@@ -1,0 +1,223 @@
+.tool-div
+{
+    margin-bottom: 0px;
+    display: table;
+    table-layout: fixed;
+}
+
+.tab:after
+{
+    content: '.';
+    visibility: hidden;
+}
+
+.tool
+{
+    padding-top:8px;
+    padding-bottom:8px;
+    padding-left:15px;
+    padding-right:15px;
+  	border: 1px solid gray;
+  	border-radius:3px;
+  	cursor: pointer;
+    text-align: center;
+    min-width: 150px
+}
+
+.notactive
+{
+  border: 1px solid #E3E3E3 !important;
+}
+
+.toolinsert
+{
+    height: 6px;
+    border: 1px solid #E3E3E3;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    min-width: 150px;
+}
+
+.toolinsertlast
+{
+  max-width: 150px;
+}
+
+.toolinsertright
+{
+  max-width: 150px;
+
+}
+
+.clearfix
+{
+  clear:both;
+  max-height:0px
+}
+
+.toolinserttop
+{
+   height: 8px;
+   border: 1px solid gray;
+   border-radius: 3px;
+   cursor: pointer;
+   margin-bottom: 5px;
+}
+
+.toolselected,.toolselected:hover
+{
+  border: 1px solid #A8A8A8 !important;
+}
+
+.tool:hover
+{
+	background-color: #E8E8E8;
+}
+
+.toolblinkon
+{
+  border: 1px solid #FC2121 !important;
+  border-radius: 3px;
+
+}
+
+.toolblinkoff
+{
+  border: 1px solid white !important;
+  border-radius: 3px;
+}
+
+.function-label
+{
+  margin-top:4px;
+}
+
+.main
+{
+  padding-top:80px;
+  padding-bottom:50px;
+}
+
+.functions
+{
+  padding-top:5px;
+  padding-bottom:5px;
+  z-index: 0;
+}
+
+.control-label
+{
+   text-align:left !important;
+}
+
+label
+{
+  font-weight:normal !important;
+}
+
+.tool .btn
+{
+  width:100px;
+}
+
+.back
+{
+  margin-bottom:10px;
+}
+
+.threads
+{
+	border-bottom: 1px solid gray;
+  width:100%;
+  background-color:white;
+  position:fixed ;
+   top:0px;
+   right:0px;
+   z-index: 0;
+}
+
+.functions
+{
+  border-top: 1px solid gray;
+  width:100%;
+  background-color:white;
+  position:fixed ;
+  bottom:0px;
+  right:0px;
+}
+
+.action-button
+{
+  font-size: 2em !important;
+  margin-right:10px;
+  padding:5px;
+  border: 1px solid white;
+
+}
+
+.action-button:hover
+{
+  background-color:#E8E8E8;
+  cursor: pointer;
+  border-radius:3px;
+}
+
+.function-action-button
+{
+  font-size: 1em !important;
+  margin-right:5px;
+  margin-top:3px;
+  padding:5px;
+}
+
+.function-action-button:hover
+{
+  background-color:#E8E8E8;
+  cursor: pointer;
+  border-radius:3px;
+}
+
+.toolbox
+{
+  margin-top: 11px;
+}
+
+.actionbuttongray
+{
+  color:gray !important;
+  display:none !important;
+}
+
+.actionbuttongray:hover
+{
+    background-color:white !important;
+    cursor: default !important;
+}
+
+.executing
+{
+  color:#D44646;
+}
+
+.toolnotexecute .executing
+{
+    display:none;
+}
+
+.notactive
+{
+  color:gray;
+}
+
+.tab
+{
+  margin-right:20px;
+  float :left;
+}
+
+#validation
+{
+  color:darkred;
+}

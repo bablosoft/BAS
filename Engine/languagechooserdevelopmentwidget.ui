@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LanguageChooserDevelopmentWidget</class>
+ <widget class="QDialog" name="LanguageChooserDevelopmentWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>369</width>
+    <height>159</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Choose language</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="engine.qrc">
+    <normaloff>:/engine/images/Logo.png</normaloff>:/engine/images/Logo.png</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="supportedLanguages">
+     <property name="styleSheet">
+      <string notr="true">QGroupBox {
+   border: 1px solid gray;
+   border-radius: 3px;
+   margin: 10px;
+   padding: 4px;
+   font-weight: bold;
+}
+QGroupBox::title {
+     subcontrol-origin: margin;
+     subcontrol-position: top left; 
+   padding:1px;
+   left: 20px;
+ }</string>
+     </property>
+     <property name="title">
+      <string>Languages, which script will support</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="switchTo">
+     <property name="styleSheet">
+      <string notr="true">QGroupBox {
+   border: 1px solid gray;
+   border-radius: 3px;
+   margin: 10px;
+   padding: 4px;
+   font-weight: bold;
+}
+QGroupBox::title {
+     subcontrol-origin: margin;
+     subcontrol-position: top left; 
+   padding:1px;
+   left: 20px;
+ }</string>
+     </property>
+     <property name="title">
+      <string>Switch all edit multi language boxes to </string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="engine.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>LanguageChooserDevelopmentWidget</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>LanguageChooserDevelopmentWidget</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

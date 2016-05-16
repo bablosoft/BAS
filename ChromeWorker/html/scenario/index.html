@@ -1,0 +1,2349 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+  <!-- ========= -->
+  <!--   HTML    -->
+  <!-- ========= -->
+  <div id="container">
+   <div id="containerdata" ></div>
+   <div class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" id="editmodal">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title tr" id="myModalLabel">Edit Task</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+
+              <input class="form-control" type="text" id="TaskName" placeholder="Task Name">
+            </div>
+            <div class="form-group">
+              <input type="hidden" id="TaskData">
+              <textarea class="form-control" rows="5" id="TaskCode" style="display:none"></textarea>
+            </div>
+            <div class="form-group">
+              <input type="checkbox" id="TaskDontRunWhenRecording"/> <label for="TaskDontRunWhenRecording" class="tr">Don't run when recording</label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary resok standartbutton tr" data-dismiss="modal">Ok</button>
+            <button type="button" class="btn btn-default standartbutton tr" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" tabindex="-1" role="dialog" aria-labelledby="myEditModalLabel" id="editfunctionmodal">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title tr" id="myEditModalLabel">Add/Edit Function</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <input class="form-control" type="text" id="EditFunctionName" placeholder="Function Name" />
+            </div>
+            <div class="form-group">
+              <button type="button" class="btn btn-default onapplicationstart tr">OnApplicationStart</button> <span class="tr">function will be run at first place.</span>
+            </div>
+            <div class="form-group">
+              <input type="checkbox" id="FunctionDontRecoverFailure"/> <label for="FunctionDontRecoverFailure" class="tr">Don't recover after failure</label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <span id="validation"></span>
+            <button type="button" class="btn btn-primary funcok standartbutton tr" data-dismiss="modal">Ok</button>
+            <button type="button" class="btn btn-default standartbutton tr" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= -->
+  <!-- TEMPLATES -->
+  <!-- ========= -->
+  <script type="text/template" id="main">
+    <div class="threads" >
+      <div class="text-center toolbox" style="width:50%; float:left">
+        <i class="fa fa-play-circle-o action-button text-success <%= (global["isscriptexecuting"] || global.execute_next_id == 1) ? "actionbuttongray" : "" %>" id="play"></i>
+        <i class="fa fa-step-forward action-button text-warning <%= (global["isscriptexecuting"] || global.execute_next_id == 1) ? "actionbuttongray" : "" %>" id="stepnext"></i>
+        <i class="fa fa-pause-circle-o action-button text-info <%= (global["isscriptexecuting"]) ? "" : "actionbuttongray" %>" id="pause"></i>
+        <i class="fa  fa-stop-circle-o  action-button text-danger" id="stop"></i>
+        <i class="fa fa-repeat action-button text-info" id="restart"></i>
+
+      </div>
+      <div style="width:50%;float:left">
+        <div><span class="tr">Thread Number</span>: <strong><%= global["threadnumber"] %></strong></div>
+        <div><span class="tr">Success Number</span>: <strong><%= global["successnumber"] %></strong></div>
+        <div><span class="tr">Fail Number</span>: <strong><%= global["failnumber"] %></strong></div>
+      </div>
+    </div>
+    <div class="functions" >
+      <div class="container-fluid">
+        <div class="col-xs-2 function-label text-left">
+          <span class="tr">Function</span>:
+        </div>
+        <div class="col-xs-6">
+          <select class="form-control input-sm" id="FunctionName" placeholder="Function Name">
+            <% _.each(GetFunctionList(), function(func, index) { %>
+              <option value="<%= func["name"] %>" <%= (func["name"] == global.function_name) ? "selected" : "" %> ><%= func["name"] %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-xs-4">
+          <i class="fa fa-plus text-success function-action-button" id="addfunction"></i>
+          <% if(global.function_name != "Main") { %>
+            <i class="fa fa-minus text-danger function-action-button" id="removefunction"></i>
+            <i class="fa fa-pencil text-warning function-action-button" id="editfunction"></i>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid main" >
+      <% _.each(data, function(task, index) { %>
+          <% var CanDisplay = global.function_name == GetFunctionData( parseInt(task.id) )["name"] && !IsFunctionNode(parseInt(task.id)) %>
+          <% if(CanDisplay) {%>
+
+            <% var len = GetTaskDepth(task.id); %>
+            <% if(GetFunctionData(task.id)["id"] != 0) len--; %>
+
+            <% for(var i = 0;i<len;i+=1){ %>
+              <div class="tab"></div>
+            <% } %>
+
+            <div class="tool-div">
+              <% if(NeedToShowUpperInsert(index)){ %>
+                <div class="toolinsert toolinsertdata <%= (global.insert_index == -index && global.insert_parent == task.parentid || global.insert_index == 0 && (parseInt(task["id"]) == parseInt(GetFirstNotFunctionId())) ) ? "toolselected":"" %>" data-insert-index="-<%= index %>" data-insert-parent="<%= task.parentid %>"></div>
+              <% } %>
+              <div class=" <%= (task.donotexecuteduringrecord)? "notactive" : "" %> tool <%= (index==0)? "toolmenufirst" : "toolmenu" %> <%= ((parseInt(task["id"]) == parseInt(GetFirstNotFunctionId()) && global.execute_next_id == 0 || global.execute_next_id == task.id) && index != 0)? "toolexecutecurrent" : "toolnotexecute" %>" data-index="<%= index %>">
+                <span class="executing"><i class="fa fa-share"></i></span>
+                <% if(task.is_selected){ %>
+                  <i class="fa fa-check-square-o selected"></i>
+                <% } %>
+                <%= _.escape(max_length(task.name,40)) %>
+              </div>
+
+              <% if(NeedToShowLowerInsert(index)){ %>
+                <div class="toolinsert toolinsertdata <%= (global.insert_index == index && global.insert_parent == task.parentid) ? "toolselected":"" %>" data-insert-index="<%= index %>" data-insert-parent="<%= task.parentid %>"></div>
+              <% } %>
+
+            </div>
+            <% } %>
+            <% if(CanDisplay || IsEmptyFunctionNode(parseInt(task.id)) && GetFunctionDataOfThisNode(parseInt(task.id))["name"] == global.function_name ){ %>
+              <% _.each(GetGroupsEndings(index), function(ending) { %>
+
+              <% var endinglevel = ending["level"] %>
+              <% if(GetFunctionData(task.id)["id"] != 0) endinglevel--; %>
+               <% if(endinglevel>=0){ %>
+                 <% for(var i = 0;i<endinglevel;i+=1){ %>
+                  <div class="tab"></div>
+                 <% } %>
+                 <div class="tool-div">
+                  <div class="toolinsert toolinsertdata toolinsertright <%= (global.insert_index == index && global.insert_parent == ending["parentid"]) ? "toolselected":"" %>" data-insert-index="<%= index %>" data-insert-parent="<%= ending["parentid"] %>"></div>
+                 </div>
+                 <div class="clearfix"></div>
+               <% } %>
+
+              <% }); %>
+
+            <% } %>
+
+
+      <% }); %>
+      <%if(GetFirstNotFunctionId() == 0 && global["function_name"] == "Main"){%>
+        <div class="tool-div">
+        <div class="toolinsert toolinsertdata toolinsertright <%= (global.insert_index == 0 && GetFirstNotFunctionId() == 0) ? "toolselected":"" %>" data-insert-index="0" data-insert-parent="0"></div>
+        </div>
+      <% } %>
+    </div>
+  </script>
+
+  <script type="text/template" id="start">
+    browser()!
+  </script>
+
+  <script type="text/template" id="resource_code">
+      RS("<%= je(resource) %>", <%= notreuse %>, <%= onlyfail %>)!
+      <%= variable %> = _result().get()
+  </script>
+
+  <script type="text/template" id="function_code">
+      function <%= name %>()
+      {
+        <% if(recover){ %>
+          _on_fail(function(){
+            log("Fail and recover " + _result())
+            _clear_on_fail()
+            _break()
+          })
+        <% }else{ %>
+            _clear_on_fail()
+        <% } %>
+        section_insert()
+        _clear_on_fail()
+      }
+  </script>
+
+
+
+  <!-- ========= -->
+  <!-- Libraries -->
+  <!-- ========= -->
+  <script src="jquery-2.1.3.min.js" type="text/javascript"></script>
+  <script src="underscore-min.js" type="text/javascript"></script>
+  <script src="backbone-min.js" type="text/javascript"></script>
+  <script src="bootstrap.min.js"></script>
+  <script src="context.js"></script>
+  <script src="bootbox.min.js"></script>
+  <script src="translate.js"></script>
+
+
+  <!-- ========= -->
+  <!--   Styles  -->
+  <!-- ========= -->
+  <link rel="stylesheet" href="bootstrap.min.css">
+  <link rel="stylesheet" href="bootstrap-theme.min.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="context.standalone.css">
+  <link rel="stylesheet" href="font-awesome.min.css">
+
+
+  <!-- =============== -->
+  <!-- Javascript code -->
+  <!-- =============== -->
+  <script type="text/javascript">
+	  var TaskModel = Backbone.Model.extend({
+        defaults: {
+            name: "",
+            code: "",
+            parentid: 0,
+            id: 0,
+            donotexecuteduringrecord:false,
+            is_selected:false
+        }
+    });
+    var GobalModel = Backbone.Model.extend({
+        defaults: {
+            state: "main",
+            istaskexecuting: false,
+            isscriptexecuting: false,
+            execute_next_id: 0,
+            isstepnextactivated: false,
+            insert_index: 0,
+            insert_parent: 0,
+            current_run_until_target_id: -1,
+            dontsend: true,
+            threadnumber: 1,
+            successnumber: 1,
+            failnumber: 1,
+            function_name: "Main"
+        }
+    });
+    var TaskCollection = Backbone.Collection.extend({
+        model: TaskModel
+    });
+
+    var MainView = Backbone.View.extend({
+      el: '#container',
+      currentTargetId: 0,
+      isEdit: false,
+      currentFuncName: "",
+
+      events: {
+        "mousedown .tool": "mousedowntool",
+        "click .resok": "taskedit",
+        "hidden.bs.modal #editmodal": "taskcancel",
+        "click .toolinsertdata": "toolinsertdata",
+        "click #play": "play",
+        "click #stepnext": "stepnext",
+        "click #pause": "pause",
+        "click #restart": "restart",
+        "click #stop": "stop",
+        "change #FunctionName": "setfunctionname",
+        "click #addfunction": "addfunction",
+        "click #editfunction": "editfunction",
+        "click #removefunction": "removefunction",
+        "click .funcok": "funcok",
+        "click .onapplicationstart": "onapplicationstart"
+      },
+
+      onapplicationstart: function()
+      {
+        $("#EditFunctionName").val("OnApplicationStart")
+      },
+
+      taskcancel: function()
+      {
+        this.isEdit = false
+        BrowserAutomationStudio_EditEnd()
+      },
+
+      funcok: function(e)
+      {
+        var name = $("#EditFunctionName").val()
+        if(name.length == 0 )
+        {
+          e.preventDefault();
+          $("#validation").html("Function name is empty")
+          $("#editfunctionmodal").modal({})
+          return
+        }
+
+        if(this.currentFuncName.length == 0)
+        {
+          if(_.find(GetFunctionList(), function(el){ return el["name"] == name; }))
+          {
+            e.preventDefault();
+            $("#validation").html("Function " + name + " already exists")
+            $("#editfunctionmodal").modal({})
+            return
+          }
+          var id = Math.floor(Math.random() * (100000 - 100)) + 100
+          var code = Normalize(_.template($('#function_code').html())({name:name,recover:true != $("#FunctionDontRecoverFailure").prop('checked')}))
+          var task = { name: name, code: code, id: id, donotexecuteduringrecord: false, parentid: 0}
+          _TaskCollection.add(task,{at: 1})
+          this.model.set("function_name",name)
+          this.SetDefaultInsert()
+        }else
+        {
+          if(_.find(GetFunctionList(), function(el){ return el["name"] == name; }) && name != this.currentFuncName)
+          {
+            e.preventDefault();
+            $("#validation").html("Function " + name + " already exists")
+            $("#editfunctionmodal").modal({})
+            return
+          }
+          var task = FindTaskById(0)
+          var found = false
+          while(true)
+          {
+            if(!task)
+              break
+            var id = parseInt(task.get("id"))
+            if(IsFunctionNode(id) && GetFunctionData(id)["name"] == this.currentFuncName)
+            {
+              found = true
+              break
+            }
+            task = FindNextTask(id)
+          }
+          if(found)
+          {
+            task.set("name",name)
+            task.set("code",Normalize(_.template($('#function_code').html())({name:name,recover:name == "OnApplicationStart" || true != $("#FunctionDontRecoverFailure").prop('checked')})))
+          }
+          this.model.set("function_name",name)
+          this.SetDefaultInsert()
+          this.send()
+        }
+      },
+
+      removefunction: function(e)
+      {
+        this.currentFuncName = this.model.get("function_name")
+        var self = this
+        bootbox.confirm("Are you sure that you want to delete " + self.currentFuncName + " function and all its content?", function(result) {
+          if(result)
+          {
+            var task = FindTaskById(0)
+            var found = false
+            while(true)
+            {
+              if(!task)
+                break
+              var id = parseInt(task.get("id"))
+              if(IsFunctionNode(id) && GetFunctionData(id)["name"] == self.currentFuncName)
+              {
+                found = true
+                break
+              }
+              task = FindNextTask(id)
+            }
+            if(found)
+            {
+              self.currentTargetId = IndexOf(parseInt(task.get("id")))
+              self.Delete()
+              self.model.set("function_name","Main")
+              self.SetDefaultInsert()
+            }
+          }
+
+        });
+      },
+
+      addfunction: function(e)
+      {
+        this.currentFuncName = ""
+        $("#EditFunctionName").val("")
+        $("#FunctionDontRecoverFailure").prop("checked",false)
+        $("#validation").html("")
+        $("#editfunctionmodal").modal({})
+      },
+
+      editfunction: function(e)
+      {
+        this.currentFuncName = this.model.get("function_name")
+        $("#EditFunctionName").val(this.currentFuncName)
+        $("#FunctionDontRecoverFailure").prop("checked",GetFunctionBody(this.currentFuncName).indexOf("_on_fail(function()") < 0)
+        $("#validation").html("")
+        $("#editfunctionmodal").modal({})
+      },
+
+      setfunctionname: function(e)
+      {
+        this.model.set("dontsend",true)
+
+        this.model.set("function_name",$(e.target).val())
+        this.SetDefaultInsert()
+
+        this.model.set("dontsend",false)
+
+      },
+
+      key: function(e)
+      {
+        if (e.keyCode == 67 && e.ctrlKey)
+        {
+          this.Copy();
+        }
+        if (e.keyCode == 86 && e.ctrlKey)
+        {
+          this.Paste();
+        }
+        if (e.keyCode == 88 && e.ctrlKey)
+        {
+          this.Cut();
+        }
+        if (e.keyCode == 46)
+        {
+          this.DeleteSelected();
+        }
+      },
+
+      stepnext: function()
+      {
+        this.model.set("isstepnextactivated", true)
+        this.play()
+      },
+
+      pause: function()
+      {
+        this.model.set("isscriptexecuting", false)
+      },
+
+      restart: function()
+      {
+        BrowserAutomationStudio_Restart(false);
+      },
+
+      stop: function()
+      {
+        BrowserAutomationStudio_Restart(true);
+      },
+
+      play: function()
+      {
+        this.model.set("isscriptexecuting", true)
+        if(!this.model.get("istaskexecuting"))
+        {
+          SendTask()
+        }
+      },
+
+      toolinsertdata: function(e)
+      {
+        var index = parseInt($(e.target).attr("data-insert-index"))
+        var parentid = parseInt($(e.target).attr("data-insert-parent"))
+        this.model.set("insert_index",index)
+        this.model.set("insert_parent",parentid)
+
+      },
+
+      taskedit: function()
+      {
+        this.collection.at(this.currentTargetId).set("name",$("#TaskName").val())
+        this.collection.at(this.currentTargetId).set("code",$("#TaskData").val() + "\n" + $("#TaskCode").val())
+        this.collection.at(this.currentTargetId).set("donotexecuteduringrecord",true == $("#TaskDontRunWhenRecording").prop('checked'))
+        //console.log("Set " + this.collection.at(this.currentTargetId).get("donotexecuteduringrecord"))
+
+        this.render()
+        this.send()
+      },
+
+      taskeditcustom: function(name,code,dontexecute)
+      {
+        this.collection.at(this.currentTargetId).set("name",name)
+        this.collection.at(this.currentTargetId).set("code",code)
+        this.collection.at(this.currentTargetId).set("donotexecuteduringrecord",dontexecute)
+
+        this.render()
+        this.send()
+      },
+
+
+      mousedowntool: function(e){
+        if($(e.target).attr("data-index") == 0)
+        {
+          $("#editmodal input,#editmodal textarea").attr("readonly","readonly")
+        }else
+        {
+          $("#editmodal input,#editmodal textarea").removeAttr("readonly")
+        }
+        if( e.button == 2 ) {
+          this.currentTargetId = parseInt($(e.target).attr("data-index"))
+        }else if(e.button == 0)
+        {
+          this.currentTargetId = parseInt($(e.target).attr("data-index"))
+          if(this.currentTargetId != 0)
+            this.ToggleSelection()
+        }
+      },
+
+      Copy: function()
+      {
+        _CopyBuffer.reset();
+        var id_map = {}
+        var ids = []
+
+        _.each(this.collection.models, function(task){
+          if(task.get("is_selected"))
+          {
+            ids.push(parseInt(task.get("id")))
+          }
+        })
+
+        _.each(this.collection.models, function(task){
+          if(task.get("is_selected") || this.IsAnsectorOfAny(ids,parseInt(task.get("id"))))
+          {
+            var id;
+            if(parseInt(task.get("id")) in id_map)
+            {
+              id = id_map[parseInt(task.get("id"))]
+            }else
+            {
+              id = Math.floor(Math.random() * (100000 - 100)) + 100
+              id_map[parseInt(task.get("id"))] = id
+            }
+            var new_task = new TaskModel(task.toJSON())
+            new_task.set("id", id)
+            _CopyBuffer.add(new_task)
+          }
+        })
+
+        _.each(_CopyBuffer.models, function(task){
+          if(task.get("is_selected"))
+          {
+            task.set("parentid", 0)
+          }
+          if(task.get("parentid") in id_map)
+          {
+            task.set("parentid", id_map[task.get("parentid")])
+          }
+          task.set("is_selected",false)
+
+        })
+        /*_.each(this.collection.models, function(task){
+          task.set("is_selected",false)
+        })*/
+
+      },
+
+      Paste: function()
+      {
+        this.model.set("dontsend",true)
+
+        var id_map = {}
+        var newbuffer = []
+
+        _.each(_CopyBuffer.models, function(task){
+          var id;
+          if(parseInt(task.get("id")) in id_map)
+          {
+            id = id_map[parseInt(task.get("id"))]
+          }else
+          {
+            id = Math.floor(Math.random() * (100000 - 100)) + 100
+            id_map[parseInt(task.get("id"))] = id
+          }
+          var new_task = new TaskModel(task.toJSON())
+          new_task.set("id", id)
+          newbuffer.push(new_task)
+        })
+
+        _.each(_CopyBuffer.models, function(task){
+          var insert_index = _GobalModel.get("insert_index")
+          if(insert_index == 0)
+          {
+            insert_index = GetFirstNotFunctionId()
+            if(insert_index == 0)
+              insert_index = _TaskCollection.models.length - 1
+            else
+              insert_index = -IndexOf(GetFirstNotFunctionId())
+          }
+          insert_index = ((insert_index<0) ? - insert_index : insert_index + 1)
+
+          var insert_parent = _GobalModel.get("insert_parent")
+
+          if(parseInt(task.get("parentid")) == 0)
+          {
+            task.set("parentid", insert_parent)
+          }
+          _TaskCollection.add(task,{at: insert_index})
+
+          _GobalModel.set("insert_index", insert_index)
+        })
+
+        _CopyBuffer.reset()
+        _CopyBuffer.add(newbuffer)
+
+        _.each(_CopyBuffer.models, function(task){
+          if(task.get("parentid") in id_map)
+          {
+            task.set("parentid", id_map[task.get("parentid")])
+          }
+          task.set("is_selected",false)
+        })
+
+        this.model.set("dontsend",false)
+        this.send()
+
+      },
+
+      Cut: function()
+      {
+        this.model.set("dontsend",true)
+
+        this.Copy()
+        var stillexists = true
+
+        while(stillexists)
+        {
+          stillexists = false
+          var self = this
+          _.every(this.collection.models, function(task,index){
+            if(task.get("is_selected"))
+            {
+              stillexists = true
+              self.currentTargetId = index
+              self.Delete()
+              return false
+            }
+            return true
+          })
+        }
+        this.model.set("dontsend",false)
+        this.send()
+      },
+
+      DeleteSelected: function()
+      {
+        this.model.set("dontsend",true)
+        var stillexists = true
+
+        while(stillexists)
+        {
+          stillexists = false
+          var self = this
+          _.every(this.collection.models, function(task,index){
+            if(task.get("is_selected"))
+            {
+              stillexists = true
+              self.currentTargetId = index
+              self.Delete()
+              return false
+            }
+            return true
+          })
+        }
+        this.model.set("dontsend",false)
+        this.send()
+      },
+
+      ClearSelection: function()
+      {
+         _.every(this.collection.models, function(task,index){
+            task.set("is_selected",false)
+            return true
+          })
+         this.render()
+      },
+
+      Delete: function(is_single){
+        if(typeof(is_single) == "undefined")
+          is_single = false
+
+        if(is_single)
+          this.model.set("dontsend",true)
+
+        var currentTargetId = parseInt(this.currentTargetId)
+        if(this.currentTargetId > 0)
+        {
+          var self = this
+          var task = this.collection.at(currentTargetId);
+          var taskstoremove = []
+
+          if(task)
+          {
+            taskstoremove.push(task)
+
+            _.find(_TaskCollection.models, function(taskinner){
+              var IdAnsector = Number(taskinner.get('id'))
+              var Id = Number(task.get('id'))
+              if(IdAnsector != Id && IsAnsectorOf(Id, IdAnsector))
+              {
+                taskstoremove.push(taskinner)
+              }
+            });
+          }
+          var deleted_current_execute = false
+          var deleted_current_insert = false
+          var taskcurrentexecute = parseInt(this.model.get("execute_next_id"))
+          var taskcurrentinsert = parseInt(_GobalModel.get("insert_index"))
+          if(taskcurrentinsert<0)
+            taskcurrentinsert = -taskcurrentinsert
+
+          if(taskcurrentinsert < _TaskCollection.length && taskcurrentinsert >= 0)
+            taskcurrentinsert = parseInt(_TaskCollection.models[taskcurrentinsert].get("id"))
+          else
+            taskcurrentinsert = 0
+
+          for(var i = 0;i<taskstoremove.length;i++)
+          {
+            var task = taskstoremove[i]
+            if(parseInt(task.get("id")) === taskcurrentexecute)
+              deleted_current_execute = true
+
+            if(parseInt(task.get("id")) === taskcurrentinsert)
+              deleted_current_insert = true
+
+          }
+
+          this.collection.remove(taskstoremove);
+
+          if(deleted_current_insert)
+          {
+            this.model.set("insert_index", _TaskCollection.length)
+            this.model.set("insert_parent", 0)
+          }
+
+          if(deleted_current_execute)
+          {
+            this.model.set("execute_next_id",1)
+          }
+          if(is_single)
+          {
+            this.model.set("dontsend",false)
+            this.send()
+          }
+        }
+
+        this.SetDefaultInsert()
+      },
+
+      SetDefaultInsert: function(){
+        var name = this.model.get("function_name")
+        if(name == "Main")
+        {
+          if(GetFirstNotFunctionId() != 0)
+          {
+            this.model.set("insert_index",_TaskCollection.length - 1)
+            this.model.set("insert_parent",0)
+          }else
+          {
+            this.model.set("insert_index",0)
+            this.model.set("insert_parent",0)
+          }
+        }else
+        {
+          var task = FindTaskById(0)
+          var id = null
+          var insert_index = 0
+          var insert_parent = 0
+
+          while(true)
+          {
+            if(!task)
+              break
+
+            var id = parseInt(task.get("id"))
+
+            if(GetFunctionDataOfThisNode(id)["name"] == name)
+            {
+              var index = IndexOf(id)
+              if(IsEmptyAndGroup(IndexOf(id)))
+              {
+                insert_index = index
+              }else
+              {
+                insert_index = -IndexOf(id) - 1
+              }
+              insert_parent = id
+            }else if(GetFunctionData(id)["name"] == name)
+            {
+              var index = IndexOf(id)
+              insert_index = index
+            }
+
+            task = FindNextTask(id)
+          }
+
+          this.model.set("insert_index",insert_index)
+          this.model.set("insert_parent",insert_parent)
+
+        }
+      },
+
+      ToggleSelection: function(){
+          var currentTargetId = this.currentTargetId
+          if(currentTargetId >= this.collection.models.length || currentTargetId < 0)
+            return
+          var task = this.collection.models[currentTargetId]
+          if(task)
+          {
+            if(task.get("is_selected"))
+              task.set("is_selected",false)
+            else
+              task.set("is_selected",true)
+          }
+
+          this.render()
+      },
+
+      DeleteThisAndAllUpper: function(){
+        this.model.set("dontsend",true)
+        var task = this.collection.models[this.currentTargetId]
+        if(!task)
+          return
+        var func_original = GetFunctionData(parseInt(task.get("id")))["name"]
+
+        while(parseInt(this.currentTargetId)>0)
+        {
+          task = this.collection.models[this.currentTargetId]
+          var id = parseInt(task.get("id"))
+          var func = GetFunctionData(id)["name"]
+          if(func == func_original && !IsFunctionNode(id))
+            this.Delete()
+          this.currentTargetId = this.currentTargetId - 1
+        }
+        this.model.set("dontsend",false)
+        this.send()
+      },
+
+      DeleteThisAndAllLower: function(){
+        this.model.set("dontsend",true)
+        var task = this.collection.models[this.currentTargetId]
+        if(!task)
+          return
+        var parent_id = task.get("parentid")
+        while(parseInt(this.currentTargetId)<this.collection.length)
+        {
+          task = this.collection.models[this.currentTargetId]
+          if(task.get("parentid") != parent_id)
+            break
+          this.Delete()
+        }
+        this.model.set("dontsend",false)
+        this.send()
+      },
+
+
+      RunUntilThis: function()
+      {
+          var task = this.collection.at(this.currentTargetId);
+          if(task)
+          {
+            this.model.set("current_run_until_target_id", task.get("id"));
+            this.play()
+          }
+      },
+
+
+      Edit: function(){
+        this.isEdit = true
+        $("#TaskName").val(this.collection.at(this.currentTargetId).get("name"))
+        var code = this.collection.at(this.currentTargetId).get("code")
+
+
+        $("#TaskDontRunWhenRecording").prop('checked', this.collection.at(this.currentTargetId).get("donotexecuteduringrecord"))
+        $("#editmodal").modal({})
+        var match = code.match(/\/\*Dat\:([^\*]+)\*\//)
+        if(match)
+        {
+          $("#TaskCode").val(code.replace(/\s*\/\*Dat\:[^\*]+\*\/\s*/g,""))
+          $("#TaskData").val("/*Dat:" + match[1] + "*/")
+          BrowserAutomationStudio_EditStart(match[1])
+        }
+        else
+          $("#TaskCode").val(code)
+      },
+
+      initialize: function(){
+        this.templates =
+        {
+          "main" : _.template($('#main').html())
+        }
+        var self = this
+
+        this.send = function()
+        {
+
+          if(!self.model.get("dontsend"))
+          {
+            //alert("send")
+            try{
+              BrowserAutomationStudio_SendCode(GenerateCode(self.collection.toJSON(),self.model.toJSON()));
+            }catch(e)
+            {}
+          }
+        }
+
+        this.model.bind('change', this.render, this);
+        this.collection.bind('add', this.render, this);
+        this.collection.bind('add', this.send, this);
+        this.collection.bind('remove', this.render, this);
+        this.collection.bind('remove', this.send, this);
+
+        try{
+          BrowserAutomationStudio_Initialized();
+        }catch(e)
+        {}
+        this.render();
+      },
+
+      render: function(event){
+
+
+        if(this.model.get("dontsend"))
+          return
+
+        var t = new Date()
+
+        _CacheLoader.Start()
+
+        console.log("Cache time" + (new Date() - t) )
+
+        t = new Date()
+
+        //alert("render")
+		    $("#containerdata").html(this.templates[this.model.get("state")]({data:this.collection.toJSON(),global:this.model.toJSON()}))
+
+        console.log("Render time" + (new Date() - t) )
+
+        _CacheLoader.Stop()
+
+
+        var self = this
+
+        $(".dropdown-menu").remove();
+
+        context.attach('.toolmenu', [
+
+          {text: tr('Delete this and all upper'), action: function(e){
+                e.preventDefault();
+                self.DeleteThisAndAllUpper()
+          }},
+          {text: tr('Delete this and all lower'), action: function(e){
+                e.preventDefault();
+                self.DeleteThisAndAllLower()
+          }},
+          {text: tr('Toggle selection'), action: function(e){
+                e.preventDefault();
+                self.ToggleSelection()
+          }},
+          {text: tr('Edit'), action: function(e){
+                e.preventDefault();
+                self.Edit()
+          }},
+          {text: tr('Delete this'), action: function(e){
+                e.preventDefault();
+                self.Delete(true)
+          }},
+          {text: tr('Run until this'), action: function(e){
+                e.preventDefault();
+                self.RunUntilThis()
+          }}
+        ]);
+
+        context.attach('html', [
+          {header: tr('Actions')},
+
+          {text: tr('Copy selected'), action: function(e){
+                e.preventDefault();
+                self.Copy()
+          }},
+          {text: tr('Paste selected'), action: function(e){
+                e.preventDefault();
+                self.Paste()
+          }},
+          {text: tr('Cut selected'), action: function(e){
+                e.preventDefault();
+                self.Cut()
+          }},
+          {text: tr('Delete selected'), action: function(e){
+                e.preventDefault();
+                self.DeleteSelected()
+
+          }},
+          {text: tr('Clear selection'), action: function(e){
+                e.preventDefault();
+                self.ClearSelection()
+
+          }},
+        ]);
+
+        tr()
+      }
+
+    });
+
+    var Router = Backbone.Router.extend({
+        routes: {
+            "": "main",
+            "!/": "main"
+        }
+    });
+
+    var _Router = new Router();
+
+    var _TaskCollection = new TaskCollection([/*{name:"Initialize Browser",code:"new_browser()!",id:0},{name:"Load Gmail.com",code:"load(\"gmail.com\")!",id:123},{name:"Load ya.ru",code:"load(\"ya.ru\")!",id:456}*/]);
+
+    var _GobalModel = new GobalModel();
+
+    var _MainView = new MainView({collection: _TaskCollection, model: _GobalModel});
+
+    var _CopyBuffer = new TaskCollection([]);
+
+    var _CacheLoader = new CacheLoader();
+
+    Backbone.history.start();
+
+    context.init({preventDoubleContext: false});
+
+    $( document ).ready(function() {
+        $(document).keydown(function(e) {
+          _MainView.key(e)
+        });
+
+        $("#EditFunctionName").keypress(function(e){
+            var charCode = !e.charCode ? e.which : e.charCode;
+            var IsGoodchar = charCode >= 'A'.charCodeAt(0) && charCode <= 'Z'.charCodeAt(0) || charCode >= 'a'.charCodeAt(0) && charCode <= 'z'.charCodeAt(0) || charCode == '_'.charCodeAt(0) || charCode >= '0'.charCodeAt(0) && charCode <= '9'.charCodeAt(0)
+            if(!IsGoodchar)
+                e.preventDefault();
+        })
+    });
+
+
+    /*
+         =========
+          HELPERS
+         =========
+
+    */
+
+    function FindTaskById(Id)
+    {
+      if(_CacheLoader.GetIsActiveForFindTaskById())
+      {
+        return _CacheLoader.FindTaskById(Id)
+      }
+      if(Id == 0)
+        return _TaskCollection.at(1)
+
+      var models = _TaskCollection.models
+      var len = models.length
+      for(var i = 0;i<len;i++)
+      {
+        var task = models[i]
+        if(Number(task.get('id')) === Id)
+        {
+          return task
+        }
+      }
+    }
+
+    function IndexOf(Id)
+    {
+      var task = FindTaskById(Id)
+      if(!task)
+        return -1
+      return _TaskCollection.models.indexOf(task)
+    }
+
+    function FindNextTask(Id)
+    {
+      var task = FindTaskById(Id)
+      if(!task)
+        return null
+      var index = _TaskCollection.models.indexOf(task)
+
+      if(index<0)
+        return null
+
+      if(index + 1 >= _TaskCollection.models.length)
+        return null
+
+      var nexttask = _TaskCollection.models[index + 1]
+      return nexttask
+    }
+
+    function IsFunctionNode(Id)
+    {
+      if(parseInt(Id) == 0)
+        return false
+      var task = FindTaskById(Id)
+      if(!task)
+        return false
+      return task.get("code").indexOf("function") == 0
+    }
+
+    function IsEmptyFunctionNode(Id)
+    {
+      return IsFunctionNode(Id) && IsEmptyAndGroup(IndexOf(Id))
+    }
+
+    function GetFunctionDataOfThisNode(Id)
+    {
+      if(_CacheLoader.GetIsActiveForGetFunctionDataOfThisNode())
+      {
+        return _CacheLoader.GetFunctionDataOfThisNode(Id)
+      }
+      var task = FindTaskById(Id)
+      if(!task)
+        return {isfunction: false,name: "Main", id: 0}
+
+      if(!IsFunctionNode(Id))
+        return {isfunction: false,name: "Main", id: 0}
+
+      var RegexpFunction = new RegExp("function\\s+([^\\(]+)\\(");
+      var code = task.get("code")
+      var match = code.match(RegexpFunction)
+      if(match)
+      {
+        return {isfunction: true, name: match[1], id: Id}
+      }
+      return {isfunction: false,name: "Main", id: 0}
+    }
+
+    function GetFunctionBody(name)
+    {
+      var task = FindTaskById(0)
+      var recover = false
+      while(true)
+      {
+        if(!task)
+          break
+
+        var id = parseInt(task.get("id"))
+
+        if(IsFunctionNode(id) && GetFunctionData(id)["name"] == name)
+        {
+          recover = task.get("code").indexOf("_on_fail(function()") >= 0
+        }
+
+        if(!IsFunctionNode(id) && GetFunctionData(id)["name"] == name)
+        {
+          var code = _.template($('#function_code').html())({name:name,recover:recover})
+          code = code.replace("section_insert()","section_start(\"test\", " + id + ")!")
+          return code
+        }
+
+
+        task = FindNextTask(id)
+      }
+      return ""
+    }
+
+    function IsFunctionExists(name)
+    {
+      var task = FindTaskById(0)
+      while(true)
+      {
+        if(!task)
+          break
+
+        var id = parseInt(task.get("id"))
+
+        if(IsFunctionNode(id) && GetFunctionData(id)["name"] == name)
+        {
+          return true
+        }
+
+        task = FindNextTask(id)
+      }
+      return false
+    }
+
+    function GetFunctionList()
+    {
+      var task = FindTaskById(0)
+      var res = []
+      res.push({isfunction: false,name: "Main", id: 0})
+      while(true)
+      {
+        if(!task)
+          break
+
+        var id = parseInt(task.get("id"))
+
+        if(IsFunctionNode(id))
+          res.push(GetFunctionDataOfThisNode(id))
+
+
+        task = FindNextTask(id)
+      }
+      return res
+    }
+
+
+    function GetFunctionData(Id)
+    {
+      if(_CacheLoader.GetIsActiveForGetFunctionData())
+      {
+        return _CacheLoader.GetFunctionData(Id)
+      }
+      var id = Id
+
+      while(true)
+      {
+        var task = FindTaskById(parseInt(id))
+
+        if(!task)
+          break
+
+        var data = GetFunctionDataOfThisNode(parseInt(id))
+
+        if(data["isfunction"])
+          return data
+
+        id = parseInt(task.get("parentid"))
+
+        if(id == 0)
+          break;
+      }
+      return {isfunction: false,name: "Main", id: 0};
+    }
+
+    function GetFirstNotFunctionId()
+    {
+      if(_CacheLoader.GetIsActiveForGetFirstNotFunctionId())
+      {
+        return _CacheLoader.GetFirstNotFunctionId()
+      }
+      var task = FindTaskById(0)
+      var found = false
+      while(true)
+      {
+        if(!task)
+          break
+        var id = parseInt(task.get("id"))
+        var funcdata = GetFunctionData(id)
+
+        if(id != 0 && funcdata["id"] == 0)
+        {
+          found = true
+          break
+        }
+        task = FindNextTask(id)
+      }
+      if(found)
+      {
+        return parseInt(task.get("id"))
+      }else
+        return 0
+    }
+
+    function FindFirstAncestor(Id)
+    {
+      var task = FindNextTask(Id)
+      if(task && parseInt(task.get("parentid")) === parseInt(Id))
+      {
+        return task
+      }
+      return null
+    }
+
+    function FindNextSiblingOrUpper(Id)
+    {
+      var task = FindTaskById(Id)
+      if(!task)
+        return null
+      while(true)
+      {
+        var tasknext = FindNextTask(Id)
+
+        if(!tasknext)
+          break
+        if(tasknext && GetTaskDepth(parseInt(task.get("id"))) >= GetTaskDepth(parseInt(tasknext.get("id"))))
+        {
+          return tasknext
+        }
+        Id = parseInt(tasknext.get("id"))
+      }
+      return null
+    }
+
+    function IsAnsectorOf(Id,IdAnsector)
+    {
+      if(Id == IdAnsector)
+        return true
+
+      if(Id == 0)
+        return true
+
+      while(true)
+      {
+        var TaskAnsector = FindTaskById(IdAnsector)
+        if(!TaskAnsector)
+          break
+        var parentid = parseInt(TaskAnsector.get("parentid"))
+        if(parentid == 0)
+          break
+        if(Id == parentid)
+          return true
+        IdAnsector = parentid
+      }
+
+      return false
+    }
+
+    function IsAnsectorOfAny(Ids,IdAnsector)
+    {
+      for(var i = 0;i<Ids.length;i++)
+      {
+        if(this.IsAnsectorOf(Ids[i],IdAnsector))
+        {
+          return true
+        }
+      }
+      return false
+    }
+
+    function NeedToShowUpperInsert(index)
+    {
+      if(index == 0)
+        return false
+
+      if(index == 1)
+        return true
+
+      if(parseInt(GetFirstNotFunctionId()) == parseInt(_TaskCollection.models[index].get("id")) ||  parseInt(_TaskCollection.models[index].get("parentid")) != parseInt(_TaskCollection.models[index - 1].get("parentid")) || ((_TaskCollection.models[index].get("code").indexOf("section_insert") < 0) && (_TaskCollection.models[index - 1].get("code").indexOf("section_insert") >= 0)))
+        return true
+
+      return false
+    }
+
+    function IsEmptyAndGroup(index)
+    {
+      if(_CacheLoader.GetIsActiveForIsEmptyAndGroup())
+      {
+        return _CacheLoader.IsEmptyAndGroup(index)
+      }
+      if(index == 0)
+        return false
+
+      if (_TaskCollection.at(index).get("code").indexOf("section_insert()") < 0)
+        return false
+
+      var isempty = true
+      var id = parseInt(_TaskCollection.at(index).get("id"))
+      var len = _TaskCollection.models.length
+      for(var i = 0;i<len;i++)
+      {
+        if(id === parseInt(_TaskCollection.at(i).get("parentid")))
+        {
+          isempty = false
+          break
+        }
+      }
+
+      return isempty
+
+    }
+
+    function GetGroupsEndings(index)
+    {
+      if(_CacheLoader.GetIsActiveForGetGroupsEndings())
+      {
+        return _CacheLoader.GetGroupsEndings(index)
+      }
+      var res = []
+
+      if(index<0 || index >= _TaskCollection.models.length)
+        return res;
+
+      var task = _TaskCollection.models[index]
+
+      if(!task)
+        return res;
+
+      var id = parseInt(task.get("id"))
+      var add = 1
+
+      if(IsEmptyAndGroup(index))
+      {
+        res.push({"parentid":id,"level":GetTaskDepth(id) + 1})
+        add = 0
+      }
+
+      var thisdepth = GetTaskDepth(id)
+      var thisdepthcopy = thisdepth
+      var nexttask = FindNextTask(id)
+      var nextdepth = -1
+      if(nexttask)
+        nextdepth = GetTaskDepth(nexttask.get("id"))
+
+      if(thisdepth - nextdepth > add)
+      {
+        var stack = GetTaskStack(id)
+        for(var i = add;i<thisdepth - nextdepth;i++)
+        {
+          res.push({"parentid":stack[i],"level":thisdepthcopy - i})
+        }
+      }
+      return res
+    }
+
+    function NeedToShowLowerInsert(index)
+    {
+      if(index == 0)
+      {
+        return false
+      }
+      if(_TaskCollection.models[index].get("code").indexOf("section_insert()") >= 0)
+        return false
+
+      return true
+    }
+
+
+    function GetTaskDepth(Id)
+    {
+      var res = 0
+      var id = Id
+
+
+      while(true)
+      {
+        var task = FindTaskById(parseInt(id))
+
+        if(!task)
+          break
+
+        id = parseInt(task.get("parentid"))
+
+        if(id == 0)
+          break;
+        res += 1
+      }
+      return res;
+    }
+
+    function GetTaskStack(Id)
+    {
+
+      var id = Id
+      var res = []
+
+      while(true)
+      {
+        var task = FindTaskById(parseInt(id))
+
+        if(!task)
+          break
+
+        id = parseInt(task.get("parentid"))
+        res.push(id)
+
+        if(id == 0)
+          break;
+      }
+      return res;
+    }
+
+    function SendTask()
+    {
+      var execute_next_id = parseInt(_GobalModel.get("execute_next_id"))
+      if(execute_next_id == 0)
+      {
+        execute_next_id = GetFirstNotFunctionId()
+        if(execute_next_id == 0)
+          execute_next_id = 1
+        if(IsFunctionExists("OnApplicationStart"))
+        {
+          var code = GetFunctionBody("OnApplicationStart") + "\n_call(OnApplicationStart,null)!\nsection_start(\"test\", " + execute_next_id + ")!"
+          BrowserAutomationStudio_Execute(code)
+          return
+        }
+
+      }
+
+      var task = null
+      if(execute_next_id != 1)
+        task = FindTaskById(execute_next_id)
+
+      if(!task)
+        _GobalModel.set("isscriptexecuting",false)
+      else
+      {
+        //var index = _.indexOf(_TaskCollection.models, task)
+        var second_line = "";
+        var tasknext = FindNextSiblingOrUpper(parseInt(execute_next_id))
+
+        if(tasknext)
+        {
+
+          var nextindex = IndexOf(parseInt(tasknext.get("id")))
+          var index = IndexOf(parseInt(task.get("id")))
+          if(nextindex >= 0 && nextindex > index && GetTaskDepth(parseInt(tasknext.get("id"))) < GetTaskDepth(parseInt(task.get("id"))) )
+          {
+            second_line="_next();"
+          }else
+          {
+            second_line="section_start(\"test\", " + tasknext.get("id") + ")!"
+          }
+        }else
+        {
+          if(parseInt(task.get("parentid")) != 0)
+          {
+            second_line="_next();"
+          }else
+          {
+            second_line="section_start(\"test\", 1)!"
+          }
+        }
+
+        /*if(index + 1 >= _TaskCollection.length)
+        {
+          second_line="section_start(\"test\", 1)!"
+        }else
+        {
+          var next_task_id = _TaskCollection.at(index + 1).get("id")
+          second_line="section_start(\"test\", " + next_task_id + ")!"
+        }*/
+
+        var code = ""
+
+        if(!task.get("donotexecuteduringrecord"))
+        {
+          code += task.get("code")
+          var taskansector = FindFirstAncestor(parseInt(execute_next_id))
+          if(taskansector)
+          {
+            code = code.replace("section_insert()","section_insert()\n" + "section_start(\"test\", " + taskansector.get("id") + ")!")
+          }
+        }
+        var FunctionRegexp = new RegExp("\\_call\\(\\s*([^\\,\\s]+)\\s*\\,")
+        var match = code.match(FunctionRegexp)
+        if(match)
+        {
+          var name = match[1]
+          code = GetFunctionBody(name) + "\n" + code
+        }
+
+        code += "\n"
+        code += second_line
+        BrowserAutomationStudio_Execute(code)
+
+      }
+
+    }
+
+    var IsChangedUsed = false
+    var IsChangedOn = false
+    function BrowserAutomationStudio_IsChanged()
+    {
+      if(IsChangedUsed)
+        return
+
+      IsChangedUsed = true
+      setInterval(function(){
+        $("#restart").removeClass("toolblinkon").removeClass("toolblinkoff")
+        IsChangedOn = !IsChangedOn
+        if(IsChangedOn)
+          $("#restart").addClass("toolblinkon")
+        else
+          $("#restart").addClass("toolblinkoff")
+      }, 1000) 
+      
+    }
+    
+    function BrowserAutomationStudio_EditCancel()
+    {
+      $('#editmodal').modal('hide');
+    }
+   
+    function BrowserAutomationStudio_AddTask(Name, Code, Id)
+    {
+      if(Name == "_threadnumber_")
+      {
+        _GobalModel.set("threadnumber",Code)
+        _MainView.send()
+      }else if(Name == "_successnumber_")
+      {
+        _GobalModel.set("successnumber",Code)
+        _MainView.send()
+      }else if(Name == "_failnumber_")
+      {
+        _GobalModel.set("failnumber",Code)
+        _MainView.send()
+      }else
+      {
+
+        var donotexecuteduringrecord = false
+        while(Name.startsWith("_"))
+        {
+          donotexecuteduringrecord = true
+          Name = Name.slice(1)
+        }
+
+        if(_MainView.isEdit)
+        {
+          _MainView.taskeditcustom(Name,Code,donotexecuteduringrecord)
+          $('#editmodal').modal('hide');
+          return
+        }
+
+        var insert_index = _GobalModel.get("insert_index")
+        if(insert_index == 0)
+        {
+          insert_index = GetFirstNotFunctionId()
+          if(insert_index == 0)
+            insert_index = _TaskCollection.models.length - 1
+          else
+            insert_index = -IndexOf(GetFirstNotFunctionId())
+        }
+        insert_index = ((insert_index<0) ? - insert_index : insert_index + 1)
+        var insert_parent = _GobalModel.get("insert_parent")
+
+        var task = { name: Name, code: Code, id: Id, donotexecuteduringrecord: donotexecuteduringrecord, parentid: insert_parent}
+        _TaskCollection.add(task,{at: insert_index})
+        /*if(Code.indexOf("section_insert()") >= 0)
+        {
+          _GobalModel.set("insert_parent", Id)
+        }*/
+        _GobalModel.set("insert_index", insert_index)
+      }
+    }
+
+    function BrowserAutomationStudio_NotRunningTask(Id)
+    {
+      if(typeof(Id) != "undefined")
+      {
+        _GobalModel.set("execute_next_id", parseInt(Id))
+        var task = FindTaskById(parseInt(Id))
+        if(task)
+        {
+           var index = _.indexOf(_TaskCollection.models, task)
+           var upper = false
+
+           for(;index<_TaskCollection.models.length;index++)
+           {
+            if(NeedToShowUpperInsert(index))
+            {
+              upper = true
+              break;
+            }
+            if(NeedToShowLowerInsert(index))
+              break;
+           }
+           //_GobalModel.set("insert_parent", _TaskCollection.models[index].get("parentid"))
+           _GobalModel.set("function_name", GetFunctionData(parseInt(_TaskCollection.models[index].get("id")))["name"] )
+           _MainView.SetDefaultInsert()
+           //_GobalModel.set("insert_index", (upper) ? -index : index)
+
+        }else
+        {
+          //_GobalModel.set("insert_index", _TaskCollection.length - 1)
+          //_GobalModel.set("insert_parent", 0)
+          _GobalModel.set("function_name", "Main")
+          _MainView.SetDefaultInsert()
+        }
+
+
+      }
+
+      if(_GobalModel.get("isstepnextactivated"))
+      {
+        _GobalModel.set("isscriptexecuting",false)
+        _GobalModel.set("isstepnextactivated",false)
+      }
+
+      if(_GobalModel.get("current_run_until_target_id") == parseInt(Id))
+      {
+        _GobalModel.set("isscriptexecuting",false)
+        _GobalModel.set("current_run_until_target_id",-1)
+      }
+
+      if(_GobalModel.get("isscriptexecuting"))
+      {
+        SendTask()
+      }else
+        _GobalModel.set("istaskexecuting",false)
+    }
+
+    function BrowserAutomationStudio_RunningTask()
+    {
+      _GobalModel.set("istaskexecuting",true)
+    }
+
+    function BrowserAutomationStudio_Parse(Code)
+    {
+
+      var RegexpStart = new RegExp("section_start\\(\\s*\\\"([^\\\"]+)\\\"\\s*\\,\\s*(\\-?\\d*)\\)\\!")
+      var RegexpInsert = new RegExp("section_insert\\(\\)")
+      var RegexpEnd = new RegExp("section_end\\(\\)\\!")
+      var RegexpThreadNumber = new RegExp("section\\(\\s*([^\\s\\,]+)\\s*(\\/\\*([^\\*]*))?")
+      var RegexpSuccess = new RegExp("section\\(\\s*([^\\s\\,]+)\\s*(\\/\\*([^\\*]*)\\*\\/)?\\s*\\,\\s*([^\\s\\,]+)\\s*(\\/\\*([^\\*]*)\\*\\/)?")
+      var RegexpFail = new RegExp("section\\(\\s*([^\\s\\,]+)\\s*(\\/\\*([^\\*]*)\\*\\/)?\\s*\\,\\s*([^\\s\\,]+)\\s*(\\/\\*([^\\*]*)\\*\\/)?\\s*\\,\\s*([^\\s\\,]+)\\s*(\\/\\*([^\\*]*)\\*\\/)?")
+      var MatchThreadNumber = Code.match(RegexpThreadNumber)
+      var MatchSuccess = Code.match(RegexpSuccess)
+      var MatchFail = Code.match(RegexpFail)
+
+
+      if(MatchThreadNumber && MatchThreadNumber.length == 4)
+      {
+        var index = 1
+        if(typeof(MatchThreadNumber[3]) == "string")
+        {
+          index = 3;
+        }
+        _GobalModel.set("threadnumber",MatchThreadNumber[index])
+      }else
+        _GobalModel.set("threadnumber",1)
+      if(MatchSuccess && MatchSuccess.length == 7)
+      {
+        var index = 4
+        if(typeof(MatchSuccess[6]) == "string")
+        {
+          index = 6;
+        }
+        _GobalModel.set("successnumber",MatchSuccess[index])
+      }else
+        _GobalModel.set("successnumber",1)
+      if(MatchFail && MatchFail.length == 10)
+      {
+        var index = 7
+        if(typeof(MatchFail[9]) == "string")
+        {
+          index = 9;
+        }
+        _GobalModel.set("failnumber",MatchFail[index])
+      }else
+        _GobalModel.set("failnumber",1)
+
+      var InsertData = []
+      var Stack = []
+      var StackReverse = []
+      var StackData = {}
+      // -1 - none
+      // 0  - start
+      // 1  - end
+      // 2  - insert
+      var State = -1
+      var PushLength = 0
+      while(true)
+      {
+        var MatchStart = Code.match(RegexpStart)
+        var MatchEnd = Code.match(RegexpEnd)
+        var MatchInsert = Code.match(RegexpInsert)
+
+
+        if(MatchStart && (!MatchEnd || (MatchStart.index < MatchEnd.index)) && (!MatchInsert || (MatchStart.index < MatchInsert.index)))
+        {
+          //Match start
+          var name = eval("\"" + MatchStart[1] + "\"")
+          var donotexecuteduringrecord = false
+          while(name.startsWith("_"))
+          {
+            donotexecuteduringrecord = true
+            name = name.slice(1)
+          }
+          var id = MatchStart[2]
+          var parentid = "0"
+          if(Stack.length > 0)
+            parentid = Stack[Stack.length - 1]
+
+          var code = ""
+
+          if(State == 0)
+          {
+            code = Normalize(Code.substr(0, MatchStart.index - 1))
+          }
+
+          var task = {name: name, id: id, donotexecuteduringrecord: donotexecuteduringrecord, parentid: parentid, code: code}
+          Stack.push(id)
+          StackReverse.push(id)
+          StackData[id] = task
+          Code = Code.substr(MatchStart.index + MatchStart[0].length)
+          State = 0
+
+        }else if(MatchEnd && (!MatchStart || (MatchEnd.index < MatchStart.index)) && (!MatchInsert || (MatchEnd.index < MatchInsert.index)))
+        {
+          //Match end
+          if(State == -1)
+            break;
+
+          if(Stack.length == 0)
+            break;
+
+          var code = Code.substr(0, MatchEnd.index - 1)
+          var taskid = Stack[Stack.length - 1]
+          var task = StackData[taskid]
+          task["code"] = Normalize(task["code"] + "\n" + code)
+          StackData[taskid] = task
+          Stack = Stack.slice(0,Stack.length - 1)
+
+          PushLength++
+          if(PushLength >= StackReverse.length)
+          {
+            for(var i = 0;i<StackReverse.length;i+=1)
+            {
+              InsertData.push(StackData[StackReverse[i]])
+            }
+            StackReverse = []
+            PushLength = 0
+          }
+
+          Code = Code.substr(MatchEnd.index + MatchEnd[0].length)
+          State = 1
+
+        }else if(MatchInsert && (!MatchStart || (MatchInsert.index < MatchStart.index)) && (!MatchEnd || (MatchInsert.index < MatchEnd.index)))
+        {
+          //Match insert
+          if(State == -1)
+            break;
+
+          if(State == 0 && Stack.length > 0)
+          {
+            var code = Code.substr(0, MatchInsert.index + MatchInsert[0].length)
+            var taskid = Stack[Stack.length - 1]
+            var task = StackData[taskid]
+            task["code"] = Normalize(task["code"] + "\n" + code)
+            StackData[taskid] = task
+          }
+          Code = Code.substr(MatchInsert.index + MatchInsert[0].length)
+          State = 2
+        }else
+          break;
+      }
+
+
+      _GobalModel.set("dontsend",true)
+      if(InsertData.length == 0)
+      {
+        InsertData.push({name: "Initialize", id: "0", donotexecuteduringrecord: false, parentid: "0", code: "browser()!"})
+      }
+      _TaskCollection.add(InsertData)
+      _GobalModel.set("dontsend",false)
+      _MainView.SetDefaultInsert()
+      _MainView.render()
+
+    }
+    function je(data)
+    {
+      return data
+      .replace(new RegExp("\\\\","g"),"\\u005c")
+      .replace(new RegExp("<","g"),"\\u003c")
+      .replace(new RegExp(">","g"),"\\u003e")
+      .replace(new RegExp("\"","g"),"\\u0022")
+      .replace(new RegExp("'","g"),"\\u0027")
+      .replace(new RegExp("&","g"),"\\u0026")
+    }
+
+    function Normalize(code, tab)
+    {
+      var a = code.split("\n")
+      var res = "";
+      for(var i=0;i<a.length;i+=1)
+      {
+        var l = a[i].trim()
+        if(l.length == 0)
+          continue;
+
+        if(res.length != 0)
+        {
+          res += "\n"
+        }
+        for(var j = 0;j<tab;j+=1)
+          res += "   "
+        res += l
+      }
+      return res
+    }
+
+    function CacheLoader()
+    {
+      var IsActiveForFindTaskById = false;
+      var IsActiveForIsEmptyAndGroup = false;
+      var IsActiveForGetGroupsEndings = false;
+      var IsActiveForGetFunctionData = false;
+      var IsActiveForGetFunctionDataOfThisNode = false;
+      var IsActiveForGetFirstNotFunctionId = false;
+
+      var firstNotFunctionId = 0;
+      var IdToTask = {}
+      var IndexToId = []
+      var IdToFunctionData = {}
+      var IdToFunctionDataForThisNode = {}
+      var IndexToIsEmptyAndGroup = []
+      var IndexToGroupsEndings = []
+
+
+      this.GetIsActiveForFindTaskById = function()
+      {
+        return IsActiveForFindTaskById
+      }
+      this.GetIsActiveForIsEmptyAndGroup = function()
+      {
+        return IsActiveForIsEmptyAndGroup
+      }
+      this.GetIsActiveForGetGroupsEndings = function()
+      {
+        return IsActiveForGetGroupsEndings
+      }
+      this.GetIsActiveForGetFunctionData = function()
+      {
+        return IsActiveForGetFunctionData
+      }
+      this.GetIsActiveForGetFunctionDataOfThisNode = function()
+      {
+        return IsActiveForGetFunctionDataOfThisNode
+      }
+      this.GetIsActiveForGetFirstNotFunctionId = function()
+      {
+        return IsActiveForGetFirstNotFunctionId
+      }
+
+
+      this.Start = function()
+      {
+
+        IsActiveForFindTaskById = false;
+        IsActiveForIsEmptyAndGroup = false;
+        IsActiveForGetGroupsEndings = false;
+        IsActiveForGetFunctionData = false;
+        IsActiveForGetFunctionDataOfThisNode = false;
+        IsActiveForGetFirstNotFunctionId = false;
+
+        IdToTask = {}
+        IdToFunctionData = {}
+        IndexToId = []
+        IndexToIsEmptyAndGroup = []
+        IndexToGroupsEndings = []
+
+        var t;
+
+        var models = _TaskCollection.models
+
+        t = new Date()
+
+        var len = models.length
+        for(var i = 0;i<len;i++)
+        {
+          var task = models[i]
+          var id = Number(task.get('id'))
+          IndexToId.push(id)
+          IdToTask[id] = task
+        }
+
+        IsActiveForFindTaskById = true
+
+        console.log("IdToTask " + (new Date() - t) )
+
+        t = new Date()
+
+        for(var i = 0;i<len;i++)
+        {
+          var task = models[i]
+          var id = Number(task.get('id'))
+          IndexToIsEmptyAndGroup.push(IsEmptyAndGroup(i))
+        }
+
+        IsActiveForIsEmptyAndGroup = true
+
+        console.log("IndexToIsEmptyAndGroup " + (new Date() - t) )
+
+        t = new Date()
+
+        for(var i = 0;i<len;i++)
+        {
+          var task = models[i]
+          var id = Number(task.get('id'))
+          IndexToGroupsEndings.push(GetGroupsEndings(i))
+        }
+
+        IsActiveForGetGroupsEndings = true
+
+        console.log("IndexToGroupsEndings " + (new Date() - t) )
+
+        t = new Date()
+
+        for(var i = 0;i<len;i++)
+        {
+          var task = models[i]
+          var id = Number(task.get('id'))
+          IdToFunctionDataForThisNode[id] = GetFunctionDataOfThisNode(id)
+        }
+
+        IsActiveForGetFunctionDataOfThisNode = true
+
+        console.log("IdToFunctionDataForThisNode " + (new Date() - t) )
+
+        t = new Date()
+
+        for(var i = 0;i<len;i++)
+        {
+          var task = models[i]
+          var id = Number(task.get('id'))
+          IdToFunctionData[id] = GetFunctionData(id)
+        }
+
+        IsActiveForGetFunctionData = true
+
+        console.log("IdToFunctionData " + (new Date() - t) )
+
+        t = new Date()
+
+        firstNotFunctionId = GetFirstNotFunctionId()
+        IsActiveForGetFirstNotFunctionId = true
+
+        console.log("firstNotFunctionId " + (new Date() - t) )
+
+
+      }
+
+      this.Stop = function()
+      {
+        IsActiveForFindTaskById = false;
+        IsActiveForIsEmptyAndGroup = false;
+        IsActiveForGetGroupsEndings = false;
+        IsActiveForGetFunctionData = false;
+        IsActiveForGetFunctionDataOfThisNode = false;
+        IsActiveForGetFirstNotFunctionId = false;
+      }
+
+      this.GetGroupsEndings = function(index)
+      {
+        return IndexToGroupsEndings[index]
+      }
+
+      this.IsEmptyAndGroup = function(index)
+      {
+        return IndexToIsEmptyAndGroup[index]
+      }
+
+      this.FindTaskById = function(Id)
+      {
+        var res = IdToTask[Id]
+        if(typeof(res) == "undefined")
+        {
+          return null
+        }
+        return res
+      }
+
+      this.GetFunctionData = function(Id)
+      {
+        var res = IdToFunctionData[Id]
+        if(typeof(res) == "undefined")
+        {
+          return null
+        }
+        return res
+      }
+
+      this.GetFunctionDataOfThisNode = function(Id)
+      {
+        var res = IdToFunctionDataForThisNode[Id]
+        if(typeof(res) == "undefined")
+        {
+          return null
+        }
+        return res
+      }
+
+      this.GetFirstNotFunctionId = function()
+      {
+        return firstNotFunctionId
+      }
+    }
+
+    function ResourceLoader()
+    {
+      var AdditionalData = "";
+      var IsString = true;
+      var Iteration = 1;
+
+      this.Resolve = function(str)
+      {
+        var res = this.ResolveResources(str);
+        //res = this.ResolveVariables(res);
+        return res;
+      }
+
+      this.SetIsString = function(value)
+      {
+        IsString = value;
+      }
+
+      this.ResolveVariables = function(str)
+      {
+        var res = "";
+        var reg = new RegExp("\\[\\[([^\\]]+)\\]\\]")
+        var rest = str
+        var all = ""
+        while(true)
+        {
+          all = res
+          if(res.length > 0 && rest.length > 0)
+            all += ((IsString) ? " + " : "")
+
+          if(rest.length > 0)
+            all += ((IsString) ? "\"" : "") + ((IsString) ? je(rest) : rest) + ((IsString) ? "\"" : "")
+
+          var match = reg.exec(rest)
+          if(!match)
+            break;
+
+          var i = match.index
+          var resnew = "";
+          if(i>0)
+          {
+            resnew += (IsString) ? "\"" : ""
+            resnew += (IsString) ? je(rest.substr(0,i)) : rest.substr(0,i)
+            resnew += (IsString) ? "\" + " : ""
+          }
+
+          resnew += "VAR_" + match[1]
+
+          i = match.index + match[0].length
+          var j = rest.length - i
+          if(j>0)
+          {
+            rest = rest.substr(i,j)
+          }else
+            rest = ""
+
+          if(res.length == 0)
+            res = resnew
+          else
+            res +=  ((IsString) ? " + " : "") + resnew
+
+
+        }
+        return all;
+      }
+
+      this.ResolveResources = function(str)
+      {
+        var res = "";
+        var reg = new RegExp("\\{\\{([^\\}]+)\\}\\}")
+        var rest = str
+        var all = ""
+        while(true)
+        {
+          all = res
+          if(res.length > 0 && rest.length > 0)
+            all += ((IsString) ? " + " : "")
+
+          if(rest.length > 0)
+            all += this.ResolveVariables(rest)
+
+          var match = reg.exec(rest)
+          if(!match)
+            break;
+
+
+          var v = "RESOURCE_" + Iteration;
+          var m = match[1].split("|")[0]
+          var notreuse = match[1].indexOf("|notreuse")>=0
+          var onlyfail = match[1].indexOf("|onlyfail")>=0
+          AdditionalData +=  _.template($('#resource_code').html())({resource:m,variable:v,notreuse:notreuse,onlyfail:onlyfail});
+
+          var i = match.index
+          var resnew = "";
+          if(i>0)
+          {
+            resnew += this.ResolveVariables(rest.substr(0,i))
+            resnew += ((IsString) ? " + " : "")
+          }
+
+          resnew += v
+
+          i = match.index + match[0].length
+          var j = rest.length - i
+          if(j>0)
+          {
+            rest = rest.substr(i,j)
+          }else
+            rest = ""
+
+          if(res.length == 0)
+            res = resnew
+          else
+            res +=  ((IsString) ? " + " : "") + resnew
+
+          Iteration+=1;
+
+        }
+        return all;
+      }
+
+      this.GetAdditionalData = function()
+      {
+        return AdditionalData;
+      }
+
+    }
+
+    function GenerateCode(data,global)
+    {
+      var res = "";
+      var loader = new ResourceLoader();
+      loader.SetIsString(false)
+
+      var threadnumber = global["threadnumber"].toString()
+      if(threadnumber.length > 0 && threadnumber[0] == "{")
+        threadnumber = loader.Resolve(threadnumber)
+
+      var successnumber = global["successnumber"].toString()
+      if(successnumber.length > 0 && successnumber[0] == "{")
+        successnumber = loader.Resolve(successnumber)
+
+      var failnumber = global["failnumber"].toString()
+      if(failnumber.length > 0 && failnumber[0] == "{")
+        failnumber = loader.Resolve(failnumber)
+
+      res += Normalize(loader.GetAdditionalData())
+      if(res.length > 0)
+        res += "\n\n"
+      res += "section(" + threadnumber + " \/*" + global["threadnumber"].toString() + "*\/," + successnumber  + " \/*" + global["successnumber"].toString() + "*\/," + failnumber  + " \/*" + global["failnumber"].toString() + "*\/,0,function(){";
+      res += "\n"
+      var index = 0
+
+      var isfunction = true
+      var wasonstartcall = false
+      var IsOnStartExists = IsFunctionExists("OnApplicationStart")
+      while(true)
+      {
+        if(index >= data.length)
+          break;
+
+        var ret = GenerateSubsection(index,data,1,"")
+        var newres = ret["res"]
+        if(index!=0 && IsOnStartExists)
+        {
+          var isfunctionnew = newres.indexOf("function")>=0
+          if(!isfunctionnew && isfunction)
+          {
+            res += "   _call(_on_start, null)!\n\n"
+            wasonstartcall = true
+          }
+          isfunction = isfunctionnew
+        }
+        index = ret["index"]
+
+        res += newres
+      }
+      if(!wasonstartcall && IsOnStartExists)
+        res += "   _call(_on_start, null)!\n\n"
+
+      res += "})!";
+      return res;
+    }
+
+    function GenerateSubsection(index,data,level,res)
+    {
+        if(index >= data.length)
+          return {index:index,res:res};
+
+        var task = data[index]
+
+        if(index == 0)
+        {
+          task.code = ""
+          for(var i = 0;i<data.length;i++)
+          {
+            if(data[i].code.indexOf("\/\*Browser\*\/") >= 0)
+            {
+              task.code = "browser()!"
+              break
+            }
+          }
+        }
+
+        var name = ""
+        if(task.donotexecuteduringrecord)
+          name += "_"
+        name += task.name
+
+        res += Normalize("section_start(\"" + je(name) + "\", " + task.id.toString() + ")!",level)
+        res += "\n"
+        var separator = "section_insert()"
+
+        var index_str = task.code.indexOf(separator)
+        if(index_str >= 0)
+          index_str += separator.length
+
+        if(index_str < 0)
+        {
+          res += Normalize(task.code,level)
+          res += "\n"
+          index += 1
+        }else
+        {
+          res += Normalize(task.code.substr(0,index_str),level)
+          res += "\n"
+
+          var code_last = task.code.substr(index_str)
+          var level_last = level
+          index ++
+          while(true)
+          {
+            if(index >= data.length)
+              break;
+
+            if(parseInt(data[index].parentid) === parseInt(task.id))
+            {
+              var ret = GenerateSubsection(index,data,level + 1,res)
+              index = ret["index"]
+              res = ret["res"]
+            }else
+              break
+          }
+          res += Normalize(code_last,level_last)
+          res += "\n"
+
+        }
+
+        res += Normalize("section_end()!",level)
+        res += "\n"
+        res += "\n"
+        return {index:index,res:res};
+    }
+
+
+
+    function max_length(data,len)
+    {
+      var res = data
+      if(res.length > len)
+      {
+        res = res.substr(0,len - 4)
+        res+=" ..."
+      }
+      return res
+
+    }
+
+  </script>
+
+</body>
+</html>

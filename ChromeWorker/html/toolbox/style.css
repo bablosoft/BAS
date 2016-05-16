@@ -1,0 +1,170 @@
+.tool
+{
+  float:left;
+  padding-left: 0px;
+  margin-bottom: 3px;
+}
+
+.toolfirst
+{
+  margin-left:10px;
+}
+
+.description
+{
+  clear: left;
+  padding-bottom: 0px;
+  float:left;
+}
+
+body
+{
+  margin-top:5px;
+}
+
+.control-label
+{
+   text-align:left !important;
+}
+
+.tool .btn, .standartbutton
+{
+  min-width:150px;
+}
+
+.back
+{
+  margin-top:5px;
+  margin-bottom:5px;
+}
+
+#tooltip
+{
+  clear:both;
+  padding-top:10px;
+}
+
+#validation
+{
+	margin-left:5px;
+  margin-right:5px;
+}
+
+.form-group {
+    margin-bottom: 5px !important;
+}
+
+.res
+{
+  float:left;
+}
+
+.var, .func, .variant
+{
+  float:left;
+  margin-left:10px;
+}
+
+.varminim
+{
+  float:left;
+}
+
+
+.modal-dialog
+{
+  margin: 5px auto !important;
+}
+
+.waitelement, .waitasyncload, .httpclientget, .httpclientdownload, .httpclientreset, .isloaded, .getstatus, .cachemaskallow,.cachemaskdeny,.cachemaskclear,.requestmaskallow,.requestmaskdeny,.requestmaskclear,.clearcache,.clearrequests, .html, .getcookiesforurl, .openfile, .reset, .moveelement,.moveandclickelement, .clickelement, .length, .set_attr, .attr, .set_random, .set_integer, .set, .focus, .check, .style, .exist, .clear, .load, .url, .xml, .log, .setvariable, .if, .while, .executefunction, .for, .sleep, .resize, .click, .move, .moveandclick, .break, .continue, .success, .fail, .text
+{
+  padding-top:35px;
+}
+
+.container-fluid {
+    padding-left: 0px !important;
+  }
+
+.mainscreen
+{
+  margin-left:10px;
+}
+
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    height: auto;
+}
+
+.specialletter
+{
+  min-width:65px;
+  margin-bottom:5px;
+}
+
+#executetype
+{
+  float:right;
+}
+
+#executetype button
+{
+   outline: none !important;
+}
+
+#NoResources
+{
+  display:none;
+}
+
+.variable-input
+{
+  text-transform: uppercase;
+}
+
+.path
+{
+   position:absolute;
+   top:5px;
+   right:0px;
+   width:350px;
+   float: right !important;
+}
+
+#selector-number1
+{
+  display:none;
+}
+
+#selector-number2
+{
+  display:none;
+}
+
+.toolbutton
+{
+  margin-right:15px;
+}
+
+#IfElse, #Check, #Check2
+{
+  margin-left:20px;
+}
+
+.tooltipinternal
+{
+  margin-left:30px;
+}
+
+.addtopost
+{
+  margin-left:20px;
+}
+
+.res-margin
+{
+  margin-right:30px;
+  margin-top:10px;
+  color:gray !important;
+  font-weight: lighter !important;
+}

@@ -1,0 +1,696 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>VocabularyTest</class>
+ <widget class="QDialog" name="VocabularyTest">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>626</width>
+    <height>578</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Generate Lines</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="engine.qrc">
+    <normaloff>:/engine/images/Logo.png</normaloff>:/engine/images/Logo.png</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLineEdit" name="lineEdit"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="TestButton">
+       <property name="text">
+        <string>Test</string>
+       </property>
+       <property name="icon">
+        <iconset resource="engine.qrc">
+         <normaloff>:/engine/images/at_sign.png</normaloff>:/engine/images/at_sign.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_18">
+     <property name="text">
+      <string>Tips:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>-352</y>
+        <width>6024</width>
+        <height>681</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <layout class="QFormLayout" name="formLayout">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         </property>
+         <item row="0" column="0">
+          <widget class="QPushButton" name="pushButton">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>AnyLetter</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Any letter</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QPushButton" name="pushButton_5">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>AnyDigit</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Any digit</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QPushButton" name="pushButton_6">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>{B1|B2|B3}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>One of options</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QPushButton" name="pushButton_7">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>ELowVow</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>{a|e|i|o|u}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QPushButton" name="pushButton_8">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>EUpVow</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>{A|E|I|O|U}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QPushButton" name="pushButton_9">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>ELowCons</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>{b|c|d|f|g|h|j|k|l|m|n|p|q|r|s|t|v|w|x|y|z}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QPushButton" name="pushButton_16">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>EUpCons</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>{B|C|D|F|G|H|J|K|L|M|N|P|Q|R|S|T|V|W|X|Y|Z}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QPushButton" name="pushButton_15">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>EUp</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>{&lt;EUpVow&gt;|&lt;EUpCons&gt;}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QPushButton" name="pushButton_14">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>ELow</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>{&lt;ELowVow&gt;|&lt;ELowCons&gt;}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0">
+          <widget class="QPushButton" name="pushButton_13">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>EFemName</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="1">
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>{Mary|Jennifer|Lisa|Sandra|Michelle|Patricia|Maria|Nancy|Donna|Laura|Linda|Susan|Karen|Carol|Sarah|Barbara|Margaret|Betty|Ruth|Kimberly|Elizabeth|Dorothy|Helen|Sharon|Deborah}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="0">
+          <widget class="QPushButton" name="pushButton_12">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>EFemNameLow</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="1">
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>{mary|jennifer|lisa|sandra|michelle|patricia|maria|nancy|donna|laura|linda|susan|karen|carol|sarah|barbara|margaret|betty|ruth|kimberly|elizabeth|dorothy|helen|sharon|deborah}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="0">
+          <widget class="QPushButton" name="pushButton_11">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>EMaleName</string>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="1">
+          <widget class="QLabel" name="label_12">
+           <property name="text">
+            <string>{James|David|Christopher|George|Ronald|John|Richard|Daniel|Kenneth|Anthony|Robert|Charles|Paul|Steven|Kevin|Michael|Joseph|Mark|Edward|Jason|William|Thomas|Donald|Brian|Jeff}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="0">
+          <widget class="QPushButton" name="pushButton_10">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>EMaleNameLow</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="1">
+          <widget class="QLabel" name="label_13">
+           <property name="text">
+            <string>{james|david|christopher|george|ronald|john|richard|daniel|kenneth|anthony|robert|charles|paul|steven|kevin|michael|joseph|mark|edward|jason|william|thomas|donald|brian|jeff}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="0">
+          <widget class="QPushButton" name="pushButton_17">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>ESurname</string>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="1">
+          <widget class="QLabel" name="label_14">
+           <property name="text">
+            <string>{Smith|Anderson|Clark|Wright|Mitchell|Johnson|Thomas|Rodriguez|Lopez|Perez|Williams|Jackson|Lewis|Hill|Roberts|Jones|White|Lee|Scott|Turner|Brown|Harris|Walker|Green|Phillips|Davis|Martin|Hall|Adams|Campbell|Miller|Thompson|Allen|Baker|Parker|Wilson|Garcia|Young|Gonzalez|Evans|Moore|Martinez|Hernandez|Nelson|Edwards|Taylor|Robinson|King|Carter|Collins}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="0">
+          <widget class="QPushButton" name="pushButton_20">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>ESurnameLow</string>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="1">
+          <widget class="QLabel" name="label_17">
+           <property name="text">
+            <string>{smith|anderson|clark|wright|mitchell|johnson|thomas|rodriguez|lopez|perez|williams|jackson|lewis|hill|roberts|jones|white|lee|scott|turner|brown|harris|walker|green|phillips|davis|martin|hall|adams|campbell|miller|thompson|allen|baker|parker|wilson|garcia|young|gonzalez|evans|moore|martinez|hernandez|nelson|edwards|taylor|robinson|king|carter|collins}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="0">
+          <widget class="QPushButton" name="pushButton_2">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>RFemName</string>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="1">
+          <widget class="QLabel" name="label_20">
+           <property name="text">
+            <string>{Александра|Саша|Анастасия|Анна|Аня|Валентина|Валя|Валерия|Лера|Вера|Виктория|Вика|Галина|Галя|Дарья|Даша|Дашка|Евгения|Женя|Екатерина|Катя|Кейт|Елена|Лена|Ленка|Инна|Кира|Лариса|Леся|Людмила|Марина|Маша|Надежда|Надя|Наталья|Наташа|Натали|Нина|Оксана|Ольга|Оля|Светлана|Света|Юлия|Юля|Яна}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="16" column="0">
+          <widget class="QPushButton" name="pushButton_3">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>TFemName</string>
+           </property>
+          </widget>
+         </item>
+         <item row="17" column="0">
+          <widget class="QPushButton" name="pushButton_4">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>RMaleName</string>
+           </property>
+          </widget>
+         </item>
+         <item row="18" column="0">
+          <widget class="QPushButton" name="pushButton_21">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>TMaleName</string>
+           </property>
+          </widget>
+         </item>
+         <item row="19" column="0">
+          <widget class="QPushButton" name="pushButton_22">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>RSurname</string>
+           </property>
+          </widget>
+         </item>
+         <item row="20" column="0">
+          <widget class="QPushButton" name="pushButton_23">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>TSurname</string>
+           </property>
+          </widget>
+         </item>
+         <item row="21" column="0">
+          <widget class="QPushButton" name="pushButton_19">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Birth</string>
+           </property>
+          </widget>
+         </item>
+         <item row="21" column="1">
+          <widget class="QLabel" name="label_15">
+           <property name="text">
+            <string>19{6|7|8}?</string>
+           </property>
+          </widget>
+         </item>
+         <item row="22" column="0">
+          <widget class="QPushButton" name="pushButton_18">
+           <property name="minimumSize">
+            <size>
+             <width>130</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Numbers</string>
+           </property>
+          </widget>
+         </item>
+         <item row="22" column="1">
+          <widget class="QLabel" name="label_16">
+           <property name="text">
+            <string>{2000|2010|2011|2012|99|9|100}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="16" column="1">
+          <widget class="QLabel" name="label_21">
+           <property name="text">
+            <string>{aleksandra|sasha|anastasija|anna|anja|valentina|valja|valerija|lera|vera|viktorija|vika|galina|galja|darja|dasha|dashka|evgenija|zhenja|ekaterina|katja|kejt|elena|lena|lenka|inna|kira|larisa|lesja|ljudmila|marina|masha|nadezhda|nadja|natalja|natasha|natali|nina|oksana|olga|olja|svetlana|sveta|julija|julja|jana}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="17" column="1">
+          <widget class="QLabel" name="label_22">
+           <property name="text">
+            <string>{Александр|Саня|Саша|Алексей|Леша|Леха|Анатолий|Толя|Толик|Андрей|Антон|Артем|Артур|Богдан|Борис|Боря|Вадим|Вадик|Валентин|Валик|Валерий|Василий|Вася|Виктор|Виталий|Виталик|Владимир|Вова|Владислав|Влад|Вячеслав|Слава|Геннадий|Гена|Григорий|Гриша|Денис|Дмитрий|Дима|Евгений|Женя|Иван|Ваня|Игорь|Илья|Константин|Костя|Леонид|Максим|Макс|Михаил|Миша|Никита|Николай|Коля|Олег|Павел|Паша|Петр|Петя|Роман|Рома|Руслан|Тарас|Юрий|Юра}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="18" column="1">
+          <widget class="QLabel" name="label_23">
+           <property name="text">
+            <string>{aleksandr|sanja|sasha|aleksej|lesha|leha|anatolij|tolja|tolik|andrej|anton|artem|artur|bogdan|boris|borja|vadim|vadik|valentin|valik|valerij|vasilij|vasja|viktor|vitalij|vitalik|vladimir|vova|vladislav|vlad|vjacheslav|slava|gennadij|gena|grigorij|grisha|denis|dmitrij|dima|evgenij|zhenja|ivan|vanja|igor|ilja|konstantin|kostja|leonid|maksim|maks|mihail|misha|nikita|nikolaj|kolja|oleg|pavel|pasha|petr|petja|roman|roma|ruslan|taras|jurij|jura}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="19" column="1">
+          <widget class="QLabel" name="label_24">
+           <property name="text">
+            <string>{Иванов|Смирнов|Васильев|Смирнов|Кузнецов|Попов|Васильев|Петров|Соколов|Михайлов|Новиков|Федоров|Морозов|Волков|Алексеев|Лебедев|Семенов|Егоров|Павлов|Козлов|Степанов|Николаев|Орлов|Андреев|Макаров|Никитин|Захаров|Зайцев|Соловьев|Борисов|Яковлев|Григорьев|Романов|Воробьев|Сергеев|Кузьмин|Фролов|Александров|Дмитриев|Королев|Гусев|Киселев|Максимов|Поляков|Сорокин|Виноградов|Ковалев|Белов|Медведев|Антонов|Тарасов|Жуков|Баранов|Филиппов|Комаров|Давыдов|Беляев|Герасимов|Богданов|Осипов|Сидоров|Матвеев|Титов|Марков|Миронов|Крылов|Куликов|Карпов|Власов|Мельников|Денисов|Гаврилов|Тихонов|Казаков|Афанасьев|Данилов|Савельев|Тимофеев|Фомин|Чернов|Абрамов|Мартынов|Ефимов|Федотов|Щербаков|Назаров|Калинин|Исаев|Чернышев|Быков|Маслов|Родионов|Коновалов|Лазарев|Воронин|Климов|Филатов|Пономарев|Голубев|Кудрявцев|Прохоров}</string>
+           </property>
+          </widget>
+         </item>
+         <item row="20" column="1">
+          <widget class="QLabel" name="label_25">
+           <property name="text">
+            <string>{ivanov|smirnov|vasilev|smirnov|kuznecov|popov|vasilev|petrov|sokolov|mihajlov|novikov|fedorov|morozov|volkov|alekseev|lebedev|semenov|egorov|pavlov|kozlov|stepanov|nikolaev|orlov|andreev|makarov|nikitin|zaharov|zajcev|solovev|borisov|jakovlev|grigorev|romanov|vorobev|sergeev|kuzmin|frolov|aleksandrov|dmitriev|korolev|gusev|kiselev|maksimov|poljakov|sorokin|vinogradov|kovalev|belov|medvedev|antonov|tarasov|zhukov|baranov|filippov|komarov|davydov|beljaev|gerasimov|bogdanov|osipov|sidorov|matveev|titov|markov|mironov|krylov|kulikov|karpov|vlasov|melnikov|denisov|gavrilov|tihonov|kazakov|afanasev|danilov|savelev|timofeev|fomin|chernov|abramov|martynov|efimov|fedotov|werbakov|nazarov|kalinin|isaev|chernyshev|bykov|maslov|rodionov|konovalov|lazarev|voronin|klimov|filatov|ponomarev|golubev|kudrjavcev|prohorov}</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_19">
+     <property name="text">
+      <string>Results:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPlainTextEdit" name="plainTextEdit">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>150</height>
+      </size>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="engine.qrc"/>
+ </resources>
+ <connections/>
+</ui>

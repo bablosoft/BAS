@@ -1,0 +1,13 @@
+﻿<!--<DataBase>
+	<Table id="10" name="accounts" description_en="Accounts" description_ru="Аккаунты" >
+		<Column id="1010" name="login" description_en="Login" description_ru="Логин" type="string" />
+		<Column id="1020" name="password" description_en="Password" description_ru="Пароль" type="string" />
+		<Column id="1030" name="is_active" description_en="Is Active" description_ru="Активный" type="bool" />
+		<Column id="1140" name="created_at" description_en="Created At" description_ru="Время Создания" type="date" />
+		<Column id="1150" name="friends_number" description_en="Friends Number" description_ru="Количество Друзей" type="int" />
+	</Table>
+	<Table id="20" name="posts" description_en="Posts" description_ru="Посты" >
+		<Column id="2010" name="text" description_en="Text" description_ru="Текст" type="string" />
+		<Column id="2020" name="ref" description_en="Reference" description_ru="Ссылка" type="string" />
+	</Table>
+</DataBase>-->

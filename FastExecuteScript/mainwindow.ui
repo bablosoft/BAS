@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>912</width>
+    <height>678</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string notr="true">Vk.vom image uploader</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="execute.qrc">
+    <normaloff>:/fastexecutescript/images/Logo.png</normaloff>:/fastexecutescript/images/Logo.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <widget class="QWidget" name="verticalLayoutWidget">
+       <layout class="QVBoxLayout" name="BrowserLayout">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetMaximumSize</enum>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="verticalLayoutWidget_2">
+       <layout class="QVBoxLayout" name="ControlLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>12</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="LabelLicense">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="LabelRunning">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Running ...</string>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="LabelGif">
+            <property name="minimumSize">
+             <size>
+              <width>126</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>126</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QTabWidget" name="tabWidget">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="currentIndex">
+           <number>1</number>
+          </property>
+          <widget class="QWidget" name="tab">
+           <attribute name="title">
+            <string>Results</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <layout class="QVBoxLayout" name="ResultsLayout">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_2">
+           <attribute name="title">
+            <string>Log</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QTextBrowser" name="Results"/>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextBesideIcon</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionStop"/>
+   <addaction name="actionExit"/>
+   <addaction name="actionRestart"/>
+   <addaction name="actionShow_Report"/>
+   <addaction name="actionResources_Report"/>
+   <addaction name="actionData"/>
+  </widget>
+  <action name="actionStop">
+   <property name="icon">
+    <iconset resource="execute.qrc">
+     <normaloff>:/fastexecutescript/images/stop.png</normaloff>:/fastexecutescript/images/stop.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stop</string>
+   </property>
+  </action>
+  <action name="actionShow_Report">
+   <property name="icon">
+    <iconset resource="../Engine/engine.qrc">
+     <normaloff>:/engine/images/report.png</normaloff>:/engine/images/report.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Report</string>
+   </property>
+  </action>
+  <action name="actionResources_Report">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="execute.qrc">
+     <normaloff>:/fastexecutescript/images/resources_ok.png</normaloff>:/fastexecutescript/images/resources_ok.png</iconset>
+   </property>
+   <property name="text">
+    <string>Resources Report</string>
+   </property>
+  </action>
+  <action name="actionShow">
+   <property name="text">
+    <string>Show</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset resource="execute.qrc">
+     <normaloff>:/fastexecutescript/images/shutdown.png</normaloff>:/fastexecutescript/images/shutdown.png</iconset>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionRestart">
+   <property name="icon">
+    <iconset resource="execute.qrc">
+     <normaloff>:/fastexecutescript/images/restart.png</normaloff>:/fastexecutescript/images/restart.png</iconset>
+   </property>
+   <property name="text">
+    <string>Restart</string>
+   </property>
+  </action>
+  <action name="actionData">
+   <property name="icon">
+    <iconset resource="../Engine/engine.qrc">
+     <normaloff>:/engine/images/database.png</normaloff>:/engine/images/database.png</iconset>
+   </property>
+   <property name="text">
+    <string>Data</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="../Engine/engine.qrc"/>
+  <include location="execute.qrc"/>
+ </resources>
+ <connections/>
+</ui>

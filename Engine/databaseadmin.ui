@@ -1,0 +1,800 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DatabaseAdmin</class>
+ <widget class="QWidget" name="DatabaseAdmin">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1250</width>
+    <height>750</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Database Manager</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QWidget" name="DockUp" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>120</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>120</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">#DockUp
+{
+	border-bottom:1px solid gray;
+
+}</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="minimumSize">
+           <size>
+            <width>569</width>
+            <height>95</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>241</width>
+            <height>95</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QGroupBox {
+   border: 1px solid gray;
+   border-radius: 3px;
+   margin: 10px;
+   padding: 0px;
+   font-weight: bold;
+}
+QGroupBox::title {
+     subcontrol-origin: margin;
+     subcontrol-position: top left; 
+   padding:1px;
+   left: 20px;
+ }
+QGroupBox::indicator:checked {
+     image: url(:/engine/images/Types/FixedNumber.png);
+width:34px;
+height:34px;
+ }
+QGroupBox::indicator:unchecked
+{
+	image: url(:/engine/images/stop_small.png);
+ }</string>
+          </property>
+          <property name="title">
+           <string>Settings</string>
+          </property>
+          <widget class="QLabel" name="label">
+           <property name="geometry">
+            <rect>
+             <x>80</x>
+             <y>20</y>
+             <width>111</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Select Table:</string>
+           </property>
+          </widget>
+          <widget class="QComboBox" name="Tables">
+           <property name="geometry">
+            <rect>
+             <x>80</x>
+             <y>45</y>
+             <width>181</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Account</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Tweet</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QLabel" name="label_5">
+           <property name="geometry">
+            <rect>
+             <x>30</x>
+             <y>30</y>
+             <width>32</width>
+             <height>32</height>
+            </rect>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="engine.qrc">:/engine/images/table.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_6">
+           <property name="geometry">
+            <rect>
+             <x>270</x>
+             <y>30</y>
+             <width>71</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Refresh</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="RefreshButton">
+           <property name="geometry">
+            <rect>
+             <x>350</x>
+             <y>30</y>
+             <width>31</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="engine.qrc">
+             <normaloff>:/engine/images/refresh.png</normaloff>:/engine/images/refresh.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="DeleteAllButton">
+           <property name="geometry">
+            <rect>
+             <x>510</x>
+             <y>30</y>
+             <width>31</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="engine.qrc">
+             <normaloff>:/engine/images/delete_all.png</normaloff>:/engine/images/delete_all.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_7">
+           <property name="geometry">
+            <rect>
+             <x>400</x>
+             <y>30</y>
+             <width>101</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Delete All Data</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="minimumSize">
+           <size>
+            <width>501</width>
+            <height>95</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>531</width>
+            <height>95</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QGroupBox {
+   border: 1px solid gray;
+   border-radius: 3px;
+   margin: 10px;
+   padding: 0px;
+   font-weight: bold;
+}
+QGroupBox::title {
+     subcontrol-origin: margin;
+     subcontrol-position: top left; 
+   padding:1px;
+   left: 20px;
+ }
+QGroupBox::indicator:checked {
+     image: url(:/engine/images/Types/FixedNumber.png);
+width:34px;
+height:34px;
+ }
+QGroupBox::indicator:unchecked
+{
+	image: url(:/engine/images/stop_small.png);
+ }</string>
+          </property>
+          <property name="title">
+           <string>Convert</string>
+          </property>
+          <widget class="QPushButton" name="ImportCsv">
+           <property name="geometry">
+            <rect>
+             <x>80</x>
+             <y>20</y>
+             <width>81</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Import Csv</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="ExportCsv">
+           <property name="geometry">
+            <rect>
+             <x>80</x>
+             <y>50</y>
+             <width>81</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Export Csv</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_2">
+           <property name="geometry">
+            <rect>
+             <x>30</x>
+             <y>30</y>
+             <width>32</width>
+             <height>32</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="engine.qrc">:/engine/images/csv.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_3">
+           <property name="geometry">
+            <rect>
+             <x>180</x>
+             <y>30</y>
+             <width>32</width>
+             <height>32</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="engine.qrc">:/engine/images/sql.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="Backup">
+           <property name="geometry">
+            <rect>
+             <x>230</x>
+             <y>20</y>
+             <width>90</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Backup</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="Restore">
+           <property name="geometry">
+            <rect>
+             <x>230</x>
+             <y>50</y>
+             <width>90</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Restore</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_4">
+           <property name="geometry">
+            <rect>
+             <x>340</x>
+             <y>30</y>
+             <width>32</width>
+             <height>32</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="engine.qrc">:/engine/images/xls.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="ExportXls">
+           <property name="geometry">
+            <rect>
+             <x>382</x>
+             <y>36</y>
+             <width>90</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Export Xls</string>
+           </property>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="widget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QSplitter" name="splitter">
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="handleWidth">
+           <number>1</number>
+          </property>
+          <property name="childrenCollapsible">
+           <bool>false</bool>
+          </property>
+          <widget class="QWidget" name="widget_2" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">#widget_2
+{
+	border-right:1px solid gray;
+}</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>2</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QWidget" name="GroupFilterWidget" native="true">
+              <property name="styleSheet">
+               <string notr="true">#GroupFilterWidget
+{
+	border-bottom:1px solid gray;
+}</string>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_5">
+               <item>
+                <widget class="QLabel" name="label_16">
+                 <property name="text">
+                  <string>Group Filter:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="EditGroupFilter">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="ClearDatabaseFilter">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>23</width>
+                   <height>23</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>23</width>
+                   <height>23</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="engine.qrc">
+                   <normaloff>:/engine/images/clear.png</normaloff>:/engine/images/clear.png</iconset>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QScrollArea" name="scrollArea_2">
+              <property name="frameShape">
+               <enum>QFrame::NoFrame</enum>
+              </property>
+              <property name="widgetResizable">
+               <bool>true</bool>
+              </property>
+              <widget class="QWidget" name="GroupsWidgetContent">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>0</y>
+                 <width>1245</width>
+                 <height>515</height>
+                </rect>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_4">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <layout class="QVBoxLayout" name="GroupsLayout">
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
+                 </layout>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="GroupButtonWidget" native="true">
+              <property name="styleSheet">
+               <string notr="true">#GroupButtonWidget
+{
+	border-top:1px solid gray;
+}</string>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <property name="spacing">
+                <number>6</number>
+               </property>
+               <property name="leftMargin">
+                <number>6</number>
+               </property>
+               <property name="topMargin">
+                <number>6</number>
+               </property>
+               <property name="rightMargin">
+                <number>6</number>
+               </property>
+               <property name="bottomMargin">
+                <number>6</number>
+               </property>
+               <item>
+                <layout class="QGridLayout" name="gridLayout">
+                 <property name="verticalSpacing">
+                  <number>10</number>
+                 </property>
+                 <item row="0" column="0">
+                  <widget class="QPushButton" name="AddGroup">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>Add Group</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="engine.qrc">
+                     <normaloff>:/engine/images/crud_create.png</normaloff>:/engine/images/crud_create.png</iconset>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QPushButton" name="DeleteSelectedGroups">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>Delete Selected</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="engine.qrc">
+                     <normaloff>:/engine/images/delete_all.png</normaloff>:/engine/images/delete_all.png</iconset>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QPushButton" name="SelectAllGroups">
+                   <property name="text">
+                    <string>Select All</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="engine.qrc">
+                     <normaloff>:/engine/images/select_all.png</normaloff>:/engine/images/select_all.png</iconset>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QPushButton" name="SelectNoGroups">
+                   <property name="text">
+                    <string>Select None</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="engine.qrc">
+                     <normaloff>:/engine/images/select_none.png</normaloff>:/engine/images/select_none.png</iconset>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="widget_3" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="DatabaseAdminTable" name="DatabaseTables" native="true"/>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DatabaseAdminTable</class>
+   <extends>QWidget</extends>
+   <header>databaseadmintable.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="engine.qrc"/>
+ </resources>
+ <connections/>
+</ui>

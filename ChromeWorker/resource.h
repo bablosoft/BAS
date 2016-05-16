@@ -1,0 +1,22 @@
+#ifndef RESOURCE
+#define RESOURCE
+
+#define IDB_UP 501
+#define IDB_DOWN 502
+#define IDB_LEFT 503
+#define IDB_RIGHT 504
+#define IDB_DEVTOOLS 505
+#define IDB_SCENARIO 506
+#define IDB_READY 507
+#define IDB_HOLD 508
+#define IDB_FINISHED 509
+#define IDB_DEVTOOLSGRAY 510
+#define IDB_SCENARIOGRAY 511
+#define IDB_MINIMIZE 512
+#define IDB_MAXIMIZE 513
+
+#define IDI_LOGO 400
+
+
+#endif // RESOURCE
+

@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/fastexecutescript">
+        <file>images/loading.gif</file>
+        <file>images/Logo.png</file>
+        <file>translate/en.qm</file>
+        <file>translate/ru.qm</file>
+        <file>images/stop.png</file>
+        <file>images/resources_ok.png</file>
+        <file>images/resources_error.png</file>
+        <file>images/shutdown.png</file>
+        <file>images/restart.png</file>
+    </qresource>
+</RCC>

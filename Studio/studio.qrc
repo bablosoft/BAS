@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/studio">
+        <file>images/loading.gif</file>
+        <file>images/start.png</file>
+        <file>images/stop.png</file>
+        <file>images/box.png</file>
+        <file>images/stop_small.png</file>
+        <file>images/open.png</file>
+        <file>images/saveas.png</file>
+        <file>images/save.png</file>
+        <file>images/new.png</file>
+        <file>data/state.txt</file>
+        <file>images/Logo.png</file>
+        <file>images/question.png</file>
+        <file>images/language.png</file>
+        <file>translate/en.qm</file>
+        <file>translate/ru.qm</file>
+        <file>images/settings.png</file>
+        <file>data/default.txt</file>
+        <file>images/resources_error.png</file>
+        <file>images/resources_ok.png</file>
+        <file>images/Record.png</file>
+        <file>data/new.txt</file>
+    </qresource>
+</RCC>
