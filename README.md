@@ -34,3 +34,12 @@ Stop paying to developers! With BrowserAutomationStudio you can create rich and 
 # Download
 
 Download from https://bablosoft.com/shop/BrowserAutomationStudio
+
+# Compile
+
+See instructions: https://wiki.bablosoft.com/doku.php?id=how_can_i_change_bas_and_compile
+
+# Learn how to use it
+
+Read wiki https://wiki.bablosoft.com/
+
