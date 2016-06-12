@@ -81,8 +81,9 @@ _do(function(){
   if(_iterator() > <%= timestosolve %>)
     fail("Too many fails solve recaptcha 2")
 
-
   wait_load("recaptcha/api2/payload")!
+
+  sleep(3000)!
 
   match("src=\"https://www.google.com/recaptcha/api2/frame").script("self.getBoundingClientRect().top + window.scrollY")!
   TOP = parseInt(_result())

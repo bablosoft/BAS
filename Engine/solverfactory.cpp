@@ -5,7 +5,7 @@ namespace BrowserAutomationStudioFramework
 {
 
     SolverFactory::SolverFactory(QObject *parent) :
-        ISolverFactory(parent),ManualSolver(0),AntigateSolver(0), DbcSolver(0)
+        ISolverFactory(parent),ManualSolver(0),AntigateSolver(0), DbcSolver(0),RucaptchaSolver(0),TwocaptchaSolver(0)
     {
     }
 
