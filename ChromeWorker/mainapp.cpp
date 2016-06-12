@@ -17,6 +17,9 @@
 #include "xml_encoder.h"
 #include "lodepng.h"
 #include "multithreading.h"
+#include "modulesdata.h"
+#include "readallfile.h"
+#include "toolboxpreprocessor.h"
 
 using namespace std::placeholders;
 MainApp * App;
@@ -85,6 +88,7 @@ CefRefPtr<CefRenderProcessHandler> MainApp::GetRenderProcessHandler()
 void MainApp::OnContextInitialized()
 {
     handler = new MainHandler();
+    handler->SetSettings(Settings);
     dhandler = new DevToolsHandler();
     dhandler->SetData(Data);
     cookievisitor = new CookieVisitor();
@@ -514,7 +518,11 @@ void MainApp::CreateTooboxBrowser()
     CefBrowserSettings browser_settings;
     CefRequestContextSettings settings;
     CefRefPtr<CefRequestContext> Context = CefRequestContext::CreateContext(settings,NULL);
-    BrowserToolbox = CefBrowserHost::CreateBrowserSync(window_info, thandler, std::string("file:///html/toolbox/index.html"), browser_settings, Context);
+    BrowserToolbox = CefBrowserHost::CreateBrowserSync(window_info, thandler, "about:blank", browser_settings, Context);
+    std::string ToolboxScript = ReadAllString("html/toolbox/index.html");
+    ToolboxPreprocess(Data->_ModulesData, ToolboxScript);
+    BrowserToolbox->GetMainFrame()->LoadString(ToolboxScript, "file:///html/toolbox/index.html");
+
     Layout->ToolBoxHandle = BrowserToolbox->GetHost()->GetWindowHandle();
 }
 
@@ -534,7 +542,7 @@ void MainApp::CreateScenarioBrowser()
     CefBrowserSettings browser_settings;
     CefRequestContextSettings settings;
     CefRefPtr<CefRequestContext> Context = CefRequestContext::CreateContext(settings,NULL);
-    BrowserScenario = CefBrowserHost::CreateBrowserSync(window_info, shandler, std::string("file:///html/scenario/index.html"), browser_settings, Context);
+    BrowserScenario = CefBrowserHost::CreateBrowserSync(window_info, shandler, "file:///html/scenario/index.html", browser_settings, Context);
     Layout->ScenarioHandle = BrowserScenario->GetHost()->GetWindowHandle();
 
 }
@@ -1781,6 +1789,8 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
 
         JavaScriptExtensions extensions;
         std::string jscode;
+        jscode += GetAllBrowserDataCode(GetData()->_ModulesData);
+
         {
             LOCK_BROWSER_DATA
             if(Data->_Headers.find("User-Agent")!=Data->_Headers.end())

@@ -289,9 +289,19 @@ function antigate(key)
     ScriptWorker.GetSolver("antigate").SetProperty("key",key);
 }
 
-function antigate_russian(is_russian)
+function rucaptcha(key)
 {
-    ScriptWorker.GetSolver("antigate").SetProperty("is_russian",((is_russian)?"true":"false"));
+    ScriptWorker.GetSolver("rucaptcha").SetProperty("key",key);
+}
+
+function twocaptcha(key)
+{
+    ScriptWorker.GetSolver("2captcha").SetProperty("key",key);
+}
+
+function solver_property(solver,key,value)
+{
+    ScriptWorker.GetSolver(solver).SetProperty(key,value);
 }
 
 function dbc(key)
@@ -301,6 +311,7 @@ function dbc(key)
 
 function solve(match, url, callback)
 {
+    LAST_CAPTCHA_METHOD = match
     _ENGINE_CALLBACK = [match,url,callback];
 
     is_load(_ENGINE_CALLBACK[1], function(){
@@ -317,8 +328,17 @@ function solve(match, url, callback)
 
 function solve_base64(match, data_base64, callback)
 {
+    LAST_CAPTCHA_METHOD = match
     ScriptWorker.Solve(match, data_base64,_get_function_body(callback));
 }
+
+function solver_failed()
+{
+    if(typeof(LAST_CAPTCHA_ID) != "undefined" && LAST_CAPTCHA_ID != "")
+        ScriptWorker.GetSolver(LAST_CAPTCHA_METHOD).ReportBad(LAST_CAPTCHA_ID);
+}
+
+
 
 function progress()
 {
@@ -471,4 +491,24 @@ function _on_start()
             success("none")
         })
     })
+}
+
+function native(dll,func,data)
+{
+    return ScriptWorker.ExecuteNativeModuleCodeSync(dll,func,data);
+}
+
+function native_async(dll,func,data,callback)
+{
+    ScriptWorker.ExecuteNativeModuleCodeAsync(dll,func,data,_get_function_body(callback));
+}
+
+function general_timeout(timeout)
+{
+    ScriptWorker.SetGeneralWaitTimeout(timeout);
+}
+
+function solver_timeout(timeout)
+{
+    ScriptWorker.SetSolverWaitTimeout(timeout);
 }

@@ -7,19 +7,24 @@
 #include <functional>
 #include "curlresourcehandler.h"
 #include <atomic>
+#include "settings.h"
 
 
-class MainHandler : public CefClient, public CefDisplayHandler, public CefLifeSpanHandler, public CefLoadHandler, public CefRequestHandler, public CefDialogHandler, public CefKeyboardHandler, public CefRenderHandler
+class MainHandler : public CefClient, public CefDisplayHandler, public CefLifeSpanHandler, public CefLoadHandler, public CefRequestHandler, public CefDialogHandler, public CefKeyboardHandler, public CefRenderHandler, public CefJSDialogHandler
 {
     bool NeedQuit;
     bool WaitForLoadEvent;
     CefRefPtr<CefBrowser> Browser;
     bool IsVisible;
     BrowserData * Data;
+    settings * Settings;
+
 public:
     MainHandler();
     bool GetIsVisible();
     void SetData(BrowserData *Data);
+    void SetSettings(settings *Settings);
+
     virtual CefRefPtr<CefDisplayHandler> GetDisplayHandler() OVERRIDE;
     virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() OVERRIDE;
     virtual CefRefPtr<CefLoadHandler> GetLoadHandler() OVERRIDE;
@@ -27,6 +32,13 @@ public:
     virtual CefRefPtr<CefDialogHandler> GetDialogHandler() OVERRIDE;
     virtual CefRefPtr<CefKeyboardHandler> GetKeyboardHandler() OVERRIDE;
     virtual CefRefPtr<CefRenderHandler> GetRenderHandler() OVERRIDE;
+    virtual CefRefPtr<CefJSDialogHandler> GetJSDialogHandler() OVERRIDE;
+
+
+    // CefJSDialogHandler methods:
+    virtual bool OnJSDialog(CefRefPtr<CefBrowser> browser, const CefString& origin_url, const CefString& accept_lang, JSDialogType dialog_type, const CefString& message_text, const CefString& default_prompt_text, CefRefPtr<CefJSDialogCallback> callback, bool& suppress_message);
+    virtual bool OnBeforeUnloadDialog(CefRefPtr<CefBrowser> browser,const CefString& message_text, bool is_reload, CefRefPtr<CefJSDialogCallback> callback);
+
 
     // CefKeyboardHandler methods:
     virtual bool OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event) OVERRIDE;
@@ -48,8 +60,7 @@ public:
 
     // CefRequestHandler methods:
     virtual ReturnValue OnBeforeResourceLoad(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, CefRefPtr<CefRequestCallback> callback) OVERRIDE;
-    virtual bool OnResourceResponse(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, CefRefPtr<CefResponse> response) OVERRIDE;
-    virtual void OnResourceRedirect(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, CefString& new_url) OVERRIDE;
+    virtual void OnResourceLoadComplete(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, CefRefPtr<CefResponse> response, CefRequestHandler::URLRequestStatus status, int64 received_content_length) OVERRIDE;
     virtual CefRefPtr<CefResourceHandler> GetResourceHandler(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request) OVERRIDE;
     virtual bool GetAuthCredentials(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, bool isProxy, const CefString& host, int port, const CefString& realm, const CefString& scheme, CefRefPtr<CefAuthCallback> callback) OVERRIDE;
     virtual bool OnCertificateError(CefRefPtr<CefBrowser> browser,cef_errorcode_t cert_error,const CefString& request_url,CefRefPtr<CefSSLInfo> ssl_info,CefRefPtr<CefRequestCallback> callback) OVERRIDE;

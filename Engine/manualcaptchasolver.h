@@ -23,18 +23,18 @@ namespace BrowserAutomationStudioFramework
         explicit ManualCaptchaSolver(QObject *parent = 0);
         ~ManualCaptchaSolver();
         virtual QString Solve(const QString& base64);
+        virtual void ReportBad(const QString& id);
         virtual void SetProperty(const QString& name,const QString& value);
         virtual bool TimeLimited();
 
         QWidget* GetWidget();
         int GetSize();
     signals:
-        void Done(const QString& val, const QString& id, bool res);
         void ChangedSize(int size);
 
     private slots:
-
-        void DoneSlot(const QString& val, const QString& id, bool res);
+        void DoneAdapter(const QString& val, const QString& id, bool res);
+        void DoneSlot(const QString& val, const QString& id, bool res,const QString& solver_id);
     };
 }
 

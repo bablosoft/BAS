@@ -293,30 +293,39 @@ namespace BrowserAutomationStudioFramework
     {
         MultiLanguageString ms1;
         ms1.SetTranslation("en","First Results");
+        ms1.SetTranslation("ru","First Results");
 
         MultiLanguageString ms2;
         ms2.SetTranslation("en","Second Results");
+        ms2.SetTranslation("ru","Second Results");
 
         MultiLanguageString ms3;
         ms3.SetTranslation("en","Third Results");
+        ms3.SetTranslation("ru","Third Results");
 
         MultiLanguageString ms4;
         ms4.SetTranslation("en","Fourth Results");
+        ms4.SetTranslation("ru","Fourth Results");
 
         MultiLanguageString ms5;
         ms5.SetTranslation("en","Fifth Results");
+        ms5.SetTranslation("ru","Fifth Results");
 
         MultiLanguageString ms6;
         ms6.SetTranslation("en","Sixth Results");
+        ms6.SetTranslation("ru","Sixth Results");
 
         MultiLanguageString ms7;
         ms7.SetTranslation("en","Seventh Results");
+        ms7.SetTranslation("ru","Seventh Results");
 
         MultiLanguageString ms8;
         ms8.SetTranslation("en","Eighth Results");
+        ms8.SetTranslation("ru","Eighth Results");
 
         MultiLanguageString ms9;
         ms9.SetTranslation("en","Ninth Results");
+        ms9.SetTranslation("ru","Ninth Results");
 
         WidgetOutput->SetOutputTitle1(ms1);
         WidgetOutput->SetOutputTitle2(ms2);

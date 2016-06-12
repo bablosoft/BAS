@@ -16,7 +16,7 @@ namespace BrowserAutomationStudioFramework
     public:
         explicit PostToAntigate(QObject *parent = 0);
         void SetServer(const QString& Server);
-        void Post(const QString& id, const QString& key, const QString& base64, bool IsRussian);
+        void Post(const QString& id, const QString& key, const QString& base64, const QMap<QString,QString>& Properties);
     signals:
         void PostedToAntigate(const QString& antigate_id, const QString& id, bool res);
     public slots:

@@ -32,6 +32,7 @@
 #include "mongodatabaseconnector.h"
 #include "csvhelper.h"
 #include "databasestate.h"
+#include "modulemanager.h"
 
 
 namespace Ui {
@@ -82,6 +83,7 @@ class MainWindow : public QMainWindow
     ILanguageModel * LangModel;
     CsvHelper *_CsvHelper;
 
+    ModuleManager *_ModuleManager;
 
     QString Language;
 

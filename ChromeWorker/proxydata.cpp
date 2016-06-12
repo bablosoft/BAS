@@ -1,5 +1,5 @@
 #include "proxydata.h"
-#include "replace.h"
+#include "replaceall.h"
 
 ProxyData::ProxyData()
 {

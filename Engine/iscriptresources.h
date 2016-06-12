@@ -19,7 +19,6 @@ namespace BrowserAutomationStudioFramework
         virtual QString GetJquery() = 0;
         virtual QList<QString> GetJqueryPlugins() = 0;
         virtual QList<QString> GetEngineScripts() = 0;
-        virtual QList<QString> GetModuleScripts() = 0;
         virtual QList<QString> GetMultiEngineScripts() = 0;
         virtual QList<QString> GetPageScripts() = 0;
     };

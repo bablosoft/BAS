@@ -42,6 +42,7 @@ namespace BrowserAutomationStudioFramework
         IHelperFactory* HelperFactory;
         IHelper* Helper;
         ICsvHelper *CsvHelper;
+        IModuleManager *ModuleManager;
 
         IHtmlParserFactory* HtmlParserFactory;
         IProperties* Properties;
@@ -73,6 +74,8 @@ namespace BrowserAutomationStudioFramework
         bool DoTrace;
         IDatabaseConnector *DatabaseConnector;
         bool IsRecord;
+
+        QList<QString> AdditionalScripts;
 
     public:
         QString WorkerScript;
@@ -171,8 +174,14 @@ namespace BrowserAutomationStudioFramework
         virtual void SetDoTrace(bool DoTrace);
         virtual bool GetDoTrace();
 
+        virtual void SetAdditionEngineScripts(const QList<QString>& AdditionalScripts);
+        virtual QList<QString> GetAdditionEngineScripts();
+
         void SetIsRecord(bool IsRecord);
         bool GetIsRecord();
+
+        virtual void SetModuleManager(IModuleManager *ModuleManager);
+        virtual IModuleManager* GetModuleManager();
     signals:
 
     public slots:

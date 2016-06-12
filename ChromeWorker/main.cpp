@@ -14,6 +14,7 @@
 #include "translate.h"
 #include "opensslmultithreaded.h"
 #include "multithreading.h"
+#include "modulesdata.h"
 
 int pid = -1;
 CefRefPtr<MainApp> app;
@@ -21,7 +22,7 @@ PipesClient *Client;
 CommandParser *Parser;
 HWND MousePositionMouseHandle,hwnd,HButtonUp,HButtonDown,HButtonLeft,HButtonRight,HButtonDevTools,HButtonScenario,HTextHold,HTextFinished;
 enum{IDButtonTerminate = 1000,IDButtonQuit,IDButtonUp,IDButtonDown,IDButtonLeft,IDButtonRight,IDButtonMinimizeMaximize,IDButtonDevTools,IDButtonScenario,IDTextHold,IDTextFinished,IDClick,IDMove,IDMoveAndClick,IDInspect,IDXml,IDText,IDScript,IDClickElement,IDMoveElement,IDMoveAndClickElement,IDClear,IDType,IDExists,IDStyle,IDCheck,IDFocus,IDSet,IDSetInteger,IDSetRandom,IDGetAttr,IDSetAttr,IDCaptcha,IDLength,IDWaitElement,
-    IDLoop,IDXmlLoop,IDTextLoop,IDScriptLoop,IDClickElementLoop,IDMoveElementLoop,IDMoveAndClickElementLoop,IDClearLoop,IDTypeLoop,IDExistsLoop,IDStyleLoop,IDCheckLoop,IDFocusLoop,IDSetLoop,IDSetIntegerLoop,IDSetRandomLoop,IDGetAttrLoop,IDSetAttrLoop,IDCaptchaLoop};
+    IDLoop,IDXmlLoop,IDTextLoop,IDScriptLoop,IDClickElementLoop,IDMoveElementLoop,IDMoveAndClickElementLoop,IDClearLoop,IDTypeLoop,IDExistsLoop,IDStyleLoop,IDCheckLoop,IDFocusLoop,IDSetLoop,IDSetIntegerLoop,IDSetRandomLoop,IDGetAttrLoop,IDSetAttrLoop,IDCaptchaLoop,IDCustom = 30000,IDCustomForeach = 40000};
 HBITMAP BReady,BHold,BFinished;
 HCURSOR HCursor;
 using namespace std::placeholders;
@@ -62,6 +63,11 @@ void RepositionInterface(int x, int y)
 void SetLang(std::string Lang, int)
 {
     Translate::SetLanguage(Lang);
+}
+
+void LoadAllModules(std::string Lang, int)
+{
+    app->GetData()->_ModulesData = LoadModulesData(Lang);
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -210,7 +216,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 InsertMenu(hPopupMenu, 23, MF_BYPOSITION | MF_STRING, IDSetAttr, Translate::Tr(L"Set Element Attribute").c_str());
                 InsertMenu(hPopupMenu, 24, MF_BYPOSITION | MF_STRING, IDCaptcha, Translate::Tr(L"Solve Captcha").c_str());
                 InsertMenu(hPopupMenu, 25, MF_BYPOSITION | MF_STRING, IDLength, Translate::Tr(L"Get Element Count").c_str());
-                InsertMenu(hPopupMenu, 26, MF_POPUP | MF_STRING, (UINT_PTR)hForEachMenu, Translate::Tr(L"For Each Element").c_str());
+
+                int iterator = 26;
+                int IdIterator = IDCustom;
+                for(ModulesData Module:app->GetData()->_ModulesData)
+                {
+                    for(ActionData Action:Module->Actions)
+                    {
+                        if(Action->IsElement)
+                        {
+                            IdIterator++;
+                            InsertMenu(hPopupMenu, iterator++, MF_BYPOSITION | MF_STRING, IdIterator, s2ws(Action->Description).c_str());
+                        }
+                    }
+                }
+
+                InsertMenu(hPopupMenu, iterator, MF_POPUP | MF_STRING, (UINT_PTR)hForEachMenu, Translate::Tr(L"For Each Element").c_str());
 
 
                 InsertMenu(hForEachMenu, 25, MF_BYPOSITION | MF_STRING, IDLoop, Translate::Tr(L"Start Loop").c_str());
@@ -234,6 +255,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 InsertMenu(hForEachMenu, 44, MF_BYPOSITION | MF_STRING, IDSetAttrLoop, Translate::Tr(L"Set Element Attribute").c_str());
                 InsertMenu(hForEachMenu, 45, MF_BYPOSITION | MF_STRING, IDCaptchaLoop, Translate::Tr(L"Solve Captcha").c_str());
 
+                iterator = 46;
+                IdIterator = IDCustomForeach;
+                for(ModulesData Module:app->GetData()->_ModulesData)
+                {
+                    for(ActionData Action:Module->Actions)
+                    {
+                        if(Action->IsElement)
+                        {
+                            IdIterator++;
+                            InsertMenu(hForEachMenu, iterator++, MF_BYPOSITION | MF_STRING, IdIterator, s2ws(Action->Description).c_str());
+                        }
+                    }
+                }
 
                 TrackPopupMenu(hPopupMenu, TPM_TOPALIGN | TPM_LEFTALIGN, p.x, p.y, 0, hwnd, NULL);
                 hPopupMenu = 0;
@@ -262,310 +296,340 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         break;
         case WM_COMMAND:
             worker_log(std::string("WM_COMMAND<<") + std::to_string((int)LOWORD(wParam)));
-            switch(LOWORD(wParam))
             {
-                case IDButtonTerminate:
-                    app->Terminate();
-                    return 0;
-                break;
-                case IDButtonQuit:
-                    app->Hide();
-                    Client->Write("<Messages><Minimized>1</Minimized></Messages>");
-                    return 0;
-                break;
-                case IDButtonUp:
-                    app->ScrollUp();
-                break;
-                case IDButtonDown:
-                    app->ScrollDown();
-                break;
-                case IDButtonRight:
-                    app->ScrollRight();
-                break;
-                case IDButtonLeft:
-                    app->ScrollLeft();
-                break;
-                case IDButtonMinimizeMaximize:
-                    Layout->MinimizeOrMaximize(hwnd,app->GetData()->_ParentWindowHandle);
-                    app->ForceUpdateWindowPositionWithParent();
-                break;
-                case IDButtonDevTools:
-                    Layout->UpdateTabs(true);
-                    app->ToggleDevTools();
-                break;
-                case IDButtonScenario:
-                    Layout->UpdateTabs(false);
-                break;
-                case IDClick:
-                    if(Layout->State == MainLayout::Ready)
+                WORD Command = LOWORD(wParam);
+                int IdIterator = IDCustom;
+                int IdIteratorForeach = IDCustomForeach;
+                for(ModulesData Module:app->GetData()->_ModulesData)
+                {
+                    for(ActionData Action:Module->Actions)
                     {
-                        app->EmulateClick(MouseMenuPositionX,MouseMenuPositionY);
+                        if(Action->IsElement)
+                        {
+                            IdIterator ++;
+                            IdIteratorForeach ++;
+                             if(Command == IdIteratorForeach)
+                             {
+                                 if(Layout->State == MainLayout::Ready)
+                                 {
+                                    app->ExecuteElementLoopFunction(Action->Name);
+                                 }
+                             }else if(Command == IdIterator)
+                             {
+                                 if(Layout->State == MainLayout::Ready)
+                                 {
+                                    app->ExecuteElementFunction(Action->Name);
+                                 }
+                             }
+                        }
+                    }
+                }
+
+                switch(Command)
+                {
+                    case IDButtonTerminate:
+                        app->Terminate();
                         return 0;
-                    }
-                break;
-                case IDMove:
-                    if(Layout->State == MainLayout::Ready)
-                    {
-                        app->EmulateMove(MouseMenuPositionX,MouseMenuPositionY);
+                    break;
+                    case IDButtonQuit:
+                        app->Hide();
+                        Client->Write("<Messages><Minimized>1</Minimized></Messages>");
                         return 0;
-                    }
-                break;
-                case IDMoveAndClick:
+                    break;
+                    case IDButtonUp:
+                        app->ScrollUp();
+                    break;
+                    case IDButtonDown:
+                        app->ScrollDown();
+                    break;
+                    case IDButtonRight:
+                        app->ScrollRight();
+                    break;
+                    case IDButtonLeft:
+                        app->ScrollLeft();
+                    break;
+                    case IDButtonMinimizeMaximize:
+                        Layout->MinimizeOrMaximize(hwnd,app->GetData()->_ParentWindowHandle);
+                        app->ForceUpdateWindowPositionWithParent();
+                    break;
+                    case IDButtonDevTools:
+                        Layout->UpdateTabs(true);
+                        app->ToggleDevTools();
+                    break;
+                    case IDButtonScenario:
+                        Layout->UpdateTabs(false);
+                    break;
+                    case IDClick:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->EmulateClick(MouseMenuPositionX,MouseMenuPositionY);
+                            return 0;
+                        }
+                    break;
+                    case IDMove:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->EmulateMove(MouseMenuPositionX,MouseMenuPositionY);
+                            return 0;
+                        }
+                    break;
+                    case IDMoveAndClick:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->EmulateMoveAndClick(MouseMenuPositionX,MouseMenuPositionY);
+                            return 0;
+                        }
+                    break;
+                    case IDInspect:
+                        Layout->UpdateTabs(true);
+                        if(InspectLastX >= 0 && InspectLastY >= 0)
+                        {
+                            app->InspectAt(MouseMenuPositionX - app->GetData()->ScrollX,MouseMenuPositionY - app->GetData()->ScrollY);
+                            InspectLastX = -1;
+                            InspectLastY = -1;
+                        }
+                    break;
+                    case IDXml:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("GetXml");
+                        }
+                    break;
+                    case IDText:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("GetText");
+                        }
+                    break;
+                    case IDScript:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("ExecuteScript");
+                        }
+                    break;
+
+                    case IDClickElement:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("ClickElement");
+                        }
+                    break;
+                    case IDMoveElement:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("MoveElement");
+                        }
+                    break;
+                    case IDMoveAndClickElement:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("MoveAndClickElement");
+                        }
+                    break;
+                    case IDClear:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("Clear");
+                        }
+                    break;
+                    case IDType:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("Type");
+                        }
+                    break;
+                    case IDExists:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("Exists");
+                        }
+                    break;
+                    case IDStyle:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("Style");
+                        }
+                    break;
+                    case IDCheck:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("Check");
+                        }
+                    break;
+                    case IDFocus:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("Focus");
+                        }
+                    break;
+                    case IDSet:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("Set");
+                        }
+                    break;
+                    case IDSetInteger:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("SetInteger");
+                        }
+                    break;
+                    case IDSetRandom:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("SetRandom");
+                        }
+                    break;
+                    case IDGetAttr:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("GetAttr");
+                        }
+                    break;
+                    case IDSetAttr:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("SetAttr");
+                        }
+                    break;
+                    case IDCaptcha:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("Captcha");
+                        }
+                    break;
+                    case IDWaitElement:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("Wait");
+                        }
+                    break;
+                    case IDLength:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("Length");
+                        }
+                    break;
+                    case IDLoop:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("LoopElement");
+                        }
+                    break;
+                case IDXmlLoop:
                     if(Layout->State == MainLayout::Ready)
                     {
-                        app->EmulateMoveAndClick(MouseMenuPositionX,MouseMenuPositionY);
-                        return 0;
+                        app->ExecuteElementLoopFunction("GetXml");
                     }
                 break;
-                case IDInspect:
-                    Layout->UpdateTabs(true);
-                    if(InspectLastX >= 0 && InspectLastY >= 0)
-                    {
-                        app->InspectAt(MouseMenuPositionX - app->GetData()->ScrollX,MouseMenuPositionY - app->GetData()->ScrollY);
-                        InspectLastX = -1;
-                        InspectLastY = -1;
-                    }
-                break;
-                case IDXml:
+                case IDTextLoop:
                     if(Layout->State == MainLayout::Ready)
                     {
-                        app->ExecuteElementFunction("GetXml");
+                        app->ExecuteElementLoopFunction("GetText");
                     }
                 break;
-                case IDText:
+                case IDScriptLoop:
                     if(Layout->State == MainLayout::Ready)
                     {
-                        app->ExecuteElementFunction("GetText");
-                    }
-                break;
-                case IDScript:
-                    if(Layout->State == MainLayout::Ready)
-                    {
-                        app->ExecuteElementFunction("ExecuteScript");
+                        app->ExecuteElementLoopFunction("ExecuteScript");
                     }
                 break;
 
-                case IDClickElement:
+                case IDClickElementLoop:
                     if(Layout->State == MainLayout::Ready)
                     {
-                        app->ExecuteElementFunction("ClickElement");
+                        app->ExecuteElementLoopFunction("ClickElement");
                     }
                 break;
-                case IDMoveElement:
+                case IDMoveElementLoop:
                     if(Layout->State == MainLayout::Ready)
                     {
-                        app->ExecuteElementFunction("MoveElement");
+                        app->ExecuteElementLoopFunction("MoveElement");
                     }
                 break;
-                case IDMoveAndClickElement:
+                case IDMoveAndClickElementLoop:
                     if(Layout->State == MainLayout::Ready)
                     {
-                        app->ExecuteElementFunction("MoveAndClickElement");
+                        app->ExecuteElementLoopFunction("MoveAndClickElement");
                     }
                 break;
-                case IDClear:
+                case IDClearLoop:
                     if(Layout->State == MainLayout::Ready)
                     {
-                        app->ExecuteElementFunction("Clear");
+                        app->ExecuteElementLoopFunction("Clear");
                     }
                 break;
-                case IDType:
+                case IDTypeLoop:
                     if(Layout->State == MainLayout::Ready)
                     {
-                        app->ExecuteElementFunction("Type");
+                        app->ExecuteElementLoopFunction("Type");
                     }
                 break;
-                case IDExists:
+                case IDExistsLoop:
                     if(Layout->State == MainLayout::Ready)
                     {
-                        app->ExecuteElementFunction("Exists");
+                        app->ExecuteElementLoopFunction("Exists");
                     }
                 break;
-                case IDStyle:
+                case IDStyleLoop:
                     if(Layout->State == MainLayout::Ready)
                     {
-                        app->ExecuteElementFunction("Style");
+                        app->ExecuteElementLoopFunction("Style");
                     }
                 break;
-                case IDCheck:
+                case IDCheckLoop:
                     if(Layout->State == MainLayout::Ready)
                     {
-                        app->ExecuteElementFunction("Check");
+                        app->ExecuteElementLoopFunction("Check");
                     }
                 break;
-                case IDFocus:
+                case IDFocusLoop:
                     if(Layout->State == MainLayout::Ready)
                     {
-                        app->ExecuteElementFunction("Focus");
+                        app->ExecuteElementLoopFunction("Focus");
                     }
                 break;
-                case IDSet:
+                case IDSetLoop:
                     if(Layout->State == MainLayout::Ready)
                     {
-                        app->ExecuteElementFunction("Set");
+                        app->ExecuteElementLoopFunction("Set");
                     }
                 break;
-                case IDSetInteger:
+                case IDSetIntegerLoop:
                     if(Layout->State == MainLayout::Ready)
                     {
-                        app->ExecuteElementFunction("SetInteger");
+                        app->ExecuteElementLoopFunction("SetInteger");
                     }
                 break;
-                case IDSetRandom:
+                case IDSetRandomLoop:
                     if(Layout->State == MainLayout::Ready)
                     {
-                        app->ExecuteElementFunction("SetRandom");
+                        app->ExecuteElementLoopFunction("SetRandom");
                     }
                 break;
-                case IDGetAttr:
+                case IDGetAttrLoop:
                     if(Layout->State == MainLayout::Ready)
                     {
-                        app->ExecuteElementFunction("GetAttr");
+                        app->ExecuteElementLoopFunction("GetAttr");
                     }
                 break;
-                case IDSetAttr:
+                case IDSetAttrLoop:
                     if(Layout->State == MainLayout::Ready)
                     {
-                        app->ExecuteElementFunction("SetAttr");
+                        app->ExecuteElementLoopFunction("SetAttr");
                     }
                 break;
-                case IDCaptcha:
+                case IDCaptchaLoop:
                     if(Layout->State == MainLayout::Ready)
                     {
-                        app->ExecuteElementFunction("Captcha");
+                        app->ExecuteElementLoopFunction("Captcha");
                     }
                 break;
-                case IDWaitElement:
-                    if(Layout->State == MainLayout::Ready)
-                    {
-                        app->ExecuteElementFunction("Wait");
-                    }
-                break;
-                case IDLength:
-                    if(Layout->State == MainLayout::Ready)
-                    {
-                        app->ExecuteElementFunction("Length");
-                    }
-                break;
-                case IDLoop:
-                    if(Layout->State == MainLayout::Ready)
-                    {
-                        app->ExecuteElementFunction("LoopElement");
-                    }
-                break;
-            case IDXmlLoop:
-                if(Layout->State == MainLayout::Ready)
-                {
-                    app->ExecuteElementLoopFunction("GetXml");
-                }
-            break;
-            case IDTextLoop:
-                if(Layout->State == MainLayout::Ready)
-                {
-                    app->ExecuteElementLoopFunction("GetText");
-                }
-            break;
-            case IDScriptLoop:
-                if(Layout->State == MainLayout::Ready)
-                {
-                    app->ExecuteElementLoopFunction("ExecuteScript");
-                }
-            break;
-
-            case IDClickElementLoop:
-                if(Layout->State == MainLayout::Ready)
-                {
-                    app->ExecuteElementLoopFunction("ClickElement");
-                }
-            break;
-            case IDMoveElementLoop:
-                if(Layout->State == MainLayout::Ready)
-                {
-                    app->ExecuteElementLoopFunction("MoveElement");
-                }
-            break;
-            case IDMoveAndClickElementLoop:
-                if(Layout->State == MainLayout::Ready)
-                {
-                    app->ExecuteElementLoopFunction("MoveAndClickElement");
-                }
-            break;
-            case IDClearLoop:
-                if(Layout->State == MainLayout::Ready)
-                {
-                    app->ExecuteElementLoopFunction("Clear");
-                }
-            break;
-            case IDTypeLoop:
-                if(Layout->State == MainLayout::Ready)
-                {
-                    app->ExecuteElementLoopFunction("Type");
-                }
-            break;
-            case IDExistsLoop:
-                if(Layout->State == MainLayout::Ready)
-                {
-                    app->ExecuteElementLoopFunction("Exists");
-                }
-            break;
-            case IDStyleLoop:
-                if(Layout->State == MainLayout::Ready)
-                {
-                    app->ExecuteElementLoopFunction("Style");
-                }
-            break;
-            case IDCheckLoop:
-                if(Layout->State == MainLayout::Ready)
-                {
-                    app->ExecuteElementLoopFunction("Check");
-                }
-            break;
-            case IDFocusLoop:
-                if(Layout->State == MainLayout::Ready)
-                {
-                    app->ExecuteElementLoopFunction("Focus");
-                }
-            break;
-            case IDSetLoop:
-                if(Layout->State == MainLayout::Ready)
-                {
-                    app->ExecuteElementLoopFunction("Set");
-                }
-            break;
-            case IDSetIntegerLoop:
-                if(Layout->State == MainLayout::Ready)
-                {
-                    app->ExecuteElementLoopFunction("SetInteger");
-                }
-            break;
-            case IDSetRandomLoop:
-                if(Layout->State == MainLayout::Ready)
-                {
-                    app->ExecuteElementLoopFunction("SetRandom");
-                }
-            break;
-            case IDGetAttrLoop:
-                if(Layout->State == MainLayout::Ready)
-                {
-                    app->ExecuteElementLoopFunction("GetAttr");
-                }
-            break;
-            case IDSetAttrLoop:
-                if(Layout->State == MainLayout::Ready)
-                {
-                    app->ExecuteElementLoopFunction("SetAttr");
-                }
-            break;
-            case IDCaptchaLoop:
-                if(Layout->State == MainLayout::Ready)
-                {
-                    app->ExecuteElementLoopFunction("Captcha");
-                }
-            break;
 
 
 
 
+                }
             }
             SetFocus(NULL);
         break;
@@ -782,6 +846,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Parser->EventReset.push_back(std::bind(&MainApp::ResetCallback,app.get()));
     Parser->EventIsChanged.push_back(std::bind(&MainApp::IsChangedCallback,app.get()));
     Parser->EventSetInitialState.push_back(std::bind(SetLang,_1,_2));
+    Parser->EventSetInitialState.push_back(std::bind(LoadAllModules,_1,_2));
     Parser->EventSetInitialState.push_back(std::bind(&MainApp::SetInitialStateCallback,app.get(),_1,_2));
 
 

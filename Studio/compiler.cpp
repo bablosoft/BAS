@@ -77,21 +77,24 @@ void Compiler::CalculateCompiledFolder()
 }
 
 
-static void recurseCopyAddDir(QDir d, QDir t)
+static void recurseCopyAddDir(const QString& ModuleFolder, QDir d, QDir t)
 {
     QStringList qsl = d.entryList(QStringList()<<"*",QDir::NoDotAndDotDot | QDir::Dirs | QDir::Files);
 
     foreach (QString file, qsl)
     {
-        if(file.endsWith(".xml"))
-            continue;
-        if(file.endsWith(".ini") && !file.startsWith("settings_worker.ini"))
-            continue;
-        if(file.endsWith(".txt"))
-            continue;
+        if(!d.absoluteFilePath(file).startsWith(ModuleFolder))
+        {
+            if(file.endsWith(".xml"))
+                continue;
+            if(file.endsWith(".ini") && !file.startsWith("settings_worker.ini"))
+                continue;
+            if(file.endsWith(".txt"))
+                continue;
 
-        if(file.endsWith("FastExecuteScriptShortcut.exe"))
-            continue;
+            if(file.endsWith("FastExecuteScriptShortcut.exe"))
+                continue;
+        }
 
 
         QFileInfo finfo(d.absoluteFilePath(file));
@@ -103,7 +106,7 @@ static void recurseCopyAddDir(QDir d, QDir t)
         {
             t.mkdir(file);
             QDir sd(finfo.filePath());
-            recurseCopyAddDir(sd, QDir(t.absoluteFilePath(file)));
+            recurseCopyAddDir(ModuleFolder,sd, QDir(t.absoluteFilePath(file)));
         } else
         {
             QFile::copy(finfo.absoluteFilePath(),t.absoluteFilePath(file));
@@ -130,7 +133,14 @@ void Compiler::Compile()
     FolderCompiled.mkdir("engine");
     FolderCompiled.cd("engine");
 
-    recurseCopyAddDir(FolderBuild,FolderCompiled);
+    QString ModulesFolder;
+    {
+        QDir FolderBuild(BuildFolder);
+        FolderBuild.cd("modules");
+        ModulesFolder = FolderBuild.absolutePath();
+    }
+
+    recurseCopyAddDir(ModulesFolder,FolderBuild,FolderCompiled);
 
 
 

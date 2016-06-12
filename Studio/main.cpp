@@ -114,6 +114,7 @@ int main(int argc, char *argv[])
     PanicLogger.SetFileName("panic.txt");
 
     //SafeApplication a(argc, argv);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication a(argc, argv);
     qDebug()<<QSslSocket::supportsSsl();
 

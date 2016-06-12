@@ -29,6 +29,7 @@ namespace BrowserAutomationStudioFramework
         virtual void WaitForSignal(const QObject *object_wait, const char * slot_signal ,const QObject *object_success,const char * slot_success,const QObject *object_fail,const char * slot_fail) = 0;
         virtual void WaitForSolver(ISolver * solver, const QString & id,const QObject *object_success,const char * slot_success,const QObject *object_fail,const char * slot_fail) = 0;
         virtual QString GetLastSolverResult() = 0;
+        virtual QString GetLastSolverId() = 0;
         virtual void WaitForHandler(IEngineResources *res, const QString name, const QSet<QString>& refuse,const QObject *object_success,const char * slot_success,const QObject *object_fail,const char * slot_fail) = 0;
         virtual IResourceHandler *GetLastHandler() = 0;
         virtual void WaitForStageFinished(const QObject *object_stage,const char * signal_finished,const QObject *object_listener,const char * slot_finished) = 0;
@@ -40,6 +41,9 @@ namespace BrowserAutomationStudioFramework
         virtual void Abort() = 0;
         virtual bool IsActive() = 0;
         virtual bool IsResourceRefused() = 0;
+
+        virtual void SetGeneralWaitTimeout(int timeout) = 0;
+        virtual void SetSolverWaitTimeout(int timeout) = 0;
 
     };
 

@@ -23,6 +23,11 @@ void MainHandler::SetData(BrowserData *Data)
     this->Data = Data;
 }
 
+void MainHandler::SetSettings(settings *Settings)
+{
+    this->Settings = Settings;
+}
+
 
 CefRefPtr<CefDisplayHandler> MainHandler::GetDisplayHandler()
 {
@@ -59,6 +64,24 @@ CefRefPtr<CefRenderHandler> MainHandler::GetRenderHandler()
     return this;
 }
 
+CefRefPtr<CefJSDialogHandler> MainHandler::GetJSDialogHandler()
+{
+    return this;
+}
+
+bool MainHandler::OnJSDialog(CefRefPtr<CefBrowser> browser, const CefString& origin_url, const CefString& accept_lang, JSDialogType dialog_type, const CefString& message_text, const CefString& default_prompt_text, CefRefPtr<CefJSDialogCallback> callback, bool& suppress_message)
+{
+    suppress_message = true;
+    return false;
+}
+
+bool MainHandler::OnBeforeUnloadDialog(CefRefPtr<CefBrowser> browser,const CefString& message_text, bool is_reload, CefRefPtr<CefJSDialogCallback> callback)
+{
+    callback->Continue(true,"");
+    return true;
+}
+
+
 bool MainHandler::OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event)
 {
     worker_log(std::string("CefKeyEvent<<") + std::string("type<<") + std::to_string(event.type)
@@ -76,6 +99,7 @@ bool MainHandler::OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& e
 CefRefPtr<CefResourceHandler> MainHandler::GetResourceHandler(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request)
 {
     CurlResourceHandler* h = new CurlResourceHandler(Data);
+    h->SetForceUtf8(Settings->ForceUtf8());
 
     EventOnTimerCurlResources.push_back(h);
     CurlResourcesLength = EventOnTimerCurlResources.size();
@@ -255,19 +279,14 @@ CefRequestHandler::ReturnValue MainHandler::OnBeforeResourceLoad(CefRefPtr<CefBr
     return RV_CONTINUE;
 }
 
-bool MainHandler::OnResourceResponse(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, CefRefPtr<CefResponse> response)
+void MainHandler::OnResourceLoadComplete(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, CefRefPtr<CefResponse> response, CefRequestHandler::URLRequestStatus status, int64 received_content_length)
 {
     for(auto f:EventUrlLoaded)
         f(request->GetURL().ToString(),response->GetStatus());
-
-    return false;
 }
 
-void MainHandler::OnResourceRedirect(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, CefString& new_url)
-{
-    for(auto f:EventUrlLoaded)
-        f(request->GetURL().ToString(),302);
-}
+
+
 
 void MainHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl)
 {

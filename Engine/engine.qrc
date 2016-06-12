@@ -80,5 +80,6 @@
         <file>text/schemaEmpty.xml</file>
         <file>scripts/engine/worker/record.js</file>
         <file>images/Record.png</file>
+        <file>images/modules.png</file>
     </qresource>
 </RCC>

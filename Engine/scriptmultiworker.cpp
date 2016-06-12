@@ -12,6 +12,16 @@ namespace BrowserAutomationStudioFramework
     {
     }
 
+    void ScriptMultiWorker::SetModuleManager(IModuleManager *ModuleManager)
+    {
+        this->ModuleManager = ModuleManager;
+    }
+
+    IModuleManager* ScriptMultiWorker::GetModuleManager()
+    {
+        return ModuleManager;
+    }
+
     void ScriptMultiWorker::SetDatabaseConnector(IDatabaseConnector *DatabaseConnector)
     {
         this->DatabaseConnector = DatabaseConnector;
@@ -316,6 +326,16 @@ namespace BrowserAutomationStudioFramework
         return DoTrace;
     }
 
+    void ScriptMultiWorker::SetAdditionEngineScripts(const QList<QString>& AdditionalScripts)
+    {
+        this->AdditionalScripts = AdditionalScripts;
+    }
+
+    QList<QString> ScriptMultiWorker::GetAdditionEngineScripts()
+    {
+        return AdditionalScripts;
+    }
+
     void ScriptMultiWorker::SetIsRecord(bool IsRecord)
     {
         this->IsRecord = IsRecord;
@@ -423,6 +443,13 @@ namespace BrowserAutomationStudioFramework
             engine->evaluate(script);
 
 
+
+        //Prepare additional scripts one time
+        int ScriptLength = AdditionalScripts.size();
+        for(int i = 0;i<ScriptLength;i++)
+        {
+            AdditionalScripts[i] = Preprocessor->Preprocess(AdditionalScripts[i],0);
+        }
         //Script = Preprocessor->Preprocess(Script,0);
 
         ReportData->Start();
@@ -618,6 +645,7 @@ namespace BrowserAutomationStudioFramework
 
     void ScriptMultiWorker::WorkerFinishedWithArgument(IWorker * w)
     {
+        ModuleManager->StopThread(w->GetThreadNumber());
         int SuspendedCount = ScriptSuspender->Count();
         bool DontCreateNewWaitForSuspended = false;
         bool IsSuspended = false;
@@ -752,6 +780,8 @@ namespace BrowserAutomationStudioFramework
             return;
 
         IWorker *worker = WorkerFactory->CreateWorker();
+        worker->SetModuleManager(ModuleManager);
+        worker->SetAdditionEngineScripts(&AdditionalScripts);
         worker->SetIsRecord(IsRecord);
         connect(worker,SIGNAL(SuccessedButRescued(QString)),ReportData,SLOT(SuccessAndRescued(QString)));
         connect(worker,SIGNAL(FailedButRescued(QString)),ReportData,SLOT(FailAndRescued(QString)));
@@ -822,9 +852,8 @@ namespace BrowserAutomationStudioFramework
         }
 
         connect(worker,SIGNAL(Finished()),this,SLOT(WorkerFinished()));
+        ModuleManager->StartThread(worker->GetThreadNumber());
         worker->Run();
-
-
     }
 
     void ScriptMultiWorker::SetAsyncResult(const QScriptValue & AsyncResult)

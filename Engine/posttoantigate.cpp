@@ -1,5 +1,9 @@
 #include "posttoantigate.h"
 #include "every_cpp.h"
+#include <QMap>
+#include <QPixmap>
+#include <QBuffer>
+#include <QMapIterator>
 
 namespace BrowserAutomationStudioFramework
 {
@@ -8,7 +12,7 @@ namespace BrowserAutomationStudioFramework
     {
     }
 
-    void PostToAntigate::Post(const QString& id,const QString& key,const QString& base64, bool IsRussian)
+    void PostToAntigate::Post(const QString& id,const QString& key,const QString& base64, const QMap<QString,QString>& Properties)
     {
         this->id = id;
         QHash<QString,ContentData> post;
@@ -27,7 +31,17 @@ namespace BrowserAutomationStudioFramework
 
         {
             ContentData DataFile;
-            DataFile.DataRaw = QByteArray::fromBase64(base64.toUtf8());
+
+            QImage image = QImage::fromData(QByteArray::fromBase64(base64.toUtf8()));
+
+            QByteArray ba;
+            QBuffer buffer(&ba);
+            buffer.open(QIODevice::WriteOnly);
+
+            image.save(&buffer, "JPEG");
+            buffer.close();
+
+            DataFile.DataRaw = ba;
             DataFile.FileName = "image.jpg";
             DataFile.ContentType = "application/octet-stream";
             post["file"] = DataFile;
@@ -38,11 +52,14 @@ namespace BrowserAutomationStudioFramework
             DataSoftId.DataString = "398";
             post["soft_id"] = DataSoftId;
         }
-        if(IsRussian)
+
+        QMapIterator<QString, QString> i(Properties);
+        while (i.hasNext())
         {
-            ContentData IsRussian;
-            IsRussian.DataString = "1";
-            post["is_russian"] = IsRussian;
+            i.next();
+            ContentData DataKey;
+            DataKey.DataString = i.value();
+            post[i.key()] = DataKey;
         }
 
         HttpClient->Connect(this,SLOT(submitRequestFinished()));

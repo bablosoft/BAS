@@ -25,7 +25,14 @@ _L =
 	"Function" :{"ru": "Функция"},
 	"Thread Number" :{"ru": "Количество потоков"},
 	"Success Number" :{"ru": "Успешных выполнений"},
-	"Fail Number" :{"ru": "Неудачных выполнений"}
+	"Fail Number" :{"ru": "Неудачных выполнений"},
+	"Selected" :{"ru": "Выбрано"},
+	"Copy (Ctrl-C)" :{"ru": "Копировать (Ctrl-C)"},
+	"Cut (Ctrl-X)" :{"ru": "Вырезать (Ctrl-X)"},
+	"Paste (Ctrl-V)" :{"ru": "Вставить (Ctrl-V)"},
+	"Check All" :{"ru": "Выделить Все"},
+	"Clear Selection" :{"ru": "Очистить Выделение"},
+	"Execute only this action" :{"ru": "Выполнить только это действие"},
 }
 
 
@@ -48,6 +55,14 @@ function tr(key)
 		{
 			var el = $(all[i])
 			el.attr("placeholder",tr(el.attr("placeholder")))
+		}
+
+		var all = $("*[title]")
+		
+		for(var i = 0;i< all.length;i++)
+		{
+			var el = $(all[i])
+			el.attr("title",tr(el.attr("title")))
 		}
 
 		

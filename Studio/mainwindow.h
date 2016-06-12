@@ -36,6 +36,7 @@
 #include "csvhelper.h"
 #include "databasestate.h"
 #include "recordprocesscommunication.h"
+#include "modulemanager.h"
 
 namespace Ui {
     class MainWindow;
@@ -98,6 +99,8 @@ protected:
     QString LanguageScript, LanguageInterface;
     Translator TranslateEngine;
     Translator TranslateStudio;
+
+    ModuleManager *_ModuleManager;
 
 
     //Reports
@@ -171,6 +174,7 @@ private slots:
     void ChooseLogLocation();
 
     void AboutEngine();
+    void ShowModuleManager();
     void SetDefaultText();
 
     void SendCode();

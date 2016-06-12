@@ -2,34 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU">
 <context>
-    <name>BrowserAutomationStudioFramework::ServerContentLoader</name>
-    <message>
-        <location filename="../servercontentloader.cpp" line="102"/>
-        <source>Failed to open file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../servercontentloader.cpp" line="89"/>
-        <source>No credentials</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../servercontentloader.cpp" line="180"/>
-        <source>Server error : </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../servercontentloader.cpp" line="191"/>
-        <source>Json parse error : </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../servercontentloader.cpp" line="202"/>
-        <source>Error from server : </source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.ui" line="78"/>
@@ -83,7 +55,6 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="228"/>
-        <location filename="../mainwindow.cpp" line="388"/>
         <source>Restart</source>
         <translation type="unfinished"></translation>
     </message>
@@ -93,34 +64,24 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="186"/>
-        <location filename="../mainwindow.cpp" line="201"/>
-        <location filename="../mainwindow.cpp" line="216"/>
+        <location filename="../mainwindow.cpp" line="182"/>
+        <location filename="../mainwindow.cpp" line="197"/>
+        <location filename="../mainwindow.cpp" line="212"/>
         <source>Database Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="242"/>
+        <location filename="../mainwindow.cpp" line="238"/>
         <source>Show all log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="306"/>
-        <source>Error loading script</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="318"/>
-        <source>License valid until </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1047"/>
+        <location filename="../mainwindow.cpp" line="968"/>
         <source>Application is still running</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1047"/>
+        <location filename="../mainwindow.cpp" line="968"/>
         <source>Use exit menu item to shut it down</source>
         <translation type="unfinished"></translation>
     </message>

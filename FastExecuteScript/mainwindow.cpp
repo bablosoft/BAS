@@ -99,6 +99,8 @@ void MainWindow::SetIsSilent()
 
 void MainWindow::Start()
 {
+    _ModuleManager = new ModuleManager(this);
+
     NeedRestart = false;
     BrowserFactory = 0;
     AlreadyShowsMessage = false;
@@ -396,7 +398,8 @@ void MainWindow::Start()
 
     //Prepare Worker
     ScriptMultiWorker* worker = new ScriptMultiWorker(this);
-
+    worker->SetModuleManager(_ModuleManager);
+    worker->SetAdditionEngineScripts(_ModuleManager->GetModuleEngineCode());
     worker->SetPreprocessor(_Preprocessor);
 
     worker->SetBrowserFactory(BrowserFactory);
@@ -412,6 +415,7 @@ void MainWindow::Start()
     DataVisualizer->SetReportData(ReportData);
     connect(ui->actionShow_Report,SIGNAL(triggered()),DataVisualizer,SLOT(ShowReport()));
     connect(FactorySolver,SIGNAL(UsedSolver(QString)),ReportData,SLOT(CaptchaUsed(QString)));
+    connect(FactorySolver,SIGNAL(FailedSolver(QString)),ReportData,SLOT(CaptchaFailed(QString)));
 
     connect(ui->actionShow,SIGNAL(triggered()),this,SLOT(show()));
     connect(ui->actionExit,SIGNAL(triggered()),this,SLOT(Close()));
@@ -655,6 +659,9 @@ void MainWindow::Start()
        Checker->Salt = ContentLoader.GetSalt();
        Checker->Start();
     #endif
+
+    _ModuleManager->StartAllDlls();
+
     QTimer::singleShot(50,worker,SLOT(Run()));
     //worker->Run();
 
@@ -1030,6 +1037,7 @@ void MainWindow::ShowBrowserPanel()
 
 void MainWindow::Finished()
 {
+    _ModuleManager->StopAllDlls();
     ResVisualizer->SetDisabled();
     ui->actionResources_Report->setEnabled(false);
     ui->actionResources_Report->setIcon(QIcon(":/fastexecutescript/images/resources_ok.png"));

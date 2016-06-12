@@ -1,8 +1,7 @@
 #include "curlhttpclient.h"
 #include <QTextCodec>
+#include <QDir>
 #include "every_cpp.h"
-
-
 
 namespace BrowserAutomationStudioFramework
 {
@@ -33,6 +32,7 @@ namespace BrowserAutomationStudioFramework
 
     void CurlHttpClient::Download(const QString &url, const QString &file)
     {
+        QFileInfo(file).absoluteDir().mkpath(".");
         GetInternal(url,file);
     }
 
@@ -67,6 +67,12 @@ namespace BrowserAutomationStudioFramework
         HeadersList<<QString("Cookie: ") + GetCookiesForUrl(url);
         while (i != Headers.end())
         {
+            if(i.key().toLower() == "accept-encoding")
+            {
+                options->insert(CURLOPT_ACCEPT_ENCODING,i.value());
+                i++;
+                continue;
+            }
             HeadersList.append(i.key() + ": " + i.value());
             i++;
         }
@@ -119,6 +125,12 @@ namespace BrowserAutomationStudioFramework
         HeadersList<<QString("Cookie: ") + GetCookiesForUrl(url);
         while (i != Headers.end())
         {
+            if(i.key().toLower() == "accept-encoding")
+            {
+                options->insert(CURLOPT_ACCEPT_ENCODING,i.value());
+                i++;
+                continue;
+            }
             HeadersList.append(i.key() + ": " + i.value());
             i++;
         }

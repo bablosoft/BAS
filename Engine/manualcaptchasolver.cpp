@@ -20,8 +20,10 @@ namespace BrowserAutomationStudioFramework
         Layout = new FlowLayout(Widget,-1,10);
         Scroll->widget()->setLayout(Layout);
         emit ChangedSize(0);
-        connect(this,SIGNAL(Done(QString,QString,bool)),this,SLOT(DoneSlot(QString,QString,bool)));
+        connect(this,SIGNAL(Done(QString,QString,bool,QString)),this,SLOT(DoneSlot(QString,QString,bool,QString)));
     }
+
+
 
     QWidget* ManualCaptchaSolver::GetWidget()
     {
@@ -45,7 +47,7 @@ namespace BrowserAutomationStudioFramework
 
     }
 
-    void ManualCaptchaSolver::DoneSlot(const QString& val, const QString& id, bool res)
+    void ManualCaptchaSolver::DoneSlot(const QString& val, const QString& id, bool res,const QString& solver_id)
     {
         emit ChangedSize(--Size);
     }
@@ -57,9 +59,19 @@ namespace BrowserAutomationStudioFramework
         SingleCaptchaWidget *w = new SingleCaptchaWidget();
         w->setParent(Widget);
         w->SetCaptcha(base64,QString::number(IdCounter));
-        connect(w,SIGNAL(Done(QString,QString,bool)),this,SIGNAL(Done(QString,QString,bool)));
+        connect(w,SIGNAL(Done(QString,QString,bool)),this,SLOT(DoneAdapter(QString,QString,bool)));
         Layout->addWidget(w);
         return QString::number(IdCounter++);
+    }
+
+    void ManualCaptchaSolver::DoneAdapter(const QString& val, const QString& id, bool res)
+    {
+        emit Done(val,id,res,"0");
+    }
+
+    void ManualCaptchaSolver::ReportBad(const QString& id)
+    {
+        emit Failed();
     }
 
     bool ManualCaptchaSolver::TimeLimited()

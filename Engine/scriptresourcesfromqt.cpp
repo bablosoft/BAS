@@ -38,42 +38,6 @@ namespace BrowserAutomationStudioFramework
         return GetFromRes(":/engine/scripts/browser/jquery.js");
     }
 
-    QList<QString> ScriptResourcesFromQt::GetModuleScripts()
-    {
-        QList<QString> res;
-        QDir dir("modules");
-        dir.setFilter(QDir::AllDirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-        QStringList dirList = dir.entryList();
-
-        foreach(QString dir, dirList)
-        {
-            QJsonParseError err;
-            QFile manifest(QString("modules/") + dir + QString("/manifest.json"));
-            if(manifest.open(QIODevice::ReadOnly))
-            {
-                QByteArray json = manifest.readAll();
-                QJsonDocument doc = QJsonDocument::fromJson(json, &err);
-                manifest.close();
-
-                if(err.error == QJsonParseError::NoError)
-                {
-                    foreach(QJsonValue val, doc.object()["engine"].toArray())
-                    {
-                        QFile engine_module(QString("modules/") + dir + QString("/") + val.toString());
-                        if(engine_module.open(QIODevice::ReadOnly))
-                        {
-                            res.append(QString("{\n") + QString::fromUtf8(engine_module.readAll()) + QString("\n}"));
-                            engine_module.close();
-                        }
-
-                    }
-                }
-            }
-        }
-        return res;
-    }
-
-
     QList<QString> ScriptResourcesFromQt::GetEngineScripts()
     {
         QList<QString> res;

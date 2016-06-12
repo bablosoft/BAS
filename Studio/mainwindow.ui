@@ -290,6 +290,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionAbout_Engine"/>
+    <addaction name="actionModules_Manager"/>
    </widget>
    <widget class="QMenu" name="menuReports">
     <property name="title">
@@ -770,6 +771,15 @@
    </property>
    <property name="text">
     <string>Record</string>
+   </property>
+  </action>
+  <action name="actionModules_Manager">
+   <property name="icon">
+    <iconset resource="../Engine/engine.qrc">
+     <normaloff>:/engine/images/modules.png</normaloff>:/engine/images/modules.png</iconset>
+   </property>
+   <property name="text">
+    <string>Module Manager</string>
    </property>
   </action>
  </widget>

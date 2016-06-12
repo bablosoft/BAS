@@ -23,6 +23,7 @@
 #include "iproperties.h"
 #include "icsvhelper.h"
 #include "idatabaseconnector.h"
+#include "modulemanager.h"
 
 namespace BrowserAutomationStudioFramework
 {
@@ -130,6 +131,12 @@ namespace BrowserAutomationStudioFramework
 
         virtual void SetIsRecord(bool IsRecord) = 0;
         virtual bool GetIsRecord() = 0;
+
+        virtual void SetAdditionEngineScripts(QList<QString>* AdditionalScripts) = 0;
+        virtual QList<QString>* GetAdditionEngineScripts() = 0;
+
+        virtual void SetModuleManager(IModuleManager *ModuleManager) = 0;
+        virtual IModuleManager* GetModuleManager() = 0;
 
         enum WorkerStatus{SuccessStatus,FailStatus,SuspendStatus,DieStatus};
     signals:

@@ -26,6 +26,7 @@ public:
             int ResponseDataReadLength = 0;
             std::mutex ResponseDataMutex;
 
+
             /* If you want to access any of this, need to lock ResultHeadersMutex */
             std::multimap<std::string,std::string> ResultHeaders;
             int ResponceStatusId = 200;
@@ -33,6 +34,7 @@ public:
             std::string MimeType = "text/html";
             std::string RedirectUrl;
             int ContentLength = -1;
+            std::string ContentType;
             bool LastHeaderClear = false;
             bool AllHeaderParsed = false;
             std::mutex ResultHeadersMutex;
@@ -41,6 +43,7 @@ public:
 
             /* Inputs */
             /* Inputs are not protected, because set only one time before thread start */
+            std::atomic_bool ForceUtf8 = true;
             std::string Url;
             std::string Method;
             std::string Referrer;
@@ -51,6 +54,8 @@ public:
 
             /* Sync */
             std::atomic_bool StopRequest = false;
+            std::atomic_bool NeedToReadWholeResponceAndThanFixEncoding = false;
+            std::atomic_bool FixEncodingDone = false;
         private:
             std::atomic<StatusClass> Status = NotStarted;
 
@@ -80,6 +85,7 @@ public:
     //~CurlResourceHandler();
     void Join();
     bool GetCanDelete();
+    void SetForceUtf8(bool ForceUtf8);
 
     void Timer();
 

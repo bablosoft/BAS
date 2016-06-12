@@ -29,7 +29,7 @@
         <translation type="vanished">Версия браузера:</translation>
     </message>
     <message>
-        <location filename="../aboutbrowserstudio.cpp" line="16"/>
+        <location filename="../aboutbrowserstudio.cpp" line="14"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Browser Automation Studio - a comprehensive solution for creating complex network software. &lt;/span&gt;Visit &lt;a href=&quot;%1&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;%1&lt;/span&gt;&lt;/a&gt; to see more details&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Browser Automation Studio - программа для создания скриптов для работы с сетью и эмуляции браузера. &lt;/span&gt;Посетите &lt;a href=&quot;%1&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;%1&lt;/span&gt;&lt;/a&gt; чтобы узнать больше&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -139,9 +139,8 @@
 <context>
     <name>BrowserAutomationStudioFramework::BrowserListWidget</name>
     <message>
-        <location filename="../browserlistwidget.cpp" line="101"/>
         <source>Browser #%1</source>
-        <translation>Браузер # %1</translation>
+        <translation type="vanished">Браузер # %1</translation>
     </message>
 </context>
 <context>
@@ -208,12 +207,12 @@
         <translation type="vanished">Нужен ключ?</translation>
     </message>
     <message>
-        <location filename="../enterlicensedialog.cpp" line="25"/>
+        <location filename="../enterlicensedialog.cpp" line="23"/>
         <source>Need A Key?</source>
         <translation>Нужен Ключ?</translation>
     </message>
     <message>
-        <location filename="../enterlicensedialog.cpp" line="32"/>
+        <location filename="../enterlicensedialog.cpp" line="30"/>
         <source>Data</source>
         <translation>База</translation>
     </message>
@@ -1801,22 +1800,22 @@
         <translation>Введите лицензионные данные</translation>
     </message>
     <message>
-        <location filename="../enterlicensedialog.ui" line="63"/>
+        <location filename="../enterlicensedialog.ui" line="56"/>
         <source>TextLabel</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../enterlicensedialog.ui" line="94"/>
+        <location filename="../enterlicensedialog.ui" line="87"/>
         <source>Email</source>
         <translation>Почта</translation>
     </message>
     <message>
-        <location filename="../enterlicensedialog.ui" line="126"/>
+        <location filename="../enterlicensedialog.ui" line="119"/>
         <source>Save Pass On Disk</source>
         <translation>Сохранять на диске</translation>
     </message>
     <message>
-        <location filename="../enterlicensedialog.ui" line="135"/>
+        <location filename="../enterlicensedialog.ui" line="128"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
@@ -1861,6 +1860,39 @@
         <location filename="../loglocationchooser.cpp" line="30"/>
         <source>Open Directory</source>
         <translation>Открыть папку</translation>
+    </message>
+</context>
+<context>
+    <name>ModuleManagerWindow</name>
+    <message>
+        <location filename="../modulemanagerwindow.ui" line="14"/>
+        <source>Module Manager</source>
+        <translation>Менеджер Модулей</translation>
+    </message>
+    <message>
+        <location filename="../modulemanagerwindow.ui" line="35"/>
+        <source>Module List:</source>
+        <translation>Список Модулей:</translation>
+    </message>
+    <message>
+        <location filename="../modulemanagerwindow.ui" line="113"/>
+        <source>Select All</source>
+        <translation>Выбрать все</translation>
+    </message>
+    <message>
+        <location filename="../modulemanagerwindow.ui" line="127"/>
+        <source>Deselect All</source>
+        <translation>Убрать Выделение</translation>
+    </message>
+    <message>
+        <location filename="../modulemanagerwindow.ui" line="141"/>
+        <source>Reload</source>
+        <translation>Перегрузить</translation>
+    </message>
+    <message>
+        <location filename="../modulemanagerwindow.ui" line="168"/>
+        <source>Close</source>
+        <translation>Закрыть</translation>
     </message>
 </context>
 <context>

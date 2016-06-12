@@ -19,6 +19,7 @@ TARGET = Engine
 TEMPLATE = lib
 
 DEFINES += ENGINE_LIBRARY QSCINTILLA_DLL QUAZIP_BUILD
+DEFINES += IS_X64
 
 
 #DEFINES += MEMORY_DEBUG
@@ -267,7 +268,10 @@ SOURCES += engine.cpp \
     icodeeditor.cpp \
     scintillacodeeditor.cpp \
     plaincodeeditor.cpp \
-    splifyheaders.cpp
+    splifyheaders.cpp \
+    imodulemanager.cpp \
+    modulemanager.cpp \
+    modulemanagerwindow.cpp
 
 win32:SOURCES += CrashHandler.cpp
 
@@ -528,7 +532,10 @@ HEADERS += engine.h\
     icodeeditor.h \
     scintillacodeeditor.h \
     plaincodeeditor.h \
-    splifyheaders.h
+    splifyheaders.h \
+    imodulemanager.h \
+    modulemanager.h \
+    modulemanagerwindow.h
 
 win32:HEADERS += CrashHandler.h
 
@@ -576,7 +583,8 @@ FORMS += \
     databaseadminfilterwidget.ui \
     databaseadminfilteritem.ui \
     databaseadminfiltercreate.ui \
-    databaseadmincsvformat.ui
+    databaseadmincsvformat.ui \
+    modulemanagerwindow.ui
 
 OTHER_FILES += \
     scripts/pages.js \

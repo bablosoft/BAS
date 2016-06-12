@@ -221,7 +221,7 @@ void QtCUrl::setOptions(Options& opt) {
 
     defaults[CURLOPT_SSL_VERIFYPEER].setValue(false);
     defaults[CURLOPT_SSL_VERIFYHOST].setValue(false);
-    defaults[CURLOPT_TIMEOUT].setValue(120);
+    defaults[CURLOPT_TIMEOUT].setValue(600);
 
     if(!Filter.isEmpty())
     {

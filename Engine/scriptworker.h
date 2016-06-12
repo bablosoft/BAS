@@ -52,6 +52,7 @@ namespace BrowserAutomationStudioFramework
         IHtmlParserFactory* HtmlParserFactory;
         IHtmlParser* HtmlParser;
         IProperties* Properties;
+        IModuleManager *ModuleManager;
 
 
         IHttpClient* HttpClient;
@@ -82,9 +83,13 @@ namespace BrowserAutomationStudioFramework
         IDatabaseConnector *DatabaseConnector;
         bool IsRecord;
 
+        QList<QString>* AdditionalScripts;
+        FunctionRunData * FunctionData;
+        QList<FunctionRunData *> FunctionDataList;
 
     public:
         explicit ScriptWorker(QObject *parent = 0);
+        ~ScriptWorker();
 
         virtual void SetProcessComunicator(IProcessComunicator *ProcessComunicator);
         virtual IProcessComunicator * GetProcessComunicator();
@@ -181,8 +186,13 @@ namespace BrowserAutomationStudioFramework
         virtual void SetIsRecord(bool IsRecord);
         virtual bool GetIsRecord();
 
-    signals:
+        virtual void SetAdditionEngineScripts(QList<QString>* AdditionalScripts);
+        virtual QList<QString>* GetAdditionEngineScripts();
 
+        void SetModuleManager(IModuleManager *ModuleManager);
+        IModuleManager* GetModuleManager();
+
+    signals:
     public slots:
         virtual void Fail(const QString& message);
         void SetMaxFail(int MaxFail);
@@ -261,6 +271,16 @@ namespace BrowserAutomationStudioFramework
         void SetSuccessExceedFunction(const QString& SuccessExceedFunction);
         void SetAbortFunction(const QString& AbortFunction);
         void DatabaseAddRecord(const QString& GroupId,const QStringList& Record, int TableId);
+
+        //CallDll functions
+        QString ExecuteNativeModuleCodeSync(const QString& DllName, const QString& FunctionName, const QString& InputParam);
+        void ExecuteNativeModuleCodeAsync(const QString& DllName, const QString& FunctionName, const QString& InputParam, const QString& Callback);
+        void RemoveFromFunctionDataList();
+        void DllResult();
+
+        //Timeouts
+        void SetGeneralWaitTimeout(int timeout);
+        void SetSolverWaitTimeout(int timeout);
 
     private slots:
         void HandlerWaitFinishedSuccess();

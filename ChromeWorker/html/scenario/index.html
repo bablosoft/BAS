@@ -74,7 +74,7 @@
         <i class="fa fa-play-circle-o action-button text-success <%= (global["isscriptexecuting"] || global.execute_next_id == 1) ? "actionbuttongray" : "" %>" id="play"></i>
         <i class="fa fa-step-forward action-button text-warning <%= (global["isscriptexecuting"] || global.execute_next_id == 1) ? "actionbuttongray" : "" %>" id="stepnext"></i>
         <i class="fa fa-pause-circle-o action-button text-info <%= (global["isscriptexecuting"]) ? "" : "actionbuttongray" %>" id="pause"></i>
-        <i class="fa  fa-stop-circle-o  action-button text-danger" id="stop"></i>
+        <i class="fa fa-stop-circle-o  action-button text-danger" id="stop"></i>
         <i class="fa fa-repeat action-button text-info" id="restart"></i>
 
       </div>
@@ -82,6 +82,20 @@
         <div><span class="tr">Thread Number</span>: <strong><%= global["threadnumber"] %></strong></div>
         <div><span class="tr">Success Number</span>: <strong><%= global["successnumber"] %></strong></div>
         <div><span class="tr">Fail Number</span>: <strong><%= global["failnumber"] %></strong></div>
+      </div>
+      <div class="maintoolbox">
+        <div style="width:50%;float:left;text-align:center">
+          <% _TotalSelected = TotalSelected(); %>
+          <img src="copy.png" class="action-button2 <%= (_TotalSelected > 0) ? "" : "disabled" %>" title="Copy (Ctrl-C)" id="action-copy" />
+          <img src="cut.png" class="action-button2 <%= (_TotalSelected > 0) ? "" : "disabled" %>" title="Cut (Ctrl-X)" id="action-cut" />
+          <img src="paste.png" class="action-button2 <%= (_CopyBuffer.models.length > 0) ? "" : "disabled" %>" title="Paste (Ctrl-V)" id="action-paste" />
+          <img src="checkall.png" class="action-button2" title="Check All" id="action-checkall" />
+          <img src="uncheckall.png" class="action-button2 <%= (_TotalSelected > 0) ? "" : "disabled" %>"  title="Clear Selection" id="action-uncheckall" />
+          
+        </div>
+        <div style="width:50%;float:left">
+          <span class="tr">Selected</span>: <strong><%= TotalSelected() %></strong>
+        </div>
       </div>
     </div>
     <div class="functions" >
@@ -122,7 +136,7 @@
               <% if(NeedToShowUpperInsert(index)){ %>
                 <div class="toolinsert toolinsertdata <%= (global.insert_index == -index && global.insert_parent == task.parentid || global.insert_index == 0 && (parseInt(task["id"]) == parseInt(GetFirstNotFunctionId())) ) ? "toolselected":"" %>" data-insert-index="-<%= index %>" data-insert-parent="<%= task.parentid %>"></div>
               <% } %>
-              <div class=" <%= (task.donotexecuteduringrecord)? "notactive" : "" %> tool <%= (index==0)? "toolmenufirst" : "toolmenu" %> <%= ((parseInt(task["id"]) == parseInt(GetFirstNotFunctionId()) && global.execute_next_id == 0 || global.execute_next_id == task.id) && index != 0)? "toolexecutecurrent" : "toolnotexecute" %>" data-index="<%= index %>">
+              <div class=" <%= (task.donotexecuteduringrecord)? "notactive" : "" %> tool <%= (index==0)? "toolmenufirst" : (AllowToExecuteOnce(task["id"]) ? "toolmenuextended" : "toolmenu") %> <%= ((parseInt(task["id"]) == parseInt(GetFirstNotFunctionId()) && global.execute_next_id == 0 || global.execute_next_id == task.id) && index != 0)? "toolexecutecurrent" : "toolnotexecute" %>" data-index="<%= index %>">
                 <span class="executing"><i class="fa fa-share"></i></span>
                 <% if(task.is_selected){ %>
                   <i class="fa fa-check-square-o selected"></i>
@@ -239,6 +253,7 @@
             insert_index: 0,
             insert_parent: 0,
             current_run_until_target_id: -1,
+            run_only_one_enabled: false,
             dontsend: true,
             threadnumber: 1,
             successnumber: 1,
@@ -261,6 +276,11 @@
         "click .resok": "taskedit",
         "hidden.bs.modal #editmodal": "taskcancel",
         "click .toolinsertdata": "toolinsertdata",
+        "click #action-copy": "Copy",
+        "click #action-paste": "Paste",
+        "click #action-cut": "Cut",
+        "click #action-checkall" :"CheckAll",
+        "click #action-uncheckall" :"ClearSelection",
         "click #play": "play",
         "click #stepnext": "stepnext",
         "click #pause": "pause",
@@ -274,6 +294,27 @@
         "click .onapplicationstart": "onapplicationstart"
       },
 
+      CheckAll: function()
+      {
+          this.ClearSelection()
+
+          this.model.set("dontsend",true)
+
+          _.every(this.collection.models, function(task,index){
+              try{
+                var id = Number(task.get("id"))
+                if(id !== 0 && GetFunctionData(id)["name"] == _GobalModel.get("function_name") && !IsFunctionNode(id))
+                  task.set("is_selected",true)
+              }catch(e){}
+             return true 
+            })
+
+         this.model.set("dontsend",false)
+
+         this.render()
+      },
+     
+      
       onapplicationstart: function()
       {
         $("#EditFunctionName").val("OnApplicationStart")
@@ -488,6 +529,7 @@
       },
 
 
+
       mousedowntool: function(e){
         if($(e.target).attr("data-index") == 0)
         {
@@ -511,6 +553,7 @@
         _CopyBuffer.reset();
         var id_map = {}
         var ids = []
+        var IdsDoNotSetParentToZero = []
 
         _.each(this.collection.models, function(task){
           if(task.get("is_selected"))
@@ -520,7 +563,16 @@
         })
 
         _.each(this.collection.models, function(task){
-          if(task.get("is_selected") || this.IsAnsectorOfAny(ids,parseInt(task.get("id"))))
+          var currentid = parseInt(task.get("id"))
+
+          var checkids = ids.slice();
+          var index = checkids.indexOf(currentid);
+          if (index > -1)
+            checkids.splice(index, 1);
+
+          var IsAnsectorOfOtherSelected = this.IsAnsectorOfAny(checkids,currentid) && task.get("is_selected")
+
+          if(task.get("is_selected") || this.IsAnsectorOfAny(ids,currentid))
           {
             var id;
             if(parseInt(task.get("id")) in id_map)
@@ -533,12 +585,18 @@
             }
             var new_task = new TaskModel(task.toJSON())
             new_task.set("id", id)
+            
+            if(IsAnsectorOfOtherSelected)
+              IdsDoNotSetParentToZero.push(id)
+            
             _CopyBuffer.add(new_task)
           }
         })
 
         _.each(_CopyBuffer.models, function(task){
-          if(task.get("is_selected"))
+          var currentid = parseInt(task.get("id"))
+
+          if(task.get("is_selected") && IdsDoNotSetParentToZero.indexOf(currentid)<0)
           {
             task.set("parentid", 0)
           }
@@ -549,6 +607,7 @@
           task.set("is_selected",false)
 
         })
+        this.render()
         /*_.each(this.collection.models, function(task){
           task.set("is_selected",false)
         })*/
@@ -614,6 +673,8 @@
         this.model.set("dontsend",false)
         this.send()
 
+        this.ClearSelection();
+
       },
 
       Cut: function()
@@ -668,10 +729,13 @@
 
       ClearSelection: function()
       {
+         this.model.set("dontsend",true)
          _.every(this.collection.models, function(task,index){
             task.set("is_selected",false)
             return true
           })
+         this.model.set("dontsend",false)
+
          this.render()
       },
 
@@ -864,6 +928,27 @@
           }
       },
 
+      ExecuteOnlyThis: function()
+      {
+          var task = this.collection.at(this.currentTargetId);
+          if(task)
+          {
+            if(!AllowToExecuteOnce(Number(task.get("id"))))
+              return;
+
+            var execute_next_id = Number(_GobalModel.get("execute_next_id"))
+            if(execute_next_id == 0)
+              execute_next_id = -2
+            _GobalModel.set("run_only_one_enabled", true);
+            _GobalModel.set("isscriptexecuting",true)
+
+            var second_line = "section_start(\"test\", " + execute_next_id + ")!"
+            var code = task.get("code") + "\n" + second_line
+
+            BrowserAutomationStudio_Execute(code)
+          }
+      },
+
 
       Edit: function(){
         this.isEdit = true
@@ -943,7 +1028,8 @@
 
         $(".dropdown-menu").remove();
 
-        context.attach('.toolmenu', [
+
+        var elementmenu = [
 
           {text: tr('Delete this and all upper'), action: function(e){
                 e.preventDefault();
@@ -969,7 +1055,17 @@
                 e.preventDefault();
                 self.RunUntilThis()
           }}
-        ]);
+        ]
+
+        var elementmenuextended = elementmenu.slice()
+        elementmenuextended.push({text: tr('Execute only this action'), action: function(e){
+                e.preventDefault();
+                self.ExecuteOnlyThis()
+          }})
+
+        context.attach('.toolmenu', elementmenu);
+
+        context.attach('.toolmenuextended', elementmenuextended);
 
         context.attach('html', [
           {header: tr('Actions')},
@@ -1066,6 +1162,22 @@
           return task
         }
       }
+    }
+
+    function TotalSelected()
+    {
+      var res = 0
+      var models = _TaskCollection.models
+      var len = models.length
+      for(var i = 0;i<len;i++)
+      {
+        var task = models[i]
+        if(Number(task.get('is_selected')))
+        {
+          res++
+        }
+      }
+      return res
     }
 
     function IndexOf(Id)
@@ -1362,9 +1474,21 @@
           break
         }
       }
-
       return isempty
+    }
 
+    function AllowToExecuteOnce(Id)
+    {
+      var task = FindTaskById(Id)
+      if(task)
+      {
+        if(task.get("code").indexOf("section_insert()") >= 0)
+          return false
+        if(task.get("code").indexOf("_call") >= 0)
+          return false
+        return true
+      }else
+        return false
     }
 
     function GetGroupsEndings(index)
@@ -1634,6 +1758,9 @@
 
     function BrowserAutomationStudio_NotRunningTask(Id)
     {
+      if(typeof(Id) != "undefined" && Id == -2)
+          Id = 0
+
       if(typeof(Id) != "undefined")
       {
         _GobalModel.set("execute_next_id", parseInt(Id))
@@ -1654,7 +1781,8 @@
               break;
            }
            //_GobalModel.set("insert_parent", _TaskCollection.models[index].get("parentid"))
-           _GobalModel.set("function_name", GetFunctionData(parseInt(_TaskCollection.models[index].get("id")))["name"] )
+           if(Id != 0)
+              _GobalModel.set("function_name", GetFunctionData(parseInt(_TaskCollection.models[index].get("id")))["name"] )
            _MainView.SetDefaultInsert()
            //_GobalModel.set("insert_index", (upper) ? -index : index)
 
@@ -1679,6 +1807,12 @@
       {
         _GobalModel.set("isscriptexecuting",false)
         _GobalModel.set("current_run_until_target_id",-1)
+      }
+
+      if(_GobalModel.get("run_only_one_enabled") == true)
+      {
+        _GobalModel.set("isscriptexecuting",false)
+        _GobalModel.set("run_only_one_enabled",false)
       }
 
       if(_GobalModel.get("isscriptexecuting"))

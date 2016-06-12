@@ -8,9 +8,26 @@ namespace BrowserAutomationStudioFramework
 
 
     ScriptWorker::ScriptWorker(QObject *parent) :
-        IWorker(parent), Browser(0), Logger(0), Results1(0),Results2(0), Results3(0),Results4(0),Results5(0),Results6(0),Results7(0),Results8(0),Results9(0), Waiter(0),engine(0),ThreadNumber(0),IsAborted(false),ProcessComunicator(0), HttpClient(0), Pop3Client(0), ImapClient(0), DoTrace(false), MaxFail(100), MaxSuccess(100), IsFailExceedRunning(false), IsSuccessExceedRunning(false)
+        IWorker(parent), Browser(0), Logger(0), Results1(0),Results2(0), Results3(0),Results4(0),Results5(0),Results6(0),Results7(0),Results8(0),Results9(0), Waiter(0),engine(0),ThreadNumber(0),IsAborted(false),ProcessComunicator(0), HttpClient(0), Pop3Client(0), ImapClient(0), DoTrace(false), MaxFail(100), MaxSuccess(100), IsFailExceedRunning(false), IsSuccessExceedRunning(false), FunctionData(0)
     {
 
+    }
+
+    ScriptWorker::~ScriptWorker()
+    {
+        for(FunctionRunData* func:FunctionDataList)
+            func->Stop();
+        FunctionDataList.clear();
+    }
+
+    void ScriptWorker::SetModuleManager(IModuleManager *ModuleManager)
+    {
+        this->ModuleManager = ModuleManager;
+    }
+
+    IModuleManager* ScriptWorker::GetModuleManager()
+    {
+        return ModuleManager;
     }
 
     void ScriptWorker::SetDatabaseConnector(IDatabaseConnector *DatabaseConnector)
@@ -369,6 +386,15 @@ namespace BrowserAutomationStudioFramework
         return IsRecord;
     }
 
+    void ScriptWorker::SetAdditionEngineScripts(QList<QString>* AdditionalScripts)
+    {
+        this->AdditionalScripts = AdditionalScripts;
+    }
+    QList<QString>* ScriptWorker::GetAdditionEngineScripts()
+    {
+        return AdditionalScripts;
+    }
+
 
     void ScriptWorker::Run()
     {
@@ -457,14 +483,15 @@ namespace BrowserAutomationStudioFramework
         foreach(QString script, ScriptResources->GetEngineScripts())
             engine->evaluate(script);
 
-        foreach(QString script, ScriptResources->GetModuleScripts())
+
+        int ScriptLength = AdditionalScripts->size();
+        for(int i = 0;i<ScriptLength;i++)
         {
-            QString Script = Preprocessor->Preprocess(script,0);
+            QString Script = AdditionalScripts->at(i);
             engine->evaluate(Script);
         }
 
         RunSubScript();
-
     }
 
     void ScriptWorker::AttachNetworkAccessManager()
@@ -1028,6 +1055,7 @@ namespace BrowserAutomationStudioFramework
 
     void ScriptWorker::Solve(const QString& method, const QString& base64,const QString& callback)
     {
+        engine->globalObject().setProperty("LAST_CAPTCHA_ID", "");
         ISolver* solver = GetSolverFactory()->GetSolver(method);
         if(!solver)
         {
@@ -1043,6 +1071,9 @@ namespace BrowserAutomationStudioFramework
     void ScriptWorker::SolverSuccess()
     {
         QString res = GetWaiter()->GetLastSolverResult();
+        QString id = GetWaiter()->GetLastSolverId();
+        engine->globalObject().setProperty("LAST_CAPTCHA_ID", id);
+
         if(res.startsWith("CAPTCHA_FAIL"))
         {
             Fail(res);
@@ -1056,7 +1087,99 @@ namespace BrowserAutomationStudioFramework
 
     void ScriptWorker::SolverFailed()
     {
+        engine->globalObject().setProperty("LAST_CAPTCHA_ID", "");
         Fail("Captcha wait timeout");
+    }
+
+    QString ScriptWorker::ExecuteNativeModuleCodeSync(const QString& DllName, const QString& FunctionName, const QString& InputParam)
+    {
+        std::shared_ptr<FunctionRunData> FunctionDataInternal(ModuleManager->PrepareExecuteFunction(DllName,FunctionName,InputParam,GetThreadNumber()));
+        if(FunctionDataInternal->IsError)
+        {
+            Fail(QString::fromStdString(FunctionDataInternal->ErrorString));
+            return QString();
+        }
+        if(FunctionDataInternal->IsAync)
+        {
+            Fail("Async function is called in sync mode");
+            return QString();
+        }
+
+        FunctionDataInternal->Execute();
+
+        if(FunctionDataInternal->ExecuteError)
+        {
+            Fail(QString("Failed to run function ") + DllName + QString(".") + FunctionName);
+            return QString();
+        }
+
+        return QString::fromUtf8(FunctionDataInternal->OutputJson.data(),FunctionDataInternal->OutputJson.size());
+
+    }
+
+    void ScriptWorker::ExecuteNativeModuleCodeAsync(const QString& DllName, const QString& FunctionName, const QString& InputParam, const QString& Callback)
+    {
+        FunctionData = ModuleManager->PrepareExecuteFunction(DllName,FunctionName,InputParam,GetThreadNumber());
+        if(FunctionData->IsError)
+        {
+            Fail(QString::fromStdString(FunctionData->ErrorString));
+            delete FunctionData;
+            return;
+        }
+        if(!FunctionData->IsAync)
+        {
+            Fail("Sync function is called in async mode");
+            delete FunctionData;
+            return;
+        }
+
+        QThread* thread = new QThread;
+
+        FunctionDataList.append(FunctionData);
+
+        SetScript(Callback);
+        SetFailMessage(QString("Failed to execute module function ") + DllName + QString(".") + FunctionName);
+        if(FunctionData->WaitInfinite)
+            Waiter->WaitInfinity(FunctionData,SIGNAL(ReadyResult()),this,SLOT(DllResult()));
+        else
+            Waiter->WaitForSignal(FunctionData,SIGNAL(ReadyResult()),this,SLOT(DllResult()),this, SLOT(FailBecauseOfTimeout()));
+
+        FunctionData->moveToThread(thread);
+
+
+        connect(thread, SIGNAL(started()), FunctionData, SLOT(Execute()));
+        connect(FunctionData, SIGNAL(Finished()), this, SLOT(RemoveFromFunctionDataList()));
+        connect(FunctionData, SIGNAL(Finished()), thread, SLOT(quit()));
+
+        connect(thread, SIGNAL(finished()), FunctionData, SLOT(deleteLater()));
+        connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+
+
+        thread->start();
+    }
+
+    void ScriptWorker::RemoveFromFunctionDataList()
+    {
+        if(qobject_cast<FunctionRunData *>(sender()) == FunctionData)
+        {
+            FunctionData = 0;
+        }
+        FunctionDataList.removeAll(qobject_cast<FunctionRunData *>(sender()));
+    }
+
+    void ScriptWorker::DllResult()
+    {
+        if(FunctionData == 0)
+            return;
+        if(FunctionData->ExecuteError)
+        {
+            Fail("Failed to run function " + FunctionData->DllName + QString(".") + FunctionData->FunctionName);
+        }else
+        {
+            QString Result = QString::fromUtf8(FunctionData->OutputJson.data(),FunctionData->OutputJson.size());
+            SetAsyncResult(QScriptValue(Result));
+            RunSubScript();
+        }
     }
 
     /* Pop3CLient */
@@ -1102,6 +1225,20 @@ namespace BrowserAutomationStudioFramework
             FailBecauseOfTimeout();
         }
 
+    }
+
+    /* Timeout */
+
+    void ScriptWorker::SetGeneralWaitTimeout(int timeout)
+    {
+        if(Waiter)
+            Waiter->SetGeneralWaitTimeout(timeout);
+    }
+
+    void ScriptWorker::SetSolverWaitTimeout(int timeout)
+    {
+        if(Waiter)
+            Waiter->SetSolverWaitTimeout(timeout);
     }
 
     /* ImapClient */

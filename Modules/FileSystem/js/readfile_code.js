@@ -1,0 +1,1 @@
+<%= variable %> = native("filesystem", "readfile", JSON.stringify({value: <%= value %>,base64:<%= base64 %>,from:<%= from %>,to:<%= to %>}))

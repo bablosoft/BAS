@@ -11,6 +11,24 @@ namespace BrowserAutomationStudioFramework
         Timer = 0;
         IsAborted = false;
         RestoreConnectors();
+        GeneralWait = 60000;
+        SolverWait = 200000;
+    }
+
+    void TimeoutWaiter::SetGeneralWaitTimeout(int timeout)
+    {
+        if(timeout<1000)
+            GeneralWait = 1000;
+        else
+            GeneralWait = timeout;
+    }
+
+    void TimeoutWaiter::SetSolverWaitTimeout(int timeout)
+    {
+        if(timeout<1000)
+            SolverWait = 1000;
+        else
+            SolverWait = timeout;
     }
 
     ITimerProxy *TimeoutWaiter::GetTimer()
@@ -62,7 +80,7 @@ namespace BrowserAutomationStudioFramework
         connect(ConnectorFail,SIGNAL(signal()),ConnectorSuccess,SLOT(end()));
         connect(ConnectorFail,SIGNAL(signal()),object_fail,slot_fail);
 
-        GetTimer()->singleShot(60000,ConnectorFail,SLOT(slot()));
+        GetTimer()->singleShot(GeneralWait,ConnectorFail,SLOT(slot()));
     }
 
     void TimeoutWaiter::WaitInfinity(const QObject *object_wait, const char * slot_signal ,const QObject *object_success,const char * slot_success)
@@ -117,16 +135,16 @@ namespace BrowserAutomationStudioFramework
             connect(ConnectorFail,SIGNAL(signal()),this,SLOT(RestoreConnectors()));
             connect(ConnectorFail,SIGNAL(signal()),ConnectorSuccess,SLOT(end()));
             connect(ConnectorFail,SIGNAL(signal()),object_fail,slot_fail);
-            GetTimer()->singleShot(200000,ConnectorFail,SLOT(slot()));
+            GetTimer()->singleShot(SolverWait,ConnectorFail,SLOT(slot()));
         }
 
-        connect(solver,SIGNAL(Done(QString,QString,bool)),this,SLOT(ObtainSolverResult(QString,QString,bool)));
+        connect(solver,SIGNAL(Done(QString,QString,bool,QString)),this,SLOT(ObtainSolverResult(QString,QString,bool,QString)));
 
     }
 
     void TimeoutWaiter::DisconnectFromSolver()
     {
-        disconnect(Solver,SIGNAL(Done(QString,QString,bool)),this,SLOT(ObtainSolverResult(QString,QString,bool)));
+        disconnect(Solver,SIGNAL(Done(QString,QString,bool,QString)),this,SLOT(ObtainSolverResult(QString,QString,bool,QString)));
     }
 
     QString TimeoutWaiter::GetLastSolverResult()
@@ -134,7 +152,12 @@ namespace BrowserAutomationStudioFramework
         return SolverResult;
     }
 
-    void TimeoutWaiter::ObtainSolverResult(const QString& val, const QString& id, bool res)
+    QString TimeoutWaiter::GetLastSolverId()
+    {
+        return SolverId;
+    }
+
+    void TimeoutWaiter::ObtainSolverResult(const QString& val, const QString& id, bool res, const QString& solver_id)
     {
         if(IsAborted)
         {
@@ -145,6 +168,7 @@ namespace BrowserAutomationStudioFramework
         if(Text == id)
         {
             DisconnectFromSolver();
+            SolverId = solver_id;
             if(!res)
             {
                 SolverResult = "CAPTCHA_FAIL : " + val;

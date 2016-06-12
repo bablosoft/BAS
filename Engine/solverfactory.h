@@ -15,6 +15,8 @@ namespace BrowserAutomationStudioFramework
         ManualCaptchaSolver * ManualSolver;
         AntigateCaptchaSolver * AntigateSolver;
         AntigateCaptchaSolver * DbcSolver;
+        AntigateCaptchaSolver * RucaptchaSolver;
+        AntigateCaptchaSolver * TwocaptchaSolver;
         IHttpClientFactory * HttpClientFactory;
     public:
         explicit SolverFactory(QObject *parent = 0);
@@ -28,6 +30,14 @@ namespace BrowserAutomationStudioFramework
         void UsedManual();
         void UsedAntigate();
         void UsedDbc();
+        void UsedRucaptcha();
+        void Used2Captcha();
+
+        void FailedManual();
+        void FailedAntigate();
+        void FailedDbc();
+        void FailedRucaptcha();
+        void Failed2Captcha();
     };
 }
 

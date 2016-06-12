@@ -1,0 +1,1 @@
+native("filesystem", "removefile", <%= value %>)

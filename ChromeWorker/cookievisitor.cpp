@@ -45,43 +45,54 @@ picojson::value::object CookieVisitor::SerializeCookie(const CefCookie& cookie)
 {
 
     picojson::value::object cookie_json;
+    try{
 
-    std::wstring value(cookie.value.str,cookie.value.length);
-    std::wstring key(cookie.name.str,cookie.name.length);
-    std::wstring url(cookie.domain.str,cookie.domain.length);
-    std::wstring path(cookie.path.str,cookie.path.length);
+        std::wstring value(cookie.value.str,cookie.value.length);
+        std::wstring key(cookie.name.str,cookie.name.length);
+        std::wstring url(cookie.domain.str,cookie.domain.length);
+        std::wstring path(cookie.path.str,cookie.path.length);
 
-    cookie_json["value"] = picojson::value(ws2s(value));
-    cookie_json["name"] = picojson::value(ws2s(key));
-    cookie_json["domain"] = picojson::value(ws2s(url));
-    cookie_json["path"] = picojson::value(ws2s(path));
-    cookie_json["creation"] = picojson::value(SerializeTime(cookie.creation));
-    cookie_json["expires"] = picojson::value(SerializeTime(cookie.expires));
-    cookie_json["has_expires"] = picojson::value(std::to_string(cookie.has_expires));
-    cookie_json["httponly"] = picojson::value(std::to_string(cookie.httponly));
-    cookie_json["last_access"] = picojson::value(SerializeTime(cookie.last_access));
-    cookie_json["secure"] = picojson::value(std::to_string(cookie.secure));
+        cookie_json["value"] = picojson::value(ws2s(value));
+        cookie_json["name"] = picojson::value(ws2s(key));
+        cookie_json["domain"] = picojson::value(ws2s(url));
+        cookie_json["path"] = picojson::value(ws2s(path));
+        cookie_json["creation"] = picojson::value(SerializeTime(cookie.creation));
+        cookie_json["expires"] = picojson::value(SerializeTime(cookie.expires));
+        cookie_json["has_expires"] = picojson::value(std::to_string(cookie.has_expires));
+        cookie_json["httponly"] = picojson::value(std::to_string(cookie.httponly));
+        cookie_json["last_access"] = picojson::value(SerializeTime(cookie.last_access));
+        cookie_json["secure"] = picojson::value(std::to_string(cookie.secure));
+    }catch(...)
+    {
+
+    }
     return cookie_json;
 }
 
 void CookieVisitor::DeserializeCookie(picojson::value::object& object,CefCookie& data)
 {
-    std::wstring name = s2ws(object["name"].get<std::string>());
-    std::wstring value = s2ws(object["value"].get<std::string>());
-    std::wstring domain = s2ws(object["domain"].get<std::string>());
-    std::wstring path = s2ws(object["path"].get<std::string>());
+    try
+    {
+        std::wstring name = s2ws(object["name"].get<std::string>());
+        std::wstring value = s2ws(object["value"].get<std::string>());
+        std::wstring domain = s2ws(object["domain"].get<std::string>());
+        std::wstring path = s2ws(object["path"].get<std::string>());
 
-    cef_string_utf16_set(name.data(),name.size(),&data.name,true);
-    cef_string_utf16_set(value.data(),value.size(),&data.value,true);
-    cef_string_utf16_set(domain.data(),domain.size(),&data.domain,true);
-    cef_string_utf16_set(path.data(),path.size(),&data.path,true);
+        cef_string_utf16_set(name.data(),name.size(),&data.name,true);
+        cef_string_utf16_set(value.data(),value.size(),&data.value,true);
+        cef_string_utf16_set(domain.data(),domain.size(),&data.domain,true);
+        cef_string_utf16_set(path.data(),path.size(),&data.path,true);
 
-    data.creation = DeserializeTime(object["creation"].get<picojson::value::object>());
-    data.expires = DeserializeTime(object["expires"].get<picojson::value::object>());
-    data.last_access = DeserializeTime(object["last_access"].get<picojson::value::object>());
-    data.has_expires = std::stoi(object["has_expires"].get<std::string>());
-    data.httponly = std::stoi(object["httponly"].get<std::string>());
-    data.secure = std::stoi(object["secure"].get<std::string>());
+        data.creation = DeserializeTime(object["creation"].get<picojson::value::object>());
+        data.expires = DeserializeTime(object["expires"].get<picojson::value::object>());
+        data.last_access = DeserializeTime(object["last_access"].get<picojson::value::object>());
+        data.has_expires = std::stoi(object["has_expires"].get<std::string>());
+        data.httponly = std::stoi(object["httponly"].get<std::string>());
+        data.secure = std::stoi(object["secure"].get<std::string>());
+    }catch(...)
+    {
+
+    }
 }
 
 CefCookie CookieVisitor::GetEmptyCookie()

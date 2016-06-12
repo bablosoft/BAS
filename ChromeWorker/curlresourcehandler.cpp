@@ -7,6 +7,7 @@
 #include <network/uri.hpp>
 #include <network/uri/uri_builder.hpp>
 #include "multithreading.h"
+#include "fixcontentcharset.h"
 
 
 void ParseHeaders(CurlResourceHandler::CurlThreadDataClass * Data)
@@ -24,6 +25,9 @@ void ParseHeaders(CurlResourceHandler::CurlThreadDataClass * Data)
     if(Data->ResultHeaders.count(ContentTypeHeader) > 0)
     {
         Data->MimeType = Data->ResultHeaders.find(ContentTypeHeader)->second;
+        Data->ContentType = Data->MimeType;
+        if(Data->ForceUtf8)
+            Data->NeedToReadWholeResponceAndThanFixEncoding = FixContentCharset().NeedToFix(Data->ContentType,Data->Url);
         std::vector<std::string> MimeTypeSplit = split(Data->MimeType,';');
         if(MimeTypeSplit.size() > 1)
             Data->MimeType = MimeTypeSplit[0];
@@ -385,6 +389,11 @@ bool CurlResourceHandler::GetCanDelete()
     return CanDelete && IteratorWaitAfterDelete<=0;
 }
 
+void CurlResourceHandler::SetForceUtf8(bool ForceUtf8)
+{
+    CurlThreadData.ForceUtf8 = ForceUtf8;
+}
+
 void CurlResourceHandler::Timer()
 {
     CurlThreadDataClass::StatusClass Status = CurlThreadData.GetStatus();
@@ -430,7 +439,7 @@ void CurlResourceHandler::Timer()
             bool DoContinue = false;
             {
                 std::lock_guard<std::mutex> lock(CurlThreadData.ResponseDataMutex);
-                if(CurlThreadData.ResponseDataReadLength < CurlThreadData.ResponseData.size())
+                if(CurlThreadData.ResponseDataReadLength < CurlThreadData.ResponseData.size() && !CurlThreadData.NeedToReadWholeResponceAndThanFixEncoding)
                 {
                     DoContinue = true;
 
@@ -607,14 +616,31 @@ bool CurlResourceHandler::ReadResponse(void* data_out, int bytes_to_read, int& b
     {
         std::lock_guard<std::mutex> lock(CurlThreadData.ResponseDataMutex);
 
+
         /* Curl is still working */
-        if(CurlThreadData.ResponseDataReadLength >= CurlThreadData.ResponseData.size())
+        if(
+                //Do not write anything if need to decode and status is not done yet.
+                (CurlThreadData.NeedToReadWholeResponceAndThanFixEncoding && Status != CurlThreadDataClass::Done)
+
+                || CurlThreadData.ResponseDataReadLength >= CurlThreadData.ResponseData.size())
         {
             ReadResponseCallback = callback;
             CanUseReadResponseCallback = true;
             bytes_read = 0;
             //worker_log("No data read next.");
             return true;
+        }
+
+        //Fix encoding one time
+        if(CurlThreadData.NeedToReadWholeResponceAndThanFixEncoding && !CurlThreadData.FixEncodingDone)
+        {
+            CurlThreadData.FixEncodingDone = true;
+            std::string TempContent(CurlThreadData.ResponseData.data(),CurlThreadData.ResponseData.size());
+            if(FixContentCharset().Fix(CurlThreadData.ContentType,TempContent,CurlThreadData.Url))
+            {
+                CurlThreadData.ResponseData.clear();
+                std::copy( TempContent.begin(), TempContent.end(), std::back_inserter(CurlThreadData.ResponseData));
+            }
         }
 
         int BytesWritten = CurlThreadData.ResponseData.size() - CurlThreadData.ResponseDataReadLength;

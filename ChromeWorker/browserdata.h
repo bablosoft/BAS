@@ -8,6 +8,7 @@
 #include "include/cef_base.h"
 #include "inspectresult.h"
 #include <atomic>
+#include "modulesdata.h"
 
 class BrowserData
 {
@@ -33,6 +34,7 @@ public:
     std::atomic_int CursorY;
     std::atomic_bool IsRecord;
     InspectResult _Inspect;
+    ModulesDataList _ModulesData;
 
     //Reset
     std::atomic_bool IsReset;

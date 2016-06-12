@@ -350,8 +350,8 @@
   <script type="text/template" id="solvecaptcha">
     <div class="container-fluid solvecaptcha">
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Captcha picture data encoded in base64"), default_selector: "expression", disable_int:true, disable_string:true}) %>
-      <%= _.template($('#input_constructor').html())({id:"Method", description:tr("Solve Method"), default_selector: "string", disable_int:true, value_string: "manual", variants: ["manual","antigate","dbc"], size: 3}) %>
-      <%= _.template($('#input_constructor').html())({id:"Antigate", description:tr("Antigate Key. Can be blank"), default_selector: "string", disable_int:true}) %>
+      <%= _.template($('#input_constructor').html())({id:"Method", description:tr("Solve Method"), default_selector: "string", disable_int:true, value_string: "manual", variants: ["manual","antigate","rucaptcha","2captcha","dbc"], size: 3}) %>
+      <%= _.template($('#input_constructor').html())({id:"Antigate", description:tr("Antigate/Rucaptcha/2captcha Key. Can be blank"), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#input_constructor').html())({id:"Dbc", description:tr("DBC Login:Password. Can be blank"), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save Result"), default_variable: "CAPTCHA_RESULT"}) %>
     </div>
@@ -571,28 +571,26 @@
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
 
-  <script type="text/template" id="fileread">
-    <div class="container-fluid fileread">
-      <%= _.template($('#input_constructor').html())({id:"Value", description:tr("File path"), default_selector: "string", disable_int:true}) %>
-      <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "FILE_CONTENT"}) %>
-      <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
-        <input type="checkbox" id="Check"/> <label for="Check" class="tr">Save In Base64 Format</label>
-      </span>
-
-    </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
-  </script>
-
-  <script type="text/template" id="filewrite">
-    <div class="container-fluid filewrite">
-        <%= _.template($('#input_constructor').html())({id:"File", description:tr("File path"), default_selector: "string", disable_int:true}) %>
-        <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Data"), default_selector: "string", disable_int:true}) %>
-        <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
-          <div><input type="checkbox" id="Check"/> <label for="Check" class="tr">Append</label></div>
-        </span>
-        <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check2">
-          <div><input type="checkbox" id="Check2"/> <label for="Check2" class="tr">Data Is In Base64 Format</label></div>
-        </span>
+  <script type="text/template" id="timeout">
+    <div class="container-fluid result">
+       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Timeout in milliseconds"), default_selector: "int", disable_string:true, value_number: 60000, min_number: 1000}) %>
+       <div class="col-xs-12">
+        <form class="form-horizontal">
+          <div class="form-group">
+            <div class="col-xs-2">
+              <div class="input-group">
+                <span data-preserve="true" data-preserve-type="select" data-preserve-id="Type">
+                  <select class="form-control input-sm" id="Type" placeholder="Result">
+                      <option value="general" selected="selected">General</option>
+                      <option value="solver">Solver</option>
+                  </select>
+                </span>
+              </div>
+            </div>
+            <label class="control-label text-right tr" style="padding-top:5px !important;">Timeout Type</label>
+          </div>
+        </form>
+      </div>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
@@ -964,6 +962,13 @@
     <%= _.template($('#back').html())({action:"add", visible:false}) %>
   </script>
 
+  <script type="text/template" id="foreach">
+    <div class="container-fluid foreach">
+      <%= _.template($('#input_constructor').html())({id:"ForArray", description:tr("Foreach Array"), default_selector: "expression", disable_string:true, disable_int:true}) %>
+    </div>
+    <%= _.template($('#back').html())({action:"add", visible:false}) %>
+  </script>
+
   <script type="text/template" id="sleep">
     <div class="container-fluid sleep">
       <span id="sleeprandomspan" style="display:none">
@@ -1192,13 +1197,14 @@
   <script type="text/template" id="captcha">
     <div class="container-fluid captcha">
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "CAPTCHA_RESULT"}) %>
-      <%= _.template($('#input_constructor').html())({id:"Method", description:tr("Solve Method"), default_selector: "string", disable_int:true, value_string: "manual", variants: ["manual","antigate","dbc"], size: 3}) %>
-      <%= _.template($('#input_constructor').html())({id:"Antigate", description:tr("Antigate Key. Can be blank"), default_selector: "string", disable_int:true}) %>
+      <%= _.template($('#input_constructor').html())({id:"Method", description:tr("Solve Method"), default_selector: "string", disable_int:true, value_string: "manual", variants: ["manual","antigate","rucaptcha","2captcha","dbc"], size: 3}) %>
+      <%= _.template($('#input_constructor').html())({id:"Antigate", description:tr("Antigate/Rucaptcha/2captcha Key. Can be blank"), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#input_constructor').html())({id:"Dbc", description:tr("DBC Login:Password. Can be blank"), default_selector: "string", disable_int:true}) %>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Solve Captcha")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
+
 
   <script type="text/template" id="length">
     <span class="path2">
@@ -1357,6 +1363,8 @@
     <%= _.template($('#back').html())({action:"add", visible:true}) %>
   </script>
 
+  _MACRO_INSERT_INTERFACE_
+
   <script type="text/template" id="log">
     <div class="container-fluid log">
       <%= _.template($('#input_constructor').html())({id:"LogText", description:tr("Data to Log"), default_selector: "string"}) %>
@@ -1364,9 +1372,20 @@
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
 
+  <script type="text/template" id="solverfailed">
+    <div class="container-fluid log">
+      <div class="tooltipinternal tr">Use this action if last captcha was solved wrong.</div>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
 
   <script type="text/template" id="log_code">
       log(<%= text %>)
+  </script>
+
+  <script type="text/template" id="solverfailed_code">
+      solver_failed()
   </script>
 
   
@@ -1537,13 +1556,24 @@
 
   <script type="text/template" id="captcha_code">
       /*Browser*/
-      <% if(antigate.length > 0){ %>
+      if(<%= method %> == "rucaptcha")
+      {
+        solver_property("rucaptcha","coordinatescaptcha","")
+        rucaptcha(<%= antigate %>)
+      }
+      if(<%= method %> == "antigate")
+      {
         antigate(<%= antigate %>)
-      <% } %>
-
-      <% if(dbc.length > 0){ %>
-          dbc(<%= dbc %>)
-      <% } %>
+      }
+      if(<%= method %> == "dbc")
+      {
+        dbc(<%= dbc %>)
+      }
+      if(<%= method %> == "2captcha")
+      {
+        solver_property("2captcha","coordinatescaptcha","")
+        twocaptcha(<%= antigate %>)
+      }
 
       <%= waiter %>
 
@@ -1551,6 +1581,8 @@
       solve_base64(<%= method %>, _result())!
       <%= variable %> = _result()
   </script>
+
+  _MACRO_INSERT_CODE_
 
   <script type="text/template" id="exist_code">
       /*Browser*/
@@ -1586,18 +1618,37 @@
 
   <script type="text/template" id="solvecaptcha_code">
       /*Browser*/
-      <% if(antigate.length > 0){ %>
+      if(<%= method %> == "rucaptcha")
+      {
+        solver_property("rucaptcha","coordinatescaptcha","")
+        rucaptcha(<%= antigate %>)
+      }
+      if(<%= method %> == "antigate")
+      {
         antigate(<%= antigate %>)
-      <% } %>
-
-      <% if(dbc.length > 0){ %>
-          dbc(<%= dbc %>)
-      <% } %>
+      }
+      if(<%= method %> == "dbc")
+      {
+        dbc(<%= dbc %>)
+      }
+      if(<%= method %> == "2captcha")
+      {
+        solver_property("2captcha","coordinatescaptcha","")
+        twocaptcha(<%= antigate %>)
+      }
 
 
       solve_base64(<%= method %>,<%= value %>)!
       <%= variable %> = _result()
   
+  </script>
+
+  <script type="text/template" id="timeout_code">
+      <% if(isgeneral){ %>
+        general_timeout(<%= timeout %>)
+      <% }else{ %>
+        solver_timeout(<%= timeout %>)
+      <% } %>
   </script>
 
   <script type="text/template" id="savecookies_code">
@@ -1788,29 +1839,8 @@
   <script type="text/template" id="result_code">
     result(<%= value %>, <%= number %>)
   </script>
-  <script type="text/template" id="fileread_code">
-      <% if(base64) { %>
-        <%= variable %> = file_read_base64(<%= value %>)
-      <% } else { %>
-        <%= variable %> = file_read(<%= value %>)
-      <% } %>
-  </script>
-  <script type="text/template" id="filewrite_code">
-
-    <% if(append) { %>
-      <% if(base64) { %>
-        file_append_base64(<%= path %>, <%= value %>)
-      <% } else { %>
-        file_append(<%= path %>, <%= value %>)
-      <% } %>
-    <% }else{ %>
-      <% if(base64) { %>
-        file_write_base64(<%= path %>, <%= value %>)
-      <% } else { %>
-        file_write(<%= path %>, <%= value %>)
-      <% } %>
-    <% } %>
-  </script>
+  
+  
   <script type="text/template" id="base64_code">
     <% if(encode) { %>
       <%= variable %> = base64_encode(<%= value %>)
@@ -1964,6 +1994,16 @@
       })!
   </script>
 
+  <script type="text/template" id="foreach_code">
+      FOREACH_ARRAY = <%= for_array %>
+      _do(function(){
+        VAR_CYCLE_INDEX = _iterator() - 1
+        if(VAR_CYCLE_INDEX > FOREACH_ARRAY.length - 1)_break();
+        VAR_FOREACH_DATA = FOREACH_ARRAY[VAR_CYCLE_INDEX]
+        section_insert()
+      })!
+  </script>
+
   <script type="text/template" id="loopelement_code">
       /*Browser*/
       <%= waiter %>
@@ -2026,6 +2066,7 @@
   <script src="bootbox.min.js"></script>
   <script src="translate.js"></script>
 
+  <script type="text/javascript"> _MACRO_INSERT_LOCALIZE_ </script>
 
   <!-- ========= -->
   <!--   Styles  -->
@@ -2041,7 +2082,7 @@
   <!-- Javascript code -->
   <!-- =============== -->
   <script type="text/javascript">
-	  var TaskModel = Backbone.Model.extend({
+    var TaskModel = Backbone.Model.extend({
         defaults: {
             name: "",
             description: "",
@@ -2926,6 +2967,14 @@
               BrowserAutomationStudio_Append("Reset http client", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
+          }else if(State == "solverfailed")
+          {
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("Captcha Failed", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
           }
           else if(State == "httpclientdownload")
           {
@@ -3173,59 +3222,6 @@
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value: Value["updated"], encode: encode})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("Base64 encode decode to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
-            }catch(e)
-            {}
-
-          }else if(State == "filewrite")
-          {
-            var File = GetInputConstructorValue("File",loader)
-            var Value = GetInputConstructorValue("Value",loader)
-            var append = $("#Check").is(':checked')
-            var base64 = $("#Check2").is(':checked')
-            
-
-            if(File["original"].length <= 0)
-            {
-              Invalid("File is empty");
-              return;
-            }
-
-            if(Value["original"].length <= 0)
-            {
-              Invalid("Data is empty");
-              return;
-            }
-
-             try{
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path:File["updated"],value:Value["updated"],append:append,base64:base64})
-              code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Write file " + File["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
-            }catch(e)
-            {}
-          
-            
-          }else if(State == "fileread")
-          {
-
-            var Save = this.$el.find("#Save").val().toUpperCase();
-            var Value = GetInputConstructorValue("Value", loader);
-            var base64 = $("#Check").is(':checked')
-
-
-            if(Save.length == 0)
-            {
-              Invalid("Variable is empty");
-              return;
-            }
-            if(Value["original"].length == 0)
-            {
-              Invalid("File path is empty");
-              return;
-            }
-             try{
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value: Value["updated"],base64:base64})
-              code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Read file to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3826,6 +3822,20 @@
               BrowserAutomationStudio_Append("For " + from["original"] + " : " + to["original"], BrowserAutomationStudio_SaveControls() + code, 1, false);
             }catch(e)
             {}
+          }else if(State == "foreach")
+          {
+            var ForArray = GetInputConstructorValue("ForArray",loader)
+            if(ForArray["original"].length == 0)
+            {
+              Invalid("Array is empty");
+              return;
+            }
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({for_array:ForArray["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("Foreach " + ForArray["original"], BrowserAutomationStudio_SaveControls() + code, 1, false);
+            }catch(e)
+            {}
           }else if(State == "resize")
           {
             var width = GetInputConstructorValue("ResizeX",loader)
@@ -3946,7 +3956,9 @@
             }catch(e)
             {}
 
-          }else if(State == "log")
+          }
+          _MACRO_INSERT_SELECT_
+          else if(State == "log")
           {
             var val = GetInputConstructorValue("LogText", loader)
 
@@ -3961,6 +3973,24 @@
             }else
             {
               Invalid("Log data is empty");
+              return;
+            }
+          }else if(State == "timeout")
+          {
+            var val = GetInputConstructorValue("Value", loader)
+            var isgeneral = this.$el.find("#Type").val().toUpperCase() == "GENERAL";
+
+            if(val["original"].length > 0)
+            {
+               try{
+                var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({timeout:val["updated"], isgeneral: isgeneral})
+                code = Normalize(code,0)
+                BrowserAutomationStudio_Append("Set Timeout " + val["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              }catch(e)
+              {}
+            }else
+            {
+              Invalid("Value empty");
               return;
             }
           }else if(State == "url")
@@ -4388,6 +4418,7 @@
           "if": _.template($('#if').html()),
           "while": _.template($('#while').html()),
           "for": _.template($('#for').html()),
+          "foreach": _.template($('#foreach').html()),
           "executefunction": _.template($('#executefunction').html()),
           "break": _.template($('#break').html()),
           "continue": _.template($('#continue').html()),
@@ -4435,8 +4466,6 @@
           "isloaded": _.template($('#isloaded').html()),
           "getfromcache": _.template($('#getfromcache').html()),
           "result": _.template($('#result').html()),
-          "fileread": _.template($('#fileread').html()),
-          "filewrite": _.template($('#filewrite').html()),
           "base64": _.template($('#base64').html()),
           "globalset": _.template($('#globalset').html()),
           "globalget": _.template($('#globalget').html()),
@@ -4470,7 +4499,9 @@
           "parseline": _.template($('#parseline').html()),
           "waitasyncload": _.template($('#waitasyncload').html()),
           "waitelement": _.template($('#waitelement').html()),
-
+          "timeout": _.template($('#timeout').html()),
+          "solverfailed": _.template($('#solverfailed').html())
+          _MACRO_INSERT_TEMPLATES_
         }
         this.model.bind('change', this.render, this);
 
@@ -4483,7 +4514,7 @@
 
       render: function(){
         $('[data-toggle="tooltip"]').tooltip()
-		    $("#containerdata").html(this.templates[this.model.get("state")]({data:this.collection.toJSON(),model:this.model.toJSON(),selector:_SelectorModel.toJSON()}))
+        $("#containerdata").html(this.templates[this.model.get("state")]({data:this.collection.toJSON(),model:this.model.toJSON(),selector:_SelectorModel.toJSON()}))
         $(".variable-input, .function-input").keypress(function(e){
             var charCode = !e.charCode ? e.which : e.charCode;
             var IsGoodchar =  (charCode == ','.charCodeAt(0) && $(e.target).is("[data-append-array]")) || charCode >= 'A'.charCodeAt(0) && charCode <= 'Z'.charCodeAt(0) || charCode >= 'a'.charCodeAt(0) && charCode <= 'z'.charCodeAt(0) || charCode == '_'.charCodeAt(0) || charCode >= '0'.charCodeAt(0) && charCode <= '9'.charCodeAt(0)
@@ -4515,6 +4546,7 @@
             "!/": "main",
             "!/ok": "ok",
             "!/load": "load",
+            "!/timeout": "timeout",
             "!/type": "type",
             "!/waitload": "waitload",
             "!/waiturl": "waiturl",
@@ -4537,6 +4569,7 @@
             "!/if": "if",
             "!/while": "while",
             "!/for": "for",
+            "!/foreach": "foreach",
             "!/executefunction": "executefunction",
             "!/break": "break",
             "!/continue": "continue",
@@ -4584,8 +4617,6 @@
             "!/isloaded": "isloaded",
             "!/getfromcache": "getfromcache",
             "!/result": "result",
-            "!/fileread": "fileread",
-            "!/filewrite": "filewrite",
             "!/base64": "base64",
             "!/globalset": "globalset",
             "!/globalget": "globalget",
@@ -4619,10 +4650,15 @@
             "!/parseline": "parseline",
             "!/waitasyncload": "waitasyncload",
             "!/waitelement": "waitelement",
+            "!/solverfailed": "solverfailed"
+            _MACRO_INSERT_ROUTER_DEF_
         },
 
         main: function () {
           _GobalModel.set({ state: "main" });
+        },
+        timeout: function () {
+          _GobalModel.set({ state: "timeout" });
         },
         load: function () {
           _GobalModel.set({ state: "load" });
@@ -4692,6 +4728,9 @@
         },
         for: function () {
           _GobalModel.set({ state: "for" });
+        },
+        foreach: function () {
+          _GobalModel.set({ state: "foreach" });
         },
         executefunction: function(){
           _GobalModel.set({ state: "executefunction" });
@@ -4834,12 +4873,6 @@
         result: function(){
                   _GobalModel.set({ state: "result" });
                 },
-        filewrite: function(){
-                  _GobalModel.set({ state: "filewrite" });
-                },
-        fileread: function(){
-                  _GobalModel.set({ state: "fileread" });
-                },
         base64: function(){
                   _GobalModel.set({ state: "base64" });
                 },
@@ -4939,10 +4972,10 @@
         waitelement: function(){
                   _GobalModel.set({ state: "waitelement" });
                 },
-                
-
-
-
+        solverfailed: function(){
+          _GobalModel.set({ state: "solverfailed" });
+        }
+        _MACRO_INSERT_ROUTER_FUNC_
     });
 
     var _Router = new Router();
@@ -4961,6 +4994,8 @@
                 { name: tr("Scroll"), description: tr("Scroll to position"), ref: "scroll" },
                 { name: tr("Render"), description: tr("Render screen part to variable as png base64 encoded"), ref: "renderscreen" },
                 { name: tr("Solve Captcha"), description: tr("Solve captcha"), ref: "solvecaptcha" },
+                { name: tr("Captcha Failed"), description: tr("Captcha Failed"), ref: "solverfailed" },
+                { name: tr("Timeout"), description: tr("Set Timeout"), ref: "timeout" },
                 { description: tr("Waiters"), type: "group" },
                 { name: tr("Wait Url Loaded"), description: tr("Wait until browser will load url"), ref: "waitload" },
                 { name: tr("Wait Address Bar"), description: tr("Wait address bar will contain url"), ref: "waiturl" },
@@ -4971,8 +5006,9 @@
                 { name: tr("If"), description: tr("Execute conditional actions"), ref: "if" },
                 { name: tr("While"), description: tr("Execute while loop"), ref: "while" },
                 { name: tr("For"), description: tr("Execute for loop"), ref: "for" },
+                { name: tr("Foreach"), description: tr("Execute foreach loop"), ref: "foreach" },
                 { name: tr("Break"), description: tr("Stop loop"), ref: "break" },
-                { name: tr("Continue"), description: tr("Start next loop iteration"), ref: "continue" },
+                /*{ name: tr("Continue"), description: tr("Start next loop iteration"), ref: "continue" },*/
                 { name: tr("Success"), description: tr("Finish script with success result"), ref: "success" },
                 { name: tr("Fail"), description: tr("Finish script with fail result"), ref: "fail" },
                 { name: tr("Set Variable"), description: tr("Sets or creates variable"), ref: "setvariable" },
@@ -4981,8 +5017,6 @@
                 { name: tr("Log"), description: tr("Output string to log"), ref: "log" },
                 { name: tr("Result"), description: tr("Save result"), ref: "result" },
                 { name: tr("Custom"), description: tr("Execute custom code"), ref: "custom" },
-                { name: tr("File Write"), description: tr("Write to file"), ref: "filewrite" },
-                { name: tr("File Read"), description: tr("Read from file"), ref: "fileread" },
                 { name: tr("Base64 Encode/Decode"), description: tr("Base64 encode or decode"), ref: "base64" },
                 { name: tr("Set Global Variable"), description: tr("Set global variable"), ref: "globalset" },
                 { name: tr("Get Global Variable"), description: tr("Get global variable"), ref: "globalget" },
@@ -5034,7 +5068,7 @@
                 { name: tr("Xpath Get Text"), description: tr("Execute xpath query and get result text"), ref: "httpclientxpathtext" },
                 { name: tr("Xpath Get Count"), description: tr("Execute xpath query and get result count"), ref: "httpclientxpathcount" },
                 { name: tr("Xpath Get Exists"), description: tr("Execute xpath query and check if exists"), ref: "httpclientxpathexists" }
-
+                _MACRO_INSERT_ACTION_LIST_
 
             ]);
 
@@ -5251,6 +5285,8 @@
 
         loader.SetIsString(ResTextTypeIsString)
         var ResTextUpdated = loader.Resolve(ResText+"");
+        if(ResTextUpdated.length == 0)
+          ResTextUpdated = "\"\""
         return {"updated" : ResTextUpdated, "original" : ResText}
     }
 
@@ -5531,6 +5567,8 @@
     {
       BrowserAutomationStudio_ElementFunction(selector, "loopelement", false)
     }
+
+    _MACRO_INSERT_ELEMENT_FUNCTION_
 
     function BrowserAutomationStudio_Wait(selector, is_loop)
     {

@@ -94,9 +94,24 @@
   margin-top:4px;
 }
 
+.maintoolbox i
+{
+  font-size: 20px;
+}
+
+.maintoolbox
+{
+    padding-top:0px;
+    border-top: 1px solid #DBDBDB;
+    clear: left;
+    height:30px;
+    line-height: 28px;
+    
+}
+
 .main
 {
-  padding-top:80px;
+  padding-top:110px;
   padding-bottom:50px;
 }
 
@@ -129,7 +144,7 @@ label
 
 .threads
 {
-	border-bottom: 1px solid gray;
+	border-bottom: 1px solid #DBDBDB;
   width:100%;
   background-color:white;
   position:fixed ;
@@ -140,7 +155,7 @@ label
 
 .functions
 {
-  border-top: 1px solid gray;
+  border-top: 1px solid #DBDBDB;
   width:100%;
   background-color:white;
   position:fixed ;
@@ -158,6 +173,28 @@ label
 }
 
 .action-button:hover
+{
+  background-color:#E8E8E8;
+  cursor: pointer;
+  border-radius:3px;
+}
+
+.action-button2
+{
+  margin-right:10px;
+}
+
+
+.disabled
+{
+  opacity: 0.4;  
+  cursor: default !important;
+  background-color:white !important;
+
+}
+
+
+.action-button2:hover
 {
   background-color:#E8E8E8;
   cursor: pointer;

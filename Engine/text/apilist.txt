@@ -183,7 +183,10 @@ thread_number()
 script(text)!
 agent(text)!
 antigate(key)
-antigate_russian(is_russian)
+rucaptcha(key)
+twocaptcha(key)
+solver_failed()
+solver_property(solver,key,value)
 dbc(login, password)
 solve(method, url)!
 solve_base64(method, data_base64)!
@@ -232,3 +235,7 @@ db_add_record(group_id, data_list, table_id)
 date_format(date, format)
 db_date_now()
 date_format_now(format)
+native(dll,func,data)
+native_async(dll,func,data,callback)
+general_timeout(timeout)
+solver_timeout(timeout)

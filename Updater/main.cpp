@@ -8,6 +8,7 @@
 
 int main(int argc, char *argv[])
 {
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication a(argc, argv);
     bool IsCloseRequest = a.arguments().contains("--close");
     qsrand(QTime(0,0,0).msecsTo(QTime::currentTime()));

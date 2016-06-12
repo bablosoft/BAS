@@ -24,6 +24,44 @@ namespace BrowserAutomationStudioFramework
         emit UsedSolver("Dbc");
     }
 
+    void SolverFactory::UsedRucaptcha()
+    {
+        emit UsedSolver("RuCaptcha");
+    }
+
+    void SolverFactory::Used2Captcha()
+    {
+        emit UsedSolver("2Captcha");
+    }
+
+
+
+
+    void SolverFactory::FailedManual()
+    {
+        emit FailedSolver("Manual");
+    }
+
+    void SolverFactory::FailedAntigate()
+    {
+        emit FailedSolver("Antigate");
+    }
+
+    void SolverFactory::FailedDbc()
+    {
+        emit FailedSolver("Dbc");
+    }
+
+    void SolverFactory::FailedRucaptcha()
+    {
+        emit FailedSolver("RuCaptcha");
+    }
+
+    void SolverFactory::Failed2Captcha()
+    {
+        emit FailedSolver("2Captcha");
+    }
+
 
     ISolver* SolverFactory::GetSolver(const QString& name)
     {
@@ -33,6 +71,7 @@ namespace BrowserAutomationStudioFramework
             {
                 ManualSolver = new ManualCaptchaSolver(this);
                 connect(ManualSolver,SIGNAL(Used()),this,SLOT(UsedManual()));
+                connect(ManualSolver,SIGNAL(Failed()),this,SLOT(FailedManual()));
             }
             return ManualSolver;
         }
@@ -44,6 +83,7 @@ namespace BrowserAutomationStudioFramework
                 AntigateSolver->SetServer("http://antigate.com/");
                 AntigateSolver->SetHttpClientFactory(HttpClientFactory);
                 connect(AntigateSolver,SIGNAL(Used()),this,SLOT(UsedAntigate()));
+                connect(AntigateSolver,SIGNAL(Failed()),this,SLOT(FailedAntigate()));
             }
             return AntigateSolver;
         }
@@ -55,8 +95,34 @@ namespace BrowserAutomationStudioFramework
                 DbcSolver->SetServer("http://api.dbcapi.me/");
                 DbcSolver->SetHttpClientFactory(HttpClientFactory);
                 connect(DbcSolver,SIGNAL(Used()),this,SLOT(UsedDbc()));
+                connect(DbcSolver,SIGNAL(Failed()),this,SLOT(FailedDbc()));
             }
             return DbcSolver;
+        }
+        if(name == "rucaptcha")
+        {
+            if(RucaptchaSolver == 0)
+            {
+                RucaptchaSolver = new AntigateCaptchaSolver(this);
+                RucaptchaSolver->SetServer("http://rucaptcha.com/");
+                RucaptchaSolver->SetHttpClientFactory(HttpClientFactory);
+                connect(RucaptchaSolver,SIGNAL(Used()),this,SLOT(UsedRucaptcha()));
+                connect(RucaptchaSolver,SIGNAL(Failed()),this,SLOT(FailedRucaptcha()));
+            }
+            return RucaptchaSolver;
+        }
+        if(name == "2captcha")
+        {
+            if(TwocaptchaSolver == 0)
+            {
+                TwocaptchaSolver = new AntigateCaptchaSolver(this);
+                TwocaptchaSolver->SetServer("http://2captcha.com/");
+                TwocaptchaSolver->SetHttpClientFactory(HttpClientFactory);
+                connect(TwocaptchaSolver,SIGNAL(Used()),this,SLOT(Used2Captcha()));
+                connect(TwocaptchaSolver,SIGNAL(Failed()),this,SLOT(Failed2Captcha()));
+
+            }
+            return TwocaptchaSolver;
         }
         return 0;
     }

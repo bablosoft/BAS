@@ -1,0 +1,1 @@
+native("filesystem", "movefile", JSON.stringify({path: <%= value %>,dest: <%= dest %>}))

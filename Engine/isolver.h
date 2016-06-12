@@ -13,11 +13,13 @@ namespace BrowserAutomationStudioFramework
 
 
     signals:
-        void Done(const QString& val, const QString& id, bool res);
+        void Done(const QString& val, const QString& id, bool res,const QString& solver_id);
         void Used();
+        void Failed();
     public slots:
         virtual bool TimeLimited() = 0;
         virtual QString Solve(const QString& base64) = 0;
+        virtual void ReportBad(const QString& id) = 0;
         virtual void SetProperty(const QString& name,const QString& value) = 0;
     };
 }

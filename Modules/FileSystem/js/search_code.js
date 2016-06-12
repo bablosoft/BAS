@@ -1,0 +1,2 @@
+native_async("filesystem", "search", JSON.stringify({folder: <%= folder %>,mask: <%= mask %>,contains:<%= contains %>,include_folders:<%= include_folders %>,include_files:<%= include_files %>,recursive:<%= recursive %>}))!
+<%= variable %> = JSON.parse(_result())["d"]

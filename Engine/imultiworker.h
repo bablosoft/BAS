@@ -22,6 +22,7 @@
 #include "iproperties.h"
 #include "icsvhelper.h"
 #include "idatabaseconnector.h"
+#include "imodulemanager.h"
 
 namespace BrowserAutomationStudioFramework
 {
@@ -121,8 +122,14 @@ namespace BrowserAutomationStudioFramework
         virtual void SetProperties(IProperties* Properties) = 0;
         virtual IProperties* GetProperties() = 0;
 
+        virtual void SetAdditionEngineScripts(const QList<QString>& AdditionalScripts) = 0;
+        virtual QList<QString> GetAdditionEngineScripts() = 0;
+
         virtual void SetDoTrace(bool DoTrace) = 0;
         virtual bool GetDoTrace() = 0;
+
+        virtual void SetModuleManager(IModuleManager *ModuleManager) = 0;
+        virtual IModuleManager* GetModuleManager() = 0;
     signals:
         void Finished();
         void StageFinished();

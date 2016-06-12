@@ -37,12 +37,17 @@ SOURCES += main.cpp \
     trim.cpp \
     split.cpp \
     readallfile.cpp \
-    replace.cpp \
-    multithreading.cpp
+    multithreading.cpp \
+    modulesdata.cpp \
+    toolboxpreprocessor.cpp \
+    replaceall.cpp \
+    convertencoding.cpp \
+    fixcontentcharset.cpp
 
 INCLUDEPATH += $(BAS_PATH_WORKER)/include
 
-LIBS += -L$(BAS_PATH_WORKER)/lib -llibcef -lcef_sandbox -llibcef_dll_wrapper -lAdvapi32 -luser32 -lPsapi -lshell32 -lDbgHelp -lgdi32 -llibcurl -llibeay32 -lssleay32 -lnetwork-uri
+
+LIBS += -L$(BAS_PATH_WORKER)/lib -llibiconv -llibcef -lcef_sandbox -llibcef_dll_wrapper -lAdvapi32 -luser32 -lPsapi -lshell32 -lDbgHelp -lgdi32 -llibcurl -llibeay32 -lssleay32 -lnetwork-uri
 QMAKE_CXXFLAGS_RELEASE += /MT
 
 QMAKE_CXXFLAGS_DEBUG += /MTd /FS
@@ -84,9 +89,13 @@ HEADERS += \
     trim.h \
     split.h \
     readallfile.h \
-    replace.h \
     refcountpublic.h \
-    multithreading.h
+    multithreading.h \
+    modulesdata.h \
+    toolboxpreprocessor.h \
+    replaceall.h \
+    convertencoding.h \
+    fixcontentcharset.h
 
 INCLUDEPATH += xml json png
 

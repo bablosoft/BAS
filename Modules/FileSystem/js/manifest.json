@@ -1,0 +1,155 @@
+{
+	
+	"name":"FileSystem",
+	"description":"Interact with filesystem",
+	"description_small":{"en": "Filesystem", "ru": "Файловая система"},
+	"major_version": 1,
+	"minor_version": 0,
+	"developer_name": "bablosoft", 
+	"developer_email": "mail.to.twaego@gmail.com", 
+	"developer_site": "https://bablosoft.com",
+	"api_version": 1,
+	"actions":
+	[
+		{
+			"name":"filesystem_readfile",
+			"description":{"en": "Read File","ru": "Читать Файл"},
+			"is_element": false,
+			"interface": "readfile_interface.js",
+			"select": "readfile_select.js",
+			"code": [{"file":"readfile_code.js", "name": "readfile_code"}]
+		},{
+			"name":"filesystem_writefile",
+			"description":{"en": "Write File","ru": "Запись В Файл"},
+			"is_element": false,
+			"interface": "writefile_interface.js",
+			"select": "writefile_select.js",
+			"code": [{"file":"writefile_code.js", "name": "writefile_code"}]
+		},{
+			"name":"filesystem_fileinfo",
+			"description":{"en": "File/Folder Info","ru": "Информация О Файле/Папке"},
+			"is_element": false,
+			"interface": "fileinfo_interface.js",
+			"select": "fileinfo_select.js",
+			"code": [{"file":"fileinfo_code.js", "name": "fileinfo_code"}]
+		},{
+			"name":"filesystem_createdir",
+			"description":{"en": "Create Folder","ru": "Создать Папку"},
+			"is_element": false,
+			"interface": "createdir_interface.js",
+			"select": "createdir_select.js",
+			"code": [{"file":"createdir_code.js", "name": "createdir_code"}]
+		},{
+			"name":"filesystem_removefile",
+			"description":{"en": "Remove File/Folder","ru": "Удалить Файл/Папку"},
+			"is_element": false,
+			"interface": "removefile_interface.js",
+			"select": "removefile_select.js",
+			"code": [{"file":"removefile_code.js", "name": "removefile_code"}]
+		},{
+			"name":"filesystem_movefile",
+			"description":{"en": "Move File/Folder","ru": "Переместить Файл/Папку"},
+			"is_element": false,
+			"interface": "movefile_interface.js",
+			"select": "movefile_select.js",
+			"code": [{"file":"movefile_code.js", "name": "movefile_code"}]
+		},{
+			"name":"filesystem_copyfile",
+			"description":{"en": "Copy File/Folder","ru": "Копировать Файл/Папку"},
+			"is_element": false,
+			"interface": "copyfile_interface.js",
+			"select": "copyfile_select.js",
+			"code": [{"file":"copyfile_code.js", "name": "copyfile_code"}]
+		},{
+			"name":"filesystem_search",
+			"description":{"en": "File Search","ru": "Поиск Файлов"},
+			"is_element": false,
+			"interface": "search_interface.js",
+			"select": "search_select.js",
+			"code": [{"file":"search_code.js", "name": "search_code"}]
+		}
+	],
+	"localize": 
+	{
+		"Start position" : {"ru": "Первый байт"},
+		"End position. Leave 0 to read all file." : {"ru": "Последний байт. Используйте 0, чтобы прочитать весь файл."},
+		"File path" : {"ru": "Путь к файлу"},
+		"Save In Base64 Format" : {"ru": "Сохранить в формате base64"},
+		"Append" : {"ru": "Дописывать файл"},
+		"Data Is In Base64 Format" : {"ru": "Данные представлены в формате base64"},
+		"File Name" : {"ru": "Имя Файла"},
+		"File Exists" : {"ru": "Существование Файла"},
+		"File Size" : {"ru": "Размер Файла"},
+		"File Base Directory" : {"ru": "Папка Файла"},
+		"Is Directory" : {"ru": "Является Ли Папкой"},
+		"Last Modified" : {"ru": "Последнее Изменение"},
+		"Directory Name" : {"ru": "Имя Папки"},
+		"File/Folder Name" : {"ru": "Имя Файла Или Папки"},
+		"File/Folder New Location" : {"ru": "Новое Расположение Файла Или Папки"},
+		"File/Folder Destination" : {"ru": "Место Назначения Копирования"},
+		"Search In Folder" : {"ru": "Папка Для Поиска"},
+		"Filename Mask" : {"ru": "Маска Имени Файла"},
+		"File Data Must Contain. Can Be Blank" : {"ru": "Файл Должен Содержать"},
+		"Include Folders" : {"ru": "Искать Папки"},
+		"Include Files" : {"ru": "Искать Файлы"},
+		"Search In Subfolders" : {"ru": "Поиск В Подпапках"}
+	},
+	"engine": [],
+	"browser": [],
+	"depends": [],
+	"dll": [
+			{
+				"name": "filesystem", 
+				"filename32": "filesystem32.dll", 
+				"filename64": "filesystem64.dll", 
+				"startdllfunction": "StartDll", 
+				"enddllfunction": "EndDll", 
+				"startthreadfunction": "StartThread", 
+				"endthreadfunction": "EndThread", 
+				"exportlist":[
+					{
+						"name": "readfile",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "FileSystemReadFile"
+					},{
+						"name": "writefile",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "FileSystemWriteFile"
+					},{
+						"name": "fileinfo",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "FileSystemFileInfo"
+					},{
+						"name": "createdir",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "FileSystemCreateDir"
+					},{
+						"name": "removefile",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "FileSystemRemoveFile"
+					},{
+						"name": "movefile",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "FileSystemMoveFile"
+					},{
+						"name": "copyfile",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "FileSystemCopyFile"
+					},{
+						"name": "search",
+						"isasync": true,
+						"waitinfinite": true,
+						"workfunction": "FileSystemSearch"
+					}
+
+				]
+			}
+		  ]
+}

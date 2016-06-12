@@ -1,0 +1,31 @@
+{
+	
+	"name":"ReCaptcha2",
+	"description":"Solve Recaptcha 2.0",
+	"description_small":{"en": "Recaptcha 2.0", "ru": "Recaptcha 2.0"},
+	"major_version": 1,
+	"minor_version": 0,
+	"developer_name": "bablosoft", 
+	"developer_email": "mail.to.twaego@gmail.com", 
+	"developer_site": "https://bablosoft.com",
+	"api_version": 1,
+	"actions":
+	[
+		{
+			"name":"ReCaptcha2",
+			"description":{"en": "Solve Recaptcha 2.0","ru": "Решить Recaptcha 2.0"},
+			"is_element": true,
+			"interface": "captcha2_interface.js",
+			"select": "captcha2_select.js",
+			"code": [{"file":"captcha2_code.js", "name": "ReCaptcha2_code"}]
+		}
+	],
+	"localize": 
+	{
+		"Solve Recaptcha 2.0" : {"ru": "Решить Recaptcha 2.0"},
+		"How many times try to solve" : {"ru": "Сколько раз пытаться решить"}
+	},
+	"engine": ["engine.js"],
+	"browser": [],
+	"depends": []	
+}

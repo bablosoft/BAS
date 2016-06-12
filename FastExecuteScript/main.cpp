@@ -128,6 +128,7 @@ int main(int argc, char *argv[])
     PanicLogger.SetFileName("panic.txt");
     qDebug()<<"Start 010";
 
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     SafeApplication a(argc, argv);
     qDebug()<<"Start 011";
     if(!MongoDatabaseConnector::Init())

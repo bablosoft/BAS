@@ -5,5 +5,14 @@
 #include <string>
 
 std::vector<char> ReadAllBytes(const std::string& filename);
+std::string ReadAllString(const std::string& filename);
+struct FileEntry
+{
+    std::string Path;
+    std::string FileName;
+    bool IsDirectory;
+};
+std::vector<FileEntry> GetFilesInDirectory(const std::string &Directory);
+
 
 #endif // READALLFILE_H

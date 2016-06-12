@@ -21,7 +21,6 @@ namespace BrowserAutomationStudioFramework
         virtual QList<QString> GetEngineScripts();
         virtual QList<QString> GetMultiEngineScripts();
         virtual QList<QString> GetPageScripts();
-        virtual QList<QString> GetModuleScripts();
     };
 }
 #endif // SCRIPTRESOURCESFROMQT_H

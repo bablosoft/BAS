@@ -15,6 +15,7 @@ namespace BrowserAutomationStudioFramework
         virtual ISolver* GetSolver(const QString& name) = 0;
     signals:
         void UsedSolver(const QString& Name);
+        void FailedSolver(const QString& Name);
     public slots:
 
     };

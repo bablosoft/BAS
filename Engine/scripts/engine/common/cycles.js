@@ -1,4 +1,5 @@
 VAR_CYCLE_INDEX = 0
+VAR_FOREACH_DATA = ""
 LINK_REGEXP = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
 VAR_FOR_EACH_CSS = "html"
 VAR_FOR_EACH_MATCH = "a"

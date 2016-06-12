@@ -57,6 +57,7 @@
 #include "noneencryptor.h"
 #include "properties.h"
 #include <QDirIterator>
+#include "modulemanagerwindow.h"
 #include "every_cpp.h"
 
 
@@ -68,6 +69,8 @@ MainWindow::MainWindow(QWidget *parent) :
     qsrand(QTime(0,0,0).msecsTo(QTime::currentTime()));
 
     ui->setupUi(this);
+
+    _ModuleManager = new ModuleManager(this);
 
     SetCurrentFileName(QDir::current().absoluteFilePath("project.xml"));
 
@@ -240,6 +243,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionShow_Database,SIGNAL(triggered()),this,SLOT(ShowDataBase()));
     connect(ui->actionEdit_Schema,SIGNAL(triggered()),this,SLOT(EditSchema()));
     connect(ui->actionDelete_Schema,SIGNAL(triggered()),this,SLOT(DeleteSchema()));
+    connect(ui->actionModules_Manager,SIGNAL(triggered()),this,SLOT(ShowModuleManager()));
 
     connect(TrayNotifier,SIGNAL(Show()),this,SLOT(show()));
     QMenu *Menu = new QMenu(this);
@@ -443,6 +447,13 @@ void MainWindow::AboutEngine()
     info.ShowAboutWindow();
 }
 
+void MainWindow::ShowModuleManager()
+{
+    ModuleManagerWindow Window;
+    Window.SetModuleManager(_ModuleManager);
+    Window.Reload();
+    Window.exec();
+}
 
 void MainWindow::Compile()
 {
@@ -755,6 +766,7 @@ void MainWindow::InitWidgets()
     connect(ui->actionShow_Report,SIGNAL(triggered()),DataVisualizer,SLOT(ShowReport()));
     DataVisualizer->SetReportData(ReportData);
     connect(fs,SIGNAL(UsedSolver(QString)),ReportData,SLOT(CaptchaUsed(QString)));
+    connect(fs,SIGNAL(FailedSolver(QString)),ReportData,SLOT(CaptchaFailed(QString)));
 
 
     ManualCaptchaSolver *cw = qobject_cast<ManualCaptchaSolver *>(fs->GetSolver("manual"));
@@ -826,6 +838,7 @@ void MainWindow::RestoreMaxHeight()
 
 void MainWindow::StopAction()
 {
+    _ModuleManager->StopAllDlls();
     //ui->VerticalSpacerRecordButtonUp->changeSize(1,1, QSizePolicy::Fixed, QSizePolicy::Expanding);
     _RecordProcessCommunication->Closed();
     ResVisualizer->SetDisabled();
@@ -1058,6 +1071,7 @@ void MainWindow::Run()
 
 void MainWindow::RunInternal(bool IsRecord)
 {
+    _ModuleManager->StartAllDlls();
     NeedRestart = false;
     IsRecordLast = IsRecord;
 
@@ -1190,6 +1204,8 @@ void MainWindow::RunInternal(bool IsRecord)
 
     //Prepare Worker
     ScriptMultiWorker* worker = new ScriptMultiWorker(this);
+    worker->SetModuleManager(_ModuleManager);
+    worker->SetAdditionEngineScripts(_ModuleManager->GetModuleEngineCode());
     EngineRes->setParent(worker);
 
     Preprocessor * _Preprocessor = new Preprocessor(worker);
