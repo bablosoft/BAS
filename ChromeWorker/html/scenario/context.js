@@ -5,6 +5,8 @@
  */
 
 var context = context || (function () {
+
+	var events_list = []
     
 	var options = {
 		fadeSpeed: 100,
@@ -74,6 +76,7 @@ var context = context || (function () {
 						eventAction = data[i].action;
 					$sub.find('a').attr('id', actionID);
 					$('#' + actionID).addClass('context-event');
+					events_list.push(actionID)
 					$(document).on('click', '#' + actionID, eventAction);
 				}
 				$menu.append($sub);
@@ -97,7 +100,8 @@ var context = context || (function () {
 			
 		$('body').append($menu);
 		
-		
+		$(document).off('contextmenu', selector);
+
 		$(document).on('contextmenu', selector, function (e) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -129,7 +133,13 @@ var context = context || (function () {
 	}
 	
 	function destroyContext(selector) {
-		$(document).off('contextmenu', selector).off('click', '.context-event');
+		//$(document).off('contextmenu', selector).off('click', '.context-event');
+		for(var i = 0;i<events_list.length;i++)
+		{
+			$(document).off('click', '#' + events_list[i]);
+		}
+		events_list = []
+
 	}
 	
 	return {

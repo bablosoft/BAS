@@ -49,6 +49,8 @@ ChooserResourceWidget::ChooserResourceWidget(QWidget *parent) :
     connect(ui->FileFilename,SIGNAL(textChanged(QString)),this,SLOT(Validate()));
     connect(ui->UrlUrl,SIGNAL(textChanged(QString)),this,SLOT(Validate()));
     connect(ui->DirectoryDirectory,SIGNAL(textChanged(QString)),this,SLOT(Validate()));
+    connect(ui->FileRead,SIGNAL(toggled(bool)),this,SLOT(Validate()));
+    connect(ui->FileWrite,SIGNAL(toggled(bool)),this,SLOT(Validate()));
     connect(MultiWidget,SIGNAL(checkedIndexesChanged(QList<int>,QList<int>)),this,SLOT(DatabaseIndexesChanged(QList<int>,QList<int>)));
 
     int MarginTop = 1;
@@ -194,6 +196,17 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
     {
         if(!Visible)
         {
+            ui->formLayout_8->removeWidget(ui->label);
+            ui->formLayout_8->removeWidget(ui->FileWrite);
+            ui->formLayout_8->removeWidget(ui->label_50);
+            ui->formLayout_8->removeWidget(ui->FileRead);
+            ui->formLayout_8->removeWidget(ui->label_3);
+            ui->formLayout_8->removeWidget(ui->FileMix);
+            ui->formLayout_8->removeWidget(ui->label_26);
+            ui->formLayout_8->removeWidget(ui->FileReload);
+            ui->formLayout_8->removeWidget(ui->label_27);
+            ui->formLayout_8->removeWidget(ui->FileReloadInterval);
+
             ui->formLayout_8->removeWidget(ui->FileMaxFail);
             ui->formLayout_8->removeWidget(ui->FileMaxSuccess);
             ui->formLayout_8->removeWidget(ui->FileMaxSimultaneous);
@@ -212,21 +225,36 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
 
         }else
         {
-            ui->formLayout_8->insertRow(3,ui->label_111,ui->FileMaxSuccess);
-            ui->formLayout_8->insertRow(4,ui->label_17,ui->FileMaxFail);
-            ui->formLayout_8->insertRow(5,ui->label_18,ui->FileMaxSimultaneous);
-            ui->formLayout_8->insertRow(6,ui->label_19,ui->FileInterval);
-            ui->formLayout_8->insertRow(7,ui->label_7,ui->FileGreedy);
+            ui->formLayout_8->insertRow(1,ui->label_50,ui->FileRead);
+            ui->formLayout_8->insertRow(2,ui->label,ui->FileWrite);
+            ui->formLayout_8->insertRow(3,ui->label_3,ui->FileMix);
+            ui->formLayout_8->insertRow(4,ui->label_111,ui->FileMaxSuccess);
+            ui->formLayout_8->insertRow(5,ui->label_17,ui->FileMaxFail);
+            ui->formLayout_8->insertRow(6,ui->label_18,ui->FileMaxSimultaneous);
+            ui->formLayout_8->insertRow(7,ui->label_19,ui->FileInterval);
+            ui->formLayout_8->insertRow(8,ui->label_7,ui->FileGreedy);
+            ui->formLayout_8->addRow(ui->label_26,ui->FileReload);
+            ui->formLayout_8->addRow(ui->label_27,ui->FileReloadInterval);
             ui->formLayout_8->addRow(ui->label_37,ui->FileRenew);
             ui->formLayout_8->addRow(ui->label_38,ui->FileRenewInterval);
 
         }
+        ui->label->setVisible(Visible);
+        ui->label_3->setVisible(Visible);
+        ui->FileMix->setVisible(Visible);
+        ui->FileReload->setVisible(Visible);
+        ui->FileReloadInterval->setVisible(Visible);
+        ui->FileWrite->setVisible(Visible);
+        ui->FileRead->setVisible(Visible);
+        ui->label_50->setVisible(Visible);
         ui->label_18->setVisible(Visible);
         ui->label_111->setVisible(Visible);
         ui->label_17->setVisible(Visible);
         ui->label_19->setVisible(Visible);
         ui->label_7->setVisible(Visible);
         ui->label_37->setVisible(Visible);
+        ui->label_26->setVisible(Visible);
+        ui->label_27->setVisible(Visible);
         ui->label_38->setVisible(Visible);
         ui->FileMaxSimultaneous->setVisible(Visible);
         ui->FileMaxSuccess->setVisible(Visible);
@@ -237,7 +265,10 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
         ui->FileRenewInterval->setVisible(Visible);
 
         if(Visible)
+        {
             on_FileRenew_toggled(ui->FileRenew->isChecked());
+            on_FileReload_toggled(ui->FileReload->isChecked());
+        }
     }
 
 
@@ -245,6 +276,16 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
     {
         if(!Visible)
         {
+            ui->formLayout->removeWidget(ui->label_39);
+            ui->formLayout->removeWidget(ui->DatabaseClear);
+            ui->formLayout->removeWidget(ui->label_40);
+            ui->formLayout->removeWidget(ui->DatabaseMix);
+            ui->formLayout->removeWidget(ui->label_46);
+            ui->formLayout->removeWidget(ui->DatabaseReload);
+            ui->formLayout->removeWidget(ui->label_47);
+            ui->formLayout->removeWidget(ui->DatabaseReloadInterval);
+
+
             ui->formLayout->removeWidget(ui->DatabaseMaxFail);
             ui->formLayout->removeWidget(ui->DatabaseMaxSuccess);
             ui->formLayout->removeWidget(ui->DatabaseMaxSimultaneous);
@@ -263,15 +304,23 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
 
         }else
         {
+            ui->formLayout->insertRow(1,ui->label_39,ui->DatabaseClear);
+            ui->formLayout->insertRow(2,ui->label_40,ui->DatabaseMix);
             ui->formLayout->insertRow(3,ui->label_41,ui->DatabaseMaxSuccess);
             ui->formLayout->insertRow(4,ui->label_42,ui->DatabaseMaxFail);
             ui->formLayout->insertRow(5,ui->label_43,ui->DatabaseMaxSimultaneous);
             ui->formLayout->insertRow(6,ui->label_44,ui->DatabaseInterval);
             ui->formLayout->insertRow(7,ui->label_45,ui->DatabaseGreedy);
+            ui->formLayout->addRow(ui->label_46,ui->DatabaseReload);
+            ui->formLayout->addRow(ui->label_47,ui->DatabaseReloadInterval);
             ui->formLayout->addRow(ui->label_48,ui->DatabaseRenew);
             ui->formLayout->addRow(ui->label_49,ui->DatabaseRenewInterval);
 
         }
+        ui->label_39->setVisible(Visible);
+        ui->label_40->setVisible(Visible);
+        ui->label_46->setVisible(Visible);
+        ui->label_47->setVisible(Visible);
         ui->label_41->setVisible(Visible);
         ui->label_42->setVisible(Visible);
         ui->label_43->setVisible(Visible);
@@ -286,15 +335,30 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
         ui->DatabaseGreedy->setVisible(Visible);
         ui->DatabaseRenew->setVisible(Visible);
         ui->DatabaseRenewInterval->setVisible(Visible);
+        ui->DatabaseClear->setVisible(Visible);
+        ui->DatabaseMix->setVisible(Visible);
+        ui->DatabaseReload->setVisible(Visible);
+        ui->DatabaseReloadInterval->setVisible(Visible);
 
         if(Visible)
+        {
             on_DatabaseRenew_toggled(ui->DatabaseRenew->isChecked());
+            on_DatabaseReload_toggled(ui->DatabaseReload->isChecked());
+        }
     }
 
     if(ui->stackedWidget->findChild<QWidget*>("page_7"))
     {
         if(!Visible)
         {
+            ui->formLayout_9->removeWidget(ui->label_13);
+            ui->formLayout_9->removeWidget(ui->UrlMix);
+            ui->formLayout_9->removeWidget(ui->label_29);
+            ui->formLayout_9->removeWidget(ui->UrlReload);
+            ui->formLayout_9->removeWidget(ui->label_28);
+            ui->formLayout_9->removeWidget(ui->UrlReloadInterval);
+
+
             ui->formLayout_9->removeWidget(ui->UrlMaxSuccess);
             ui->formLayout_9->removeWidget(ui->UrlMaxFail);
             ui->formLayout_9->removeWidget(ui->UrlMaxSimultaneous);
@@ -313,16 +377,22 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
             ui->formLayout_9->removeWidget(ui->label_36);
         }else
         {
+            ui->formLayout_9->insertRow(2,ui->label_13,ui->UrlMix);
             ui->formLayout_9->insertRow(3,ui->label_112,ui->UrlMaxSuccess);
             ui->formLayout_9->insertRow(4,ui->label_20,ui->UrlMaxFail);
             ui->formLayout_9->insertRow(5,ui->label_21,ui->UrlMaxSimultaneous);
             ui->formLayout_9->insertRow(6,ui->label_22,ui->UrlInterval);
             ui->formLayout_9->insertRow(7,ui->label_31,ui->UrlGreedy);
+            ui->formLayout_9->addRow(ui->label_29,ui->UrlReload);
+            ui->formLayout_9->addRow(ui->label_28,ui->UrlReloadInterval);
             ui->formLayout_9->addRow(ui->label_35,ui->UrlRenew);
             ui->formLayout_9->addRow(ui->label_36,ui->UrlRenewInterval);
 
         }
-
+        ui->label_28->setVisible(Visible);
+        ui->label_29->setVisible(Visible);
+        ui->UrlReloadInterval->setVisible(Visible);
+        ui->UrlReload->setVisible(Visible);
         ui->label_112->setVisible(Visible);
         ui->label_20->setVisible(Visible);
         ui->label_21->setVisible(Visible);
@@ -339,7 +409,10 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
         ui->label_36->setVisible(Visible);
 
         if(Visible)
+        {
+            on_UrlReload_toggled(ui->UrlReload->isChecked());
             on_UrlRenew_toggled(ui->UrlRenew->isChecked());
+        }
     }
 
     if(ui->stackedWidget->findChild<QWidget*>("page_8"))
@@ -454,14 +527,14 @@ void ChooserResourceWidget::Validate()
                 QString filename = ui->FileFilename->text();
                 if(filename.isEmpty())
                 {
-                    IsValid = false;
+                    IsValid = !ui->FileWrite->isChecked() && !ui->FileRead->isChecked();
                 }else
                 {
 
                     foreach(QString f,filename.split("|"))
                     {
                         QFileInfo info(f);
-                        IsValid = info.exists();
+                        IsValid = !ui->FileRead->isChecked() || info.exists();
                         if(!IsValid)
                         {
                             break;
@@ -627,11 +700,22 @@ void ChooserResourceWidget::RemoveWidgetAtIndex(int index)
 
 void ChooserResourceWidget::on_ButtonFileSelect_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileNames(this, tr("Open File"), "", tr("All Files (*.*)")).join("|");
-    if(fileName.length()>0)
+    if(ui->FileRead->isChecked())
     {
-        ui->FileFilename->setText(fileName);
+        QString fileName = QFileDialog::getOpenFileNames(this, tr("Open File"), "", tr("All Files (*.*)")).join("|");
+        if(fileName.length()>0)
+        {
+            ui->FileFilename->setText(fileName);
+        }
+    }else
+    {
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("All Files (*.*)"));
+        if(fileName.length()>0)
+        {
+            ui->FileFilename->setText(fileName);
+        }
     }
+
 }
 
 void ChooserResourceWidget::on_ButtonDirectorySelect_clicked()

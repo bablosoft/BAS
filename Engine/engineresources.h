@@ -38,7 +38,8 @@ namespace BrowserAutomationStudioFramework
         virtual int GetTotalLength(const QString& name);
         virtual void Reload(const QString & name);
         virtual void Remove(const QString & name);
-        virtual void Insert(const QString & name, const QString & value);
+        virtual void Insert(const QString & name, const QString & value, bool onlywrite);
+        virtual void Sync(const QString & name);
         void SetEngineResourcesController(IResourceController* EngineResourcesController);
         void SetResources(IResources* Resources);
 

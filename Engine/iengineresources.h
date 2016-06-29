@@ -26,7 +26,8 @@ namespace BrowserAutomationStudioFramework
 
         virtual void Reload(const QString & name) = 0;
         virtual void Remove(const QString & name) = 0;
-        virtual void Insert(const QString & name, const QString & value) = 0;
+        virtual void Insert(const QString & name, const QString & value, bool onlywrite) = 0;
+        virtual void Sync(const QString & name) = 0;
     signals:
 
     public slots:

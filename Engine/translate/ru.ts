@@ -553,33 +553,41 @@
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Будет ли  строка удалена после использования максимального числа раз.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="492"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Delete lines after use&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Удалять строки&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Удалять строки&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Change file&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Изменять файл&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../chooserresourcewidget.ui" line="492"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Write file&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Запись&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../chooserresourcewidget.ui" line="512"/>
-        <location filename="../chooserresourcewidget.ui" line="913"/>
+        <location filename="../chooserresourcewidget.ui" line="933"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If lines will be mixed after load. This options selected will result data in random order.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Будут ли строки перемешаны после загрузки.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../chooserresourcewidget.ui" line="515"/>
-        <location filename="../chooserresourcewidget.ui" line="916"/>
+        <location filename="../chooserresourcewidget.ui" line="936"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Mix lines&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Мешать строки&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../chooserresourcewidget.ui" line="535"/>
-        <location filename="../chooserresourcewidget.ui" line="936"/>
+        <location filename="../chooserresourcewidget.ui" line="956"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Max success usage, after which line will be removed. Success definition depends on your script purpose.&lt;/p&gt;&lt;p&gt;For example, if you register accounts and define proxy, this integer will designate maximum registration from one proxy.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Максимальное количество успешных использований. Определение успешности использования зависит от назначения скрипта.&lt;/p&gt;&lt;p&gt;Например, если скрипт регистрирует аккаунты, а ресурс задает прокси, то значение поля задает количество успешных регистраций с одного прокси.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../chooserresourcewidget.ui" line="538"/>
-        <location filename="../chooserresourcewidget.ui" line="939"/>
-        <location filename="../chooserresourcewidget.ui" line="1395"/>
-        <location filename="../chooserresourcewidget.ui" line="1877"/>
+        <location filename="../chooserresourcewidget.ui" line="959"/>
+        <location filename="../chooserresourcewidget.ui" line="1415"/>
+        <location filename="../chooserresourcewidget.ui" line="1897"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Max success usage&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Успешных использований&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -590,37 +598,37 @@
     </message>
     <message>
         <location filename="../chooserresourcewidget.ui" line="554"/>
-        <location filename="../chooserresourcewidget.ui" line="977"/>
-        <location filename="../chooserresourcewidget.ui" line="1411"/>
-        <location filename="../chooserresourcewidget.ui" line="1909"/>
+        <location filename="../chooserresourcewidget.ui" line="997"/>
+        <location filename="../chooserresourcewidget.ui" line="1431"/>
+        <location filename="../chooserresourcewidget.ui" line="1929"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Max fail usage&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Ошибочных использований&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../chooserresourcewidget.ui" line="567"/>
-        <location filename="../chooserresourcewidget.ui" line="1012"/>
+        <location filename="../chooserresourcewidget.ui" line="1032"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How many times one line could be used by different threads.&lt;/p&gt;&lt;p&gt;For example is you set it to 5 and the resource is proxy - one proxy could be used with up to 5 threads simultaneously.&lt;/p&gt;&lt;p&gt;If you set it too high - proxy could be banned by server.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Сколько раз одна и та же строка может быть использовна разными потоками.&lt;/p&gt;&lt;p&gt;Например, если Вы установите этот параметр в 5, а ресурс задает прокси, то один прокси может быть использован с 5 тредов одновременно.&lt;/p&gt;&lt;p&gt;Если Вы выставите это значение слишком высоко, то прокси может быть забанен сервером.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../chooserresourcewidget.ui" line="570"/>
-        <location filename="../chooserresourcewidget.ui" line="1015"/>
-        <location filename="../chooserresourcewidget.ui" line="1427"/>
-        <location filename="../chooserresourcewidget.ui" line="1941"/>
+        <location filename="../chooserresourcewidget.ui" line="1035"/>
+        <location filename="../chooserresourcewidget.ui" line="1447"/>
+        <location filename="../chooserresourcewidget.ui" line="1961"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Max number of simultaneous use&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Количество одновременных использований&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../chooserresourcewidget.ui" line="583"/>
-        <location filename="../chooserresourcewidget.ui" line="1050"/>
+        <location filename="../chooserresourcewidget.ui" line="1070"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Interval between usage. How much time needed to wait to use line repeatedly.&lt;/p&gt;&lt;p&gt;For example, if you register accounts and define proxy this integer will designate maximum interval between usage of each proxy.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Интервал между использованиями. Сколько времени нужно ждать, чтобы скрипт получил доступ к ресурсу повторно.&lt;/p&gt;&lt;p&gt;Например, если скрипт регистрирует аккаунты, а ресурс задает прокси, то этот параметр будет задавать интервал между использованиями прокси.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../chooserresourcewidget.ui" line="586"/>
-        <location filename="../chooserresourcewidget.ui" line="1053"/>
-        <location filename="../chooserresourcewidget.ui" line="1443"/>
-        <location filename="../chooserresourcewidget.ui" line="1973"/>
+        <location filename="../chooserresourcewidget.ui" line="1073"/>
+        <location filename="../chooserresourcewidget.ui" line="1463"/>
+        <location filename="../chooserresourcewidget.ui" line="1993"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Interval between usage(millisecond)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Время между использованиями&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -631,9 +639,9 @@
     </message>
     <message>
         <location filename="../chooserresourcewidget.ui" line="693"/>
-        <location filename="../chooserresourcewidget.ui" line="1094"/>
-        <location filename="../chooserresourcewidget.ui" line="1576"/>
-        <location filename="../chooserresourcewidget.ui" line="2028"/>
+        <location filename="../chooserresourcewidget.ui" line="1114"/>
+        <location filename="../chooserresourcewidget.ui" line="1596"/>
+        <location filename="../chooserresourcewidget.ui" line="2048"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Reload periodically&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Перегружать переоидически&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -644,94 +652,104 @@
     </message>
     <message>
         <location filename="../chooserresourcewidget.ui" line="719"/>
-        <location filename="../chooserresourcewidget.ui" line="1123"/>
-        <location filename="../chooserresourcewidget.ui" line="1592"/>
-        <location filename="../chooserresourcewidget.ui" line="2051"/>
+        <location filename="../chooserresourcewidget.ui" line="1143"/>
+        <location filename="../chooserresourcewidget.ui" line="1612"/>
+        <location filename="../chooserresourcewidget.ui" line="2071"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Reload interval (millisecond)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Интервал перезагрузки&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../chooserresourcewidget.ui" line="760"/>
-        <location filename="../chooserresourcewidget.ui" line="1164"/>
+        <location filename="../chooserresourcewidget.ui" line="1184"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If data needs to be renewed in certain periods of time.&lt;/p&gt;&lt;p&gt;In this case all information about usage of lines will be cleared periodically and data could be used again.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Нужно ли обновлять информацию об использовании данных периодически.&lt;/p&gt;&lt;p&gt;Если выбрать эту опцию, данные могут быть использованы повторно через промежутки времени.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../chooserresourcewidget.ui" line="763"/>
-        <location filename="../chooserresourcewidget.ui" line="1167"/>
-        <location filename="../chooserresourcewidget.ui" line="1646"/>
-        <location filename="../chooserresourcewidget.ui" line="2086"/>
+        <location filename="../chooserresourcewidget.ui" line="1187"/>
+        <location filename="../chooserresourcewidget.ui" line="1666"/>
+        <location filename="../chooserresourcewidget.ui" line="2106"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Renew periodically&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Обновлять периодически&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../chooserresourcewidget.ui" line="776"/>
-        <location filename="../chooserresourcewidget.ui" line="1180"/>
-        <location filename="../chooserresourcewidget.ui" line="1666"/>
-        <location filename="../chooserresourcewidget.ui" line="2106"/>
+        <location filename="../chooserresourcewidget.ui" line="1200"/>
+        <location filename="../chooserresourcewidget.ui" line="1686"/>
+        <location filename="../chooserresourcewidget.ui" line="2126"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How often engine will renew data.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Как часто движок будет обновлять данные&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../chooserresourcewidget.ui" line="779"/>
-        <location filename="../chooserresourcewidget.ui" line="1183"/>
-        <location filename="../chooserresourcewidget.ui" line="1669"/>
-        <location filename="../chooserresourcewidget.ui" line="2109"/>
+        <location filename="../chooserresourcewidget.ui" line="1203"/>
+        <location filename="../chooserresourcewidget.ui" line="1689"/>
+        <location filename="../chooserresourcewidget.ui" line="2129"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Renew interval&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Частота обновлений&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1828"/>
+        <location filename="../chooserresourcewidget.ui" line="841"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If engine will read from file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Будет ли движок читать из файла.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../chooserresourcewidget.ui" line="844"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Read file&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Чтение&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../chooserresourcewidget.ui" line="1848"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If rows will be deleted after max success usage or max fail usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1831"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Delete rows after use&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <location filename="../chooserresourcewidget.ui" line="1851"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Change table&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Изменять таблицу&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1851"/>
+        <location filename="../chooserresourcewidget.ui" line="1871"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If rows will be mixed after load. This options selected will result data in random order.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1854"/>
+        <location filename="../chooserresourcewidget.ui" line="1874"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Mix rows&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1874"/>
+        <location filename="../chooserresourcewidget.ui" line="1894"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Max success usage, after which row will be removed. Success definition depends on your script purpose.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1906"/>
+        <location filename="../chooserresourcewidget.ui" line="1926"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Max row usage, after which line will be removed. Fail is often page load timeout or wait timeout.&lt;/p&gt;&lt;p&gt;If you set this property low - resource will be banned quickly, otherwise engine will try a lot of time before give up with each row.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1938"/>
+        <location filename="../chooserresourcewidget.ui" line="1958"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How many times one row could be used by different threads.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1970"/>
+        <location filename="../chooserresourcewidget.ui" line="1990"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Interval between usage. How much time needed to wait to use row repeatedly.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="2025"/>
+        <location filename="../chooserresourcewidget.ui" line="2045"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If rows need to be reloaded periodically in certain periods of time.&lt;/p&gt;&lt;p&gt;This is expensive option, use it only if you sure, that table content will change.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="2048"/>
+        <location filename="../chooserresourcewidget.ui" line="2068"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How often engine will reload table content.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="2083"/>
+        <location filename="../chooserresourcewidget.ui" line="2103"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If data needs to be renewed in certain periods of time.&lt;/p&gt;&lt;p&gt;In this case all information about usage of files will be cleared periodically and rows could be used again.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -741,27 +759,27 @@
     </message>
     <message>
         <location filename="../chooserresourcewidget.ui" line="824"/>
-        <location filename="../chooserresourcewidget.ui" line="1228"/>
-        <location filename="../chooserresourcewidget.ui" line="1710"/>
-        <location filename="../chooserresourcewidget.ui" line="2002"/>
+        <location filename="../chooserresourcewidget.ui" line="1248"/>
+        <location filename="../chooserresourcewidget.ui" line="1730"/>
+        <location filename="../chooserresourcewidget.ui" line="2022"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If this option is set, еngine will try to use same lines again and again. Otherwise, new line will be used on every resource request.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;При использовании жадного алгоритма, движок будет использовать одни и те же ресурсы пока не закончится число их успехов или неудач.&lt;/p&gt;&lt;p&gt;Иначе движок будет пробовать работать с разными ресурсами.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../chooserresourcewidget.ui" line="827"/>
-        <location filename="../chooserresourcewidget.ui" line="1231"/>
-        <location filename="../chooserresourcewidget.ui" line="1713"/>
-        <location filename="../chooserresourcewidget.ui" line="2005"/>
+        <location filename="../chooserresourcewidget.ui" line="1251"/>
+        <location filename="../chooserresourcewidget.ui" line="1733"/>
+        <location filename="../chooserresourcewidget.ui" line="2025"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Greedy algorithm&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Жадный алгоритм&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="864"/>
+        <location filename="../chooserresourcewidget.ui" line="884"/>
         <source>Urls separated by | symbol</source>
         <translation>Ссылки с разделителем |</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1643"/>
+        <location filename="../chooserresourcewidget.ui" line="1663"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If data needs to be renewed in certain periods of time.&lt;/p&gt;&lt;p&gt;In this case all information about usage of files will be cleared periodically and files could be used again.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Нужно ли обновлять информацию об использовании данных периодически.&lt;/p&gt;&lt;p&gt;Если выбрать эту опцию, данные могут быть использованы повторно через промежутки времени.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -770,77 +788,77 @@
         <translation type="vanished">Список url, разделенных запятыми</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="974"/>
+        <location filename="../chooserresourcewidget.ui" line="994"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Max fail usage, after which line will be removed. Fail is often page load timeout or wait timeout.&lt;/p&gt;&lt;p&gt;If you set this property low - resource will be banned quickly, otherwise engine will try a lot of time before give up with each line.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Максимальное количество ошибочных использований. Как правило это ошибки загрузки страниц или превышение периодов ожидания.&lt;/p&gt;&lt;p&gt;Если вы сделаете этот параметр достаточно маленьким - ресурс будет использован быстро, иначе движок будет повторять попытки множество раз для каждой строки.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1091"/>
+        <location filename="../chooserresourcewidget.ui" line="1111"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If url needs to be reloaded periodically in certain periods of time.&lt;/p&gt;&lt;p&gt;For example, you can load proxies from url and this option enable, engine will reload fresh proxies.&lt;/p&gt;&lt;p&gt;This is expensive option, use it only if you sure, that url content will change.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Должен ли url быть перезагружен периодически через определенные периоды времени.&lt;/p&gt;&lt;p&gt;Например, эта функция может быть использована для обновления списка прокси с веб-сервиса.&lt;/p&gt;&lt;p&gt;Эта функция может увеличить потребление ресурсов, используйте ее только если уверены, что содержимое url будет изменяться.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1120"/>
+        <location filename="../chooserresourcewidget.ui" line="1140"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How often engine will reload url.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Как часто движок будет загружать url.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1268"/>
+        <location filename="../chooserresourcewidget.ui" line="1288"/>
         <source>Directory</source>
         <translation>Папка</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1346"/>
+        <location filename="../chooserresourcewidget.ui" line="1366"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If files will be deleted after max success usage or max fail usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Будет ли  файл удален после использования максимального числа раз.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1349"/>
+        <location filename="../chooserresourcewidget.ui" line="1369"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Delete files after use&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Удалять после использования&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1369"/>
+        <location filename="../chooserresourcewidget.ui" line="1389"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If files will be mixed after load. This options selected will result data in random order.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Будут ли файлы перемешаны после загрузки.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1372"/>
+        <location filename="../chooserresourcewidget.ui" line="1392"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Mix files&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Перемешивать файлы&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1392"/>
+        <location filename="../chooserresourcewidget.ui" line="1412"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Max success usage, after which file will be removed. Success definition depends on your script purpose.&lt;/p&gt;&lt;p&gt;For example, if you register accounts and define picture, this integer will designate maximum times one picture could be in different accounts.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Максимальное количество успешных использований. Определение успешности использования зависит от назначения скрипта.&lt;/p&gt;&lt;p&gt;Например, если скрипт регистрирует аккаунты, а ресурс задает аватары, которые находятся в папке, то значение поля задает сколько раз один аватар может быть использован для разных аккаунтов.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1408"/>
+        <location filename="../chooserresourcewidget.ui" line="1428"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Max fail usage, after which line will be removed. Fail is often page load timeout or wait timeout.&lt;/p&gt;&lt;p&gt;If you set this property low - resource will be banned quickly, otherwise engine will try a lot of time before give up with each file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Максимальное количество ошибочных использований. Как правило это ошибки загрузки страниц или превышение периодов ожидания.&lt;/p&gt;&lt;p&gt;Если вы сделаете этот параметр достаточно маленьким - ресурс будет использован быстро, иначе движок будет повторять попытки множество раз для каждого файла.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1424"/>
+        <location filename="../chooserresourcewidget.ui" line="1444"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How many times one file could be used by different threads.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Сколько раз один и тот же файл может быть использовн разными потоками.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1440"/>
+        <location filename="../chooserresourcewidget.ui" line="1460"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Interval between usage. How much time needed to wait to use file repeatedly.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Интервал между использованиями. Сколько времени нужно ждать, чтобы скрипт получил доступ к файлу повторно.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1547"/>
+        <location filename="../chooserresourcewidget.ui" line="1567"/>
         <source>Wildcard</source>
         <translation>Маска</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1573"/>
+        <location filename="../chooserresourcewidget.ui" line="1593"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If folder content needs to be reloaded periodically in certain periods of time.&lt;/p&gt;&lt;p&gt;This is expensive option, use it only if you sure, that folder content will change.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Должна ли папка быть перезагружена через определенные периоды времени.&lt;/p&gt;&lt;p&gt;Эта функция может увеличить потребление ресурсов, используйте ее только если уверены, что файл будет изменяться.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1589"/>
+        <location filename="../chooserresourcewidget.ui" line="1609"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How often engine will reload directory content.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Как часто движок будет перезагружать папку.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -850,42 +868,48 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="417"/>
+        <location filename="../chooserresourcewidget.cpp" line="490"/>
         <source>No groups selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="438"/>
+        <location filename="../chooserresourcewidget.cpp" line="511"/>
         <source>Field is empty</source>
         <translation>Поле пустое</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="477"/>
+        <location filename="../chooserresourcewidget.cpp" line="550"/>
         <source>File not exists</source>
         <translation>Файл не существует</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="514"/>
+        <location filename="../chooserresourcewidget.cpp" line="587"/>
         <source>Url not valid</source>
         <translation>Ссылка не правильная</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="543"/>
+        <location filename="../chooserresourcewidget.cpp" line="616"/>
         <source>Directory not exists</source>
         <translation>Папка не существует</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="630"/>
+        <location filename="../chooserresourcewidget.cpp" line="705"/>
         <source>Open File</source>
         <translation>Открыть файл</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="630"/>
+        <location filename="../chooserresourcewidget.cpp" line="705"/>
+        <location filename="../chooserresourcewidget.cpp" line="712"/>
         <source>All Files (*.*)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="639"/>
+        <location filename="../chooserresourcewidget.cpp" line="712"/>
+        <source>Save File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../chooserresourcewidget.cpp" line="723"/>
         <source>Open Directory</source>
         <translation>Открыть папку</translation>
     </message>

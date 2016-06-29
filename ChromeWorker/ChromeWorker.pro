@@ -42,7 +42,8 @@ SOURCES += main.cpp \
     toolboxpreprocessor.cpp \
     replaceall.cpp \
     convertencoding.cpp \
-    fixcontentcharset.cpp
+    fixcontentcharset.cpp \
+    extract_resources.cpp
 
 INCLUDEPATH += $(BAS_PATH_WORKER)/include
 
@@ -95,7 +96,8 @@ HEADERS += \
     toolboxpreprocessor.h \
     replaceall.h \
     convertencoding.h \
-    fixcontentcharset.h
+    fixcontentcharset.h \
+    extract_resources.h
 
 INCLUDEPATH += xml json png
 

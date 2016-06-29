@@ -23,9 +23,14 @@ private:
     bool IsInitialized;
     bool IsEditCancel;
 
+    bool IsMaximize;
+    bool IsMinimize;
+
 
     std::mutex mut;
     std::mutex mut_initialized;
+    std::mutex mut_maximize;
+    std::mutex mut_minimize;
     std::mutex mut_editcancel;
 
 
@@ -33,6 +38,8 @@ public:
     ToolboxV8Handler();
     bool GetIsInitialized();
     bool GetIsEditCancel();
+    bool GetIsMaximize();
+    bool GetIsMinimize();
 
     virtual bool Execute(const CefString& name, CefRefPtr<CefV8Value> object, const CefV8ValueList& arguments, CefRefPtr<CefV8Value>& retval, CefString& exception) OVERRIDE;
     std::pair<ResultClass, bool> GetResult();

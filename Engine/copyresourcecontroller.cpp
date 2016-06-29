@@ -81,7 +81,8 @@ namespace BrowserAutomationStudioFramework
 
             if(!ModelDefaultActual ||
                     (ModelDefaultActual->GetFilename() != ModelFromActual->GetFilename()) ||
-                    (ModelDefaultActual->GetClean() != ModelFromActual->GetClean()) ||
+                    (ModelDefaultActual->GetWrite() != ModelFromActual->GetWrite()) ||
+                    (ModelDefaultActual->GetRead() != ModelFromActual->GetRead()) ||
                     (ModelDefaultActual->GetMix() != ModelFromActual->GetMix()) ||
                     (ModelDefaultActual->GetSuccessAttempts() != ModelFromActual->GetSuccessAttempts()) ||
                     (ModelDefaultActual->GetFailAttempts() != ModelFromActual->GetFailAttempts()) ||
@@ -281,9 +282,13 @@ namespace BrowserAutomationStudioFramework
             {
                 ModelToActual->SetFilename(ModelFromActual->GetFilename());
             }
-            if(!ModelDefaultActual || (ModelDefaultActual->GetClean() != ModelFromActual->GetClean()))
+            if(!ModelDefaultActual || (ModelDefaultActual->GetRead() != ModelFromActual->GetRead()))
             {
-                ModelToActual->SetClean(ModelFromActual->GetClean());
+                ModelToActual->SetRead(ModelFromActual->GetRead());
+            }
+            if(!ModelDefaultActual || (ModelDefaultActual->GetWrite() != ModelFromActual->GetWrite()))
+            {
+                ModelToActual->SetWrite(ModelFromActual->GetWrite());
             }
             if(!ModelDefaultActual || (ModelDefaultActual->GetMix() != ModelFromActual->GetMix()))
             {

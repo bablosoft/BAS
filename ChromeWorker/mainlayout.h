@@ -7,6 +7,7 @@
 class MainLayout
 {
     int DevToolsRectWidth;
+    int ToolBoxRectHeight;
     void MoveDevTools();
     void CalculateAllSize(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight, RECT& DevToolsRectangle, RECT& ToolboxRectangle, RECT& BrowserRectangle);
     bool DevToolsTab;
@@ -18,6 +19,7 @@ public:
 
     //Minimize/Maximize
     bool IsMinimized;
+    bool IsToolboxMaximized;
     HBITMAP ButtonMinimize, ButtonMaximize;
     HWND HButtonMinimizeMaximize;
     LONG SavelStyle,SavelExStyle;
@@ -45,7 +47,7 @@ public:
 
     int BrowserWidth, BrowserHeight, WindowWidth, WindowHeight;
 
-    MainLayout();
+    MainLayout(int ToolboxHeight, int ScenarioWidth);
     void MinimizeOrMaximize(HWND MainWindow, HWND ParentWindow);
 
     void Update(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
@@ -54,6 +56,8 @@ public:
     bool IsDevToolsTab();
     void UpdateTabs();
     void UpdateState(StateClass State);
+    void MaximizeToolbox(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
+    void MinimizeToolbox(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
     std::pair<int,int> GetDefaultWindowSize();
     std::pair<int,int> GetDefaultBrowserSize();
     RECT GetDevToolsRectangle(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);

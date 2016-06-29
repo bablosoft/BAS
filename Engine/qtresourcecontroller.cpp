@@ -183,7 +183,8 @@ namespace BrowserAutomationStudioFramework
             m->SetName(r->GetVariableName());
             m->SetDescription(r->GetDescription());
             m->SetFilename(w->findChild<QLineEdit *>("FileFilename")->text());
-            m->SetClean(w->findChild<QCheckBox *>("FileClean")->isChecked());
+            m->SetRead(w->findChild<QCheckBox *>("FileRead")->isChecked());
+            m->SetWrite(w->findChild<QCheckBox *>("FileWrite")->isChecked());
             m->SetMix(w->findChild<QCheckBox *>("FileMix")->isChecked());
             m->SetSuccessAttempts(w->findChild<QSpinBox *>("FileMaxSuccess")->value());
             m->SetFailAttempts(w->findChild<QSpinBox *>("FileMaxFail")->value());
@@ -656,7 +657,8 @@ namespace BrowserAutomationStudioFramework
         {
             ResourceModelFile * r = qobject_cast<ResourceModelFile *>(res);
             w->GetTemplateWidgetByType(true,Type)->findChild<QLineEdit *>("FileFilename")->setText(r->GetFilename());
-            w->GetTemplateWidgetByType(true,Type)->findChild<QCheckBox *>("FileClean")->setChecked(r->GetClean());
+            w->GetTemplateWidgetByType(true,Type)->findChild<QCheckBox *>("FileWrite")->setChecked(r->GetWrite());
+            w->GetTemplateWidgetByType(true,Type)->findChild<QCheckBox *>("FileRead")->setChecked(r->GetRead());
             w->GetTemplateWidgetByType(true,Type)->findChild<QCheckBox *>("FileMix")->setChecked(r->GetMix());
             w->GetTemplateWidgetByType(true,Type)->findChild<QSpinBox *>("FileMaxSuccess")->setValue(r->GetSuccessAttempts());
             w->GetTemplateWidgetByType(true,Type)->findChild<QSpinBox *>("FileMaxFail")->setValue(r->GetFailAttempts());

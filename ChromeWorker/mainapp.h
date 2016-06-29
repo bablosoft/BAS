@@ -17,6 +17,7 @@
 #include "scenariov8handler.h"
 #include "variablesextractor.h"
 #include "extract_functions.h"
+#include "extract_resources.h"
 #include "settings.h"
 
 class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderProcessHandler
@@ -84,7 +85,8 @@ class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderP
     int ImageHeight;
     MainLayout *Layout;
 
-    std::string Code, Resources, Variables, Functions;
+    std::string Code, Resources, AdditionalResources, Variables, Functions;
+    bool ResourcesChanged;
 
     void HandleMainBrowserEvents();
     void HandleToolboxBrowserEvents();

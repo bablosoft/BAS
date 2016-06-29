@@ -251,8 +251,15 @@ namespace BrowserAutomationStudioFramework
         StringBoxProxy->ReloadOnDemad();
     }
 
-    void EngineResourceStringBox::Insert(const QString& value)
+    void EngineResourceStringBox::Insert(const QString& value, bool onlywrite)
     {
-        Box->Put(QStringList()<<value);
+        Box->Insert(value, onlywrite);
     }
+
+    void EngineResourceStringBox::Sync()
+    {
+        emit Synced();
+    }
+
+
 }

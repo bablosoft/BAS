@@ -314,7 +314,8 @@ namespace BrowserAutomationStudioFramework
             m->SetEnabledByUser(attr["Enabled"].toInt());
 
             m->SetFilename(attr["Filename"]);
-            m->SetClean(attr["Clean"].toInt());
+            m->SetWrite(attr["Clean"].toInt());
+            m->SetRead(attr["Read"].toInt());
             m->SetMix(attr["Mix"].toInt());
             m->SetSuccessAttempts(attr["MaxSuccess"].toInt());
             m->SetFailAttempts(attr["MaxFail"].toInt());
@@ -728,7 +729,8 @@ namespace BrowserAutomationStudioFramework
         {
             ResourceModelFile * r = qobject_cast<ResourceModelFile *>(m);
             xmlWriter.writeTextElement("Filename",r->GetFilename());
-            xmlWriter.writeTextElement("Clean",QString::number(r->GetClean()));
+            xmlWriter.writeTextElement("Clean",QString::number(r->GetWrite()));
+            xmlWriter.writeTextElement("Read",QString::number(r->GetRead()));
             xmlWriter.writeTextElement("Mix",QString::number(r->GetMix()));
             xmlWriter.writeTextElement("MaxSuccess",QString::number(r->GetSuccessAttempts()));
             xmlWriter.writeTextElement("MaxFail",QString::number(r->GetFailAttempts()));

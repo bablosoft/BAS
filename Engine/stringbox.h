@@ -32,6 +32,7 @@ namespace BrowserAutomationStudioFramework
     public:
         explicit StringBox(QObject *parent = 0);
         virtual void Put(const QStringList& list);
+        virtual void Insert(const QString& str, bool onlywrite);
         virtual StringBoxItem Get(const QSet<QString>& refuse);
         virtual QList<QString> GetAll();
         virtual QList<QString> GetRandomSubarrayData(int size);
@@ -40,6 +41,7 @@ namespace BrowserAutomationStudioFramework
         virtual int GetTotalLength();
 
     signals:
+
     public slots:
         virtual void Success(const QString& str);
         virtual void Fail(const QString& str);

@@ -27,10 +27,11 @@ namespace BrowserAutomationStudioFramework
         virtual void SetAtIndex(int index, const QString& value) = 0;
         virtual int GetTotalLength() = 0;
 
+
     signals:
         void Removed(const QString& line);
         void NeedToUpdate();
-
+        void Inserted(const QString& str);
     public slots:
         virtual void Success(const QString& str) = 0;
         virtual void Fail(const QString& str) = 0;
@@ -41,6 +42,7 @@ namespace BrowserAutomationStudioFramework
         virtual void Reload() = 0;
         virtual void SetDoMix(bool DoMix) = 0;
         virtual void SetGreedy(bool Greedy) = 0;
+        virtual void Insert(const QString& str, bool onlywrite) = 0;
     };
 }
 

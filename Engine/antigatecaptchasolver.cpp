@@ -11,6 +11,11 @@ namespace BrowserAutomationStudioFramework
         Server = "http://antigate.com/";
     }
 
+    void AntigateCaptchaSolver::SetSoftId(const QString& SoftId)
+    {
+        this->SoftId = SoftId;
+    }
+
     void AntigateCaptchaSolver::StartMonitor()
     {
         if(!StartedMonitor)
@@ -96,7 +101,7 @@ namespace BrowserAutomationStudioFramework
         client->setParent(post);
         post->SetHttpClient(client);
         connect(post,SIGNAL(PostedToAntigate(QString,QString,bool)),this,SLOT(PostedToAntigate(QString,QString,bool)));
-        post->Post(i,key,base64,Properties);
+        post->Post(i,key,base64,Properties,SoftId);
         return i;
     }
 

@@ -2203,7 +2203,7 @@ void CopyResourcesTests::CheckIfFileIsChanged()
     ResourceModelFile *Model1 = new ResourceModelFile(_Controller);
     Model1->SetName("name");
     Model1->SetFilename("file1");
-    Model1->SetClean(true);
+    Model1->SetWrite(true);
     Model1->SetMix(true);
     Model1->SetSuccessAttempts(99);
     Model1->SetFailAttempts(999);
@@ -2223,7 +2223,7 @@ void CopyResourcesTests::CheckIfFileIsChanged()
     ResourceModelFile *Model2 = new ResourceModelFile(_Controller);
     Model2->SetName("name");
     Model2->SetFilename("file2");
-    Model2->SetClean(false);
+    Model2->SetWrite(false);
     Model2->SetMix(false);
     Model2->SetSuccessAttempts(991);
     Model2->SetFailAttempts(9919);
@@ -2250,7 +2250,7 @@ void CopyResourcesTests::CheckIfFileIsChanged()
         QFAIL("Object is 0 after cast");
 
     QCOMPARE(ModelResult->GetFilename(),QString("file2"));
-    QCOMPARE(ModelResult->GetClean(),false);
+    QCOMPARE(ModelResult->GetWrite(),false);
     QCOMPARE(ModelResult->GetMix(),false);
     QCOMPARE(ModelResult->GetSuccessAttempts(),991);
     QCOMPARE(ModelResult->GetFailAttempts(),9919);

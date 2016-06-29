@@ -1,5 +1,110 @@
 _L = 
 {
+	
+	"STRING": {"ru": "СТРОКА"},
+	"INT": {"ru": "ЧИСЛО"},
+	"EXPRESSION": {"ru": "ВЫРАЖЕНИЕ"},
+	
+	"Confirm Changes": {"ru": "Подтвердить Изменения"},
+	"Replace old value": {"ru": "Заменить старое значение"},
+	"with new one": {"ru": "новым выражением"},
+	"OK": {"ru": "ОК"},
+	"Enter Value": {"ru": "Введите значение"},
+	"CANCEL": {"ru": "ОТМЕНА"},
+
+	"ACCEPT": {"ru": "ПРИНЯТЬ"},
+	"value1": {"ru": "значение1"},
+	"value2": {"ru": "значение2"},
+	"expression": {"ru": "выражение"},
+	"value": {"ru": "значение"},
+	"string": {"ru": "строка"},
+	"first": {"ru": "первый"},
+	"second": {"ru": "второй"},
+	"index1": {"ru": "индекс1"},
+	"index2": {"ru": "индекс2"},
+	"string part": {"ru": "часть строки"},
+	"replace from": {"ru": "заменить из"},
+	"replace to": {"ru": "заменить на"},
+	"regexp": {"ru": "рег выражение"},
+	"array": {"ru": "массив"},
+	"min": {"ru": "мин"},
+	"max": {"ru": "макс"},
+	"element": {"ru": "элемент"},
+	"number1": {"ru": "число1"},
+	"number2": {"ru": "число2"},
+	"separator": {"ru": "разделитель"},
+	"index": {"ru": "индекс"},
+	"array1": {"ru": "массив1"},
+	"array2": {"ru": "массив2"},
+	"alphabet": {"ru": "словарь"},
+	"length": {"ru": "длина"},
+  	"Returns true if value1 equal value2, otherwise false": {"ru": "Возвращает true, если значение1 равно значению2, в противном случае возвращает false"},
+	"Returns true if value1 is less than value2, otherwise false": {"ru": "Возвращает true, если значение1 меньше значения2, в противном случае возвращает false"},
+	"Returns true if value1 is not greater than value2, otherwise false": {"ru": "Возвращает true, если значение1 не больше значения2, в противном случае возвращает false"},
+	"Returns true if value1 is greater than value2, otherwise false": {"ru": "Возвращает true, если значение1 больше значения2, в противном случае возвращает false"},
+	"Returns true if value1 is not less than value2, otherwise false": {"ru": "Возвращает true, если значение1 не меньше значения2, в противном случае возвращает false"},
+    "Value": {"ru": "Значение"},  
+    "result": {"ru": "результат"},
+    "Code": {"ru": "Код"},
+	"and": {"ru": "и"},
+	"or": {"ru": "или"},
+	"not": {"ru": "не"},
+	"if": {"ru": "если"},
+	"concat": {"ru": "соединить строки"},
+	"length": {"ru": "длина"},
+	"contains": {"ru": "содержит"},
+	"substring": {"ru": "подстрока"},
+	"search": {"ru": "поиск"},
+	"replace": {"ru": "заменить"},
+	"split with string": {"ru": "разделить строкой"},
+	"split with regexp": {"ru": "разделить рег выражением"},
+	"matches": {"ru": "совпадает"},
+	"scan": {"ru": "поиск"},
+	"random number": {"ru": "случайное число"},
+	"random string": {"ru": "случайная строка"},
+	"random alphabet": {"ru": "случайный словарь"},
+	"empty array": {"ru": "пустой массив"},
+	"create array": {"ru": "создать массив"},
+	"array push": {"ru": "добавить в массив"},
+	"array concat": {"ru": "соединить массивы"},
+	"array insert": {"ru": "вставить в массив"},
+	"array length": {"ru": "длина массива"},
+	"array get index": {"ru": "получить элемент"},
+	"array join": {"ru": "массив в строку"},
+	"subarray": {"ru": "подмассив"},
+	"custom": {"ru": "произвольный код"},
+	"Returns true if value1 is true and value2 is true, otherwise false": {"ru": "Возвращает true, если значение1 и значение2 равно true, в противном случае false"},
+	"Returns true if value1 is true or value2 is true, otherwise false": {"ru": "Возвращает true, если значение1 или значение2 равно true, в противном случае false"},
+	"Returns true if value is false and false if value is true": {"ru": "Возвращает true, если значение равно false, и false если значение равно true"},
+	"Returns value1 if expression true and value2 otherwise": {"ru": "Возвращает значение1 если выражение равно true и значение2 в противном случае"},
+	"Add one string to another": {"ru": "Соединить две строки"},
+	"Returns string length": {"ru": "Длина строки"},
+	"Check if one string contains another": {"ru": "Проверить, содержит ли одна строка вторую"},
+	"Takes substring from a given string. First param - string, second - first index, third - second index": {"ru": "Получает подстроку из заданной строки. Первый параметр - строка, второй - первый индекс, третий - второй индекс"},
+	"Searches for string part inside string, if found returns found index, otherwise returns -1": {"ru": "Поиски части строки внутри строки, если строка присутствует, возвращает найденный индекс, в противном случае возвращает -1"},
+	"Replace all occurrences of one string with another": {"ru": "Заменить все вхождения одной строки другой"},
+	"Splits string with defined separator. Returns array of strings": {"ru": "Разделяет строку другой строкой. Возвращает массив строк"},
+	"Splits string with defined regexp. Returns array of strings": {"ru": "Разделяет строку регулярным выражением. Возвращает массив строк"},
+	"Returns true if string matches given regexp": {"ru": "Возвращает true, если строка подходит под регулярное выражение"},
+	"Extract string part with regular expression. For example, string : abc 123 xyz 456, regexp: \\d+ extracts all numbers": {"ru": "Извлечь часть строки с помощью регулярного выражения. Например, строка: abc 123 456 xyz, регулярное выражение: \\d+ извлекает все числа."},
+	"Generate random number": {"ru": "Случайное число"},
+	"Generate random string": {"ru": "Случайная строка"},
+	"Generate random string, with given alphabet. Alphabet is just a string, for example, if alphabet is 01 action will generate random binary number": {"ru": "Генерация случайной строки, с заданным алфавитом. Алфавит это просто строка, например, если алфавит является 01, то действие будет генерировать случайные двоичные числа"},
+	"Creates empty array": {"ru": "Создать пустой массив"},
+	"Creates array with single element": {"ru": "Создать массив с одним элементом"},
+	"Add value to the end of array": {"ru": "Добавить элемент в конец массива"},
+	"Concat several arrays": {"ru": "Объединить 2 массива"},
+	"Add value to specific place of array": {"ru": "Добавить элемент в заданное место массива"},
+	"Get array length": {"ru": "Получить длину массива"},
+	"Get element from array by index": {"ru": "Получить элемент массива с заданным индексом"},
+	"Join array of strings with defined separator": {"ru": "Преобразовать массив в строку с заданным разделителем"},
+	"Takes subarray from a given array. First param - array, second - first index, third - second index": {"ru": "Получает подмассив из заданного массива. Первый параметр - массив, второй - первый индекс, третий - второй индекс"},
+	"Adds numbers": {"ru": "Прибавить числа"},
+	"Substracts numbers": {"ru": "Вычесть числа"},
+	"Multiply numbers": {"ru": "Умножить числа"},
+	"Divide numbers": {"ru": "Разделить числа"},
+	"Execute custom code": {"ru": "Выполнить произвольный код"},
+
 	"Use this action if last captcha was solved wrong.": {"ru": "Используйте это действие, если прошлая капча была решена неправильно"},
 	"Timeout Type": {"ru": "Тип таймаута"},
 	"Captcha Failed": {"ru": "Решено Неверно"},
@@ -363,7 +468,11 @@ function tr(key)
 		for(var i = 0;i< all.length;i++)
 		{
 			var el = $(all[i])
-			el.html(tr(el.html()))
+			if(typeof(el.attr("tr")) == "undefined" || el.attr("tr") != "true" )
+			{
+				el.html(tr(el.html()))
+				el.attr("tr","true")
+			}
 		}
 
 		var all = $("*[placeholder]")
@@ -371,7 +480,11 @@ function tr(key)
 		for(var i = 0;i< all.length;i++)
 		{
 			var el = $(all[i])
-			el.attr("placeholder",tr(el.attr("placeholder")))
+			if(typeof(el.attr("tr")) == "undefined" || el.attr("tr") != "true" )
+			{
+				el.attr("placeholder",tr(el.attr("placeholder")))
+				el.attr("tr","true")
+			}
 		}
 
 		

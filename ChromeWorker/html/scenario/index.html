@@ -30,7 +30,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary resok standartbutton tr" data-dismiss="modal">Ok</button>
+            <span class="tr" style="color:gray;margin-right:10px">(This button will only change task name)</span><button type="button" class="btn btn-primary resok standartbutton tr" data-dismiss="modal">Ok</button>
             <button type="button" class="btn btn-default standartbutton tr" data-dismiss="modal">Cancel</button>
           </div>
         </div>
@@ -223,7 +223,7 @@
   <!--   Styles  -->
   <!-- ========= -->
   <link rel="stylesheet" href="bootstrap.min.css">
-  <link rel="stylesheet" href="bootstrap-theme.min.css">
+  <!--<link rel="stylesheet" href="bootstrap-theme.min.css">-->
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="context.standalone.css">
   <link rel="stylesheet" href="font-awesome.min.css">
@@ -1028,6 +1028,7 @@
 
         $(".dropdown-menu").remove();
 
+        context.destroy()
 
         var elementmenu = [
 

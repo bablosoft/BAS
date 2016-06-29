@@ -83,7 +83,11 @@ namespace BrowserAutomationStudioFramework
     {
         Active = true;
     }
-    void EngineResourceRandomInteger::Insert(const QString& value)
+    void EngineResourceRandomInteger::Insert(const QString& value, bool onlywrite)
+    {
+
+    }
+    void EngineResourceRandomInteger::Sync()
     {
 
     }

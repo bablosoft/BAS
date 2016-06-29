@@ -24,6 +24,7 @@ namespace BrowserAutomationStudioFramework
         QTimer timer;
         int timeout;
         QString Server;
+        QString SoftId;
         void StartMonitor();
         QMap<QString, QString> Properties;
     public:
@@ -32,6 +33,7 @@ namespace BrowserAutomationStudioFramework
     signals:
     public slots:
         void SetServer(const QString& Server);
+        void SetSoftId(const QString& SoftId);
         virtual QString Solve(const QString& base64);
         virtual void ReportBad(const QString& id);
         virtual bool TimeLimited();

@@ -1,0 +1,210 @@
+body
+{
+  /*overflow-y: hidden;*/
+  margin:0px;
+}
+
+
+.available-magnet {
+    fill: yellow;
+    outline: none !important;
+
+}
+
+.available-cell rect {
+    stroke-dasharray: 5, 2;
+}
+
+.expressioneditor-container {
+   z-index:1000;
+}
+
+#expressioneditor-list {
+    width: 250px;
+    float: left;
+   	/*height:220px;*/
+    overflow-y: scroll;
+    padding-top:5px;
+    padding-left:5px;
+
+}
+
+#expressioneditor-constructor {
+    float: none;
+    width: auto;
+    overflow: hidden;
+    position:relative;
+   	/*height:220px;*/
+}
+
+#expressioneditor-overlay
+{
+  width: 100%;
+  bottom: 0px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color:white;
+  z-index: 99999;
+  display:none;
+  
+}
+
+#expressioneditor-overlay-confirm
+{
+  width: 100%;
+  bottom: 0px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color:white;
+  z-index: 99999;
+  display:none;
+  text-align: center;
+}
+
+
+#expressioneditor-container
+{
+  display:none;
+}
+
+#expressioneditor-list div
+{
+  margin-bottom:7px;
+}
+
+.deleteTool circle
+{
+  cursor: hand
+}
+
+.expressioneditor-add-string
+{
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width:100px;
+}
+
+.expressioneditor-add-int
+{
+  position: absolute;
+  left: 130px;
+  top: 10px;
+  width:100px;
+}
+
+
+.expressioneditor-add-expression
+{
+  position: absolute;
+  left: 250px;
+  top: 10px;
+  width:110px;
+}
+
+
+.expressioneditor-container
+{
+  position: relative;
+}
+.expressioneditor-bottom-titlebar
+{
+  position: absolute;
+  right: 30px;
+  top: 190px;
+  z-index:999999999;
+
+}
+
+.expressioneditor-navigator
+{
+  position: absolute;
+  right: 3px;
+  top: 2px;  
+  width:170px;
+  height:170px;
+  background-color:red;
+}
+
+.expressioneditor-bottom-titlebar-text
+{
+  float:right;
+}
+
+.expressioneditor-bottom-titlebar-button button
+{
+  float:right;
+}
+
+#expressioneditor-expression
+{
+  font-style: italic;
+  position:absolute;
+  left:10px;
+}
+
+.expressioneditor-button-accept
+{
+  margin-left:20px
+}
+
+.label
+{
+    font-weight: normal !important;
+    /*font-size: 100% !important;*/
+}
+
+.expressioneditor-overlay-title
+{
+  text-align: center;
+  margin-top: 10%;
+  border-bottom:1px solid #DBDBDB;
+}
+
+.expressioneditor-overlay-data
+{
+  margin-top:20px;
+  margin-left:25%;
+  width:60%;
+}
+
+.expressioneditor-overlay-olddata
+{
+    margin-top:20px;
+}
+
+#expressioneditor-old-value
+{
+  font-weight: bold;
+  word-break: break-word;
+}
+
+.expressioneditor-overlay-buttons
+{
+  margin-top: 75px;
+  border-top:1px solid #DBDBDB;
+  text-align:center;
+  padding-top:10px;
+}
+
+.modal-backdrop
+{
+  z-index:9999999;
+}
+
+#VariableModal
+{
+ z-index:99999999; 
+}
+
+#RecourseModal
+{
+ z-index:99999999; 
+}
+
+.expressioneditor-overlay-buttons .btn
+{
+  min-width:100px;
+}

@@ -12,7 +12,7 @@ namespace BrowserAutomationStudioFramework
     {
     }
 
-    void PostToAntigate::Post(const QString& id,const QString& key,const QString& base64, const QMap<QString,QString>& Properties)
+    void PostToAntigate::Post(const QString& id,const QString& key,const QString& base64, const QMap<QString,QString>& Properties, const QString& soft)
     {
         this->id = id;
         QHash<QString,ContentData> post;
@@ -47,9 +47,10 @@ namespace BrowserAutomationStudioFramework
             post["file"] = DataFile;
         }
 
+        if(!soft.isEmpty())
         {
             ContentData DataSoftId;
-            DataSoftId.DataString = "398";
+            DataSoftId.DataString = soft;
             post["soft_id"] = DataSoftId;
         }
 

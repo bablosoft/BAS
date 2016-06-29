@@ -31,7 +31,8 @@ namespace BrowserAutomationStudioFramework
         virtual void Success();
         virtual void Fail();
         virtual void Die();
-        virtual void Insert(const QString& value);
+        virtual void Insert(const QString& value, bool onlywrite);
+        virtual void Sync();
     };
 }
 

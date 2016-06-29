@@ -66,7 +66,11 @@ namespace BrowserAutomationStudioFramework
     {
 
     }
-    void EngineResourceRandomString::Insert(const QString& value)
+    void EngineResourceRandomString::Insert(const QString& value, bool onlywrite)
+    {
+
+    }
+    void EngineResourceRandomString::Sync()
     {
 
     }

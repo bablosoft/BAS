@@ -657,82 +657,87 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         break;
         case WM_PAINT:
             {
-                HDC hdc;
-                PAINTSTRUCT ps;
-                hdc = BeginPaint(hwnd, &ps);
-
-                RECT br = Layout->GetBrowserRectangle(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
-
-                Layout->CustomDraw(hdc,app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
-
-                std::pair<int, int> size = app->GetImageSize();
-
-                if(size.first > 0 && size.second > 0)
+                if(!Layout->IsToolboxMaximized)
                 {
-                    char * data = app->GetImageData();
+                    HDC hdc;
+                    PAINTSTRUCT ps;
+                    hdc = BeginPaint(hwnd, &ps);
 
-                    BITMAPINFO info;
-                    ZeroMemory(&info, sizeof(BITMAPINFO));
-                    info.bmiHeader.biBitCount = 32;
-                    info.bmiHeader.biWidth = size.first;
-                    info.bmiHeader.biHeight = size.second;
-                    info.bmiHeader.biPlanes = 1;
-                    info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-                    info.bmiHeader.biSizeImage = size.first * size.second * 4;
-                    info.bmiHeader.biCompression = BI_RGB;
+                    RECT br = Layout->GetBrowserRectangle(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
 
-                    if(br.right > br.left && br.bottom > br.top)
-                        StretchDIBits(hdc, br.left, br.bottom, br.right - br.left, br.top - br.bottom, 0, 0, size.first, size.second, data, &info, DIB_RGB_COLORS, SRCCOPY);
-                }
+                    Layout->CustomDraw(hdc,app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
 
-                if(app->GetData()->IsRecord)
-                {
-                    RECT r = Layout->GetStateIndicatorRectangle(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
-                    BITMAP bitmap;
-                    HBITMAP b;
-                    switch(Layout->State)
+                    std::pair<int, int> size = app->GetImageSize();
+
+                    if(size.first > 0 && size.second > 0 )
                     {
-                        case MainLayout::Ready: b = BReady; break;
-                        case MainLayout::Hold: b = BHold; break;
-                        case MainLayout::Finished: b = BFinished; break;
+                        char * data = app->GetImageData();
+
+                        BITMAPINFO info;
+                        ZeroMemory(&info, sizeof(BITMAPINFO));
+                        info.bmiHeader.biBitCount = 32;
+                        info.bmiHeader.biWidth = size.first;
+                        info.bmiHeader.biHeight = size.second;
+                        info.bmiHeader.biPlanes = 1;
+                        info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+                        info.bmiHeader.biSizeImage = size.first * size.second * 4;
+                        info.bmiHeader.biCompression = BI_RGB;
+
+                        if(br.right > br.left && br.bottom > br.top)
+                            StretchDIBits(hdc, br.left, br.bottom, br.right - br.left, br.top - br.bottom, 0, 0, size.first, size.second, data, &info, DIB_RGB_COLORS, SRCCOPY);
                     }
-                    HDC hdcMem = CreateCompatibleDC(hdc);
-                    HGDIOBJ oldBitmap = SelectObject(hdcMem, b);
-                    GetObject(b, sizeof(bitmap), &bitmap);
-                    BitBlt(hdc, r.left, r.top, bitmap.bmWidth, bitmap.bmHeight, hdcMem, 0, 0, SRCCOPY);
-                    SelectObject(hdcMem, oldBitmap);
-                    DeleteDC(hdcMem);
-                }
-                {
-                    LOCK_BROWSER_DATA
-                    BrowserData * d = app->GetData();
-                    if(d->CursorX >= d->ScrollX && d->CursorX <= d->ScrollX + d->WidthBrowser && d->CursorY >= d->ScrollY && d->CursorY <= d->ScrollY + d->HeightBrowser)
-                        DrawIcon(hdc, br.left + (float)(d->CursorX - d->ScrollX) * (float)(br.right - br.left) / (float)(d->WidthBrowser) , br.top + (float)(d->CursorY - d->ScrollY) * (float)(br.bottom - br.top) / (float)(d->HeightBrowser), HCursor);
-                }
-                std::string label;
-                {
-                    LOCK_BROWSER_DATA
-                    label = app->GetData()->_Inspect.label;
-                }
+
+                    if(app->GetData()->IsRecord)
+                    {
+                        RECT r = Layout->GetStateIndicatorRectangle(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
+                        BITMAP bitmap;
+                        HBITMAP b;
+                        switch(Layout->State)
+                        {
+                            case MainLayout::Ready: b = BReady; break;
+                            case MainLayout::Hold: b = BHold; break;
+                            case MainLayout::Finished: b = BFinished; break;
+                        }
+                        HDC hdcMem = CreateCompatibleDC(hdc);
+                        HGDIOBJ oldBitmap = SelectObject(hdcMem, b);
+                        GetObject(b, sizeof(bitmap), &bitmap);
+                        BitBlt(hdc, r.left, r.top, bitmap.bmWidth, bitmap.bmHeight, hdcMem, 0, 0, SRCCOPY);
+                        SelectObject(hdcMem, oldBitmap);
+                        DeleteDC(hdcMem);
+                    }
+
+                    {
+                        LOCK_BROWSER_DATA
+                        BrowserData * d = app->GetData();
+                        if(d->CursorX >= d->ScrollX && d->CursorX <= d->ScrollX + d->WidthBrowser && d->CursorY >= d->ScrollY && d->CursorY <= d->ScrollY + d->HeightBrowser)
+                            DrawIcon(hdc, br.left + (float)(d->CursorX - d->ScrollX) * (float)(br.right - br.left) / (float)(d->WidthBrowser) , br.top + (float)(d->CursorY - d->ScrollY) * (float)(br.bottom - br.top) / (float)(d->HeightBrowser), HCursor);
+                    }
+                    std::string label;
+                    {
+                        LOCK_BROWSER_DATA
+                        label = app->GetData()->_Inspect.label;
+                    }
 
 
-                if(LastLabel != label)
-                {
-                    RECT r = Layout->GetLabelRectangle(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
-                    std::string NewLabel = label;
-                    std::wstring txt = s2ws(NewLabel);
-                    FillRect(hdc,&r,(HBRUSH) (COLOR_WINDOW+1));
-                    DrawText(hdc,txt.c_str(),txt.length(),&r,DT_VCENTER | DT_SINGLELINE);
-                    LastLabel = NewLabel;
+                    if(LastLabel != label)
+                    {
+                        RECT r = Layout->GetLabelRectangle(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
+                        std::string NewLabel = label;
+                        std::wstring txt = s2ws(NewLabel);
+                        FillRect(hdc,&r,(HBRUSH) (COLOR_WINDOW+1));
+                        DrawText(hdc,txt.c_str(),txt.length(),&r,DT_VCENTER | DT_SINGLELINE);
+                        LastLabel = NewLabel;
+                    }
+
+                    if(!hPopupMenu)
+                    {
+                        LOCK_BROWSER_DATA
+                        app->GetData()->_Inspect.Paint(hdc,app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,br.right - br.left,br.bottom - br.top,app->GetData()->ScrollX,app->GetData()->ScrollY,br.left,br.top);
+                    }
+
+                    EndPaint(hwnd, &ps);
                 }
 
-                if(!hPopupMenu)
-                {
-                    LOCK_BROWSER_DATA
-                    app->GetData()->_Inspect.Paint(hdc,app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,br.right - br.left,br.bottom - br.top,app->GetData()->ScrollX,app->GetData()->ScrollY,br.left,br.top);
-                }
-
-                EndPaint(hwnd, &ps);
 
                 return DefWindowProc(hwnd, msg, wParam, lParam);
             }
@@ -752,7 +757,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     worker_log("------------------------Initialize-----------------------");
     std::srand(std::time(0));
     SkipFrames = Settings.SkipFrames();
-    Layout = new MainLayout();
+    Layout = new MainLayout(Settings.ToolboxHeight(),Settings.ScenarioWidth());
     hInst = hInstance;
 
     CefMainArgs main_args(hInstance);

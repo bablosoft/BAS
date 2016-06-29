@@ -1,0 +1,60 @@
+{
+	
+	"name":"Resources",
+	"description":"Advanced way to manipulate resources",
+	"description_small":{"en": "Resources", "ru": "Ресурсы"},
+	"major_version": 1,
+	"minor_version": 0,
+	"developer_name": "bablosoft", 
+	"developer_email": "mail.to.twaego@gmail.com", 
+	"developer_site": "https://bablosoft.com",
+	"api_version": 1,
+	"actions":
+	[
+
+		{
+			"name":"CreateResource",
+			"description":{"en": "Create Resource","ru": "Создать Ресурс"},
+			"is_element": false,
+			"interface": "create_resource_interface.js",
+			"select": "create_resource_select.js",
+			"code": [{"file":"create_resource_code.js", "name": "create_resource_code"}]
+		},
+		{
+			"name":"DeleteCurrentElement",
+			"description":{"en": "Delete Current Element","ru": "Удалить Текущий Элемент"},
+			"is_element": false,
+			"interface": "delete_current_element_interface.js",
+			"select": "delete_current_element_select.js",
+			"code": [{"file":"delete_current_element_code.js", "name": "delete_current_element_code"}]
+		},
+		{
+			"name":"AddElement",
+			"description":{"en": "Add Element","ru": "Добавить Элемент"},
+			"is_element": false,
+			"interface": "add_element_interface.js",
+			"select": "add_element_select.js",
+			"code": [{"file":"add_element_code.js", "name": "add_element_code"}]
+		}
+	],
+	"localize": 
+	{
+		"Delete Current Element" : {"ru": "Удалить текущий элемент"},
+		"Resource name" : {"ru": "Имя ресурса"},
+		"Data to add" : {"ru": "Данные для добавления"},
+		"Delete from file/database instantly" : {"ru": "Удалить из файла/базы мгновенно"},
+		"In order to manage resource lifetime manually, you should first set resource success and fail number to a big value." : {"ru": "Чтобы управлять жизнью ресурсов вручную нужно установить количество успехов и неудач при создании ресурса в большое значение."},
+		"Add to file/database instantly" : {"ru": "Добавить в файл/базу мгновенно"},
+		"Only write to file/database" : {"ru": "Только добавить в файл/базу"},
+		"Success Usage" : {"ru": "Количество успехов"},
+		"Fail Usage" : {"ru": "Количество неудач"},
+		"Simultaneous Usage" : {"ru": "Одновременных использований"},
+		"Interval Between Usage" : {"ru": "Интервалы между использованиями"},
+		"Greedy Usage Algorithm" : {"ru": "Жадный алгоритм"},
+		"Wait For Resource" : {"ru": "Ждать появления"}
+
+	},
+	"engine": [],
+	"browser": [],
+	"depends": []	
+}

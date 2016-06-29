@@ -11,7 +11,8 @@ namespace BrowserAutomationStudioFramework
     {
         Q_OBJECT
         QString filename;
-        bool clean;
+        bool write;
+        bool read;
         bool mix;
         int success;
         int fails;
@@ -30,8 +31,11 @@ namespace BrowserAutomationStudioFramework
         QString GetFilename();
         void SetFilename(const QString& val);
 
-        bool GetClean();
-        void SetClean(bool val);
+        bool GetWrite();
+        void SetWrite(bool val);
+
+        bool GetRead();
+        void SetRead(bool val);
 
         bool GetMix();
         void SetMix(bool val);

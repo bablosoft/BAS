@@ -32,6 +32,7 @@ MainApp::MainApp()
     TypeTextTaskIsActive = false;
     TypeTextIsFirstLetter = true;
     IsWaitingForLoad = false;
+    ResourcesChanged = true;
     TypeTextLastTime = 0;
     LastMouseTrack = 0;
     ImageWidth = 0;
@@ -1016,11 +1017,16 @@ void MainApp::SetCodeCallback(const std::string & code)
         Code = " ";
     Variables = extract_variables(code);
     Functions = extract_functions(code);
+    std::string AdditionalResourcesPrev = AdditionalResources;
+    AdditionalResources = extract_resources(code);
+    if(AdditionalResourcesPrev!=AdditionalResources)
+        ResourcesChanged = true;
 }
 
 void MainApp::SetResourceCallback(const std::string & resources)
 {
     Resources = resources;
+    ResourcesChanged = true;
 }
 
 void MainApp::SetInitialStateCallback(const std::string & lang, int IsVisible)
@@ -1256,6 +1262,10 @@ void MainApp::HandleScenarioBrowserEvents()
         worker_log(std::string("HandleScenarioBrowserEvents<<") + new_code);
         Variables = extract_variables(new_code);
         Functions = extract_functions(new_code);
+        std::string AdditionalResourcesPrev = AdditionalResources;
+        AdditionalResources = extract_resources(new_code);
+        if(AdditionalResourcesPrev != AdditionalResources)
+            ResourcesChanged = true;
         xml_encode(new_code);
         SendTextResponce(std::string("<Messages><ReceivedCode>") + new_code + std::string("</ReceivedCode></Messages>"));
         if(!DelayedSend.empty())
@@ -1369,11 +1379,11 @@ void MainApp::HandleToolboxBrowserEvents()
 
     }
 
-    if(toolboxv8handler->GetIsInitialized() && !Resources.empty())
+    if(toolboxv8handler->GetIsInitialized() && (ResourcesChanged))
     {
-        std::string script = std::string("BrowserAutomationStudio_SetResources(") + picojson::value(Resources.data()).serialize() + std::string(")");
+        std::string script = std::string("BrowserAutomationStudio_SetResources(") + picojson::value(Resources.data()).serialize() + "," + picojson::value(AdditionalResources.data()).serialize() + std::string(")");
         BrowserToolbox->GetMainFrame()->ExecuteJavaScript(script,BrowserToolbox->GetMainFrame()->GetURL(), 0);
-        Resources.clear();
+        ResourcesChanged = false;
     }
 
     if(toolboxv8handler->GetIsInitialized() && !Variables.empty())
@@ -1388,6 +1398,24 @@ void MainApp::HandleToolboxBrowserEvents()
         std::string script = std::string("BrowserAutomationStudio_SetFunctions(") + picojson::value(Functions.data()).serialize() + std::string(")");
         BrowserToolbox->GetMainFrame()->ExecuteJavaScript(script,BrowserToolbox->GetMainFrame()->GetURL(), 0);
         Functions.clear();
+    }
+
+    if(toolboxv8handler->GetIsMaximize())
+    {
+        if(BrowserToolbox)
+        {
+            Layout->MaximizeToolbox(GetData()->WidthBrowser,GetData()->HeightBrowser,GetData()->WidthAll,GetData()->HeightAll);
+            BrowserToolbox->GetMainFrame()->ExecuteJavaScript("BrowserAutomationStudio_MaximizeCallback()",BrowserToolbox->GetMainFrame()->GetURL(), 0);
+
+        }
+    }
+
+    if(toolboxv8handler->GetIsMinimize())
+    {
+        if(BrowserToolbox)
+        {
+            Layout->MinimizeToolbox(GetData()->WidthBrowser,GetData()->HeightBrowser,GetData()->WidthAll,GetData()->HeightAll);
+        }
     }
 }
 
@@ -1820,6 +1848,8 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
         object->SetValue("BrowserAutomationStudio_Append", CefV8Value::CreateFunction("BrowserAutomationStudio_Append", toolboxv8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("BrowserAutomationStudio_Initialized", CefV8Value::CreateFunction("BrowserAutomationStudio_Initialized", toolboxv8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("BrowserAutomationStudio_EditCancel", CefV8Value::CreateFunction("BrowserAutomationStudio_EditCancel", toolboxv8handler), V8_PROPERTY_ATTRIBUTE_NONE);
+        object->SetValue("BrowserAutomationStudio_Maximize", CefV8Value::CreateFunction("BrowserAutomationStudio_Maximize", toolboxv8handler), V8_PROPERTY_ATTRIBUTE_NONE);
+        object->SetValue("BrowserAutomationStudio_Minimize", CefV8Value::CreateFunction("BrowserAutomationStudio_Minimize", toolboxv8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("_K", CefV8Value::CreateString(Lang), V8_PROPERTY_ATTRIBUTE_NONE);
     }
 

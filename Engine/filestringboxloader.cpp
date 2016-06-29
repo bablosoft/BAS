@@ -11,6 +11,18 @@ namespace BrowserAutomationStudioFramework
         CurrentStreamPosition = 0;
         CurrentFileListIterator = 0;
         WaitingForNewPortionReuqest = false;
+        Read = true;
+        Write = false;
+    }
+
+    void FileStringBoxLoader::SetRead(bool Read)
+    {
+        this->Read = Read;
+    }
+
+    void FileStringBoxLoader::SetWrite(bool Write)
+    {
+        this->Write = Write;
     }
 
     void FileStringBoxLoader::SetFileName(const QString& FileName)
@@ -70,6 +82,14 @@ namespace BrowserAutomationStudioFramework
 
     void FileStringBoxLoader::Load()
     {
+        if(!Read)
+        {
+            emit DataLoadedCompletely();
+            emit Loaded(list);
+            list.clear();
+            WaitingForNewPortionReuqest = false;
+            return;
+        }
         if(WaitingForNewPortionReuqest)
         {
             for(;CurrentFileListIterator<CurrentFileList.length();CurrentFileListIterator++)
@@ -172,47 +192,81 @@ namespace BrowserAutomationStudioFramework
 
     void FileStringBoxLoader::CleanFile(const QString& file)
     {
-        QFile inputFile(file);
-        QFile outputFile(file + ".temp");
-        outputFile.remove();
-
-        if (inputFile.open(QIODevice::ReadOnly))
+        if(!Read)
         {
-            QTextStream in(&inputFile);
-            in.setCodec("UTF-8");
-            if(outputFile.open(QIODevice::WriteOnly))
+            QFileInfo info(file);
+            if(!info.exists())
+            {
+                info.absoluteDir().mkpath(".");
+            }
+        }
+        if(!ToAdd.empty() && ToRemove.empty())
+        {
+            QFile outputFile(file);
+            if(outputFile.open(QIODevice::WriteOnly | QIODevice::Append))
             {
                 QTextStream out(&outputFile);
                 out.setCodec("UTF-8");
-                while ( !in.atEnd() )
+                for(QString AddString:ToAdd)
                 {
-                    QString line = in.readLine();
-                    if(!line.isEmpty() && !ToRemove.contains(line))
+                    out<<AddString<<"\r\n";
+                }
+                outputFile.close();
+            }
+
+        }else
+        {
+            QFile inputFile(file);
+            QFile outputFile(file + ".temp");
+            outputFile.remove();
+
+            if (inputFile.open(QIODevice::ReadOnly))
+            {
+                QTextStream in(&inputFile);
+                in.setCodec("UTF-8");
+                if(outputFile.open(QIODevice::WriteOnly))
+                {
+                    QTextStream out(&outputFile);
+                    out.setCodec("UTF-8");
+                    while ( !in.atEnd() )
                     {
-                        out<<line<<"\r\n";
+                        QString line = in.readLine();
+                        if(!line.isEmpty() && !ToRemove.contains(line))
+                        {
+                            out<<line<<"\r\n";
+                        }
+                    }
+                    for(QString AddString:ToAdd)
+                    {
+                        out<<AddString<<"\r\n";
                     }
                 }
             }
+            inputFile.close();
+
+            if(inputFile.remove())
+            {
+                outputFile.rename(inputFile.fileName());
+            }else
+            {
+                outputFile.close();
+                outputFile.remove();
+            }
         }
-        inputFile.close();
-
-        if(inputFile.remove())
-        {
-            outputFile.rename(inputFile.fileName());
-        }else
-        {
-            outputFile.close();
-            outputFile.remove();
-        }
-
-
-
+        ToAdd.clear();
 
     }
 
-    void FileStringBoxLoader::CleanUp()
+    void FileStringBoxLoader::ForceSync()
     {
-        if(!ToRemove.isEmpty())
+        Sync(true);
+    }
+
+    void FileStringBoxLoader::Sync(bool Force)
+    {
+        if(FileName.isEmpty())
+            return;
+        if((!ToRemove.isEmpty() || !ToAdd.isEmpty()) && (Force || Write))
         {
             if(FileName.contains("|"))
             {
@@ -226,7 +280,7 @@ namespace BrowserAutomationStudioFramework
             }else
             {
                 QFileInfo info(FileName);
-                if(info.isFile())
+                if(info.isFile() || !Read)
                 {
                     CleanFile(FileName);
                 }else if(info.isDir())
@@ -251,15 +305,30 @@ namespace BrowserAutomationStudioFramework
 
     FileStringBoxLoader::~FileStringBoxLoader()
     {
-        CleanUp();
+        Sync(false);
     }
 
     void FileStringBoxLoader::ItemDeleted(const QString& item)
     {
+        if(FileName.isEmpty())
+            return;
         ToRemove.append(item);
-        if(ToRemove.length()>100000)
+        ToAdd.removeAll(item);
+        if(ToRemove.length() + ToAdd.length()>100000)
         {
-            CleanUp();
+            Sync(false);
+        }
+    }
+
+    void FileStringBoxLoader::ItemAdded(const QString& item)
+    {
+        if(FileName.isEmpty())
+            return;
+        ToRemove.removeAll(item);
+        ToAdd.append(item);
+        if(ToRemove.length() + ToAdd.length()>100000)
+        {
+            Sync(false);
         }
     }
 }

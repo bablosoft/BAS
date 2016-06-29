@@ -72,10 +72,16 @@ namespace BrowserAutomationStudioFramework
     {
         Active = true;
     }
-    void EngineResourceFixedString::Insert(const QString& value)
+    void EngineResourceFixedString::Insert(const QString& value, bool onlywrite)
     {
         this->Value = value;
     }
+
+    void EngineResourceFixedString::Sync()
+    {
+
+    }
+
     void EngineResourceFixedString::SetAtIndex(int index, const QString& val)
     {
 

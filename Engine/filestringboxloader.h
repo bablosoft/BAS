@@ -12,9 +12,12 @@ namespace BrowserAutomationStudioFramework
     class ENGINESHARED_EXPORT FileStringBoxLoader : public IStringBoxLoader
     {
         Q_OBJECT
+        bool Read;
+        bool Write;
         QString FileName;
         QStringList list;
         QStringList ToRemove;
+        QStringList ToAdd;
 
         QFile *CurrentFile;
         qint64 CurrentStreamPosition;
@@ -28,15 +31,17 @@ namespace BrowserAutomationStudioFramework
 
         explicit FileStringBoxLoader(QObject *parent = 0);
         ~FileStringBoxLoader();
-
+        void SetRead(bool Read);
+        void SetWrite(bool Write);
     signals:
 
     public slots:
         void SetFileName(const QString& FileName);
         virtual void Load();
         void ItemDeleted(const QString& item);
-    private slots:
-        void CleanUp();
+        void ItemAdded(const QString& item);
+        void Sync(bool Force);
+        void ForceSync();
     };
 }
 

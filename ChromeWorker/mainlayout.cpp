@@ -2,7 +2,7 @@
 MainLayout* _Layout;
 
 
-MainLayout::MainLayout()
+MainLayout::MainLayout(int ToolboxHeight, int ScenarioWidth)
 {
     IsRecord = false;
 
@@ -14,6 +14,7 @@ MainLayout::MainLayout()
     HButtonScenario = 0;
 
     IsMinimized = false;
+    IsToolboxMaximized = false;
     HButtonMinimizeMaximize = 0;
     ButtonMinimize = 0;
     ButtonMaximize = 0;
@@ -46,6 +47,42 @@ MainLayout::MainLayout()
     if(DevToolsRectWidth + 850 > ScreenWidth)
     {
         DevToolsRectWidth = ScreenWidth - 850;
+    }
+    DevToolsRectWidth = (ScenarioWidth == 0)?DevToolsRectWidth:ScenarioWidth;
+    ToolBoxRectHeight = (ToolboxHeight == 0)?221:ToolboxHeight;
+}
+
+void MainLayout::MaximizeToolbox(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight)
+{
+    if(ToolBoxHandle)
+    {
+        MoveWindow(ToolBoxHandle,0,0,WindowWidth,WindowHeight,true);
+        ShowWindow(HButtonUp,SW_HIDE);
+        ShowWindow(HButtonDown,SW_HIDE);
+        ShowWindow(HButtonLeft,SW_HIDE);
+        ShowWindow(HButtonRight,SW_HIDE);
+        ShowWindow(HButtonDevTools,SW_HIDE);
+        ShowWindow(HButtonScenario,SW_HIDE);
+        ShowWindow(HButtonMinimizeMaximize,SW_HIDE);
+
+        IsToolboxMaximized = true;
+    }
+
+}
+void MainLayout::MinimizeToolbox(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight)
+{
+    if(ToolBoxHandle)
+    {
+        RECT r = GetToolboxRectangle(BrowserWidth,BrowserHeight,WindowWidth,WindowHeight);
+        MoveWindow(ToolBoxHandle,r.left,r.top,r.right - r.left,r.bottom - r.top,true);
+        ShowWindow(HButtonUp,SW_SHOW);
+        ShowWindow(HButtonDown,SW_SHOW);
+        ShowWindow(HButtonLeft,SW_SHOW);
+        ShowWindow(HButtonRight,SW_SHOW);
+        ShowWindow(HButtonDevTools,SW_SHOW);
+        ShowWindow(HButtonScenario,SW_SHOW);
+        ShowWindow(HButtonMinimizeMaximize,SW_SHOW);
+        IsToolboxMaximized = false;
     }
 }
 
@@ -82,6 +119,8 @@ void MainLayout::MinimizeOrMaximize(HWND MainWindow, HWND ParentWindow)
         FlashWindow(MainWindow,true);
         SendMessage(HButtonMinimizeMaximize, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)ButtonMinimize);
     }
+    InvalidateRect(MainWindowHandle,NULL,false);
+
 }
 
 
@@ -95,13 +134,13 @@ void MainLayout::CalculateAllSize(int BrowserWidth,int BrowserHeight,int WindowW
     ToolboxRectangle.left = DevToolsRectWidth+2;
     ToolboxRectangle.right = WindowWidth;
     ToolboxRectangle.top = 0;
-    ToolboxRectangle.bottom = 220;
+    ToolboxRectangle.bottom = ToolBoxRectHeight - 1;
 
     if(IsRecord)
     {
         BrowserRectangle.left = DevToolsRectWidth+2;
         BrowserRectangle.right = WindowWidth-31;
-        BrowserRectangle.top = 222;
+        BrowserRectangle.top = ToolBoxRectHeight + 1;
         BrowserRectangle.bottom = WindowHeight-31;
     }else
     {
@@ -238,6 +277,9 @@ void MainLayout::CustomDraw(HDC hdc,int BrowserWidth,int BrowserHeight,int Windo
 {
     if(!IsRecord)
         return;
+
+    if(IsToolboxMaximized)
+        return;
     POINT pt;
     SelectObject(hdc, GetStockObject(DC_PEN));
     SetDCPenColor(hdc, RGB(125,125,125));
@@ -248,8 +290,8 @@ void MainLayout::CustomDraw(HDC hdc,int BrowserWidth,int BrowserHeight,int Windo
     MoveToEx(hdc, 0, 30, &pt);
     LineTo(hdc, DevToolsRectWidth, 30);
 
-    MoveToEx(hdc, DevToolsRectWidth + 2, 221, &pt);
-    LineTo(hdc, WindowWidth, 221);
+    MoveToEx(hdc, DevToolsRectWidth + 2, ToolBoxRectHeight, &pt);
+    LineTo(hdc, WindowWidth, ToolBoxRectHeight);
 
 }
 
@@ -257,7 +299,7 @@ RECT MainLayout::GetBrowserOuterRectangle(int BrowserWidth,int BrowserHeight,int
 {
     RECT r;
     r.left = DevToolsRectWidth + 2;
-    r.top = 221;
+    r.top = ToolBoxRectHeight;
     if(!IsRecord)
     {
         r.left = 0;
@@ -298,7 +340,14 @@ void MainLayout::Update(int BrowserWidth,int BrowserHeight,int WindowWidth,int W
     RECT BrowserRectangle = GetBrowserRectangle(BrowserWidth, BrowserHeight, WindowWidth, WindowHeight);
 
 
-    MoveWindow(ToolBoxHandle,ToolboxRectangle.left,ToolboxRectangle.top,ToolboxRectangle.right - ToolboxRectangle.left,ToolboxRectangle.bottom - ToolboxRectangle.top,true);
+    if(IsToolboxMaximized)
+    {
+        MoveWindow(ToolBoxHandle,0,0,WindowWidth,WindowHeight,true);
+    }else
+    {
+        MoveWindow(ToolBoxHandle,ToolboxRectangle.left,ToolboxRectangle.top,ToolboxRectangle.right - ToolboxRectangle.left,ToolboxRectangle.bottom - ToolboxRectangle.top,true);
+    }
+
     MoveDevTools();
 
     MoveWindow(HButtonUp,BrowserRectangle.right + 5,BrowserRectangle.bottom - 90,20,20,true);
@@ -313,13 +362,14 @@ void MainLayout::Update(int BrowserWidth,int BrowserHeight,int WindowWidth,int W
     MoveWindow(HTextHold,70,7,DevToolsRectWidth - 100,23,true);
     MoveWindow(HTextFinished,70,7,DevToolsRectWidth - 100,23,true);
 
+
 }
 
 std::pair<int,int> MainLayout::GetDefaultWindowSize()
 {
     std::pair<int,int> res;
     res.first = 1024 + DevToolsRectWidth + 30 + 70;
-    res.second = 600 + 220 + 30 + 120;
+    res.second = 600 + ToolBoxRectHeight - 1 + 30 + 120;
     return res;
 }
 

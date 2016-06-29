@@ -4,6 +4,8 @@ ToolboxV8Handler::ToolboxV8Handler()
 {
     IsInitialized = false;
     IsEditCancel = false;
+    IsMaximize = false;
+    IsMinimize = false;
 }
 
 
@@ -26,6 +28,22 @@ bool ToolboxV8Handler::GetIsInitialized()
     std::lock_guard<std::mutex> lock(mut_initialized);
 
     return IsInitialized;
+}
+
+bool ToolboxV8Handler::GetIsMaximize()
+{
+    std::lock_guard<std::mutex> lock(mut_maximize);
+    bool res = IsMaximize;
+    IsMaximize = false;
+    return res;
+}
+
+bool ToolboxV8Handler::GetIsMinimize()
+{
+    std::lock_guard<std::mutex> lock(mut_minimize);
+    bool res = IsMinimize;
+    IsMinimize = false;
+    return res;
 }
 
 bool ToolboxV8Handler::GetIsEditCancel()
@@ -70,6 +88,14 @@ bool ToolboxV8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> obje
     {
         std::lock_guard<std::mutex> lock(mut_editcancel);
         IsEditCancel = true;
+    }else if(name == std::string("BrowserAutomationStudio_Maximize"))
+    {
+        std::lock_guard<std::mutex> lock(mut_maximize);
+        IsMaximize = true;
+    }else if(name == std::string("BrowserAutomationStudio_Minimize"))
+    {
+        std::lock_guard<std::mutex> lock(mut_minimize);
+        IsMinimize = true;
     }
     return true;
 }

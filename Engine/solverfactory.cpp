@@ -81,6 +81,7 @@ namespace BrowserAutomationStudioFramework
             {
                 AntigateSolver = new AntigateCaptchaSolver(this);
                 AntigateSolver->SetServer("http://antigate.com/");
+                AntigateSolver->SetSoftId("784");
                 AntigateSolver->SetHttpClientFactory(HttpClientFactory);
                 connect(AntigateSolver,SIGNAL(Used()),this,SLOT(UsedAntigate()));
                 connect(AntigateSolver,SIGNAL(Failed()),this,SLOT(FailedAntigate()));
@@ -105,6 +106,7 @@ namespace BrowserAutomationStudioFramework
             {
                 RucaptchaSolver = new AntigateCaptchaSolver(this);
                 RucaptchaSolver->SetServer("http://rucaptcha.com/");
+                RucaptchaSolver->SetSoftId("1345");
                 RucaptchaSolver->SetHttpClientFactory(HttpClientFactory);
                 connect(RucaptchaSolver,SIGNAL(Used()),this,SLOT(UsedRucaptcha()));
                 connect(RucaptchaSolver,SIGNAL(Failed()),this,SLOT(FailedRucaptcha()));
@@ -117,6 +119,7 @@ namespace BrowserAutomationStudioFramework
             {
                 TwocaptchaSolver = new AntigateCaptchaSolver(this);
                 TwocaptchaSolver->SetServer("http://2captcha.com/");
+                TwocaptchaSolver->SetSoftId("1346");
                 TwocaptchaSolver->SetHttpClientFactory(HttpClientFactory);
                 connect(TwocaptchaSolver,SIGNAL(Used()),this,SLOT(Used2Captcha()));
                 connect(TwocaptchaSolver,SIGNAL(Failed()),this,SLOT(Failed2Captcha()));

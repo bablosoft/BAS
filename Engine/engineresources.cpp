@@ -134,14 +134,25 @@ namespace BrowserAutomationStudioFramework
         }
     }
 
-    void EngineResources::Insert(const QString & name,const QString & value)
+    void EngineResources::Insert(const QString & name,const QString & value, bool onlywrite)
     {
         if(!Data.contains(name))
         {
             return;
         }else
         {
-            Data[name]->Insert(value);
+            Data[name]->Insert(value, onlywrite);
+        }
+    }
+
+    void EngineResources::Sync(const QString & name)
+    {
+        if(!Data.contains(name))
+        {
+            return;
+        }else
+        {
+            Data[name]->Sync();
         }
     }
 

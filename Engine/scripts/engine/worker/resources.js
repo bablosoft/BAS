@@ -81,10 +81,21 @@ function Reload(key)
     ScriptWorker.ReloadResource(key);
 }
 
-function RInsert(name, value)
+function RInsert(name, value, onlywrite)
 {
-    EngineRes.Insert(name, value)
+    EngineRes.Insert(name, value, onlywrite)
 }
+
+function RSync(name)
+{
+    EngineRes.Sync(name)
+}
+
+function RCreate(name, successes, fails, simultaneous, interval, greedy, dont_give_up)
+{
+    EngineRes.Create(name, successes, fails, simultaneous, interval, greedy, dont_give_up)
+}
+
 
 function RTake(name, callback)
 {

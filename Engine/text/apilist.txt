@@ -62,10 +62,11 @@ PClear(group, key)
 PClear(group)
 PClear()
 Reload(resource_name)
+RSync(name)
 Remove(resource_name)
 RSafe(resource_name)!
 RCreate(resource_name, successes, fails, simultaneous, interval, greedy, dont_give_up)
-RInsert(resource_name, value)
+RInsert(resource_name, value, onlywrite)
 RTake(resource_name)!
 RInfo(resource_name, resource_key)
 RPick(resource_name)

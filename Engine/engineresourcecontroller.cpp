@@ -274,13 +274,17 @@ namespace BrowserAutomationStudioFramework
                    proxy->SetDontGiveUp(r->GetLoadInterval() || r->GetRenewInterval() > 0);
 
                    loader->SetFileName(r->GetFilename());
+                   loader->SetRead(r->GetRead());
+                   loader->SetWrite(r->GetWrite());
 
                    period->SetReloadInterval(r->GetLoadInterval());
                    period->SetRenewInterval(r->GetRenewInterval());
                    period->SetStringBoxProxy(proxy);
                    period->Start();
-                   if(r->GetClean())
-                       connect(box,SIGNAL(Removed(QString)),loader,SLOT(ItemDeleted(QString)));
+                   connect(box,SIGNAL(Removed(QString)),loader,SLOT(ItemDeleted(QString)));
+                   connect(box,SIGNAL(Inserted(QString)),loader,SLOT(ItemAdded(QString)));
+
+                   connect(n,SIGNAL(Synced()),loader,SLOT(ForceSync()));
 
                    n->SetValue(box);
                    n->SetStringBoxProxy(proxy);

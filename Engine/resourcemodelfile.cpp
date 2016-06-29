@@ -8,7 +8,8 @@ namespace BrowserAutomationStudioFramework
         ResourceModelAbstract(parent)
     {
         renew_interval = -1;
-        clean = false;
+        write = false;
+        read = true;
         mix = false;
         success = 0;
         fails = 0;
@@ -30,13 +31,23 @@ namespace BrowserAutomationStudioFramework
     }
 
 
-    bool ResourceModelFile::GetClean()
+    bool ResourceModelFile::GetWrite()
     {
-        return clean;
+        return write;
     }
-    void ResourceModelFile::SetClean(bool val)
+    void ResourceModelFile::SetWrite(bool val)
     {
-        clean = val;
+        write = val;
+    }
+
+    bool ResourceModelFile::GetRead()
+    {
+        return read;
+    }
+
+    void ResourceModelFile::SetRead(bool val)
+    {
+        read = val;
     }
 
     bool ResourceModelFile::GetMix()

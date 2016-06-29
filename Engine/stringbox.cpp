@@ -46,6 +46,13 @@ namespace BrowserAutomationStudioFramework
         }
     }
 
+    void StringBox::Insert(const QString& str, bool onlywrite)
+    {
+        if(!onlywrite)
+            Put(QStringList()<<str);
+        emit Inserted(str);
+    }
+
     QList<QString> StringBox::GetRandomSubarrayData(int size)
     {
         QList<QString> res;

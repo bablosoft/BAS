@@ -1,5 +1,6 @@
 _L = 
 {
+	"(This button will only change task name)" :{"ru": "(Эта кнопка изменит только имя задания)"},
 	"Delete this and all upper" :{"ru": "Удалить это действие и предыдущие"},
 	"Delete this and all lower" :{"ru": "Удалить это действие и следующие"},
 	"Toggle selection" :{"ru": "Выбрать"},

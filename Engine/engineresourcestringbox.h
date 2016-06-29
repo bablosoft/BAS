@@ -28,7 +28,7 @@ namespace BrowserAutomationStudioFramework
 
 
     signals:
-
+        void Synced();
     public slots:
         virtual IResourceHandler* GetHandler(const QSet<QString>& refuse);
         virtual QList<QScriptValue> GetAllData();
@@ -44,7 +44,8 @@ namespace BrowserAutomationStudioFramework
         virtual void Purge();
         virtual void Update(const QStringList &);
         virtual void Reload();
-        virtual void Insert(const QString& value);
+        virtual void Insert(const QString& value, bool onlywrite);
+        virtual void Sync();
 
     };
 }

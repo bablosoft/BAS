@@ -10,6 +10,8 @@ settings::settings()
     use_flash = false;
     force_utf8 = true;
     skip_frames = 74;
+    toolbox_height = 0;
+    scenario_width = 0;
     std::ifstream fin("settings_worker.ini");
     if(fin.is_open())
     {
@@ -29,6 +31,16 @@ settings::settings()
                 std::vector<std::string> s = split(line,'=');
                 skip_frames = std::stoi(s[1]);
             }
+            if(line.find("ToolboxHeight=") != std::string::npos)
+            {
+                std::vector<std::string> s = split(line,'=');
+                toolbox_height = std::stoi(s[1]);
+            }
+            if(line.find("ScenarioWidth=") != std::string::npos)
+            {
+                std::vector<std::string> s = split(line,'=');
+                scenario_width = std::stoi(s[1]);
+            }
         }
     }
     fin.close();
@@ -47,4 +59,14 @@ bool settings::ForceUtf8()
 int settings::SkipFrames()
 {
     return skip_frames + 1;
+}
+
+int settings::ToolboxHeight()
+{
+    return toolbox_height;
+}
+
+int settings::ScenarioWidth()
+{
+    return scenario_width;
 }
