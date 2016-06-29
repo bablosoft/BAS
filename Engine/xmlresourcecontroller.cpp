@@ -315,7 +315,11 @@ namespace BrowserAutomationStudioFramework
 
             m->SetFilename(attr["Filename"]);
             m->SetWrite(attr["Clean"].toInt());
-            m->SetRead(attr["Read"].toInt());
+            if(!attr.contains("Read"))
+                m->SetRead(1);
+            else
+                m->SetRead(attr["Read"].toInt());
+
             m->SetMix(attr["Mix"].toInt());
             m->SetSuccessAttempts(attr["MaxSuccess"].toInt());
             m->SetFailAttempts(attr["MaxFail"].toInt());
