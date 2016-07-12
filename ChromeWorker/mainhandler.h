@@ -8,22 +8,30 @@
 #include "curlresourcehandler.h"
 #include <atomic>
 #include "settings.h"
+#include "log.h"
+#include "refcountpublic.h"
+
 
 
 class MainHandler : public CefClient, public CefDisplayHandler, public CefLifeSpanHandler, public CefLoadHandler, public CefRequestHandler, public CefDialogHandler, public CefKeyboardHandler, public CefRenderHandler, public CefJSDialogHandler
 {
     bool NeedQuit;
     bool WaitForLoadEvent;
+    bool IsPopup;
     CefRefPtr<CefBrowser> Browser;
     bool IsVisible;
     BrowserData * Data;
     settings * Settings;
+
+    int GetBrowserId();
 
 public:
     MainHandler();
     bool GetIsVisible();
     void SetData(BrowserData *Data);
     void SetSettings(settings *Settings);
+    void SetIsPopup();
+    bool GetIsPopup();
 
     virtual CefRefPtr<CefDisplayHandler> GetDisplayHandler() OVERRIDE;
     virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() OVERRIDE;
@@ -81,18 +89,20 @@ public:
     int GetResourceListLength();
 
     //Events
-    std::vector<std::function<void(const std::string&)> > EventSendTextResponce;
-    std::vector<std::function<void(const std::string&, int)> > EventUrlLoaded;
-    std::vector<std::function<void()> > EventClosedProgrammatically;
-    std::vector<std::function<void()> > EventLoadSuccess;
-    std::vector<std::function<void(char*,int,int)> > EventPaint;
+    std::vector<std::function<void(const std::string&, int)> > EventSendTextResponce;
+    std::vector<std::function<void(const std::string&, int, int)> > EventUrlLoaded;
+    std::vector<std::function<void(int)> > EventLoadSuccess;
+    std::vector<std::function<void(char*,int,int,int)> > EventPaint;
+    std::vector<std::function<void(CefRefPtr<MainHandler>,CefRefPtr<CefBrowser>)> > EventPopupCreated;
+    std::vector<std::function<void(int)> > EventPopupClosed;
     std::vector<CefRefPtr<CurlResourceHandler> > EventOnTimerCurlResources;
     std::atomic_int CurlResourcesLength;
 
 private:
     void SendTextResponce(const std::string&);
-    IMPLEMENT_REFCOUNTING(MainHandler);
 
+private:
+    IMPLEMENT_REFCOUNTING_NONE();
 };
 
 #endif // MAINHANDLER_H

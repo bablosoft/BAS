@@ -444,8 +444,8 @@
 
                 /* Random */
                 {name: "random number", description: "Generate random number", code: "Math.floor(Math.random() * (<<0>> - <<1>> + 1)) + <<1>>", params: [{name: "max"},{name: "min"}]},
-                {name: "random string", description: "Generate random string", code: "Array(<<0>>).join().split(',').map(function() { return \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\".charAt(Math.floor(Math.random() * 62)); }).join('');", params: [{name: "length"}]},
-                {name: "random alphabet", description: "Generate random string, with given alphabet. Alphabet is just a string, for example, if alphabet is 01 action will generate random binary number", code: "Array(<<1>>).join().split(',').map(function() { return (<<0>>).charAt(Math.floor(Math.random() * <<0>>.length)); }).join('');", params: [{name: "alphabet"},{name: "length"}]},
+                {name: "random string", description: "Generate random string", code: "Array(<<0>>).join().split(',').map(function() { return \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\".charAt(Math.floor(Math.random() * 62)); }).join('')", params: [{name: "length"}]},
+                {name: "random alphabet", description: "Generate random string, with given alphabet. Alphabet is just a string, for example, if alphabet is 01 action will generate random binary number", code: "Array(<<1>>).join().split(',').map(function() { return (<<0>>).charAt(Math.floor(Math.random() * <<0>>.length)); }).join('')", params: [{name: "alphabet"},{name: "length"}]},
 
                 
                 /* Array */

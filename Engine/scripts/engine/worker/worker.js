@@ -73,6 +73,24 @@ function open_file_dialog(text, callback)
     Browser.SetOpenFileName(text,_get_function_body(callback));
 }
 
+function prompt_result(text, callback)
+{
+    _ensure_browser_created();
+    Browser.SetPromptResult(text,_get_function_body(callback));
+}
+
+function http_auth_result(login, pass, callback)
+{
+    _ensure_browser_created();
+    Browser.SetHttpAuthResult(login,pass,_get_function_body(callback));
+}
+
+function open_file_dialog(text, callback)
+{
+    _ensure_browser_created();
+    Browser.SetPromptResult(text,_get_function_body(callback));
+}
+
 function screenshot(path, callback)
 {
     _ensure_browser_created();

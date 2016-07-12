@@ -1,6 +1,7 @@
 #include "commandparser.h"
 #include "rapidxml.hpp"
 #include "log.h"
+#include "split.h"
 
 CommandParser::CommandParser()
 {
@@ -123,6 +124,30 @@ void CommandParser::Parse(const std::string& Xml)
             worker_log("EventSetOpenFileName");
             for(auto f:EventSetOpenFileName)
                 f(value);
+        }
+
+        CommandNode = MessagesNode->first_node("SetPromptResult");
+        if(CommandNode)
+        {
+            std::string value = CommandNode->value();
+            worker_log("EventSetPromptResult");
+            for(auto f:EventSetPromptResult)
+                f(value);
+        }
+
+        CommandNode = MessagesNode->first_node("SetHttpAuthResult");
+        if(CommandNode)
+        {
+            std::string value = CommandNode->value();
+            std::vector<std::string> s = split(value,':');
+            if(s.size() == 2)
+            {
+                std::string login = s[0];
+                std::string password = s[1];
+                worker_log("EventSetHttpAuthResult");
+                for(auto f:EventSetHttpAuthResult)
+                    f(login,password);
+            }
         }
 
         CommandNode = MessagesNode->first_node("GetCookiesForUrl");

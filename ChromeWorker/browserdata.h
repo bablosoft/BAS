@@ -36,6 +36,12 @@ public:
     InspectResult _Inspect;
     ModulesDataList _ModulesData;
 
+    //Dialogs
+    std::string _PromptResult;
+    std::string _HttpAuthLogin;
+    std::string _HttpAuthPassword;
+
+
     //Reset
     std::atomic_bool IsReset;
     std::atomic_bool IsAboutBlankLoaded;

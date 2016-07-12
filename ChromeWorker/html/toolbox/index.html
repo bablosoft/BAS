@@ -355,7 +355,7 @@
 
   <script type="text/template" id="custom">
     <div class="container-fluid custom">
-      <%= _.template($('#input_constructor').html())({id:"Code", description:tr("Custom Code"), default_selector: "expression", disable_int:true, disable_string:true, use_textarea:true, size: 8, disable_type_chooser:true}) %>
+      <%= _.template($('#input_constructor').html())({id:"Code", description:tr("Custom Code"), default_selector: "expression", disable_int:true, disable_editor:true, disable_string:true, use_textarea:true, size: 8, disable_type_chooser:true}) %>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
@@ -458,6 +458,21 @@
   <script type="text/template" id="openfile">
     <div class="container-fluid openfile">
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("File path to set as result of open file dialog"), default_selector: "string", disable_int:true}) %>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
+  <script type="text/template" id="promptresult">
+    <div class="container-fluid promptresult">
+      <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Prompt user input result"), default_selector: "string", disable_int:true}) %>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
+  <script type="text/template" id="httpauth">
+    <div class="container-fluid httpauth">
+      <%= _.template($('#input_constructor').html())({id:"Login", description:tr("Http auth login"), default_selector: "string", disable_int:true}) %>
+      <%= _.template($('#input_constructor').html())({id:"Password", description:tr("Http auth password"), default_selector: "string", disable_int:true}) %>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
@@ -2013,6 +2028,16 @@
   <script type="text/template" id="openfile_code">
       /*Browser*/
       open_file_dialog(<%= value %>)!
+  </script>
+
+  <script type="text/template" id="promptresult_code">
+      /*Browser*/
+      prompt_result(<%= value %>)!
+  </script>
+
+  <script type="text/template" id="httpauth_code">
+      /*Browser*/
+      http_auth_result(<%= login %>,<%= password %>)!
   </script>
 
   <script type="text/template" id="waitcontent_code">
@@ -3604,6 +3629,48 @@
             }catch(e)
             {}
             
+          }else if(State == "promptresult")
+          {
+            var Value = GetInputConstructorValue("Value",loader)
+
+            if(Value["original"].length <= 0)
+            {
+              Invalid("Value is empty");
+              return;
+            }
+
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({value:Value["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("Prompt result " + Value["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+            
+          }else if(State == "httpauth")
+          {
+            var Login = GetInputConstructorValue("Login",loader)
+            var Password = GetInputConstructorValue("Password",loader)
+            
+
+            if(Login["original"].length <= 0)
+            {
+              Invalid("Login is empty");
+              return;
+            }
+
+            if(Password["original"].length <= 0)
+            {
+              Invalid("Password is empty");
+              return;
+            }
+
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({login:Login["updated"],password:Password["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("Http Auth " + Login["original"] + ":" + Password["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+            
           }else if(State == "javascript")
           {
             var Save = this.$el.find("#Save").val().toUpperCase();
@@ -4625,6 +4692,8 @@
           "waitasyncload": _.template($('#waitasyncload').html()),
           "waitelement": _.template($('#waitelement').html()),
           "timeout": _.template($('#timeout').html()),
+          "promptresult": _.template($('#promptresult').html()),
+          "httpauth": _.template($('#httpauth').html()),
           "solverfailed": _.template($('#solverfailed').html())
           _MACRO_INSERT_TEMPLATES_
         }
@@ -4775,6 +4844,8 @@
             "!/parseline": "parseline",
             "!/waitasyncload": "waitasyncload",
             "!/waitelement": "waitelement",
+            "!/promptresult": "promptresult",
+            "!/httpauth": "httpauth",
             "!/solverfailed": "solverfailed"
             _MACRO_INSERT_ROUTER_DEF_
         },
@@ -5097,6 +5168,12 @@
         waitelement: function(){
                   _GobalModel.set({ state: "waitelement" });
                 },
+        promptresult: function(){
+                  _GobalModel.set({ state: "promptresult" });
+                },
+        httpauth: function(){
+                  _GobalModel.set({ state: "httpauth" });
+                },
         solverfailed: function(){
           _GobalModel.set({ state: "solverfailed" });
         }
@@ -5116,6 +5193,8 @@
                 { name: tr("Javascript"), description: tr("Execute javascript"), ref: "javascript" },
                 { name: tr("Reset"), description: tr("Clear all browser data"), ref: "reset" },
                 { name: tr("Open File Result"), description: tr("Set open file dialog result"), ref: "openfile" },
+                { name: tr("Prompt Result"), description: tr("Set prompt result"), ref: "promptresult" },
+                { name: tr("Http Auth"), description: tr("Set http auth login and password"), ref: "httpauth" },
                 { name: tr("Scroll"), description: tr("Scroll to position"), ref: "scroll" },
                 { name: tr("Render"), description: tr("Render screen part to variable as png base64 encoded"), ref: "renderscreen" },
                 { name: tr("Solve Captcha"), description: tr("Solve captcha"), ref: "solvecaptcha" },

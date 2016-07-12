@@ -1,6 +1,11 @@
 _L = 
 {
-	
+	"Prompt user input result": {"ru": "Результат ввода"},
+	"Http auth login": {"ru": "HTTP Аутентификация логин"},
+	"Http auth password": {"ru": "HTTP Аутентификация пароль"},
+	"Http Auth": {"ru": "HTTP Аутентификация"},
+	"Prompt Result": {"ru": "Окно \"prompt\""},
+
 	"STRING": {"ru": "СТРОКА"},
 	"INT": {"ru": "ЧИСЛО"},
 	"EXPRESSION": {"ru": "ВЫРАЖЕНИЕ"},

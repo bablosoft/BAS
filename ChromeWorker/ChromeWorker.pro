@@ -43,15 +43,16 @@ SOURCES += main.cpp \
     replaceall.cpp \
     convertencoding.cpp \
     fixcontentcharset.cpp \
-    extract_resources.cpp
+    extract_resources.cpp \
+    handlersmanager.cpp
 
 INCLUDEPATH += $(BAS_PATH_WORKER)/include
 
 
-LIBS += -L$(BAS_PATH_WORKER)/lib -llibiconv -llibcef -lcef_sandbox -llibcef_dll_wrapper -lAdvapi32 -luser32 -lPsapi -lshell32 -lDbgHelp -lgdi32 -llibcurl -llibeay32 -lssleay32 -lnetwork-uri
+LIBS += -L$(BAS_PATH_WORKER)/lib -llibiconv -llibcef -llibcef_dll_wrapper -lAdvapi32 -luser32 -lPsapi -lshell32 -lDbgHelp -lgdi32 -llibcurl -llibeay32 -lssleay32 -lnetwork-uri
 QMAKE_CXXFLAGS_RELEASE += /MT
 
-QMAKE_CXXFLAGS_DEBUG += /MTd /FS
+QMAKE_CXXFLAGS_DEBUG += /MTd
 
 HEADERS += \
     mainapp.h \
@@ -97,7 +98,8 @@ HEADERS += \
     replaceall.h \
     convertencoding.h \
     fixcontentcharset.h \
-    extract_resources.h
+    extract_resources.h \
+    handlersmanager.h
 
 INCLUDEPATH += xml json png
 

@@ -51,6 +51,8 @@ public:
             std::vector<char> PostData;
             std::string Proxy;
             std::string ProxyAuth;
+            std::string HttpAuthLogin;
+            std::string HttpAuthPassword;
 
             /* Sync */
             std::atomic_bool StopRequest = false;

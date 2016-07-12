@@ -3,7 +3,6 @@
 #include "include/cef_app.h"
 #include "include/wrapper/cef_closure_task.h"
 #include "include/wrapper/cef_helpers.h"
-#include "log.h"
 #include "match.h"
 #include "multithreading.h"
 
@@ -11,10 +10,20 @@ using namespace std::placeholders;
 
 MainHandler::MainHandler()
 {
+    worker_log(std::string("MainHandlerCreaate<<") + std::to_string((int)this));
+
     NeedQuit = false;
     WaitForLoadEvent = false;
     Browser = 0;
     IsVisible = false;
+    IsPopup = false;
+}
+
+int MainHandler::GetBrowserId()
+{
+    if(!Browser)
+        return -1;
+    return Browser->GetIdentifier();
 }
 
 
@@ -26,6 +35,16 @@ void MainHandler::SetData(BrowserData *Data)
 void MainHandler::SetSettings(settings *Settings)
 {
     this->Settings = Settings;
+}
+
+void MainHandler::SetIsPopup()
+{
+    this->IsPopup = true;
+}
+
+bool MainHandler::GetIsPopup()
+{
+    return IsPopup;
 }
 
 
@@ -71,8 +90,35 @@ CefRefPtr<CefJSDialogHandler> MainHandler::GetJSDialogHandler()
 
 bool MainHandler::OnJSDialog(CefRefPtr<CefBrowser> browser, const CefString& origin_url, const CefString& accept_lang, JSDialogType dialog_type, const CefString& message_text, const CefString& default_prompt_text, CefRefPtr<CefJSDialogCallback> callback, bool& suppress_message)
 {
-    suppress_message = true;
-    return false;
+    switch(dialog_type)
+    {
+        case JSDIALOGTYPE_PROMPT:
+        {
+            std::string res;
+            {
+                LOCK_PROMPT
+                res = Data->_PromptResult;
+            }
+            worker_log(std::string("Prompt<<") + res);
+            suppress_message = false;
+            callback->Continue(true,res);
+            return true;
+
+        }break;
+        case JSDIALOGTYPE_CONFIRM:
+        {
+            suppress_message = false;
+            callback->Continue(true,"");
+            return true;
+
+        }break;
+        case JSDIALOGTYPE_ALERT:
+        {
+            suppress_message = true;
+            return false;
+
+        }break;
+    }
 }
 
 bool MainHandler::OnBeforeUnloadDialog(CefRefPtr<CefBrowser> browser,const CefString& message_text, bool is_reload, CefRefPtr<CefJSDialogCallback> callback)
@@ -173,6 +219,14 @@ void MainHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
 
     this->Browser = browser;
 
+    if(IsPopup)
+    {
+        Browser->GetHost()->WasResized();
+        auto EventPopupCreatedCopy = EventPopupCreated;
+        for(auto f: EventPopupCreatedCopy)
+            f(this,browser);
+    }
+
     if(IsVisible)
         Show();
 }
@@ -211,19 +265,49 @@ bool MainHandler::DoClose(CefRefPtr<CefBrowser> browser)
 
 void MainHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser)
 {
-    Browser = 0;
     worker_log("OnBeforeClose");
 
-    for(auto f:EventClosedProgrammatically)
-        f();
+
+    if(IsPopup)
+    {
+        auto EventPopupClosedCopy = EventPopupClosed;
+        for(auto f: EventPopupClosedCopy)
+            f(GetBrowserId());
+    }
+    Browser = 0;
 }
 
 bool MainHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, const CefString& target_url, const CefString& target_frame_name, CefLifeSpanHandler::WindowOpenDisposition target_disposition, bool user_gesture, const CefPopupFeatures& popupFeatures, CefWindowInfo& windowInfo, CefRefPtr<CefClient>& client, CefBrowserSettings& settings, bool* no_javascript_access)
 {
     worker_log(std::string("OnBeforePopup<<") + target_url.ToString());
-    frame->LoadURL(target_url);
-    worker_log(std::string("OnBeforePopup>>"));
-    return true;
+
+
+    bool Accept = true;
+    std::string url = target_url.ToString();
+    {
+        LOCK_BROWSER_DATA
+        for(std::pair<bool, std::string> p:Data->_RequestMask)
+        {
+            if(match(p.second,url))
+            {
+                Accept = p.first;
+            }
+        }
+    }
+
+    if(Accept)
+    {
+        windowInfo.SetAsWindowless(0,true);
+        settings.windowless_frame_rate = 5;
+        MainHandler * h = new MainHandler();
+        h->SetSettings(Settings);
+        h->SetData(Data);
+        h->SetIsPopup();
+        h->EventPopupCreated = EventPopupCreated;
+        client = h;
+    }
+
+    return !Accept;
 }
 
 CefRequestHandler::ReturnValue MainHandler::OnBeforeResourceLoad(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, CefRefPtr<CefRequestCallback> callback)
@@ -282,7 +366,7 @@ CefRequestHandler::ReturnValue MainHandler::OnBeforeResourceLoad(CefRefPtr<CefBr
 void MainHandler::OnResourceLoadComplete(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, CefRefPtr<CefResponse> response, CefRequestHandler::URLRequestStatus status, int64 received_content_length)
 {
     for(auto f:EventUrlLoaded)
-        f(request->GetURL().ToString(),response->GetStatus());
+        f(request->GetURL().ToString(),response->GetStatus(),GetBrowserId());
 }
 
 
@@ -314,10 +398,10 @@ void MainHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> f
     {
         if(httpStatusCode >= 200 && httpStatusCode < 300)
         {
-           browser->GetMainFrame()->ExecuteJavaScript("if(document.body.style['background-color'].length === 0)document.body.style['background-color']='white';", Browser->GetMainFrame()->GetURL(), 0);
+           browser->GetMainFrame()->ExecuteJavaScript("if(document.body.style['background-color'].length === 0)document.body.style['background-color']='white';", browser->GetMainFrame()->GetURL(), 0);
            SendTextResponce("<Messages><Load>0</Load></Messages>");
            for(auto f:EventLoadSuccess)
-               f();
+               f(GetBrowserId());
         }else
         {
             SendTextResponce("<Messages><Load>1</Load></Messages>");
@@ -334,7 +418,7 @@ void MainHandler::OnLoadStart(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame>
 void MainHandler::SendTextResponce(const std::string& text)
 {
     for(auto f:EventSendTextResponce)
-        f(text);
+        f(text,GetBrowserId());
 }
 
 bool MainHandler::IsNeedQuit()
@@ -366,8 +450,7 @@ void MainHandler::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, 
     if(type == PET_VIEW)
     {
         for(auto f:EventPaint)
-            f((char*)buffer, width, height);
-        //worker_log(std::string("OnPaint<<") + std::to_string(width) + std::string("<<") + std::to_string(height) + std::string("<<"));
+            f((char*)buffer, width, height, GetBrowserId());
     }
 }
 

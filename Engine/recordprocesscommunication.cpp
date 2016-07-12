@@ -27,6 +27,7 @@ namespace BrowserAutomationStudioFramework
         }
     }
 
+
     QString RecordProcessCommunication::ConvertResources(const QList<IRecordProcessCommunication::ResourceDescription>& Resources)
     {
         QJsonArray array;
@@ -57,6 +58,11 @@ namespace BrowserAutomationStudioFramework
         {
             SendData = Code;
         }
+    }
+
+    void RecordProcessCommunication::StopRecorder()
+    {
+        emit Stop();
     }
 
     void RecordProcessCommunication::SetWindow(const QString& Window)

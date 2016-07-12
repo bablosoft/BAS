@@ -168,6 +168,8 @@ scroll(x, y)!
 render(x, y, width, height)!
 load(text)!
 open_file_dialog(text)!
+prompt_result(text)!
+http_auth_result(login,password)!
 screenshot(path)!
 url()!
 get_cookies(url)!

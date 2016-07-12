@@ -191,6 +191,12 @@ void CurlThreadFunction(CurlResourceHandler::CurlThreadDataClass * Data)
             curl_easy_setopt(curl_handle,CURLOPT_PROXYUSERPWD,Data->ProxyAuth.c_str());
     }
 
+    if(!Data->HttpAuthLogin.empty() && !Data->HttpAuthPassword.empty())
+    {
+        curl_easy_setopt(curl_handle,CURLOPT_USERNAME,Data->HttpAuthLogin.c_str());
+        curl_easy_setopt(curl_handle,CURLOPT_PASSWORD,Data->HttpAuthPassword.c_str());
+    }
+
     //if(write_logs)
     //{
         //curl_easy_setopt(curl_handle, CURLOPT_VERBOSE, 1L);
@@ -298,6 +304,12 @@ bool CurlResourceHandler::ProcessRequest(CefRefPtr<CefRequest> request, CefRefPt
         LOCK_BROWSER_DATA
         CurlThreadData.Proxy = _BrowserData->_Proxy.ToString();
         CurlThreadData.ProxyAuth = _BrowserData->_Proxy.AuthToString();
+    }
+
+    {
+        LOCK_HTTP_AUTH
+        CurlThreadData.HttpAuthLogin = _BrowserData->_HttpAuthLogin;
+        CurlThreadData.HttpAuthPassword = _BrowserData->_HttpAuthPassword;
     }
 
     CefRequest::HeaderMap ReqestHeaderMap;

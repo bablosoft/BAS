@@ -19,14 +19,15 @@
 #include "extract_functions.h"
 #include "extract_resources.h"
 #include "settings.h"
+#include "handlersmanager.h"
+
 
 class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderProcessHandler
 {
-    CefRefPtr<MainHandler> handler;
+    std::shared_ptr<HandlersManager> _HandlersManager;
+
     CefRefPtr<ToolboxHandler> thandler;
     CefRefPtr<ScenarioHandler> shandler;
-
-    CefRefPtr<CefBrowser> Browser;
     CefRefPtr<CefBrowser> BrowserToolbox;
     CefRefPtr<CefBrowser> BrowserScenario;
     CefRefPtr<DevToolsHandler> dhandler;
@@ -94,9 +95,6 @@ class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderP
 
     std::string Lang;
 
-    bool DevToolsShown;
-
-
 public:
     MainApp();
     void ForceUpdateWindowPositionWithParent();
@@ -105,8 +103,6 @@ public:
     void SetSettings(settings *Settings);
     void SetLayout(MainLayout *Layout);
     BrowserData * GetData();
-    CefRefPtr<CefBrowser> GetBrowser();
-    CefRefPtr<CefBrowser> GetBrowserToolbox();
 
     virtual CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler() OVERRIDE;
     virtual CefRefPtr<CefRenderProcessHandler> GetRenderProcessHandler() OVERRIDE;
@@ -130,6 +126,8 @@ public:
     void GetUrlCallback();
     void SetUserAgentCallback(const std::string& value);
     void SetOpenFileNameCallback(const std::string& value);
+    void SetPromptResultCallback(const std::string& value);
+    void SetHttpAuthResultCallback(const std::string& login,const std::string& password);
     void GetCookiesForUrlCallback(const std::string& value);
     void SaveCookiesCallback();
     void RestoreCookiesCallback(const std::string& value);

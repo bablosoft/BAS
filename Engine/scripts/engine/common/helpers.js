@@ -63,6 +63,17 @@ function proxy_parse(proxy_string)
     proxy_string = proxy_string.replace(new RegExp("\\\\",'g'),":");
     proxy_string = proxy_string.replace(new RegExp("\\/",'g'),":");
     proxy_string = proxy_string.replace(new RegExp("\\s",'g'),"");
+
+    var ipv6regexp = new RegExp("\\[[^\\]]+\\]");
+    var ipv6match = proxy_string.match(ipv6regexp)
+    var ipv6addr = ""
+    if(ipv6match)
+    {
+        ipv6addr = ipv6match[0]
+        proxy_string = proxy_string.replace(ipv6regexp,"127.0.0.1");
+    }
+
+
     var list = proxy_string.split(":")
     for(var i = 0;i<list.length;i++)
     {
@@ -86,6 +97,10 @@ function proxy_parse(proxy_string)
         if(server.length == 0 && el.indexOf(".")>=0)
         {
             server = el
+            if(ipv6addr.length>0)
+            {
+                server = server.replace("127.0.0.1",ipv6addr)
+            }
             continue;
         }
         if(el.length>0)

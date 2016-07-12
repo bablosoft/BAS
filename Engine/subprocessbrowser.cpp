@@ -125,6 +125,30 @@ namespace BrowserAutomationStudioFramework
         Worker->GetProcessComunicator()->Send(WriteString);
     }
 
+    void SubprocessBrowser::SetPromptResult(const QString & Text, const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("SetPromptResult",Text);
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(QString("Timeout during SetPromptResult ") + Text);
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SetPromptResult()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
+    void SubprocessBrowser::SetHttpAuthResult(const QString & Login, const QString & Password, const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("SetHttpAuthResult",Login + ":" + Password);
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(QString("Timeout during SetHttpAuthResult ") + Login);
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SetHttpAuthResult()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
     void SubprocessBrowser::SetUserAgent(const QString& agent, const QString& callback)
     {
         QString WriteString;
@@ -267,7 +291,15 @@ namespace BrowserAutomationStudioFramework
             }else if(xmlReader.name() == "SetOpenFileName" && token == QXmlStreamReader::StartElement)
             {
                 emit SetOpenFileName();
-            }else if(xmlReader.name() == "GetCookiesForUrl" && token == QXmlStreamReader::StartElement)
+            }else if(xmlReader.name() == "SetPromptResult" && token == QXmlStreamReader::StartElement)
+            {
+                emit SetPromptResult();
+            }
+            else if(xmlReader.name() == "SetHttpAuthResult" && token == QXmlStreamReader::StartElement)
+            {
+                emit SetHttpAuthResult();
+            }
+            else if(xmlReader.name() == "GetCookiesForUrl" && token == QXmlStreamReader::StartElement)
             {
                 xmlReader.readNext();
                 Worker->SetAsyncResult(QScriptValue(xmlReader.text().toString()));

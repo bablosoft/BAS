@@ -84,7 +84,7 @@ body
   margin: 5px auto !important;
 }
 
-.waitelement, .waitasyncload, .httpclientget, .httpclientdownload, .httpclientreset, .isloaded, .getstatus, .cachemaskallow,.cachemaskdeny,.cachemaskclear,.requestmaskallow,.requestmaskdeny,.requestmaskclear,.clearcache,.clearrequests, .html, .getcookiesforurl, .openfile, .reset, .moveelement,.moveandclickelement, .clickelement, .length, .set_attr, .attr, .set_random, .set_integer, .set, .focus, .check, .style, .exist, .clear, .load, .url, .xml, .log, .setvariable, .if, .while, .executefunction, .for, .sleep, .resize, .click, .move, .moveandclick, .break, .continue, .success, .fail, .text, .foreach
+.promptresult, .waitelement, .waitasyncload, .httpclientget, .httpclientdownload, .httpclientreset, .isloaded, .getstatus, .cachemaskallow,.cachemaskdeny,.cachemaskclear,.requestmaskallow,.requestmaskdeny,.requestmaskclear,.clearcache,.clearrequests, .html, .getcookiesforurl, .openfile, .reset, .moveelement,.moveandclickelement, .clickelement, .length, .set_attr, .attr, .set_random, .set_integer, .set, .focus, .check, .style, .exist, .clear, .load, .url, .xml, .log, .setvariable, .if, .while, .executefunction, .for, .sleep, .resize, .click, .move, .moveandclick, .break, .continue, .success, .fail, .text, .foreach
 {
   padding-top:35px;
 }

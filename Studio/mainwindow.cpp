@@ -553,6 +553,8 @@ void MainWindow::OpenFromFileOrDisplayMessageBox(const QString& fileName)
         QMessageBox::warning(0, tr("Error loading file"), QString(tr("Error loading file : %1")).arg(Result));
     }else
     {
+        if(_RecordProcessCommunication)
+            _RecordProcessCommunication->StopRecorder();
         SetCurrentFileName(fileName);
 		Settings->setValue("CurrentFileName",CurrentFileName);
     }
@@ -684,6 +686,8 @@ void MainWindow::New()
     QString fileName = QFileDialog::getSaveFileName(this, tr("Create Project"), "", tr("Project Files (*.xml);;All Files (*.*)"));
     if(fileName.length()>0)
     {
+        if(_RecordProcessCommunication)
+            _RecordProcessCommunication->StopRecorder();
         Output->SetDefaults();
         TextEditor->Clear();
         SetDefaultText();

@@ -546,6 +546,7 @@ namespace BrowserAutomationStudioFramework
         w->SetVariableName("place_variable_name");
         MultiLanguageString str;
         str.SetTranslation("en","PLEASE FILL DESCRIPTION");
+        str.SetTranslation("ru",QString::fromStdWString(std::wstring(L"\x0412\x0412\x0415\x0414\x0418\x0422\x0415\x0020\x041E\x041F\x0418\x0421\x0410\x041D\x0418\x0415")));
         w->SetDescription(str);
         w->SetTypeId("FixedStringValue");
         GetLayoutForSection("")->addWidget(w->GetMainWidget());

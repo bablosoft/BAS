@@ -58,4 +58,22 @@ class CefRefCountPublic {
     CefRefCountPublic ref_count_;
 
 
+#define IMPLEMENT_REFCOUNTING_NONE()                \
+  public:                                           \
+    void AddRef() const OVERRIDE {                  \
+      ref_count_.AddRef();                          \
+    }                                               \
+    bool Release() const OVERRIDE {                 \
+      if (ref_count_.Release()) {                   \
+        return true;                                \
+      }                                             \
+      return false;                                 \
+    }                                               \
+    bool HasOneRef() const OVERRIDE {               \
+      return ref_count_.HasOneRef();                \
+    }                                               \
+    CefRefCountPublic ref_count_;
+
+
+
 #endif // REFCOUNTPUBLIC_H

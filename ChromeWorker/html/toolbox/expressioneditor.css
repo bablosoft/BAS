@@ -204,6 +204,11 @@ body
  z-index:99999999; 
 }
 
+#FunctionModal
+{
+ z-index:99999999; 
+}
+
 .expressioneditor-overlay-buttons .btn
 {
   min-width:100px;

@@ -30,6 +30,7 @@ namespace BrowserAutomationStudioFramework
         void SetCanSendDataFalse();
     public slots:
         virtual void SendIsChanged();
+        virtual void StopRecorder();
         virtual void SendCode(const QString& Code);
         virtual void SetWindow(const QString& Window);
         virtual void SendResources(const QList<ResourceDescription>& Resources);
