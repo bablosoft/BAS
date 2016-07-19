@@ -8,6 +8,9 @@
 #include <network/uri/uri_builder.hpp>
 #include "multithreading.h"
 #include "fixcontentcharset.h"
+#include <chrono>
+
+using namespace std::chrono;
 
 
 void ParseHeaders(CurlResourceHandler::CurlThreadDataClass * Data)
@@ -291,7 +294,15 @@ void CurlThreadFunction(CurlResourceHandler::CurlThreadDataClass * Data)
 CurlResourceHandler::CurlResourceHandler(BrowserData * _BrowserData)
 {
     this->_BrowserData = _BrowserData;
+    this->StartTime = duration_cast< milliseconds >( system_clock::now().time_since_epoch() ).count();
+
 }
+
+int64 CurlResourceHandler::GetStartTime()
+{
+    return this->StartTime;
+}
+
 
 
 bool CurlResourceHandler::ProcessRequest(CefRefPtr<CefRequest> request, CefRefPtr<CefCallback> callback)
@@ -542,15 +553,24 @@ void CurlResourceHandler::GetResponseHeaders(CefRefPtr<CefResponse> response, in
                 }
 
                 Result = builder.uri().string();
-                if(!RedirectUrl.empty() && RedirectUrl.at(0)!='/')
+                if((RedirectUrl.length() > 1 && RedirectUrl[0] == '/' && RedirectUrl[1] == '/'))
+                {
+                    Result = OriginalUrlParsed.scheme().to_string() + ":" + RedirectUrl;
+                }else if(!RedirectUrl.empty() && RedirectUrl.at(0)!='/')
+                {
                     Result += "/";
-                 Result += RedirectUrl;
+                    Result += RedirectUrl;
+                }else
+                {
+                    Result += RedirectUrl;
+                }
 
             }
         }catch(...)
         {
             Result = RedirectUrl;
         }
+
 
         //worker_log(std::string("!!!FinalLocationUrl : ") + Result);
 

@@ -29,6 +29,7 @@ class HandlersManager
     void UrlLoaded(const std::string& url, int status, int BrowserId);
     void LoadSuccess(int BrowserId);
     void Paint(char * data, int width, int height, int BrowserId);
+    void OldestRequestTimeChanged(int64 OldestTime, int BrowserId);
 
 
     int CurrentBrowserId = -1;
@@ -42,6 +43,7 @@ class HandlersManager
     std::function<void(const std::string&, int)> UrlLoadedCallback;
     std::function<void()> LoadSuccessCallback;
     std::function<void(char*,int,int)> PaintCallback;
+    std::function<void(int64)> OldestRequestTimeChangedCallback;
 
     std::vector<int> NewContextCreatedIds;
 
@@ -57,7 +59,8 @@ public:
                std::function<void(const std::string&)> SendTextResponceCallback,
                std::function<void(const std::string&, int)> UrlLoadedCallback,
                std::function<void()> LoadSuccessCallback,
-               std::function<void(char*,int,int)> PaintCallback
+               std::function<void(char*,int,int)> PaintCallback,
+               std::function<void(int64)> OldestRequestTimeChangedCallback
                );
     void Init2(CefRefPtr<CefBrowser> Browser);
 

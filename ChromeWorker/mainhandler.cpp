@@ -88,7 +88,7 @@ CefRefPtr<CefJSDialogHandler> MainHandler::GetJSDialogHandler()
     return this;
 }
 
-bool MainHandler::OnJSDialog(CefRefPtr<CefBrowser> browser, const CefString& origin_url, const CefString& accept_lang, JSDialogType dialog_type, const CefString& message_text, const CefString& default_prompt_text, CefRefPtr<CefJSDialogCallback> callback, bool& suppress_message)
+bool MainHandler::OnJSDialog(CefRefPtr<CefBrowser> browser, const CefString& origin_url, JSDialogType dialog_type, const CefString& message_text, const CefString& default_prompt_text, CefRefPtr<CefJSDialogCallback> callback, bool& suppress_message)
 {
     switch(dialog_type)
     {
@@ -144,6 +144,11 @@ bool MainHandler::OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& e
 
 CefRefPtr<CefResourceHandler> MainHandler::GetResourceHandler(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request)
 {
+    std::string url = request->GetURL().ToString();
+    if(url.size()>4 && url[0] == 'b' && url[1] == 'l' && url[2] == 'o' && url[3] == 'b' && url[4] == ':')
+    {
+        return 0;
+    }
     CurlResourceHandler* h = new CurlResourceHandler(Data);
     h->SetForceUtf8(Settings->ForceUtf8());
 
@@ -160,6 +165,7 @@ int MainHandler::GetResourceListLength()
 void MainHandler::CleanResourceHandlerList()
 {
     //Delete expired handlers and run timer on existing
+    int64 OldestRequest = 0;
     int i = 0;
     for (std::vector<CefRefPtr<CurlResourceHandler> >::iterator it=EventOnTimerCurlResources.begin();it!=EventOnTimerCurlResources.end();)
     {
@@ -170,6 +176,8 @@ void MainHandler::CleanResourceHandlerList()
         }
         else
         {
+            if(it->get()->GetStartTime() < OldestRequest || OldestRequest == 0)
+                OldestRequest = it->get()->GetStartTime();
             it->get()->Timer();
             ++it;
         }
@@ -177,6 +185,10 @@ void MainHandler::CleanResourceHandlerList()
      }
     CurlResourcesLength = EventOnTimerCurlResources.size();
 
+    for(auto f:EventOldestRequestTimeChanged)
+    {
+        f(OldestRequest,GetBrowserId());
+    }
 }
 
 

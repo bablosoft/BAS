@@ -1,3 +1,7 @@
+BROWSERAUTOMATIONSTUDIO_WAIT_TIMEOUT = 60
+BROWSERAUTOMATIONSTUDIO_FULL_LOAD_TIMEOUT = 4
+
+
 function wait_url()
 {
     var text_success = null;
@@ -231,17 +235,72 @@ function wait_css()
 
 function wait_async_load(func)
 {
-    WAIT_ASYNC_LOAD_FUNC = func;
-    url(function(){
-        wait("Failed to wait of state complete on page " + _result(),function(){
-                    _set_result(false);
-                    script("document.readyState", function(){
-                      _set_result(_result() === "complete");
-                    })
-                },null,WAIT_ASYNC_LOAD_FUNC);
-        })
-}
+    WAIT_ASYNC_LOAD_START_TIME = (new Date()).getTime();
+    //WAIT_ASYNC_LOAD_LOAD_TIME = 0;
+    WAIT_ASYNC_LOAD_TIMEOUT_TIME = 0;
 
+
+    //0 -  ***    IsLoading = 1       IsLoading = 0
+    //1 -         IsLoading = 1  ***  IsLoading = 0
+    //2 -         IsLoading = 1       IsLoading = 0   ***
+    WAIT_ASYNC_LOAD_STAGE = 0;
+
+    WAIT_ASYNC_LOAD_ITERATOR = 0;
+
+    wait("Failed to wait of state complete",function(){
+        _set_result(false);
+
+        get_load_stats(function(){
+
+            var is_loading = parseInt(_result().split(",")[0])
+
+            switch(WAIT_ASYNC_LOAD_STAGE)
+            {
+                case 0:
+                {
+                    if(is_loading === 1)
+                    {
+                        WAIT_ASYNC_LOAD_STAGE = 1
+                        //log("Stage #1")
+                    }
+                }break;
+                case 1:
+                {
+                    if(is_loading === 0)
+                    {
+                        WAIT_ASYNC_LOAD_STAGE = 2
+                        //WAIT_ASYNC_LOAD_LOAD_TIME = (new Date()).getTime();
+                        //log("Stage #2")
+                    }
+                }break;
+            }
+
+            if(WAIT_ASYNC_LOAD_ITERATOR == BROWSERAUTOMATIONSTUDIO_FULL_LOAD_TIMEOUT - 1)
+            {
+                WAIT_ASYNC_LOAD_TIMEOUT_TIME = (new Date()).getTime();
+            }
+
+            var oldest_not_loaded_request_time = parseInt(_result().split(",")[1]);
+            //log("[" + WAIT_ASYNC_LOAD_ITERATOR + "][" + WAIT_ASYNC_LOAD_STAGE + "] Wait start time : " + WAIT_ASYNC_LOAD_START_TIME + "; Oldest request time : " + oldest_not_loaded_request_time + "; Second stage time : " + WAIT_ASYNC_LOAD_LOAD_TIME)
+
+            _set_result(
+
+                        //No requests during 7 seconds.
+                        (WAIT_ASYNC_LOAD_STAGE == 0 && WAIT_ASYNC_LOAD_ITERATOR >= BROWSERAUTOMATIONSTUDIO_FULL_LOAD_TIMEOUT - 1 && (oldest_not_loaded_request_time > WAIT_ASYNC_LOAD_TIMEOUT_TIME || oldest_not_loaded_request_time === 0)) ||
+
+                        //Page loaded and every request that was started before page ended
+                        (WAIT_ASYNC_LOAD_STAGE == 2 /*&& (oldest_not_loaded_request_time > WAIT_ASYNC_LOAD_LOAD_TIME || oldest_not_loaded_request_time === 0)*/)
+
+                      );
+
+            WAIT_ASYNC_LOAD_ITERATOR++;
+        })
+
+
+
+    },null,func);
+
+}
 
 function wait()
 {
@@ -285,7 +344,7 @@ function wait()
 
     _do(function(i)
     {
-        if(i>60)
+        if(i>BROWSERAUTOMATIONSTUDIO_WAIT_TIMEOUT)
             fail(fail_message)
 
         _set_result(false)

@@ -53,5 +53,13 @@ ConverterResult convert(const std::string& text, const std::string& encoding_in,
 
 ConverterResult convert_to_utf8(const std::string& text, const std::string& encoding_in)
 {
+    if(encoding_in == "utf-8")
+    {
+        ConverterResult Result = std::make_shared<ConverterResultClass>();
+        Result->WasSuccess = true;
+        Result->Result = text;
+        return Result;
+    }
+
     return convert(text,encoding_in,"UTF-8");
 }

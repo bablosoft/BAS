@@ -481,6 +481,14 @@ void CommandParser::Parse(const std::string& Xml)
                 f(value);
         }
 
+        CommandNode = MessagesNode->first_node("GetLoadStats");
+        if(CommandNode)
+        {
+            worker_log("GetLoadStats");
+            for(auto f:EventGetLoadStats)
+                f();
+        }
+
 
         CommandNode = MessagesNode->first_node("Element");
         if(CommandNode)

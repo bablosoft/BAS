@@ -111,6 +111,11 @@ namespace BrowserAutomationStudioFramework
                 emit ReceiveCode(xmlReader.text().toString());
                 CanSendIsChanged = CanSendIsChangedSaved;
             }
+            if(xmlReader.name() == "LoadScript" && token == QXmlStreamReader::StartElement)
+            {
+                xmlReader.readNext();
+                emit LoadScript(xmlReader.text().toString());
+            }
             if(xmlReader.name() == "Terminate" && token == QXmlStreamReader::StartElement)
             {
                 emit Stop();

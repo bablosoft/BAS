@@ -266,6 +266,11 @@ namespace BrowserAutomationStudioFramework
         Worker->RunSubScript();
     }
 
+    void NetworkAccessManager::GetLoadStats(const QString& callback)
+    {
+
+    }
+
     bool NetworkAccessManager::CheckListOfMask(const QList<MaskStruct>& Masks, const QString& Text, bool Default)
     {
         bool res = Default;

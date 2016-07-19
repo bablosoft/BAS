@@ -15,6 +15,7 @@ MainLayout::MainLayout(int ToolboxHeight, int ScenarioWidth)
 
     IsMinimized = false;
     IsToolboxMaximized = false;
+    IsCentralShown = false;
     HButtonMinimizeMaximize = 0;
     ButtonMinimize = 0;
     ButtonMaximize = 0;
@@ -22,6 +23,7 @@ MainLayout::MainLayout(int ToolboxHeight, int ScenarioWidth)
     //Browsers
     BrowserHandle = 0;
     ToolBoxHandle = 0;
+    CentralHandle = 0;
     ScenarioHandle = 0;
     DevToolsHandle = 0;
 
@@ -50,6 +52,32 @@ MainLayout::MainLayout(int ToolboxHeight, int ScenarioWidth)
     }
     DevToolsRectWidth = (ScenarioWidth == 0)?DevToolsRectWidth:ScenarioWidth;
     ToolBoxRectHeight = (ToolboxHeight == 0)?221:ToolboxHeight;
+}
+
+void MainLayout::ShowCentralBrowser()
+{
+    if(CentralHandle)
+    {
+        IsCentralShown = true;
+        ShowWindow(HButtonUp,SW_HIDE);
+        ShowWindow(HButtonDown,SW_HIDE);
+        ShowWindow(HButtonLeft,SW_HIDE);
+        ShowWindow(HButtonRight,SW_HIDE);
+        ShowWindow(CentralHandle,SW_SHOW);
+    }
+
+}
+void MainLayout::HideCentralBrowser()
+{
+    if(CentralHandle)
+    {
+        IsCentralShown = false;
+        ShowWindow(HButtonUp,SW_SHOW);
+        ShowWindow(HButtonDown,SW_SHOW);
+        ShowWindow(HButtonLeft,SW_SHOW);
+        ShowWindow(HButtonRight,SW_SHOW);
+        ShowWindow(CentralHandle,SW_HIDE);
+    }
 }
 
 void MainLayout::MaximizeToolbox(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight)
@@ -181,7 +209,7 @@ BOOL CALLBACK FindDevToolsIteration(HWND hwnd, LPARAM lParam)
         std::wstring CefBrowserWindow = L"CefBrowserWindow";
         wchar_t data[256];
         int res = GetClassName(hwnd,data,256);
-        if(res && std::wstring(data,res) == CefBrowserWindow && (!_Layout->ToolBoxHandle || _Layout->ToolBoxHandle != hwnd)&& (!_Layout->ScenarioHandle || _Layout->ScenarioHandle != hwnd))
+        if(res && std::wstring(data,res) == CefBrowserWindow && (!_Layout->ToolBoxHandle || _Layout->ToolBoxHandle != hwnd)&& (!_Layout->ScenarioHandle || _Layout->ScenarioHandle != hwnd)&& (!_Layout->CentralHandle || _Layout->CentralHandle != hwnd))
         {
             _Layout->DevToolsHandle = hwnd;
             return false;
@@ -270,6 +298,9 @@ void MainLayout::UpdateState(StateClass State)
         ShowWindow(HTextFinished,(State == Finished)?SW_SHOW:SW_HIDE);
         RECT r = GetStateIndicatorRectangle(_Layout->BrowserWidth, _Layout->BrowserHeight, _Layout->WindowWidth, _Layout->WindowHeight);
         InvalidateRect(MainWindowHandle,&r,true);
+
+        if(State == Hold || State == Finished)
+            HideCentralBrowser();
     }
 }
 
@@ -326,11 +357,14 @@ void MainLayout::Update(int BrowserWidth,int BrowserHeight,int WindowWidth,int W
         ShowWindow(HTextFinished,SW_HIDE);
     }
 
+
+
     UpdateState(State);
     UpdateTabs();
 
     RECT r = GetBrowserOuterRectangle(BrowserWidth, BrowserHeight, WindowWidth, WindowHeight);
-    InvalidateRect(MainWindowHandle,&r,true);
+    if(!IsCentralShown)
+        InvalidateRect(MainWindowHandle,&r,true);
 
     this->BrowserWidth = BrowserWidth;
     this->BrowserHeight = BrowserHeight;
@@ -348,7 +382,15 @@ void MainLayout::Update(int BrowserWidth,int BrowserHeight,int WindowWidth,int W
         MoveWindow(ToolBoxHandle,ToolboxRectangle.left,ToolboxRectangle.top,ToolboxRectangle.right - ToolboxRectangle.left,ToolboxRectangle.bottom - ToolboxRectangle.top,true);
     }
 
+    if(CentralHandle)
+    {
+        MoveWindow(CentralHandle,BrowserRectangle.left,BrowserRectangle.top,BrowserRectangle.right - BrowserRectangle.left,BrowserRectangle.bottom - BrowserRectangle.top,true);
+    }
+
     MoveDevTools();
+
+    MoveWindow(CentralHandle,BrowserRectangle.left,BrowserRectangle.top,BrowserRectangle.right - BrowserRectangle.left,BrowserRectangle.bottom - BrowserRectangle.top,true);
+
 
     MoveWindow(HButtonUp,BrowserRectangle.right + 5,BrowserRectangle.bottom - 90,20,20,true);
     MoveWindow(HButtonDown,BrowserRectangle.right + 5, BrowserRectangle.bottom - 60,20,20,true);

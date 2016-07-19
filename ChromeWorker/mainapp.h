@@ -11,10 +11,12 @@
 #include "browsereventsemulator.h"
 #include "toolboxhandler.h"
 #include "scenariohandler.h"
+#include "centralhandler.h"
 #include <ctime>
 #include "mainlayout.h"
 #include "toolboxv8handler.h"
 #include "scenariov8handler.h"
+#include "centralv8handler.h"
 #include "variablesextractor.h"
 #include "extract_functions.h"
 #include "extract_resources.h"
@@ -28,13 +30,16 @@ class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderP
 
     CefRefPtr<ToolboxHandler> thandler;
     CefRefPtr<ScenarioHandler> shandler;
+    CefRefPtr<CentralHandler> chandler;
     CefRefPtr<CefBrowser> BrowserToolbox;
     CefRefPtr<CefBrowser> BrowserScenario;
+    CefRefPtr<CefBrowser> BrowserCentral;
     CefRefPtr<DevToolsHandler> dhandler;
     CefRefPtr<CookieVisitor> cookievisitor;
     CefRefPtr<V8Handler> v8handler;
     CefRefPtr<ToolboxV8Handler> toolboxv8handler;
     CefRefPtr<ScenarioV8Handler> scenariov8handler;
+    CefRefPtr<CentralV8Handler> central8handler;
     ElementCommand LastCommand;
     bool IsLastCommandNull;
     BrowserData *Data;
@@ -92,6 +97,8 @@ class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderP
     void HandleMainBrowserEvents();
     void HandleToolboxBrowserEvents();
     void HandleScenarioBrowserEvents();
+    void HandleCentralBrowserEvents();
+
 
     std::string Lang;
 
@@ -154,6 +161,7 @@ public:
     void FindStatusByMaskCallback(const std::string& value);
     void FindCacheByMaskStringCallback(const std::string& value);
     void IsUrlLoadedByMaskCallback(const std::string& value);
+    void GetLoadStatsCallback();
     void ElementCommandCallback(const ElementCommand &Command);
     void SetCodeCallback(const std::string & code);
     void SetResourceCallback(const std::string & resources);
@@ -172,10 +180,12 @@ public:
     void ExecuteMouseMove();
     void FinishedLastCommand(const std::string& data);
     void Paint(char * data, int width, int height);
+    void OldestRequestTimeChanged(int64 OldestTime);
     char* GetImageData();
     std::pair<int,int> GetImageSize();
     void CreateTooboxBrowser();
     void CreateScenarioBrowser();
+    void CreateCentralBrowser();
 
     void EmulateClick(int x, int y);
     void EmulateMove(int x, int y);

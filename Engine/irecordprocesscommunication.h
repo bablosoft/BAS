@@ -21,6 +21,7 @@ namespace BrowserAutomationStudioFramework
         explicit IRecordProcessCommunication(QObject *parent = 0);
     signals:
         void ReceiveCode(QString Code);
+        void LoadScript(QString FileName);
         void NeedRestart();
         void Stop();
     public slots:

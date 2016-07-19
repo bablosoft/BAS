@@ -20,6 +20,7 @@ public:
     ProxyData _Proxy;
     CefWindowHandle _MainWindowHandle;
     CefWindowHandle _ParentWindowHandle;
+    std::atomic<int64> OldestRequestTime;
     std::vector<std::pair<bool, std::string> > _CacheMask;
     std::vector<std::pair<bool, std::string> > _RequestMask;
     std::vector<std::pair<std::string, int> > _LoadedUrls;

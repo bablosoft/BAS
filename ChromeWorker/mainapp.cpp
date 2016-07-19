@@ -82,7 +82,8 @@ void MainApp::OnContextInitialized()
                             std::bind(&MainApp::SendTextResponce,this,_1),
                             std::bind(&MainApp::UrlLoaded,this,_1,_2),
                             std::bind(&MainApp::LoadSuccessCallback,this),
-                            std::bind(&MainApp::Paint,this,_1,_2,_3));
+                            std::bind(&MainApp::Paint,this,_1,_2,_3),
+                            std::bind(&MainApp::OldestRequestTimeChanged,this,_1));
 
     _HandlersManager->GetHandler()->SetSettings(Settings);
     _HandlersManager->GetHandler()->SetData(Data);
@@ -92,6 +93,11 @@ void MainApp::OnContextInitialized()
     dhandler->SetLayout(Layout);
     dhandler->SetHandlersManager(_HandlersManager.get());
     cookievisitor = new CookieVisitor();
+}
+
+void MainApp::OldestRequestTimeChanged(int64 OldestTime)
+{
+    Data->OldestRequestTime = OldestTime;
 }
 
 void MainApp::Paint(char * data, int width, int height)
@@ -545,6 +551,7 @@ void MainApp::CreateScenarioBrowser()
     CefWindowInfo window_info;
 
     RECT r =  Layout->GetDevToolsRectangle(GetData()->WidthBrowser,GetData()->HeightBrowser,GetData()->WidthAll,GetData()->HeightAll);
+
     window_info.SetAsChild(Data->_MainWindowHandle,r);
 
     CefBrowserSettings browser_settings;
@@ -552,6 +559,32 @@ void MainApp::CreateScenarioBrowser()
     CefRefPtr<CefRequestContext> Context = CefRequestContext::CreateContext(settings,NULL);
     BrowserScenario = CefBrowserHost::CreateBrowserSync(window_info, shandler, "file:///html/scenario/index.html", browser_settings, Context);
     Layout->ScenarioHandle = BrowserScenario->GetHost()->GetWindowHandle();
+
+}
+
+void MainApp::CreateCentralBrowser()
+{
+    if(BrowserCentral)
+        return;
+    if(!Data->IsRecord)
+        return;
+    chandler = new CentralHandler();
+
+    CefWindowInfo window_info;
+
+    RECT r =  Layout->GetBrowserRectangle(GetData()->WidthBrowser,GetData()->HeightBrowser,GetData()->WidthAll,GetData()->HeightAll);
+
+    window_info.SetAsChild(Data->_MainWindowHandle,r);
+
+    CefBrowserSettings browser_settings;
+    CefRequestContextSettings settings;
+    CefRefPtr<CefRequestContext> Context = CefRequestContext::CreateContext(settings,NULL);
+    std::string page = std::string("file:///html/central/index_") + Lang + std::string(".html");
+
+    BrowserCentral = CefBrowserHost::CreateBrowserSync(window_info, chandler, page, browser_settings, Context);
+
+    Layout->CentralHandle = BrowserCentral->GetHost()->GetWindowHandle();
+    Layout->ShowCentralBrowser();
 
 }
 
@@ -593,8 +626,7 @@ void MainApp::AfterReadyToCreateBrowser(bool Reload)
     CefBrowserSettings browser_settings;
     browser_settings.windowless_frame_rate = 5;
 
-    std::string encoding("utf-8");
-    std::wstring wencoding = s2ws(encoding);
+    std::wstring wencoding = L"UTF-8";
     cef_string_utf16_set(wencoding.data(),wencoding.size(),&browser_settings.default_encoding,true);
 
     //CefRequestContextSettings settings;
@@ -626,6 +658,7 @@ void MainApp::AfterReadyToCreateBrowser(bool Reload)
         //ToggleDevTools();
         CreateTooboxBrowser();
         CreateScenarioBrowser();
+        CreateCentralBrowser();
     }else
     {
         worker_log("!!!OPTIMIZEDRELOAD!!!");
@@ -967,8 +1000,22 @@ void MainApp::FindStatusByMaskCallback(const std::string& value)
     }
     SendTextResponce(std::string("<Messages><FindStatusByMask>") + res + ("</FindStatusByMask></Messages>"));
 }
+
+void MainApp::GetLoadStatsCallback()
+{
+    int is_loading = 0;
+    if(_HandlersManager->GetBrowser())
+        is_loading = _HandlersManager->GetBrowser()->IsLoading();
+
+
+    SendTextResponce(std::string("<Messages><GetLoadStats>") + std::to_string(is_loading) + "," + std::to_string(Data->OldestRequestTime) + std::string("</GetLoadStats></Messages>"));
+    return;
+}
+
+
 void MainApp::FindCacheByMaskStringCallback(const std::string& value)
 {
+
     worker_log(std::string("FindCacheByMaskStringCallback<<") + value);
     std::string res = "";
     {
@@ -1225,6 +1272,9 @@ void MainApp::Timer()
     if(scenariov8handler)
         HandleScenarioBrowserEvents();
 
+    if(central8handler)
+        HandleCentralBrowserEvents();
+
     if(dhandler)
         dhandler->Timer();
 
@@ -1240,6 +1290,32 @@ void MainApp::Timer()
     }
 
     UpdateWindowPositionWithParent();
+}
+
+void MainApp::HandleCentralBrowserEvents()
+{
+    std::pair<std::string, bool> res = central8handler->GetLoadUrl();
+    if(res.second)
+    {
+        std::string url = res.first;
+        if(url.length() >= 7 && url[0] == 'f'&& url[1] == 'i'&& url[2] == 'l'&& url[3] == 'e'&& url[4] == ':'&& url[5] == '/'&& url[6] == '/')
+        {
+            url = url.substr(7,url.length() - 7);
+            worker_log(std::string("OpenScriptExample<<") + url);
+            xml_encode(url);
+            SendTextResponce(std::string("<Messages><LoadScript>") + url + std::string("</LoadScript></Messages>"));
+
+        }else
+        {
+            worker_log(std::string("LoadUrlFromCentralBrowser<<") + res.first);
+            ShellExecute(0, 0, s2ws(res.first).c_str(), 0, 0 , SW_SHOW );
+        }
+    }
+
+    if(central8handler->GetClose())
+    {
+        Layout->HideCentralBrowser();
+    }
 }
 
 void MainApp::HandleScenarioBrowserEvents()
@@ -1477,7 +1553,7 @@ void MainApp::HandleMainBrowserEvents()
             }
         }else if(LastCommand.CommandName == std::string("_scroll"))
         {
-            std::size_t pos = res.first.find(",");
+            /*std::size_t pos = res.first.find(",");
             int x = -1, y = -1;
             if(pos != std::string::npos)
             {
@@ -1494,7 +1570,10 @@ void MainApp::HandleMainBrowserEvents()
             {
                 v8handler->SetResultProcessed();
                 SendTextResponce("<Messages><Scroll></Scroll></Messages>");
-            }
+            }*/
+
+            v8handler->SetResultProcessed();
+            SendTextResponce("<Messages><Scroll></Scroll></Messages>");
 
 
         }else if(LastCommand.CommandName == std::string("_render"))
@@ -1831,6 +1910,18 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
         object->SetValue("_K", CefV8Value::CreateString(Lang), V8_PROPERTY_ATTRIBUTE_NONE);
         return;
     }
+
+    if(BrowserCentral.get() && BrowserCentral->GetIdentifier() == browser->GetIdentifier())
+    {
+        worker_log("OnContextCreated<<BrowserCentral");
+        CefRefPtr<CefV8Value> object = context->GetGlobal();
+        if(frame->IsMain())
+            central8handler = new CentralV8Handler();
+        object->SetValue("BrowserAutomationStudio_OpenUrl", CefV8Value::CreateFunction("BrowserAutomationStudio_OpenUrl", central8handler), V8_PROPERTY_ATTRIBUTE_NONE);
+        object->SetValue("BrowserAutomationStudio_Close", CefV8Value::CreateFunction("BrowserAutomationStudio_Close", central8handler), V8_PROPERTY_ATTRIBUTE_NONE);
+        return;
+    }
+
 
 
     //Main Browser

@@ -58,7 +58,8 @@ bool FixContentCharset::NeedToFix(const std::string& ContentTypeHeader, const st
     std::string Charset = ExtractCharset(ContentTypeHeader);
     std::string Mime = ExtractMime(ContentTypeHeader);
 
-    bool IsOk = IsUtf8(Charset) || Mime != "text/html" && Charset.empty();
+    //bool IsOk = IsUtf8(Charset) || Mime != "text/html" && Charset.empty();
+    bool IsOk = Mime != "text/html" && Charset.empty();
     return !IsOk;
 }
 
@@ -130,22 +131,36 @@ bool FixContentCharset::Fix(const std::string& ContentTypeHeader, std::string& P
 
     if(Charset.empty())
     {
-        worker_log(std::string(std::string("[") + Url + std::string("]") + "Can't find charset, asume it is utf-8, do nothing"));
-        return false;
+        worker_log(std::string(std::string("[") + Url + std::string("]") + "Can't find charset, asume it is utf-8"));
+        Charset = "utf-8";
     }
 
     if(IsUtf8(Charset))
     {
-        worker_log(std::string(std::string("[") + Url + std::string("]") + "Charset is utf-8, do nothing"));
-        return false;
+        worker_log(std::string(std::string("[") + Url + std::string("]") + "Charset is utf-8"));
+        Charset = "utf-8";
     }
 
 
     worker_log(std::string("[") + Url + std::string("]") + std::string("Fixing content with encoding ") + Charset);
     ConverterResult Result = convert_to_utf8(PageContent,Charset);
+
     worker_log(std::string("[") + Url + std::string("]") + std::string("Fix result ") + std::to_string(Result->WasSuccess));
     if(Result->WasSuccess)
     {
+
+        if(IsUtf8(Charset) && !Result->Result.empty())
+        {
+            std::string bom;
+            bom.push_back(0xef);
+            bom.push_back(0xbb);
+            bom.push_back(0xbf);
+            Result->Result = bom + Result->Result;
+
+            worker_log(std::string(std::string("[") + Url + std::string("]") + "Append BOM"));
+        }
+
+
         PageContent.assign(Result->Result);
 
         //ReplaceMime if needed

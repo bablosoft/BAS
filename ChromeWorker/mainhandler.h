@@ -44,8 +44,8 @@ public:
 
 
     // CefJSDialogHandler methods:
-    virtual bool OnJSDialog(CefRefPtr<CefBrowser> browser, const CefString& origin_url, const CefString& accept_lang, JSDialogType dialog_type, const CefString& message_text, const CefString& default_prompt_text, CefRefPtr<CefJSDialogCallback> callback, bool& suppress_message);
-    virtual bool OnBeforeUnloadDialog(CefRefPtr<CefBrowser> browser,const CefString& message_text, bool is_reload, CefRefPtr<CefJSDialogCallback> callback);
+    virtual bool OnJSDialog(CefRefPtr<CefBrowser> browser, const CefString& origin_url, JSDialogType dialog_type, const CefString& message_text, const CefString& default_prompt_text, CefRefPtr<CefJSDialogCallback> callback, bool& suppress_message) OVERRIDE;
+    virtual bool OnBeforeUnloadDialog(CefRefPtr<CefBrowser> browser,const CefString& message_text, bool is_reload, CefRefPtr<CefJSDialogCallback> callback) OVERRIDE;
 
 
     // CefKeyboardHandler methods:
@@ -95,6 +95,7 @@ public:
     std::vector<std::function<void(char*,int,int,int)> > EventPaint;
     std::vector<std::function<void(CefRefPtr<MainHandler>,CefRefPtr<CefBrowser>)> > EventPopupCreated;
     std::vector<std::function<void(int)> > EventPopupClosed;
+    std::vector<std::function<void(int64,int)> > EventOldestRequestTimeChanged;
     std::vector<CefRefPtr<CurlResourceHandler> > EventOnTimerCurlResources;
     std::atomic_int CurlResourcesLength;
 

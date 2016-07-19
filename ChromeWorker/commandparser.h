@@ -55,6 +55,8 @@ public:
     std::vector<std::function<void(const std::string&)> > EventFindStatusByMask;
     std::vector<std::function<void(const std::string&)> > EventFindCacheByMaskString;
     std::vector<std::function<void(const std::string&)> > EventIsUrlLoadedByMask;
+    std::vector<std::function<void()> > EventGetLoadStats;
+
 
     std::vector<std::function<void(const std::string&)> > EventSetCode;
     std::vector<std::function<void(const std::string&)> > EventSetResources;

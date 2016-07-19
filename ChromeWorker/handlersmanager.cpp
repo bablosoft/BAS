@@ -6,18 +6,20 @@
 
 using namespace std::placeholders;
 
-void HandlersManager::Init1(CefRefPtr<MainHandler> Handler,std::function<void(const std::string&)> SendTextResponceCallback,std::function<void(const std::string&, int)> UrlLoadedCallback,std::function<void()> LoadSuccessCallback,std::function<void(char*,int,int)> PaintCallback)
+void HandlersManager::Init1(CefRefPtr<MainHandler> Handler,std::function<void(const std::string&)> SendTextResponceCallback,std::function<void(const std::string&, int)> UrlLoadedCallback,std::function<void()> LoadSuccessCallback,std::function<void(char*,int,int)> PaintCallback, std::function<void(int64)> OldestRequestTimeChangedCallback)
 {
     this->Handler.swap(Handler);
     this->SendTextResponceCallback = SendTextResponceCallback;
     this->UrlLoadedCallback = UrlLoadedCallback;
     this->LoadSuccessCallback = LoadSuccessCallback;
     this->PaintCallback = PaintCallback;
+    this->OldestRequestTimeChangedCallback = OldestRequestTimeChangedCallback;
 
     this->Handler->EventLoadSuccess.push_back(std::bind(&HandlersManager::LoadSuccess,this,_1));
     this->Handler->EventPaint.push_back(std::bind(&HandlersManager::Paint,this,_1,_2,_3,_4));
     this->Handler->EventSendTextResponce.push_back(std::bind(&HandlersManager::SendTextResponce,this,_1,_2));
     this->Handler->EventUrlLoaded.push_back(std::bind(&HandlersManager::UrlLoaded,this,_1,_2,_3));
+    this->Handler->EventOldestRequestTimeChanged.push_back(std::bind(&HandlersManager::OldestRequestTimeChanged,this,_1,_2));
 
     this->Handler->EventPopupClosed.push_back(std::bind(&HandlersManager::PopupRemoved,this,_1));
     this->Handler->EventPopupCreated.push_back(std::bind(&HandlersManager::PopupCreated,this,_1,_2));
@@ -151,12 +153,15 @@ void HandlersManager::PopupCreated(CefRefPtr<MainHandler> new_handler,CefRefPtr<
     p->Handler->EventUrlLoaded.clear();
     p->Handler->EventPopupClosed.clear();
     p->Handler->EventPopupCreated.clear();
+    p->Handler->EventOldestRequestTimeChanged.clear();
 
 
     p->Handler->EventLoadSuccess.push_back(std::bind(&HandlersManager::LoadSuccess,this,_1));
     p->Handler->EventPaint.push_back(std::bind(&HandlersManager::Paint,this,_1,_2,_3,_4));
     p->Handler->EventSendTextResponce.push_back(std::bind(&HandlersManager::SendTextResponce,this,_1,_2));
     p->Handler->EventUrlLoaded.push_back(std::bind(&HandlersManager::UrlLoaded,this,_1,_2,_3));
+    p->Handler->EventOldestRequestTimeChanged.push_back(std::bind(&HandlersManager::OldestRequestTimeChanged,this,_1,_2));
+
 
     p->Handler->EventPopupClosed.push_back(std::bind(&HandlersManager::PopupRemoved,this,_1));
     p->Handler->EventPopupCreated.push_back(std::bind(&HandlersManager::PopupCreated,this,_1,_2));
@@ -203,6 +208,12 @@ void HandlersManager::Paint(char * data, int width, int height, int BrowserId)
 {
     if(CurrentBrowserId == BrowserId)
         PaintCallback(data,width,height);
+}
+
+void HandlersManager::OldestRequestTimeChanged(int64 OldestTime, int BrowserId)
+{
+    if(CurrentBrowserId == BrowserId)
+        OldestRequestTimeChangedCallback(OldestTime);
 }
 
 void HandlersManager::NewContextCreated(int ContextId)

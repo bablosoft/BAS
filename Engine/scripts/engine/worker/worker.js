@@ -85,12 +85,6 @@ function http_auth_result(login, pass, callback)
     Browser.SetHttpAuthResult(login,pass,_get_function_body(callback));
 }
 
-function open_file_dialog(text, callback)
-{
-    _ensure_browser_created();
-    Browser.SetPromptResult(text,_get_function_body(callback));
-}
-
 function screenshot(path, callback)
 {
     _ensure_browser_created();
@@ -524,6 +518,12 @@ function native_async(dll,func,data,callback)
 function general_timeout(timeout)
 {
     ScriptWorker.SetGeneralWaitTimeout(timeout);
+    BROWSERAUTOMATIONSTUDIO_WAIT_TIMEOUT = Math.floor(timeout/1000);
+}
+
+function async_load_timeout(timeout)
+{
+    BROWSERAUTOMATIONSTUDIO_FULL_LOAD_TIMEOUT = Math.floor(timeout/1000);
 }
 
 function solver_timeout(timeout)

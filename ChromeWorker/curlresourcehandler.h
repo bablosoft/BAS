@@ -80,10 +80,14 @@ private:
 
     bool CanDelete = false;
     int IteratorWaitAfterDelete = 10;
+    int64 StartTime;
 public:
 
 
+
     CurlResourceHandler(BrowserData * _BrowserData);
+
+    int64 GetStartTime();
     //~CurlResourceHandler();
     void Join();
     bool GetCanDelete();

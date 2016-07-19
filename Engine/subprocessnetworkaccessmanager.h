@@ -28,6 +28,7 @@ namespace BrowserAutomationStudioFramework
         void FindCacheByMaskBase64();
         void FindCacheByMaskString();
         void IsUrlLoadedByMask();
+        void GetLoadStats();
         void SetProxy();
         void CleanHeader();
         void FindStatusByMask();
@@ -54,6 +55,7 @@ namespace BrowserAutomationStudioFramework
         virtual void FindStatusByMask(const QString& Mask, const QString& callback);
         virtual void FindCacheByMaskString(const QString& Mask, const QString& callback);
         virtual void IsUrlLoadedByMask(const QString& Mask, const QString& callback);
+        virtual void GetLoadStats(const QString& callback);
         virtual QNetworkAccessManager *GetNetworkAccessManager();
     private slots:
         void Received(const QString& value);

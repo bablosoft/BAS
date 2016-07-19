@@ -60,6 +60,7 @@ namespace BrowserAutomationStudioFramework
         virtual void FindStatusByMask(const QString& Mask, const QString& callback);
         virtual void FindCacheByMaskString(const QString& Mask, const QString& callback);
         virtual void IsUrlLoadedByMask(const QString& Mask, const QString& callback);
+        virtual void GetLoadStats(const QString& callback);
         virtual QNetworkAccessManager *GetNetworkAccessManager();
         virtual void SetProxy(const QString& server, int Port, bool IsHttp, const QString& name, const QString& password, const QString& callback);
 

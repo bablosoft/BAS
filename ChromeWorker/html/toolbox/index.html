@@ -145,7 +145,7 @@
                 <% first = true; %>
               <% } else { %>
                 <div class="tool <%= (first)? "toolfirst" : "" %>" >
-                  <a class="toolbutton" href="#!/<%= task.ref %>" data-toggle="tooltip" data-placement="right" title="<%= task.description %>" data-name="<%= task.name %>"><i class="fa fa-cog"></i> <%= task.name %> </a>
+                  <a class="toolbutton" href="#!/<%= task.ref %>" data-placement="right" title="<%= task.description %>" data-name="<%= task.name %>"><i class="fa fa-cog"></i> <%= task.name %> </a>
                 </div>
                 <% first = false; %>
               <% } %>
@@ -157,6 +157,10 @@
   <script type="text/template" id="back">
     <div class="container-fluid back" >
       <div class="col-xs-12">
+        <% if(typeof(use_waiter) != "undefined"){ %>
+          <a href="#" id="use-waiter" class="use-waiter-disabled trtitle" data-enabled="false" data-toggle="tooltip" data-placement="top" title="Wait full page load after this action"><i class="fa fa-clock-o" aria-hidden="true"></i></a>
+
+        <% } %>
         <a class="btn btn-success standartbutton tr" id="ok">Ok</a> <a class="btn btn-danger standartbutton tr" href="#!/" id="backtomain">Cancel</a>
         <span id="validation" class="text-muted"><%= _GobalModel.GetPageInfo() || name %></span>
         <% if(visible){ %>
@@ -504,7 +508,7 @@
       <%= _.template($('#input_constructor').html())({id:"X", description:tr("Scroll x position"), default_selector: "int", disable_string:true}) %>
       <%= _.template($('#input_constructor').html())({id:"Y", description:tr("Scroll y position"), default_selector: "int", disable_string:true}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true, visible:true}) %>
   </script>
 
   <script type="text/template" id="html">
@@ -669,6 +673,7 @@
                 <span data-preserve="true" data-preserve-type="select" data-preserve-id="Type">
                   <select class="form-control input-sm" id="Type" placeholder="Result">
                       <option value="general" selected="selected">General</option>
+                      <option value="fullpageload">Full Page Load</option>
                       <option value="solver">Solver</option>
                   </select>
                 </span>
@@ -1118,7 +1123,7 @@
     <div class="container-fluid clickelement">
       <div class="tooltipinternal tr">Click on element.</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Click On Element")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true, visible:true, name: tr("Click On Element")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1134,7 +1139,7 @@
     <div class="container-fluid moveandclickelement">
       <div class="tooltipinternal tr">Move mouse pointer and click on element.</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Move And Click On Element")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true, visible:true, name: tr("Move And Click On Element")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1154,7 +1159,7 @@
       <%= _.template($('#special_buttons').html())({}) %>
 
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Type Text")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true, use_waiter:true, name: tr("Type Text")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1189,9 +1194,9 @@
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
-  <script type="text/template" id="waitasyncload">
-    <div class="container-fluid waitasyncload">
-      <div class="tooltipinternal tr">Wait until page state will be "complete".</div>
+  <script type="text/template" id="waitfullload">
+    <div class="container-fluid waitfullload">
+      <div class="tooltipinternal tr">Wait until full page load.</div>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
@@ -1372,7 +1377,7 @@
       <%= _.template($('#input_constructor').html())({id:"ClickX", description:tr("Click x position"), default_selector: "int", disable_string:true, value_number: model['x']}) %>
       <%= _.template($('#input_constructor').html())({id:"ClickY", description:tr("Click y position"), default_selector: "int", disable_string:true, value_number: model['y']}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Click")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true, visible:true, name: tr("Click")}) %>
   </script>
 
   <script type="text/template" id="threadnumber">
@@ -1401,7 +1406,7 @@
       <%= _.template($('#input_constructor').html())({id:"X", description:tr("Move and click x position"), default_selector: "int", disable_string:true, value_number: model['x']}) %>
       <%= _.template($('#input_constructor').html())({id:"Y", description:tr("Move and click y position"), default_selector: "int", disable_string:true, value_number: model['y']}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Move And Click")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true, visible:true, name: tr("Move And Click")}) %>
   </script>
 
   <script type="text/template" id="type">
@@ -1411,7 +1416,7 @@
 
       <%= _.template($('#special_buttons').html())({}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Type Text")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true, use_waiter:true, name: tr("Type Text")}) %>
   </script>
 
   <script type="text/template" id="resize">
@@ -1731,8 +1736,10 @@
   </script>
 
   <script type="text/template" id="timeout_code">
-      <% if(isgeneral){ %>
+      <% if(type == "general"){ %>
         general_timeout(<%= timeout %>)
+      <% }else if(type == "fullpageload"){ %>
+        async_load_timeout(<%= timeout %>)
       <% }else{ %>
         solver_timeout(<%= timeout %>)
       <% } %>
@@ -1841,7 +1848,7 @@
       <%= waiter %>
   </script>
 
-  <script type="text/template" id="waitasyncload_code">
+  <script type="text/template" id="waitfullload_code">
       /*Browser*/
       wait_async_load()!
   </script>
@@ -2085,8 +2092,8 @@
 
   <script type="text/template" id="for_code">
       _do(function(){
-        VAR_CYCLE_INDEX = _iterator() - 1 + <%= expression_from %>
-        if(VAR_CYCLE_INDEX > <%= expression_to %>)_break();
+        VAR_CYCLE_INDEX = _iterator() - 1 + parseInt(<%= expression_from %>)
+        if(VAR_CYCLE_INDEX > parseInt(<%= expression_to %>))_break();
         section_insert()
       })!
   </script>
@@ -2279,9 +2286,19 @@
         "click .int": "int",
         "change .groupselector": "groupselector",
         "click .variant": "selectvariant",
-        "click .addtopost": "addpostdata"
+        "click .addtopost": "addpostdata",
+        "click #use-waiter": "usewaiterchange"
 
      },
+
+      usewaiterchange: function(event)
+      {
+        event.preventDefault();
+        var el = $(event.target).closest("a")
+        var new_state = el.attr("data-enabled") != "true"
+        el.attr("data-enabled",((new_state) ? "true" : "false") );
+        el.removeClass().addClass(((new_state) ? "use-waiter-enabled" : "use-waiter-disabled") );
+      },
 
       editstart: function(event)
       {
@@ -2331,6 +2348,7 @@
       addpostdata: function(event)
       {
         var loader = new ResourceLoader();
+        loader.SetIsPrerender(true)
         var Name = GetInputConstructorValue("PostName",loader)["updated"]
         var Value = GetInputConstructorValue("PostValue",loader)["updated"]
 
@@ -2707,14 +2725,6 @@
               BrowserAutomationStudio_Append("Wait while element " + path["raw"] + " appear on page", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
-          }else if(State == "waitasyncload")
-          {
-             try{
-              var code = _.template($('#' + State + "_code").html())({})
-              code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Wait until page fully loaded", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
-            }catch(e)
-            {}
           }else if(State == "httpclientxpathtext")
           {
 
@@ -3017,7 +3027,7 @@
             var follow = $("#Check").is(':checked')
             var multipart = $("#CheckSecond").is(':checked')
             
-            var PostData = $("#PostData").val()
+            var PostData = GetInputConstructorValue("PostData",loader)
             
 
             if(Value["original"].length <= 0)
@@ -3033,7 +3043,7 @@
               multipart = "{}"
 
 
-            params = "{" + PostData + "}"
+            params = "{" + PostData["updated"] + "}"
             
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({follow:follow,value:Value["updated"],multipart:multipart,params:params})
@@ -3943,6 +3953,14 @@
               Invalid("Waiter is empty");
               return;
             }
+          }else if(State == "waitfullload")
+          {
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("Wait Full Page Load", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
           }else if(State == "if")
           {
             var val = GetInputConstructorValue("IfExpression",loader)
@@ -4069,7 +4087,7 @@
             }
 
             try{
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({text:TypeData["updated"],interval:TypeInterval["updated"]})
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({text:TypeData["updated"],interval:TypeInterval["updated"]}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("Type " + TypeData["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -4093,7 +4111,7 @@
 
             try{
               var path = GetPath(loader)
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({text:TypeData["updated"],interval:TypeInterval["updated"],path: path["path"],waiter: path["waiter"]})
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({text:TypeData["updated"],interval:TypeInterval["updated"],path: path["path"],waiter: path["waiter"]}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("Type " + TypeData["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -4170,12 +4188,12 @@
           }else if(State == "timeout")
           {
             var val = GetInputConstructorValue("Value", loader)
-            var isgeneral = this.$el.find("#Type").val().toUpperCase() == "GENERAL";
+            var type = this.$el.find("#Type").val();
 
             if(val["original"].length > 0)
             {
                try{
-                var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({timeout:val["updated"], isgeneral: isgeneral})
+                var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({timeout:val["updated"], type: type})
                 code = Normalize(code,0)
                 BrowserAutomationStudio_Append("Set Timeout " + val["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e)
@@ -4284,7 +4302,7 @@
           {
              try{
               var path = GetPath(loader)
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("Click on " + path["raw"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -4320,7 +4338,7 @@
           {
              try{
               var path = GetPath(loader)
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("Move and click on " + path["raw"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -4505,7 +4523,7 @@
             var MoveY = GetInputConstructorValue("ClickY", loader);
 
             try{
-              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({x:MoveX["updated"],y:MoveY["updated"]})
+              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({x:MoveX["updated"],y:MoveY["updated"]}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("Click " + MoveX["original"] + "," + MoveY["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -4528,7 +4546,7 @@
             var Y = GetInputConstructorValue("Y", loader);
 
             try{
-              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({x:X["updated"],y:Y["updated"]})
+              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({x:X["updated"],y:Y["updated"]}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("Scroll to " + X["original"] + "," + Y["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -4555,7 +4573,7 @@
             var MoveY = GetInputConstructorValue("Y", loader);
 
             try{
-              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({x:MoveX["updated"],y:MoveY["updated"]})
+              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({x:MoveX["updated"],y:MoveY["updated"]}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("Move and click " + MoveX["original"] + "," + MoveY["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -4591,6 +4609,7 @@
           "type" : _.template($('#type').html()),
           "waitload" : _.template($('#waitload').html()),
           "waiturl" : _.template($('#waiturl').html()),
+          "waitfullload" : _.template($('#waitfullload').html()),
           "waitcontent" : _.template($('#waitcontent').html()),
           "waitcss" : _.template($('#waitcss').html()),
           "sleep" : _.template($('#sleep').html()),
@@ -4689,7 +4708,6 @@
           "httpclientxpathcount": _.template($('#httpclientxpathcount').html()),
           "httpclientxpathexists": _.template($('#httpclientxpathexists').html()),
           "parseline": _.template($('#parseline').html()),
-          "waitasyncload": _.template($('#waitasyncload').html()),
           "waitelement": _.template($('#waitelement').html()),
           "timeout": _.template($('#timeout').html()),
           "promptresult": _.template($('#promptresult').html()),
@@ -4707,7 +4725,6 @@
       },
 
       render: function(){
-        $('[data-toggle="tooltip"]').tooltip()
         $("#containerdata").html(this.templates[this.model.get("state")]({data:this.collection.toJSON(),model:this.model.toJSON(),selector:_SelectorModel.toJSON()}))
         $(".variable-input, .function-input").keypress(function(e){
             var charCode = !e.charCode ? e.which : e.charCode;
@@ -4717,6 +4734,8 @@
         })
         this.updatepath()
         tr()
+
+        $('[data-toggle="tooltip"]').tooltip({trigger:'hover', template:'<div class="mytooltip" role="tooltip"><div class="mytooltip-arrow tooltip-arrow"></div><div class="mytooltip-inner tooltip-inner"></div></div>',delay: { "show": 500, "hide": 100 }})
 
 
       },
@@ -4743,6 +4762,7 @@
             "!/timeout": "timeout",
             "!/type": "type",
             "!/waitload": "waitload",
+            "!/waitfullload": "waitfullload",
             "!/waiturl": "waiturl",
             "!/waitcontent": "waitcontent",
             "!/waitcss": "waitcss",
@@ -4842,7 +4862,6 @@
             "!/httpclientxpathcount": "httpclientxpathcount",
             "!/httpclientxpathexists": "httpclientxpathexists",
             "!/parseline": "parseline",
-            "!/waitasyncload": "waitasyncload",
             "!/waitelement": "waitelement",
             "!/promptresult": "promptresult",
             "!/httpauth": "httpauth",
@@ -4864,6 +4883,9 @@
         },
         waitload: function () {
           _GobalModel.set({ state: "waitload" });
+        },
+        waitfullload: function () {
+          _GobalModel.set({ state: "waitfullload" });
         },
         waiturl: function () {
           _GobalModel.set({ state: "waiturl" });
@@ -5162,9 +5184,6 @@
         parseline: function(){
                   _GobalModel.set({ state: "parseline" });
                 },
-        waitasyncload: function(){
-                  _GobalModel.set({ state: "waitasyncload" });
-                },
         waitelement: function(){
                   _GobalModel.set({ state: "waitelement" });
                 },
@@ -5201,6 +5220,7 @@
                 { name: tr("Captcha Failed"), description: tr("Captcha Failed"), ref: "solverfailed" },
                 { name: tr("Timeout"), description: tr("Set Timeout"), ref: "timeout" },
                 { description: tr("Waiters"), type: "group" },
+                { name: tr("Wait Full Page Load"), description: tr("Wait for full page load"), ref: "waitfullload" },
                 { name: tr("Wait Url Loaded"), description: tr("Wait until browser will load url"), ref: "waitload" },
                 { name: tr("Wait Address Bar"), description: tr("Wait address bar will contain url"), ref: "waiturl" },
                 { name: tr("Wait Text"), description: tr("Wait until specific text will be present on page"), ref: "waitcontent" },
@@ -5330,9 +5350,29 @@
         return decodeURIComponent(escape(window.atob( str )));
     }
 
+    function BrowserAutomationStudio_GetWaitCode()
+    {
+      var usewaiter = $("#use-waiter")
+
+      if(usewaiter.length > 0 && usewaiter.attr("data-enabled") == "true")  
+      {
+        return "\nwait_async_load()!"
+      }
+
+      return "";
+    }
+
+
     function BrowserAutomationStudio_SaveControls()
     {
       var ControlsText = {s:_GobalModel.get("state"),e:$("#executetype .btn-info").attr("data-action")}
+      
+      var usewaiter = $("#use-waiter")
+      if(usewaiter.length > 0 && usewaiter.attr("data-enabled") == "true")  
+      {
+        ControlsText["uw"] = "1"
+      }
+
       var ControlList = $("*[data-preserve=true]")
       var Elements = []
       var loader = new ResourceLoader();
@@ -5416,6 +5456,12 @@
       $("#executetype button").addClass("btn-default")
 
       $("#executetype *[data-action=" + data["e"] + "]").removeClass("btn-default").addClass("btn-info")
+
+      if(data["uw"] == "1")
+      {
+        $("#use-waiter").attr("data-enabled","true")
+        $("#use-waiter").removeClass().addClass("use-waiter-enabled")
+      }
 
       for(var i = 0;i<data["d"].length;i++)
       {

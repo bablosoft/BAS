@@ -16,6 +16,7 @@ public:
     enum StateClass{Ready,Hold,Finished}State;
 
     bool IsRecord;
+    bool IsCentralShown;
 
     //Minimize/Maximize
     bool IsMinimized;
@@ -33,6 +34,7 @@ public:
     HWND BrowserHandle;
     HWND ToolBoxHandle;
     HWND ScenarioHandle;
+    HWND CentralHandle;
     HWND DevToolsHandle;
 
     //Mainwindow
@@ -58,6 +60,8 @@ public:
     void UpdateState(StateClass State);
     void MaximizeToolbox(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
     void MinimizeToolbox(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
+    void ShowCentralBrowser();
+    void HideCentralBrowser();
     std::pair<int,int> GetDefaultWindowSize();
     std::pair<int,int> GetDefaultBrowserSize();
     RECT GetDevToolsRectangle(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);

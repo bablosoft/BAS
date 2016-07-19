@@ -1,0 +1,1 @@
+window.Notification = {permission:"denied"}

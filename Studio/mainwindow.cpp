@@ -80,6 +80,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     _RecordProcessCommunication = new RecordProcessCommunication(this);
     connect(_RecordProcessCommunication,SIGNAL(ReceiveCode(QString)),this,SLOT(ReceiveCode(QString)));
+    connect(_RecordProcessCommunication,SIGNAL(LoadScript(QString)),this,SLOT(OpenFromFileOrDisplayMessageBox(QString)));
     connect(_RecordProcessCommunication,SIGNAL(NeedRestart()),this,SLOT(SetNeedRestart()));
     connect(_RecordProcessCommunication,SIGNAL(Stop()),ui->actionStop,SLOT(trigger()));
 

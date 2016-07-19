@@ -81,3 +81,8 @@ function is_load(match, callback)
     _get_network_access_manager().IsUrlLoadedByMask(match,_get_function_body(callback))
 }
 
+function get_load_stats(callback)
+{
+    _get_network_access_manager().GetLoadStats(_get_function_body(callback))
+}
+

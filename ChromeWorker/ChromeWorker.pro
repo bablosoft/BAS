@@ -44,7 +44,9 @@ SOURCES += main.cpp \
     convertencoding.cpp \
     fixcontentcharset.cpp \
     extract_resources.cpp \
-    handlersmanager.cpp
+	handlersmanager.cpp \
+    centralhandler.cpp \
+    centralv8handler.cpp
 
 INCLUDEPATH += $(BAS_PATH_WORKER)/include
 
@@ -99,7 +101,9 @@ HEADERS += \
     convertencoding.h \
     fixcontentcharset.h \
     extract_resources.h \
-    handlersmanager.h
+	centralhandler.h \
+    handlersmanager.h \
+    centralv8handler.h
 
 INCLUDEPATH += xml json png
 

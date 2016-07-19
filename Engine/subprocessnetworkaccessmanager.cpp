@@ -82,6 +82,11 @@ namespace BrowserAutomationStudioFramework
                 xmlReader.readNext();
                 Worker->SetAsyncResult(QScriptValue(xmlReader.text().toString().toInt()));
                 emit IsUrlLoadedByMask();
+            }else if(xmlReader.name() == "GetLoadStats" && token == QXmlStreamReader::StartElement)
+            {
+                xmlReader.readNext();
+                Worker->SetAsyncResult(QScriptValue(xmlReader.text().toString()));
+                emit GetLoadStats();
             }
 
 
@@ -315,6 +320,18 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(QString("Timeout during IsUrlLoadedByMask"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(IsUrlLoadedByMask()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
+    void SubprocessNetworkAccessManager::GetLoadStats(const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("GetLoadStats","");
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(QString("Timeout during GetLoadStats"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(GetLoadStats()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
 

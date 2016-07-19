@@ -9,7 +9,7 @@ AboutBrowserStudio::AboutBrowserStudio(const QString& Version,const QString& Ser
     ui(new Ui::AboutBrowserStudio)
 {
     ui->setupUi(this);
-    ui->LabelWebkit->setText(QString("<b>") + "49.0.2623.54" + QString("</b>"));
+    ui->LabelWebkit->setText(QString("<b>") + "51.0.2704.103" + QString("</b>"));
     ui->LabelVersion->setText(QString("<b>") + Version + QString("</b>"));
     ui->LabelDescription->setText(QString(tr("<html><head/><body><p><span style=\" font-size:10pt;\">Browser Automation Studio - a comprehensive solution for creating complex network software. </span>Visit <a href=\"%1\"><span style=\" text-decoration: underline; color:#0000ff;\">%1</span></a> to see more details</p></body></html>")).arg(ServerName));
     this->setFixedSize(327,270);

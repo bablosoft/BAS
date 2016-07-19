@@ -1,5 +1,10 @@
 _L = 
 {
+	"Wait full page load after this action": {"ru": "Ждать полной загрузки страницы после этого действия"},
+	"Wait for full page load": {"ru": "Ждать полной загрузки"},
+	"Wait Full Page Load": {"ru": "Ждать Полной Загрузки"},
+	"Wait until full page load.": {"ru": "Ждать пока страница не будет полностью загружена."},
+
 	"Prompt user input result": {"ru": "Результат ввода"},
 	"Http auth login": {"ru": "HTTP Аутентификация логин"},
 	"Http auth password": {"ru": "HTTP Аутентификация пароль"},
@@ -476,6 +481,18 @@ function tr(key)
 			if(typeof(el.attr("tr")) == "undefined" || el.attr("tr") != "true" )
 			{
 				el.html(tr(el.html()))
+				el.attr("tr","true")
+			}
+		}
+
+		all = $(".trtitle")
+		
+		for(var i = 0;i< all.length;i++)
+		{
+			var el = $(all[i])
+			if(typeof(el.attr("tr")) == "undefined" || el.attr("tr") != "true" )
+			{
+				el.attr("title",tr(el.attr("title")))
 				el.attr("tr","true")
 			}
 		}
