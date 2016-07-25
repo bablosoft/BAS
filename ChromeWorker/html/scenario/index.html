@@ -1124,6 +1124,7 @@
     context.init({preventDoubleContext: false});
 
     $( document ).ready(function() {
+        document.documentElement.style.zoom = _Z + '%';
         $(document).keydown(function(e) {
           _MainView.key(e)
         });

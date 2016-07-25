@@ -17,6 +17,7 @@ public:
 
     bool IsRecord;
     bool IsCentralShown;
+    bool IsSettingsShown;
 
     //Minimize/Maximize
     bool IsMinimized;
@@ -29,6 +30,8 @@ public:
     //Buttons
     HWND HButtonUp,HButtonDown,HButtonLeft,HButtonRight;
     HWND HButtonDevTools,HButtonScenario;
+    HWND HButtonSettings;
+
 
     //Browsers
     HWND BrowserHandle;
@@ -60,7 +63,7 @@ public:
     void UpdateState(StateClass State);
     void MaximizeToolbox(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
     void MinimizeToolbox(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
-    void ShowCentralBrowser();
+    void ShowCentralBrowser(bool IsSettings);
     void HideCentralBrowser();
     std::pair<int,int> GetDefaultWindowSize();
     std::pair<int,int> GetDefaultBrowserSize();
@@ -70,6 +73,7 @@ public:
     RECT GetBrowserOuterRectangle(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
     RECT GetStateIndicatorRectangle(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
     RECT GetLabelRectangle(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
+    RECT GetCentralRectangle(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
 
     //Helpers
     HWND GetDevToolsHandle();

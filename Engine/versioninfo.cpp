@@ -16,7 +16,7 @@ namespace BrowserAutomationStudioFramework
 
     int VersionInfo::MinorVersion()
     {
-        return 0;
+        return 2;
     }
 
     int VersionInfo::BuildVersion()

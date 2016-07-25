@@ -21,7 +21,7 @@ CefRefPtr<MainApp> app;
 PipesClient *Client;
 CommandParser *Parser;
 HWND MousePositionMouseHandle,hwnd,HButtonUp,HButtonDown,HButtonLeft,HButtonRight,HButtonDevTools,HButtonScenario,HTextHold,HTextFinished;
-enum{IDButtonTerminate = 1000,IDButtonQuit,IDButtonUp,IDButtonDown,IDButtonLeft,IDButtonRight,IDButtonMinimizeMaximize,IDButtonDevTools,IDButtonScenario,IDTextHold,IDTextFinished,IDClick,IDMove,IDMoveAndClick,IDInspect,IDXml,IDText,IDScript,IDClickElement,IDMoveElement,IDMoveAndClickElement,IDClear,IDType,IDExists,IDStyle,IDCheck,IDFocus,IDSet,IDSetInteger,IDSetRandom,IDGetAttr,IDSetAttr,IDCaptcha,IDLength,IDWaitElement,
+enum{IDButtonTerminate = 1000,IDButtonQuit,IDButtonUp,IDButtonDown,IDButtonLeft,IDButtonRight,IDButtonMinimizeMaximize,IDButtonDevTools,IDButtonScenario,IDButtonSettings,IDTextHold,IDTextFinished,IDClick,IDMove,IDMoveAndClick,IDInspect,IDXml,IDText,IDScript,IDClickElement,IDMoveElement,IDMoveAndClickElement,IDClear,IDType,IDExists,IDStyle,IDCheck,IDFocus,IDSet,IDSetInteger,IDSetRandom,IDGetAttr,IDSetAttr,IDCaptcha,IDLength,IDWaitElement,
     IDLoop,IDXmlLoop,IDTextLoop,IDScriptLoop,IDClickElementLoop,IDMoveElementLoop,IDMoveAndClickElementLoop,IDClearLoop,IDTypeLoop,IDExistsLoop,IDStyleLoop,IDCheckLoop,IDFocusLoop,IDSetLoop,IDSetIntegerLoop,IDSetRandomLoop,IDGetAttrLoop,IDSetAttrLoop,IDCaptchaLoop,IDCustom = 30000,IDCustomForeach = 40000};
 HBITMAP BReady,BHold,BFinished;
 HCURSOR HCursor;
@@ -117,6 +117,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             {
                 Layout->ButtonScenarioBitmap = (HBITMAP)LoadImage(hInst, MAKEINTRESOURCEW(IDB_SCENARIO), IMAGE_BITMAP, 0, 0, 0);
                 Layout->ButtonScenarioBitmapGray = (HBITMAP)LoadImage(hInst, MAKEINTRESOURCEW(IDB_SCENARIOGRAY), IMAGE_BITMAP, 0, 0, 0);
+            }
+
+            Layout->HButtonSettings = CreateWindow(L"BUTTON", NULL, BS_BITMAP|WS_TABSTOP|WS_VISIBLE|WS_CHILD|BS_PUSHBUTTON, 0,0, 20, 20, hwnd, (HMENU)IDButtonSettings, hInst, NULL);
+            {
+                HBITMAP bitmap = (HBITMAP)LoadImage(hInst, MAKEINTRESOURCEW(IDB_SETTINGS), IMAGE_BITMAP, 0, 0, 0);
+                SendMessage(Layout->HButtonSettings, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
             }
 
             Layout->ButtonMinimize = (HBITMAP)LoadImage(hInst, MAKEINTRESOURCEW(IDB_MINIMIZE), IMAGE_BITMAP, 0, 0, 0);
@@ -357,6 +363,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     case IDButtonMinimizeMaximize:
                         Layout->MinimizeOrMaximize(hwnd,app->GetData()->_ParentWindowHandle);
                         app->ForceUpdateWindowPositionWithParent();
+                        Settings.SetMaximized(!Layout->IsMinimized);
                     break;
                     case IDButtonDevTools:
                         Layout->UpdateTabs(true);
@@ -364,6 +371,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     break;
                     case IDButtonScenario:
                         Layout->UpdateTabs(false);
+                    break;
+                    case IDButtonSettings:
+                        app->LoadSettingsPage();
+                        {
+                            LOCK_BROWSER_DATA
+                            app->GetData()->_Inspect.label.clear();
+                        }
                     break;
                     case IDClick:
                         if(Layout->State == MainLayout::Ready)

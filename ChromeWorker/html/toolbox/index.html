@@ -5323,6 +5323,10 @@
 
     Backbone.history.start();
 
+    $( document ).ready(function() {
+        document.documentElement.style.zoom = _Z + '%';
+    });
+
     function Invalid(data)
     {
       console.log("Invalid");

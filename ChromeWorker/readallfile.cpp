@@ -9,7 +9,7 @@ std::string ReadAllString(const std::string& filename)
 
     try
     {
-        std::ifstream ifs(filename.c_str(), std::ios::binary|std::ios::ate);
+        std::ifstream ifs(s2ws(filename), std::ios::binary|std::ios::ate);
         std::ifstream::pos_type pos = ifs.tellg();
 
         result.resize(pos);
@@ -30,7 +30,7 @@ std::vector<char> ReadAllBytes(const std::string& filename)
     std::vector<char> result;
     try
     {
-        std::ifstream ifs(filename.c_str(), std::ios::binary|std::ios::ate);
+        std::ifstream ifs(s2ws(filename), std::ios::binary|std::ios::ate);
         std::ifstream::pos_type pos = ifs.tellg();
 
         result.resize(pos);

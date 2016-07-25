@@ -1,6 +1,6 @@
-function NumbersParseRecaptcha2(resp,IS33,IS44,IS42,TOP_PIC,LEFT_PIC,BOTTOM_PIC,RIGHT_PIC)
+function NumbersParseRecaptcha2(resp,IS33,IS44,IS42,TOP_PIC,LEFT_PIC,BOTTOM_PIC,RIGHT_PIC,BOTTOM_IMAGE,TOP_IMAGE)
 {
-	if(typeof(TOP_PIC) == "undefined")
+	if(typeof(TOP_PIC) == "undefined" || typeof(BOTTOM_IMAGE) == "undefined" || typeof(TOP_IMAGE) == "undefined")
 		die("You are using old action. Please recreate Recaptcha2 action.")
 	var CLICKS = []
 	if(resp.indexOf("coordinates:") >= 0 || resp.indexOf("coordinate:") >= 0)
@@ -12,7 +12,10 @@ function NumbersParseRecaptcha2(resp,IS33,IS44,IS42,TOP_PIC,LEFT_PIC,BOTTOM_PIC,
 			if(resp[i].length>0)
 			{
 				var split = resp[i].split(",")
-				CLICKS.push([parseInt(split[0].split("=")[1]),parseInt(split[1].split("=")[1])])
+				var x = parseInt(split[0].split("=")[1])
+				var y = parseInt(split[1].split("=")[1])
+				if(y <= BOTTOM_IMAGE && y >= TOP_IMAGE)
+					CLICKS.push([x,y])
 			}
 		}
 		return CLICKS

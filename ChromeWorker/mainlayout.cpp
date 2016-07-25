@@ -12,10 +12,13 @@ MainLayout::MainLayout(int ToolboxHeight, int ScenarioWidth)
     HButtonRight = 0;
     HButtonDevTools = 0;
     HButtonScenario = 0;
+    HButtonSettings = 0;
 
     IsMinimized = false;
     IsToolboxMaximized = false;
     IsCentralShown = false;
+    IsSettingsShown = false;
+    IsSettingsShown = false;
     HButtonMinimizeMaximize = 0;
     ButtonMinimize = 0;
     ButtonMaximize = 0;
@@ -42,22 +45,27 @@ MainLayout::MainLayout(int ToolboxHeight, int ScenarioWidth)
 
     State = Hold;
 
+    DevToolsRectWidth = (ScenarioWidth == 0)?500:ScenarioWidth;
+    ToolBoxRectHeight = (ToolboxHeight == 0)?221:ToolboxHeight;
+
 
     int ScreenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int ScreenHeight = GetSystemMetrics(SM_CYSCREEN);
 
-    DevToolsRectWidth = 500;
-    if(DevToolsRectWidth + 850 > ScreenWidth)
-    {
-        DevToolsRectWidth = ScreenWidth - 850;
-    }
-    DevToolsRectWidth = (ScenarioWidth == 0)?DevToolsRectWidth:ScenarioWidth;
-    ToolBoxRectHeight = (ToolboxHeight == 0)?221:ToolboxHeight;
+
+    if(DevToolsRectWidth > ScreenWidth - 600)
+        DevToolsRectWidth = ScreenWidth - 600;
+
+    if(ToolBoxRectHeight > ScreenHeight - 600)
+        ToolBoxRectHeight = ScreenHeight - 600;
+
 }
 
-void MainLayout::ShowCentralBrowser()
+void MainLayout::ShowCentralBrowser(bool IsSettings)
 {
     if(CentralHandle)
     {
+        IsSettingsShown = IsSettings;
         IsCentralShown = true;
         ShowWindow(HButtonUp,SW_HIDE);
         ShowWindow(HButtonDown,SW_HIDE);
@@ -71,6 +79,7 @@ void MainLayout::HideCentralBrowser()
 {
     if(CentralHandle)
     {
+        IsSettingsShown = false;
         IsCentralShown = false;
         ShowWindow(HButtonUp,SW_SHOW);
         ShowWindow(HButtonDown,SW_SHOW);
@@ -92,6 +101,7 @@ void MainLayout::MaximizeToolbox(int BrowserWidth,int BrowserHeight,int WindowWi
         ShowWindow(HButtonDevTools,SW_HIDE);
         ShowWindow(HButtonScenario,SW_HIDE);
         ShowWindow(HButtonMinimizeMaximize,SW_HIDE);
+        ShowWindow(HButtonSettings,SW_HIDE);
 
         IsToolboxMaximized = true;
     }
@@ -110,6 +120,7 @@ void MainLayout::MinimizeToolbox(int BrowserWidth,int BrowserHeight,int WindowWi
         ShowWindow(HButtonDevTools,SW_SHOW);
         ShowWindow(HButtonScenario,SW_SHOW);
         ShowWindow(HButtonMinimizeMaximize,SW_SHOW);
+        ShowWindow(HButtonSettings,SW_SHOW);
         IsToolboxMaximized = false;
     }
 }
@@ -299,7 +310,7 @@ void MainLayout::UpdateState(StateClass State)
         RECT r = GetStateIndicatorRectangle(_Layout->BrowserWidth, _Layout->BrowserHeight, _Layout->WindowWidth, _Layout->WindowHeight);
         InvalidateRect(MainWindowHandle,&r,true);
 
-        if(State == Hold || State == Finished)
+        if((State == Hold || State == Finished) && !IsSettingsShown)
             HideCentralBrowser();
     }
 }
@@ -353,6 +364,7 @@ void MainLayout::Update(int BrowserWidth,int BrowserHeight,int WindowWidth,int W
         ShowWindow(HButtonRight,SW_HIDE);
         ShowWindow(HButtonDevTools,SW_HIDE);
         ShowWindow(HButtonScenario,SW_HIDE);
+        ShowWindow(HButtonSettings,SW_HIDE);
         ShowWindow(HTextHold,SW_HIDE);
         ShowWindow(HTextFinished,SW_HIDE);
     }
@@ -384,18 +396,19 @@ void MainLayout::Update(int BrowserWidth,int BrowserHeight,int WindowWidth,int W
 
     if(CentralHandle)
     {
-        MoveWindow(CentralHandle,BrowserRectangle.left,BrowserRectangle.top,BrowserRectangle.right - BrowserRectangle.left,BrowserRectangle.bottom - BrowserRectangle.top,true);
+        RECT CentralRectangle = GetCentralRectangle(BrowserWidth, BrowserHeight, WindowWidth, WindowHeight);
+        MoveWindow(CentralHandle,CentralRectangle.left,CentralRectangle.top,CentralRectangle.right - CentralRectangle.left,CentralRectangle.bottom - CentralRectangle.top,true);
     }
 
     MoveDevTools();
-
-    MoveWindow(CentralHandle,BrowserRectangle.left,BrowserRectangle.top,BrowserRectangle.right - BrowserRectangle.left,BrowserRectangle.bottom - BrowserRectangle.top,true);
 
 
     MoveWindow(HButtonUp,BrowserRectangle.right + 5,BrowserRectangle.bottom - 90,20,20,true);
     MoveWindow(HButtonDown,BrowserRectangle.right + 5, BrowserRectangle.bottom - 60,20,20,true);
     MoveWindow(HButtonLeft,BrowserRectangle.right - 90, BrowserRectangle.bottom + 5,20,20,true);
     MoveWindow(HButtonRight,BrowserRectangle.right - 60, BrowserRectangle.bottom + 5,20,20,true);
+
+    MoveWindow(HButtonSettings,BrowserRectangle.right + 5, BrowserRectangle.top + 35,20,20,true);
 
     MoveWindow(HButtonMinimizeMaximize,BrowserRectangle.right + 5,BrowserRectangle.top + 5,20,20,true);
 
@@ -442,6 +455,14 @@ RECT MainLayout::GetBrowserRectangle(int BrowserWidth,int BrowserHeight,int Wind
 {
     RECT DevToolsRectangle, ToolboxRectangle, BrowserRectangle;
     CalculateAllSize(BrowserWidth,BrowserHeight,WindowWidth,WindowHeight,DevToolsRectangle, ToolboxRectangle, BrowserRectangle);
+    return BrowserRectangle;
+}
+
+RECT MainLayout::GetCentralRectangle(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight)
+{
+    RECT DevToolsRectangle, ToolboxRectangle, BrowserRectangle;
+    CalculateAllSize(BrowserWidth,BrowserHeight,WindowWidth,WindowHeight,DevToolsRectangle, ToolboxRectangle, BrowserRectangle);
+    BrowserRectangle.bottom += 30;
     return BrowserRectangle;
 }
 

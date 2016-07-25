@@ -213,6 +213,8 @@ public:
     void ExecuteElementFunction(const std::string& FuncName);
     void ExecuteElementLoopFunction(const std::string& FuncName);
 
+    void LoadSettingsPage();
+
 private:
     void SendTextResponce(const std::string&);
 

@@ -3,6 +3,7 @@
 CentralV8Handler::CentralV8Handler()
 {
     url_changed = false;
+    settings_changed = false;
     close = false;
 }
 
@@ -15,6 +16,16 @@ bool CentralV8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> obje
             std::lock_guard<std::mutex> lock(url_mut);
             url = arguments[0]->GetStringValue().ToString();
             url_changed = true;
+        }
+    }
+
+    if(name == std::string("BrowserAutomationStudio_SetOptions"))
+    {
+        if (arguments.size() == 1 && arguments[0]->IsString())
+        {
+            std::lock_guard<std::mutex> lock(settings_mut);
+            settings = arguments[0]->GetStringValue().ToString();
+            settings_changed = true;
         }
     }
 
@@ -40,6 +51,21 @@ std::pair<std::string, bool> CentralV8Handler::GetLoadUrl()
     url_changed = false;
 
     url.clear();
+
+    return r;
+}
+
+std::pair<std::string, bool> CentralV8Handler::GetSettings()
+{
+    std::lock_guard<std::mutex> lock(settings_mut);
+
+    std::pair<std::string, bool> r;
+    r.first = settings;
+    r.second = settings_changed;
+
+    settings_changed = false;
+
+    settings.clear();
 
     return r;
 }

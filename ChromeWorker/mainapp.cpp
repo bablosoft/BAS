@@ -10,9 +10,9 @@
 #include "browsereventsemulator.h"
 #include "include/base/cef_bind.h"
 #include "include/wrapper/cef_closure_task.h"
-
 #include "include/cef_browser.h"
 #include "include/cef_command_line.h"
+#include "include/cef_parser.h"
 #include "include/wrapper/cef_helpers.h"
 #include "xml_encoder.h"
 #include "lodepng.h"
@@ -422,7 +422,8 @@ void MainApp::SetWindowCallback(const std::string& Window)
     worker_log(std::string("SetWindowCallback<<") + Window);
     Data->_ParentWindowHandle = (HWND)std::stoi(Window);
     Layout->MinimizeOrMaximize(Data->_MainWindowHandle,Data->_ParentWindowHandle);
-
+    if(Settings->Maximized())
+        Layout->MinimizeOrMaximize(Data->_MainWindowHandle,Data->_ParentWindowHandle);
     ForceUpdateWindowPositionWithParent();
 }
 
@@ -572,7 +573,7 @@ void MainApp::CreateCentralBrowser()
 
     CefWindowInfo window_info;
 
-    RECT r =  Layout->GetBrowserRectangle(GetData()->WidthBrowser,GetData()->HeightBrowser,GetData()->WidthAll,GetData()->HeightAll);
+    RECT r =  Layout->GetCentralRectangle(GetData()->WidthBrowser,GetData()->HeightBrowser,GetData()->WidthAll,GetData()->HeightAll);
 
     window_info.SetAsChild(Data->_MainWindowHandle,r);
 
@@ -584,7 +585,7 @@ void MainApp::CreateCentralBrowser()
     BrowserCentral = CefBrowserHost::CreateBrowserSync(window_info, chandler, page, browser_settings, Context);
 
     Layout->CentralHandle = BrowserCentral->GetHost()->GetWindowHandle();
-    Layout->ShowCentralBrowser();
+    Layout->ShowCentralBrowser(false);
 
 }
 
@@ -789,6 +790,7 @@ void MainApp::GetUrlCallback()
 void MainApp::OnBeforeCommandLineProcessing(const CefString& process_type,CefRefPtr<CefCommandLine> command_line)
 {
     command_line->AppendSwitch("--single-process");
+    command_line->AppendSwitch("--high-dpi-support");
     if(Settings->UseFlash())
         command_line->AppendSwitch("--enable-system-flash");
 }
@@ -1097,16 +1099,9 @@ void MainApp::ElementCommandCallback(const ElementCommand &Command)
         {
             BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
             script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(el)el.click();browser_automation_studio_result('');}");
-        }else if(Command.CommandName == "system_click" || Command.CommandName == "check" || Command.CommandName == "focus")
+        }else if(Command.CommandName == "system_click" || Command.CommandName == "check")
         {
-            if(Command.CommandName == std::string("focus") && LastCommand.Path.size() == 0)
-            {
-                FinishedLastCommand("");
-                return;
-            }else
-            {
-                script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2);}else browser_automation_studio_result('');}");
-            }
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2);}else browser_automation_studio_result('');}");
         }else if(Command.CommandName == "move")
         {
             script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2);}else browser_automation_studio_result('');}");
@@ -1217,6 +1212,9 @@ void MainApp::ElementCommandCallback(const ElementCommand &Command)
         }else if(Command.CommandName == "render_base64")
         {
             script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2, el);}else browser_automation_studio_result('');}");
+        }else if(Command.CommandName == "focus")
+        {
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2, el);}else browser_automation_studio_result('');}");
         }
         if(!script.empty())
         {
@@ -1315,6 +1313,15 @@ void MainApp::HandleCentralBrowserEvents()
     if(central8handler->GetClose())
     {
         Layout->HideCentralBrowser();
+    }
+
+    res = central8handler->GetSettings();
+    if(res.second)
+    {
+        std::string settings = res.first;
+        worker_log(std::string("Settings updated") + settings);
+        Settings->Deserialize(settings);
+        Restart();
     }
 }
 
@@ -1605,7 +1612,7 @@ void MainApp::HandleMainBrowserEvents()
             }
 
 
-        }else if(LastCommand.CommandName == std::string("system_click") || LastCommand.CommandName == std::string("check") || LastCommand.CommandName == std::string("focus"))
+        }else if(LastCommand.CommandName == std::string("system_click") || LastCommand.CommandName == std::string("check"))
         {
             std::size_t pos = res.first.find(",");
             int x = -1, y = -1;
@@ -1626,10 +1633,7 @@ void MainApp::HandleMainBrowserEvents()
                 worker_log(std::string("system_click>>") + std::to_string(x) + std::string(">>") + std::to_string(y));
 
                 BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
-                if(LastCommand.CommandName != std::string("focus"))
-                {
-                    BrowserEventsEmulator::MouseClick(_HandlersManager->GetBrowser(),x,y,GetScrollPosition());
-                }
+                BrowserEventsEmulator::MouseClick(_HandlersManager->GetBrowser(),x,y,GetScrollPosition());
                 FinishedLastCommand("");
             }
         }else if(LastCommand.CommandName == std::string("render_base64"))
@@ -1699,6 +1703,14 @@ void MainApp::HandleMainBrowserEvents()
                 if(_HandlersManager->GetBrowser())
                     _HandlersManager->GetBrowser()->GetHost()->Invalidate(PET_VIEW);
             }
+        }else if(LastCommand.CommandName == std::string("focus"))
+        {
+            worker_log(std::string("focus1111<<") + res.first);
+            v8handler->SetResultProcessed();
+            std::string data = res.first;
+            xml_encode(data);
+            FinishedLastCommand(data);
+
         }else if(LastCommand.CommandName == std::string("move"))
         {
             std::size_t pos = res.first.find(",");
@@ -1891,6 +1903,7 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
         object->SetValue("BrowserAutomationStudio_Maximize", CefV8Value::CreateFunction("BrowserAutomationStudio_Maximize", toolboxv8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("BrowserAutomationStudio_Minimize", CefV8Value::CreateFunction("BrowserAutomationStudio_Minimize", toolboxv8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("_K", CefV8Value::CreateString(Lang), V8_PROPERTY_ATTRIBUTE_NONE);
+        object->SetValue("_Z", CefV8Value::CreateInt(Settings->Zoom()), V8_PROPERTY_ATTRIBUTE_NONE);
         return;
     }
 
@@ -1908,6 +1921,7 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
         object->SetValue("BrowserAutomationStudio_EditStart", CefV8Value::CreateFunction("BrowserAutomationStudio_EditStart", scenariov8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("BrowserAutomationStudio_EditEnd", CefV8Value::CreateFunction("BrowserAutomationStudio_EditEnd", scenariov8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("_K", CefV8Value::CreateString(Lang), V8_PROPERTY_ATTRIBUTE_NONE);
+        object->SetValue("_Z", CefV8Value::CreateInt(Settings->Zoom()), V8_PROPERTY_ATTRIBUTE_NONE);
         return;
     }
 
@@ -1919,6 +1933,8 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
             central8handler = new CentralV8Handler();
         object->SetValue("BrowserAutomationStudio_OpenUrl", CefV8Value::CreateFunction("BrowserAutomationStudio_OpenUrl", central8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("BrowserAutomationStudio_Close", CefV8Value::CreateFunction("BrowserAutomationStudio_Close", central8handler), V8_PROPERTY_ATTRIBUTE_NONE);
+        object->SetValue("BrowserAutomationStudio_SetOptions", CefV8Value::CreateFunction("BrowserAutomationStudio_SetOptions", central8handler), V8_PROPERTY_ATTRIBUTE_NONE);
+        object->SetValue("_K", CefV8Value::CreateString(Lang), V8_PROPERTY_ATTRIBUTE_NONE);
         return;
     }
 
@@ -1959,8 +1975,11 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
 
         if(!jscode.empty())
             frame->ExecuteJavaScript(jscode, frame->GetURL(), NULL);
-        Data->ScrollX = 0;
-        Data->ScrollY = 0;
+        if(frame->IsMain())
+        {
+            Data->ScrollX = 0;
+            Data->ScrollY = 0;
+        }
     }
 }
 
@@ -2048,4 +2067,15 @@ void MainApp::ExecuteElementLoopFunction(const std::string& FuncName)
         }
         BrowserToolbox->GetMainFrame()->ExecuteJavaScript(std::string("BrowserAutomationStudio_") + FuncName + std::string("(") + serialize + std::string(",1)"),BrowserToolbox->GetMainFrame()->GetURL(), 0);
     }
+}
+
+void MainApp::LoadSettingsPage()
+{
+    if(BrowserCentral)
+    {
+        std::string page = std::string("file:///html/central/index_settings.html?d=") + CefURIEncode(Settings->Serialize(),true).ToString();
+        BrowserCentral->GetMainFrame()->LoadURL(page);
+        Layout->ShowCentralBrowser(true);
+    }
+
 }

@@ -418,7 +418,7 @@
             //console.log("Load time7 " + (new Date() - t) )            
 
 
-    		var actions = [
+            var actions = [
                 /* Logical */
                 {name: "==", description: "Returns true if value1 equal value2, otherwise false", code: "(<<0>>) == (<<1>>)", params: [{name: "value1"},{name: "value2"}]},
                 {name: "<", description: "Returns true if value1 is less than value2, otherwise false", code: "(<<0>>) < (<<1>>)", params: [{name: "value1"},{name: "value2"}]},
@@ -437,10 +437,10 @@
                 {name: "substring", description: "Takes substring from a given string. First param - string, second - first index, third - second index", code: "(<<0>>).substring(<<1>>,<<2>>)", params: [{name: "string"},{name: "index1"},{name: "index2"}]},
                 {name: "search", description: "Searches for string part inside string, if found returns found index, otherwise returns -1", code: "(<<0>>).indexOf(<<1>>)", params: [{name: "string"},{name: "string part"}]},
                 {name: "replace", description: "Replace all occurrences of one string with another", code: "(<<0>>).split(<<1>>).join(<<2>>)", params: [{name: "string"},{name: "replace from"},{name: "replace to"}]},
-    			{name: "split with string", description: "Splits string with defined separator. Returns array of strings", code: "(<<0>>).split(<<1>>)", params: [{name: "array"},{name: "separator"}]},
+                {name: "split with string", description: "Splits string with defined separator. Returns array of strings", code: "(<<0>>).split(<<1>>)", params: [{name: "array"},{name: "separator"}]},
                 {name: "split with regexp", description: "Splits string with defined regexp. Returns array of strings", code: "(<<0>>).split(/<<1>>/)", params: [{name: "string"},{name: "regexp"}]},
                 {name: "matches", description: "Returns true if string matches given regexp", code: "Boolean((<<0>>).match(/<<1>>/))", params: [{name: "string"},{name: "regexp"}]},
-                {name: "scan", description: "Extract string part with regular expression. For example, string : abc 123 xyz 456, regexp: \\d+ extracts all numbers", code: "(<<0>>).match(/<<1>>/g) || []", params: [{name: "string"},{name: "regexp"}]},
+                {name: "scan", description: "Extract string part with regular expression. For example, string : abc 123 xyz 456, regexp: \\d+ extracts all numbers", code: "(/<<1>>/g).exec(<<0>>) || []", params: [{name: "string"},{name: "regexp"}]},
 
                 /* Random */
                 {name: "random number", description: "Generate random number", code: "Math.floor(Math.random() * (<<0>> - <<1>> + 1)) + <<1>>", params: [{name: "max"},{name: "min"}]},
@@ -456,7 +456,7 @@
                 {name: "array insert", description: "Add value to specific place of array", code: "(<<0>>).slice(0,<<2>>).concat([<<1>>].concat((<<0>>).slice(<<2>>,(<<0>>).length)))", params: [{name: "array"}, {name: "value"}, {name: "index"}]},
                 {name: "array length", description: "Get array length", code: "(<<0>>).length", params: [{name: "array"}]},
                 {name: "array get index", description: "Get element from array by index", code: "(<<0>>)[<<1>>] || null", params: [{name: "array"}, {name: "index"}]},
-    			{name: "array join", description: "Join array of strings with defined separator", code: "(<<0>>).join(<<1>>)", params: [{name: "array"},{name: "separator"}]},
+                {name: "array join", description: "Join array of strings with defined separator", code: "(<<0>>).join(<<1>>)", params: [{name: "array"},{name: "separator"}]},
                 {name: "subarray", description: "Takes subarray from a given array. First param - array, second - first index, third - second index", code: "(<<0>>).slice(<<1>>,<<2>>)", params: [{name: "array"},{name: "index1"},{name: "index2"}]},
 
 
@@ -470,11 +470,11 @@
                 {name: "custom", description: "Execute custom code", code: "", params: []}
                 
                 
-    		]
+            ]
 
             //console.log("Load time8 " + (new Date() - t) )            
 
-    		/* Populate all actions */
+            /* Populate all actions */
             {
               var text = ""
               var templ = $('#expressioneditor-list-item').html()

@@ -14,6 +14,7 @@
 #define IDB_SCENARIOGRAY 511
 #define IDB_MINIMIZE 512
 #define IDB_MAXIMIZE 513
+#define IDB_SETTINGS 514
 
 #define IDI_LOGO 400
 
