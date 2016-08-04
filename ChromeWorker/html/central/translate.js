@@ -9,7 +9,7 @@ _L =
 	"Number of frames to skip in run mode. The higher the value, the lower the use of resources. 1 - means no skip, 75 is default value." :{"ru": "Пропуск кадров в рабочем режиме. Чем больше это значение, тем меньше используется ресурсов. 1 - означает отрисовывать все кадры, 75 - стандартное значение."},
 	"Force UTF-8 Encoding" :{"ru": "Преобразовывать все страницы в UTF-8"},
 	"Ok" :{"ru": "Ок"},
-	"Cancel" :{"ru": "Отмета"},
+	"Cancel" :{"ru": "Отмена"},
 	"Defaults" :{"ru": "По Умолчанию"}
 }
 

@@ -611,7 +611,7 @@
             <number>1</number>
            </property>
            <property name="maximum">
-            <number>99999</number>
+            <number>999999999</number>
            </property>
           </widget>
          </item>
@@ -633,7 +633,7 @@
             <number>1</number>
            </property>
            <property name="maximum">
-            <number>99999</number>
+            <number>999999999</number>
            </property>
           </widget>
          </item>
@@ -655,7 +655,7 @@
             <number>1</number>
            </property>
            <property name="maximum">
-            <number>99999</number>
+            <number>999999999</number>
            </property>
           </widget>
          </item>
@@ -984,7 +984,7 @@
             <number>1</number>
            </property>
            <property name="maximum">
-            <number>99999</number>
+            <number>999999999</number>
            </property>
           </widget>
          </item>
@@ -1022,7 +1022,7 @@
             <number>1</number>
            </property>
            <property name="maximum">
-            <number>99999</number>
+            <number>999999999</number>
            </property>
           </widget>
          </item>
@@ -1060,7 +1060,7 @@
             <number>1</number>
            </property>
            <property name="maximum">
-            <number>99999</number>
+            <number>999999999</number>
            </property>
           </widget>
          </item>
@@ -1488,7 +1488,7 @@
             <number>1</number>
            </property>
            <property name="maximum">
-            <number>99999</number>
+            <number>999999999</number>
            </property>
           </widget>
          </item>
@@ -1510,7 +1510,7 @@
             <number>1</number>
            </property>
            <property name="maximum">
-            <number>99999</number>
+            <number>999999999</number>
            </property>
           </widget>
          </item>
@@ -1532,7 +1532,7 @@
             <number>1</number>
            </property>
            <property name="maximum">
-            <number>99999</number>
+            <number>999999999</number>
            </property>
           </widget>
          </item>
@@ -1647,7 +1647,7 @@
             <number>10000</number>
            </property>
            <property name="maximum">
-            <number>99999999</number>
+            <number>999999999</number>
            </property>
            <property name="singleStep">
             <number>1000</number>
@@ -1916,7 +1916,7 @@
             <number>1</number>
            </property>
            <property name="maximum">
-            <number>999999</number>
+            <number>999999999</number>
            </property>
           </widget>
          </item>
@@ -1948,7 +1948,7 @@
             <number>1</number>
            </property>
            <property name="maximum">
-            <number>999999</number>
+            <number>999999999</number>
            </property>
           </widget>
          </item>
@@ -1980,7 +1980,7 @@
             <number>1</number>
            </property>
            <property name="maximum">
-            <number>999999</number>
+            <number>999999999</number>
            </property>
           </widget>
          </item>
@@ -2148,7 +2148,7 @@
             <number>10000</number>
            </property>
            <property name="maximum">
-            <number>99999999</number>
+            <number>999999999</number>
            </property>
            <property name="value">
             <number>60000</number>

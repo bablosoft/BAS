@@ -46,6 +46,7 @@ namespace BrowserAutomationStudioFramework
         virtual void MouseMove(int x, int y, const QString& callback) = 0;
         virtual void Scroll(int x, int y, const QString& callback) = 0;
         virtual void Render(int x, int y, int width, int height, const QString& callback) = 0;
+        virtual void DebugVariablesResult(const QString& data, const QString& callback) = 0;
 
         virtual void Resize(int x, int y, const QString& callback) = 0;
         virtual void Reset(const QString& callback) = 0;

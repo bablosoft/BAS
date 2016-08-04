@@ -230,18 +230,25 @@ void CurlThreadFunction(CurlResourceHandler::CurlThreadDataClass * Data)
     if(!Referer.empty())
         curl_easy_setopt(curl_handle, CURLOPT_REFERER, Referer.c_str());
 
+    bool postdatawasset = false;
 
     if(Data->Method == "HEAD")
         curl_easy_setopt(curl_handle, CURLOPT_NOBODY, 1L);
     else if(Data->Method == "POST")
     {
-
         curl_easy_setopt(curl_handle, CURLOPT_POST, 1L);
         curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, Data->PostData.data());
         curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDSIZE, (long)Data->PostData.size());
+        postdatawasset = true;
     }
     else
         curl_easy_setopt(curl_handle, CURLOPT_CUSTOMREQUEST, Data->Method.c_str());
+
+    if(!postdatawasset && Data->PostData.size() > 0)
+    {
+        curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, Data->PostData.data());
+        curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDSIZE, (long)Data->PostData.size());
+    }
 
 
     //Run
@@ -343,7 +350,7 @@ bool CurlResourceHandler::ProcessRequest(CefRefPtr<CefRequest> request, CefRefPt
     }
 
     CefRefPtr<CefPostData> PostData = request->GetPostData();
-    if(request->GetMethod().ToString() == "POST" && PostData)
+    if(/*request->GetMethod().ToString() == "POST" &&*/ PostData)
     {
         CefPostData::ElementVector Elements;
         PostData->GetElements(Elements);

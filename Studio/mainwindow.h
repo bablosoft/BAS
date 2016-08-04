@@ -104,6 +104,7 @@ protected:
 
 
     //Reports
+    bool AlreadyShowsMessage;
     ScriptMultiWorkerReportData *ReportData;
     ReportDataVisualizer *DataVisualizer;
     ResourcesVisualizer *ResVisualizer;

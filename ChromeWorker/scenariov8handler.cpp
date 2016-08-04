@@ -10,6 +10,11 @@ ScenarioV8Handler::ScenarioV8Handler()
     NeedRestart = None;
     IsEditStart = false;
     IsEditEnd = false;
+    IsThreadNumberEditStart = false;
+    IsSuccessNumberEditStart = false;
+    IsFailNumberEditStart = false;
+    IsClipboardGetRequest = false;
+    IsClipboardSetRequest = false;
 }
 
 
@@ -137,6 +142,83 @@ bool ScenarioV8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> obj
             std::lock_guard<std::mutex> lock(mut_editend);
             IsEditEnd = true;
         }
+    }else if(name == std::string("BrowserAutomationStudio_ThreadNumberEdit"))
+    {
+        std::lock_guard<std::mutex> lock(mut_threadnumbereditstart);
+        IsThreadNumberEditStart = true;
+    }else if(name == std::string("BrowserAutomationStudio_SuccessNumberEdit"))
+    {
+        std::lock_guard<std::mutex> lock(mut_successnumbereditstart);
+        IsSuccessNumberEditStart = true;
+    }else if(name == std::string("BrowserAutomationStudio_FailNumberEdit"))
+    {
+        std::lock_guard<std::mutex> lock(mut_failnumbereditstart);
+        IsFailNumberEditStart = true;
+    }else if(name == std::string("BrowserAutomationStudio_SetClipboard"))
+    {
+        if (arguments.size() == 1)
+        {
+            std::lock_guard<std::mutex> lock(mut_clipboard_set);
+            clipboard_set = arguments[0]->GetStringValue().ToString();
+            IsClipboardSetRequest = true;
+        }
+    }else if(name == std::string("BrowserAutomationStudio_GetClipboard"))
+    {
+        if (arguments.size() == 0)
+        {
+            std::lock_guard<std::mutex> lock(mut_clipboard_get);
+            IsClipboardGetRequest = true;
+        }
     }
+
     return true;
+}
+
+std::pair<std::string, bool> ScenarioV8Handler::GetClipboardSetRequest()
+{
+    std::lock_guard<std::mutex> lock(mut_clipboard_set);
+
+    std::pair<std::string, bool> r;
+    r.first = clipboard_set;
+    r.second = IsClipboardSetRequest;
+
+    IsClipboardSetRequest = false;
+
+    clipboard_set.clear();
+
+    return r;
+}
+
+bool ScenarioV8Handler::GetClipboardGetRequest()
+{
+    std::lock_guard<std::mutex> lock(mut_clipboard_get);
+    bool res = IsClipboardGetRequest;
+    IsClipboardGetRequest = false;
+    return res;
+}
+
+bool ScenarioV8Handler::GetIsThreadNumberEditStart()
+{
+    std::lock_guard<std::mutex> lock(mut_threadnumbereditstart);
+    bool res = IsThreadNumberEditStart;
+    IsThreadNumberEditStart = false;
+    return res;
+}
+
+bool ScenarioV8Handler::GetIsSuccessNumberEditStart()
+{
+    std::lock_guard<std::mutex> lock(mut_successnumbereditstart);
+    bool res = IsSuccessNumberEditStart;
+    IsSuccessNumberEditStart = false;
+    return res;
+
+}
+
+bool ScenarioV8Handler::GetIsFailNumberEditStart()
+{
+    std::lock_guard<std::mutex> lock(mut_failnumbereditstart);
+    bool res = IsFailNumberEditStart;
+    IsFailNumberEditStart = false;
+    return res;
+
 }

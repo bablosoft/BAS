@@ -166,6 +166,7 @@ public:
     void SetCodeCallback(const std::string & code);
     void SetResourceCallback(const std::string & resources);
     void SetInitialStateCallback(const std::string & lang, int IsVisible);
+    void DebugVariablesResultCallback(const std::string & data);
 
     void MouseClickCallback(int x, int y);
     void MouseMoveCallback(int x, int y);

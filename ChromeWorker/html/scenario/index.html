@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
 </head>
-<body>
+<body style="display:none">
   <!-- ========= -->
   <!--   HTML    -->
   <!-- ========= -->
@@ -79,27 +79,38 @@
 
       </div>
       <div style="width:50%;float:left">
-        <div><span class="tr">Thread Number</span>: <strong><%= global["threadnumber"] %></strong></div>
-        <div><span class="tr">Success Number</span>: <strong><%= global["successnumber"] %></strong></div>
-        <div><span class="tr">Fail Number</span>: <strong><%= global["failnumber"] %></strong></div>
+        <div><a href="#" id="thread-number-edit"><i class="fa fa-pencil" aria-hidden="true"></i></a> <span class="tr small">Thread Number</span>: <strong><%= global["threadnumber"] %></strong></div>
+        <div><a href="#" id="success-number-edit"><i class="fa fa-pencil" aria-hidden="true"></i></a> <span class="tr small">Success Number</span>: <strong><%= global["successnumber"] %></strong></div>
+        <div><a href="#" id="fail-number-edit"><i class="fa fa-pencil" aria-hidden="true"></i></a> <span class="tr small">Fail Number</span>: <strong><%= global["failnumber"] %></strong></div>
       </div>
       <div class="maintoolbox">
         <div style="width:50%;float:left;text-align:center">
           <% _TotalSelected = TotalSelected(); %>
+          
+          <img src="undo.png" class="action-button2 <%= (_UndoManager.CanUndo()) ? "" : "disabled" %>" title="Undo (Ctrl-Z)" id="action-undo" />
+          <img src="redo.png" class="action-button2 <%= (_UndoManager.CanRedo()) ? "" : "disabled" %>" title="Redo (Ctrl-Y)" id="action-redo" />
+
           <img src="copy.png" class="action-button2 <%= (_TotalSelected > 0) ? "" : "disabled" %>" title="Copy (Ctrl-C)" id="action-copy" />
           <img src="cut.png" class="action-button2 <%= (_TotalSelected > 0) ? "" : "disabled" %>" title="Cut (Ctrl-X)" id="action-cut" />
-          <img src="paste.png" class="action-button2 <%= (_CopyBuffer.models.length > 0) ? "" : "disabled" %>" title="Paste (Ctrl-V)" id="action-paste" />
+          <img src="paste.png" class="action-button2" title="Paste (Ctrl-V)" id="action-paste" />
           <img src="checkall.png" class="action-button2" title="Check All" id="action-checkall" />
           <img src="uncheckall.png" class="action-button2 <%= (_TotalSelected > 0) ? "" : "disabled" %>"  title="Clear Selection" id="action-uncheckall" />
           
         </div>
         <div style="width:50%;float:left">
-          <span class="tr">Selected</span>: <strong><%= TotalSelected() %></strong>
+          <span class="tr small">Selected</span>: <strong><%= TotalSelected() %></strong>
         </div>
       </div>
     </div>
-    <div class="functions" >
-      <div class="container-fluid">
+    <div class="bottompannel" >
+      <div class="container-fluid" id="variableinspector" style="<%= (global["show_variable_inspector"]) ? "" : "display:none" %>">
+        <div style="position:absolute;top:5px;right:30px">
+          <a href="#" id="closevariableinspector" class="text-danger"><i class="fa fa-times-circle-o" aria-hidden="true" style="font-size: 150%;"></i></a>
+        </div>
+          <div style="<%= (global["show_variable_inspector_pending"]) ? "" : "display:none" %>" class="tr">Variables will be loaded on next script pause</div>
+          <div style="<%= (global["show_variable_inspector_pending"]) ? "display:none" : "" %>" class="tr"><%= JSONTree.create(JSON.parse(global["variable_inspector_data"])) %></div>
+      </div>
+      <div class="container-fluid" id="functions">
         <div class="col-xs-2 function-label text-left">
           <span class="tr">Function</span>:
         </div>
@@ -120,7 +131,7 @@
       </div>
     </div>
 
-    <div class="container-fluid main" >
+    <div class="container-fluid main" style="padding-bottom:<%= (global["show_variable_inspector"]) ? "250px" : "50px" %>" >
       <% _.each(data, function(task, index) { %>
           <% var CanDisplay = global.function_name == GetFunctionData( parseInt(task.id) )["name"] && !IsFunctionNode(parseInt(task.id)) %>
           <% if(CanDisplay) {%>
@@ -169,7 +180,6 @@
 
             <% } %>
 
-
       <% }); %>
       <%if(GetFirstNotFunctionId() == 0 && global["function_name"] == "Main"){%>
         <div class="tool-div">
@@ -217,6 +227,8 @@
   <script src="context.js"></script>
   <script src="bootbox.min.js"></script>
   <script src="translate.js"></script>
+  <script src="undo.js"></script>
+  <script src="jsontree.js"></script>
 
 
   <!-- ========= -->
@@ -227,12 +239,14 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="context.standalone.css">
   <link rel="stylesheet" href="font-awesome.min.css">
+  <link rel="stylesheet" href="jsontree.css">
 
 
   <!-- =============== -->
   <!-- Javascript code -->
   <!-- =============== -->
   <script type="text/javascript">
+
 	  var TaskModel = Backbone.Model.extend({
         defaults: {
             name: "",
@@ -258,7 +272,10 @@
             threadnumber: 1,
             successnumber: 1,
             failnumber: 1,
-            function_name: "Main"
+            function_name: "Main",
+            show_variable_inspector: false,
+            show_variable_inspector_pending: false,
+            variable_inspector_data: "{}"
         }
     });
     var TaskCollection = Backbone.Collection.extend({
@@ -278,6 +295,8 @@
         "click .toolinsertdata": "toolinsertdata",
         "click #action-copy": "Copy",
         "click #action-paste": "Paste",
+        "click #action-undo": "Undo",
+        "click #action-redo": "Redo",
         "click #action-cut": "Cut",
         "click #action-checkall" :"CheckAll",
         "click #action-uncheckall" :"ClearSelection",
@@ -291,7 +310,27 @@
         "click #editfunction": "editfunction",
         "click #removefunction": "removefunction",
         "click .funcok": "funcok",
-        "click .onapplicationstart": "onapplicationstart"
+        "click .onapplicationstart": "onapplicationstart",
+        "click #thread-number-edit": "threadnumberedit",
+        "click #success-number-edit": "successnumberedit",
+        "click #fail-number-edit": "failnumberedit",
+        "click #closevariableinspector": "closevariableinspector", 
+      },
+
+      threadnumberedit: function(event)
+      {
+        BrowserAutomationStudio_ThreadNumberEdit();
+        event.preventDefault();
+      },
+      successnumberedit: function(event)
+      {
+        BrowserAutomationStudio_SuccessNumberEdit();
+        event.preventDefault();
+      },
+      failnumberedit: function(event)
+      {
+        BrowserAutomationStudio_FailNumberEdit();
+        event.preventDefault();
       },
 
       CheckAll: function()
@@ -328,6 +367,7 @@
 
       funcok: function(e)
       {
+
         var name = $("#EditFunctionName").val()
         if(name.length == 0 )
         {
@@ -361,6 +401,8 @@
             $("#editfunctionmodal").modal({})
             return
           }
+          this.model.set("dontsend",true)
+
           var task = FindTaskById(0)
           var found = false
           while(true)
@@ -382,17 +424,23 @@
           }
           this.model.set("function_name",name)
           this.SetDefaultInsert()
+          this.model.set("dontsend",false)
           this.send()
         }
+        
+        
+        
       },
 
       removefunction: function(e)
       {
+
         this.currentFuncName = this.model.get("function_name")
         var self = this
         bootbox.confirm("Are you sure that you want to delete " + self.currentFuncName + " function and all its content?", function(result) {
           if(result)
           {
+            self.model.set("dontsend",true)
             var task = FindTaskById(0)
             var found = false
             while(true)
@@ -414,6 +462,8 @@
               self.model.set("function_name","Main")
               self.SetDefaultInsert()
             }
+            self.model.set("dontsend",false)
+            self.send()
           }
 
         });
@@ -450,7 +500,15 @@
 
       key: function(e)
       {
-        if (e.keyCode == 67 && e.ctrlKey)
+        if (e.keyCode == 90 && e.ctrlKey)
+        {
+          this.Undo();
+        }
+        if (e.keyCode == 89 && e.ctrlKey)
+        {
+          this.Redo();
+        }
+        if (e.keyCode == 67 && e.ctrlKey && window.getSelection().toString().length == 0)
         {
           this.Copy();
         }
@@ -509,10 +567,12 @@
 
       taskedit: function()
       {
+        this.model.set("dontsend",true)
         this.collection.at(this.currentTargetId).set("name",$("#TaskName").val())
         this.collection.at(this.currentTargetId).set("code",$("#TaskData").val() + "\n" + $("#TaskCode").val())
         this.collection.at(this.currentTargetId).set("donotexecuteduringrecord",true == $("#TaskDontRunWhenRecording").prop('checked'))
         //console.log("Set " + this.collection.at(this.currentTargetId).get("donotexecuteduringrecord"))
+        this.model.set("dontsend",false)
 
         this.render()
         this.send()
@@ -520,9 +580,11 @@
 
       taskeditcustom: function(name,code,dontexecute)
       {
+        this.model.set("dontsend",true)
         this.collection.at(this.currentTargetId).set("name",name)
         this.collection.at(this.currentTargetId).set("code",code)
         this.collection.at(this.currentTargetId).set("donotexecuteduringrecord",dontexecute)
+        this.model.set("dontsend",false)
 
         this.render()
         this.send()
@@ -548,9 +610,19 @@
         }
       },
 
+      Undo: function()
+      {
+        BrowserAutomationStudio_RestoreFromUndoManager(_UndoManager.Undo())
+      },
+
+      Redo: function()
+      {
+        BrowserAutomationStudio_RestoreFromUndoManager(_UndoManager.Redo())
+      },
+
       Copy: function()
       {
-        _CopyBuffer.reset();
+        var _CopyBuffer = new TaskCollection([]);
         var id_map = {}
         var ids = []
         var IdsDoNotSetParentToZero = []
@@ -607,6 +679,8 @@
           task.set("is_selected",false)
 
         })
+
+        BrowserAutomationStudio_SetClipboard(JSON.stringify(_CopyBuffer.toJSON()))
         this.render()
         /*_.each(this.collection.models, function(task){
           task.set("is_selected",false)
@@ -616,6 +690,26 @@
 
       Paste: function()
       {
+          BrowserAutomationStudio_GetClipboard();
+      },
+
+      PasteFinal: function(data)
+      {
+
+        try
+        {
+          var j = JSON.parse(data)
+        }catch(e)
+        {
+          return
+        }
+
+        if(typeof(j) != "object")
+          return
+
+
+        var _CopyBuffer = new TaskCollection(j);
+
         this.model.set("dontsend",true)
 
         var id_map = {}
@@ -674,6 +768,8 @@
         this.send()
 
         this.ClearSelection();
+
+        BrowserAutomationStudio_SetClipboard(JSON.stringify(_CopyBuffer.toJSON()))
 
       },
 
@@ -737,6 +833,22 @@
          this.model.set("dontsend",false)
 
          this.render()
+      },
+
+      ToggleVariableInspector: function()
+      {
+        var show_variable_inspector = this.model.get("show_variable_inspector")
+        show_variable_inspector = !show_variable_inspector
+        this.model.set("show_variable_inspector",show_variable_inspector)
+        if(show_variable_inspector)
+        {
+          BrowserAutomationStudio_AskForVariablesUpdateOrWait()
+        }
+      },
+
+      closevariableinspector: function()
+      {
+        this.model.set("show_variable_inspector",false)
       },
 
       Delete: function(is_single){
@@ -928,8 +1040,26 @@
           }
       },
 
+      MoveExecutionPointHere: function()
+      {
+          if(_GobalModel.get("isscriptexecuting"))
+            return;
+
+          var task = this.collection.at(this.currentTargetId);
+          if(task)
+          {
+            var second_line = "section_start(\"test\", " + task.get("id") + ")!"
+            var code = "_kill_call_stack()" + "\n" + second_line
+
+            BrowserAutomationStudio_Execute(code)
+          }
+      },
+
       ExecuteOnlyThis: function()
       {
+          if(_GobalModel.get("isscriptexecuting"))
+            return;
+
           var task = this.collection.at(this.currentTargetId);
           if(task)
           {
@@ -1055,6 +1185,10 @@
           {text: tr('Run until this'), action: function(e){
                 e.preventDefault();
                 self.RunUntilThis()
+          }},
+          {text: tr('Move Execution Point Here'), action: function(e){
+                e.preventDefault();
+                self.MoveExecutionPointHere()
           }}
         ]
 
@@ -1093,9 +1227,16 @@
                 self.ClearSelection()
 
           }},
+          {text: tr('Variable Inspector'), action: function(e){
+                e.preventDefault();
+                self.ToggleVariableInspector()
+
+          }},
         ]);
 
         tr()
+        $("body").show()
+        BrowserAutomationStudio_HandlersInitialize()
       }
 
     });
@@ -1107,6 +1248,7 @@
         }
     });
 
+
     var _Router = new Router();
 
     var _TaskCollection = new TaskCollection([/*{name:"Initialize Browser",code:"new_browser()!",id:0},{name:"Load Gmail.com",code:"load(\"gmail.com\")!",id:123},{name:"Load ya.ru",code:"load(\"ya.ru\")!",id:456}*/]);
@@ -1115,9 +1257,10 @@
 
     var _MainView = new MainView({collection: _TaskCollection, model: _GobalModel});
 
-    var _CopyBuffer = new TaskCollection([]);
-
     var _CacheLoader = new CacheLoader();
+
+    var _UndoManager = new UndoManager();
+
 
     Backbone.history.start();
 
@@ -1137,6 +1280,88 @@
         })
     });
 
+
+    /*
+         =========
+          UNDO
+         =========
+
+    */
+
+    
+    var BrowserAutomationStudio_HandlerIsInitialized = false
+    var BrowserAutomationStudio_StopSaveToUndoManager = false
+
+    function BrowserAutomationStudio_SaveToUndoManager()
+    {
+      if(BrowserAutomationStudio_StopSaveToUndoManager)
+        return
+
+      if(_GobalModel.get("dontsend"))
+          return
+
+      var g = _GobalModel.toJSON()
+      _UndoManager.Save(JSON.stringify({tasks: _TaskCollection.toJSON(), global: 
+        {
+          threadnumber: g["threadnumber"],
+          successnumber: g["successnumber"],
+          failnumber: g["failnumber"],
+          function_name: g["function_name"]
+        }}))
+    }
+
+    function BrowserAutomationStudio_RestoreFromUndoManager(data)
+    {
+      var j = JSON.parse(data)
+      var global = j["global"]
+      var tasks = j["tasks"]
+
+
+
+      BrowserAutomationStudio_StopSaveToUndoManager = true
+      _GobalModel.set("dontsend",true)
+        
+        _GobalModel.set("threadnumber",global["threadnumber"])
+        _GobalModel.set("successnumber",global["successnumber"])
+        _GobalModel.set("failnumber",global["failnumber"])
+        _GobalModel.set("function_name",global["function_name"])
+
+        _TaskCollection.reset(tasks);
+
+        _MainView.SetDefaultInsert()
+
+        if(FindTaskById(_GobalModel.get("execute_next_id")) == null)
+        {
+          _GobalModel.set("execute_next_id",1)
+        }
+
+      _GobalModel.set("dontsend",false)
+      _MainView.send()
+
+
+      BrowserAutomationStudio_StopSaveToUndoManager = false
+    }
+
+    
+
+    function BrowserAutomationStudio_HandlersInitialize()
+    {
+      if(BrowserAutomationStudio_HandlerIsInitialized)
+        return
+
+      BrowserAutomationStudio_HandlerIsInitialized = true
+
+      _GobalModel.bind('change', BrowserAutomationStudio_SaveToUndoManager);
+      _TaskCollection.bind('add', BrowserAutomationStudio_SaveToUndoManager);
+      _TaskCollection.bind('change', BrowserAutomationStudio_SaveToUndoManager);
+      _TaskCollection.bind('remove', BrowserAutomationStudio_SaveToUndoManager);  
+
+      _TaskCollection.bind('add', BrowserAutomationStudio_AskForVariablesUpdateIfNeeded);
+      _TaskCollection.bind('change', BrowserAutomationStudio_AskForVariablesUpdateIfNeeded);
+      _TaskCollection.bind('remove', BrowserAutomationStudio_AskForVariablesUpdateIfNeeded);  
+      _TaskCollection.bind('reset', BrowserAutomationStudio_AskForVariablesUpdateIfNeeded);  
+      
+    }
 
     /*
          =========
@@ -1622,14 +1847,14 @@
         var second_line = "";
         var tasknext = FindNextSiblingOrUpper(parseInt(execute_next_id))
 
-        if(tasknext)
+        if(tasknext && GetFirstNotFunctionId() != parseInt(tasknext.get("id")) && !IsFunctionNode(parseInt(tasknext.get("id"))))
         {
 
           var nextindex = IndexOf(parseInt(tasknext.get("id")))
           var index = IndexOf(parseInt(task.get("id")))
           if(nextindex >= 0 && nextindex > index && GetTaskDepth(parseInt(tasknext.get("id"))) < GetTaskDepth(parseInt(task.get("id"))) )
           {
-            second_line="_next();"
+            second_line="_next_or_section(" + tasknext.get("id") + ")!"
           }else
           {
             second_line="section_start(\"test\", " + tasknext.get("id") + ")!"
@@ -1638,7 +1863,7 @@
         {
           if(parseInt(task.get("parentid")) != 0)
           {
-            second_line="_next();"
+            second_line="_next_or_section(1)!"
           }else
           {
             second_line="section_start(\"test\", 1)!"
@@ -1681,8 +1906,75 @@
 
     }
 
+    var VariablesListPrev = []
+    var VariablesUpdateTakesPlace = false
+    var VariablesNeedRefresh = false
+
+    function BrowserAutomationStudio_GetVariablesList()
+    {
+      var code = GenerateCode(_TaskCollection.toJSON(),_GobalModel.toJSON())
+      var match = code.match(/VAR_[A-Z0-9_]+/g)
+      var variables = null
+      if(match)
+      {
+        variables = _.uniq(match)
+      }else
+        variables = []       
+
+      return variables
+    }
+
+    function BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
+    {
+      if(JSON.stringify(VariablesListPrev) != JSON.stringify(BrowserAutomationStudio_GetVariablesList()))
+        BrowserAutomationStudio_AskForVariablesUpdateOrWait()
+    }
+
+    function BrowserAutomationStudio_AskForVariablesUpdateOrWait()
+    {
+        if(!_GobalModel.get("isscriptexecuting") && !_GobalModel.get("istaskexecuting"))
+        {
+          BrowserAutomationStudio_AskForVariablesUpdate()
+        }else
+        {
+          _GobalModel.set("show_variable_inspector_pending",true)
+        }
+    }
+
+    function BrowserAutomationStudio_AskForVariablesUpdate()
+    {
+
+      if(!_GobalModel.get("show_variable_inspector"))
+        return
+
+      if(VariablesUpdateTakesPlace)
+      {
+        VariablesNeedRefresh = true
+        return
+      }
+      
+      VariablesUpdateTakesPlace = true
+
+      VariablesListPrev = BrowserAutomationStudio_GetVariablesList()
+      variables = JSON.stringify(VariablesListPrev)
+      VariablesNeedRefresh = false
+      BrowserAutomationStudio_Execute("debug_variables(" + variables + ")!" + "\n" + "section_start(\"test\",-3)!")
+    }
+
+
+    function BrowserAutomationStudio_UpdateVariablesResult(data)
+    {
+      _GobalModel.set("variable_inspector_data", data)
+    }
+
     var IsChangedUsed = false
     var IsChangedOn = false
+    function BrowserAutomationStudio_GetClipboardResult(data)
+    {
+      if(data.length > 0)
+        _MainView.PasteFinal(data)
+    }
+
     function BrowserAutomationStudio_IsChanged()
     {
       if(IsChangedUsed)
@@ -1696,7 +1988,7 @@
           $("#restart").addClass("toolblinkon")
         else
           $("#restart").addClass("toolblinkoff")
-      }, 1000) 
+      }, 400) 
       
     }
     
@@ -1760,6 +2052,13 @@
 
     function BrowserAutomationStudio_NotRunningTask(Id)
     {
+      if(Id == -3)
+      {
+        VariablesUpdateTakesPlace = false
+        if(VariablesNeedRefresh)
+          BrowserAutomationStudio_AskForVariablesUpdate()
+        return
+      }
       if(typeof(Id) != "undefined" && Id == -2)
           Id = 0
 
@@ -1822,6 +2121,12 @@
         SendTask()
       }else
         _GobalModel.set("istaskexecuting",false)
+
+      if(!_GobalModel.get("isscriptexecuting") && !_GobalModel.get("istaskexecuting"))
+      {
+        _GobalModel.set("show_variable_inspector_pending", false)
+        BrowserAutomationStudio_AskForVariablesUpdate()
+      }
     }
 
     function BrowserAutomationStudio_RunningTask()
@@ -1991,6 +2296,14 @@
       .replace(new RegExp("\"","g"),"\\u0022")
       .replace(new RegExp("'","g"),"\\u0027")
       .replace(new RegExp("&","g"),"\\u0026")
+    }
+
+    function utf8_to_b64( str ) {
+        return window.btoa(unescape(encodeURIComponent( str )));
+    }
+
+    function b64_to_utf8( str ) {
+        return decodeURIComponent(escape(window.atob( str )));
     }
 
     function Normalize(code, tab)

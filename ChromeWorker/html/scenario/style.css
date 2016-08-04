@@ -5,6 +5,8 @@
     table-layout: fixed;
 }
 
+
+
 .tab:after
 {
     content: '.';
@@ -76,16 +78,21 @@
 	background-color: #E8E8E8;
 }
 
+#restart
+{
+  border: 2px solid white;
+}
+
 .toolblinkon
 {
-  border: 1px solid #FC2121 !important;
+  border: 2px solid #FC2121 !important;
   border-radius: 3px;
 
 }
 
 .toolblinkoff
 {
-  border: 1px solid white !important;
+  border: 2px solid white !important;
   border-radius: 3px;
 }
 
@@ -112,14 +119,6 @@
 .main
 {
   padding-top:110px;
-  padding-bottom:50px;
-}
-
-.functions
-{
-  padding-top:5px;
-  padding-bottom:5px;
-  z-index: 0;
 }
 
 .control-label
@@ -153,14 +152,32 @@ label
    z-index: 0;
 }
 
-.functions
+#variableinspector
+{
+ border-bottom: 1px solid #DBDBDB;
+ padding-bottom:5px;
+ height: 200px;
+ overflow: auto;
+ margin-bottom:5px;
+
+}
+
+#functions
+{
+  
+}
+
+.bottompannel
 {
   border-top: 1px solid #DBDBDB;
   width:100%;
   background-color:white;
-  position:fixed ;
+  position:fixed;
   bottom:0px;
   right:0px;
+  padding-top:5px;
+  padding-bottom:5px;
+  z-index: 0;
 }
 
 .action-button
@@ -181,7 +198,7 @@ label
 
 .action-button2
 {
-  margin-right:10px;
+  margin-right:3px;
 }
 
 
@@ -257,4 +274,24 @@ label
 #validation
 {
   color:darkred;
+}
+
+
+#thread-number-edit
+{
+  font-size: smaller;
+}
+
+#success-number-edit
+{
+  font-size: smaller;
+}
+
+#fail-number-edit
+{
+  font-size: smaller;
+}
+
+.main, #functions, .threads{
+  -webkit-user-select: none; 
 }

@@ -53,9 +53,6 @@ namespace BrowserAutomationStudioFramework
         bool GetEnabledToUser();
         QString GetAvailableNames();
 
-
-
-
         QWidget* GetTemplateCurrentWidget(bool IsUser);
         QWidget* GetTemplateWidgetByType(bool IsUser, const QString& type);
 
@@ -63,6 +60,9 @@ namespace BrowserAutomationStudioFramework
     signals:
         void Up(int index);
         void Down(int index);
+        void VariableNameChanged(QString name);
+        void WillBeDeleted();
+
     private slots:
         void SetMinimum(int);
         void SetMinimum_2(int);
@@ -79,6 +79,8 @@ namespace BrowserAutomationStudioFramework
         void on_ButtonUp_clicked();
 
         void on_ButtonDown_clicked();
+
+        void GoingToDelete();
 
     private:
         Ui::DesignResourceWidget *ui;

@@ -11,12 +11,12 @@ namespace BrowserAutomationStudioFramework
 
     int VersionInfo::MajorVersion()
     {
-        return 13;
+        return 14;
     }
 
     int VersionInfo::MinorVersion()
     {
-        return 2;
+        return 1;
     }
 
     int VersionInfo::BuildVersion()

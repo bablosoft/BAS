@@ -1,6 +1,8 @@
 #include "mainlayout.h"
-MainLayout* _Layout;
+#include <chrono>
 
+using namespace std::chrono;
+MainLayout* _Layout;
 
 MainLayout::MainLayout(int ToolboxHeight, int ScenarioWidth)
 {
@@ -48,8 +50,11 @@ MainLayout::MainLayout(int ToolboxHeight, int ScenarioWidth)
     DevToolsRectWidth = (ScenarioWidth == 0)?500:ScenarioWidth;
     ToolBoxRectHeight = (ToolboxHeight == 0)?221:ToolboxHeight;
 
+    LastTimeChangedHoldPicture = 0;
+    HoldAnimation = 0;
 
-    int ScreenWidth = GetSystemMetrics(SM_CXSCREEN);
+
+    /*int ScreenWidth = GetSystemMetrics(SM_CXSCREEN);
     int ScreenHeight = GetSystemMetrics(SM_CYSCREEN);
 
 
@@ -57,7 +62,7 @@ MainLayout::MainLayout(int ToolboxHeight, int ScenarioWidth)
         DevToolsRectWidth = ScreenWidth - 600;
 
     if(ToolBoxRectHeight > ScreenHeight - 600)
-        ToolBoxRectHeight = ScreenHeight - 600;
+        ToolBoxRectHeight = ScreenHeight - 600;*/
 
 }
 
@@ -302,6 +307,7 @@ void MainLayout::UpdateState(StateClass State)
 {
     if(IsRecord)
     {
+        StateClass OldState = this->State;
         this->State = State;
         EnableWindow(ToolBoxHandle,State == Ready);
 
@@ -312,6 +318,11 @@ void MainLayout::UpdateState(StateClass State)
 
         if((State == Hold || State == Finished) && !IsSettingsShown)
             HideCentralBrowser();
+
+        if(State == Hold && OldState != Hold)
+        {
+            LastTimeChangedHoldPicture = duration_cast< milliseconds >( system_clock::now().time_since_epoch() ).count();
+        }
     }
 }
 
@@ -486,5 +497,35 @@ RECT MainLayout::GetStateIndicatorRectangle(int BrowserWidth,int BrowserHeight,i
     r.right = DevToolsRectWidth-5;
     r.bottom = 25;
     return r;
+}
+
+void MainLayout::Timer(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight)
+{
+    //Hold Animation
+    if(IsRecord && State == MainLayout::Hold)
+    {
+        long long now = duration_cast< milliseconds >( system_clock::now().time_since_epoch() ).count();
+        long long delta = now - LastTimeChangedHoldPicture;
+        bool res = delta > 850;
+
+        if(res)
+        {
+            LastTimeChangedHoldPicture += (delta / 850) * 850;
+            HoldAnimation += (delta / 850);
+            HoldAnimation %=2;
+
+            RECT r = GetStateIndicatorRectangle(BrowserWidth,BrowserHeight,WindowWidth,WindowHeight);
+            InvalidateRect(MainWindowHandle,&r,false);
+        }
+    }
+}
+
+HBITMAP MainLayout::GetHoldAnimationButton()
+{
+    switch(HoldAnimation)
+    {
+        case 0:return BHold;
+        case 1:return BHold90;
+    }
 }
 

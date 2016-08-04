@@ -7,6 +7,7 @@
 #include <QRadioButton>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QMessageBox>
 #include "classcomboboxfillpictures.h"
 #include "multiselect.h"
 #include "every_cpp.h"
@@ -60,7 +61,8 @@ namespace BrowserAutomationStudioFramework
         SetMinimum_2(EditMinimum_2->value());
         SetMaximum_2(EditMaximum_2->value());
 
-        connect(this,SIGNAL(toggled(bool)),this,SLOT(deleteLater()));
+        //connect(this,SIGNAL(toggled(bool)),this,SLOT(deleteLater()));
+        connect(this,SIGNAL(toggled(bool)),this,SLOT(GoingToDelete()));
         ui->horizontalLayout_3->setAlignment(Qt::AlignRight);
         ui->gridLayout->setAlignment(Qt::AlignRight);
         HideMore();
@@ -70,9 +72,21 @@ namespace BrowserAutomationStudioFramework
 
         ui->ChooserWidget->SetShowValidation(false);
 
+        connect(ui->lineEdit,SIGNAL(textChanged(QString)), this, SIGNAL(VariableNameChanged(QString)));
     }
 
-
+    void DesignResourceWidget::GoingToDelete()
+    {
+        QMessageBox msgBox;
+        msgBox.setText(tr("Are you sure, that you want to delete resource?"));
+        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        if(QMessageBox::Ok == msgBox.exec())
+        {
+            emit WillBeDeleted();
+            deleteLater();
+        }
+    }
 
     void DesignResourceWidget::SetLanguageModel(ILanguageModel *Model)
     {
@@ -527,9 +541,3 @@ namespace BrowserAutomationStudioFramework
 
 
 }
-
-
-
-
-
-

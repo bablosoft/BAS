@@ -35,6 +35,10 @@ QGroupBox::title {
  }
 QGroupBox::indicator:checked {
      image: url(:/engine/images/stop_small.png);
+ }
+
+QGroupBox::indicator:unchecked {
+     image: url(:/engine/images/stop_small.png);
  }</string>
   </property>
   <property name="title">

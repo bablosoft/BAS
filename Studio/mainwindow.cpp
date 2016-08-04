@@ -68,6 +68,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     qsrand(QTime(0,0,0).msecsTo(QTime::currentTime()));
 
+    AlreadyShowsMessage = false;
+
     ui->setupUi(this);
 
     _ModuleManager = new ModuleManager(this);
@@ -516,6 +518,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
     if(!IsClosingWindow)
     {
         hide();
+        if(!AlreadyShowsMessage)
+        {
+            TrayNotifier->ShowMessage(tr("Application is still running"),tr("Use exit menu item to shut it down"));
+            AlreadyShowsMessage = true;
+        }
         event->ignore();
     }
 
@@ -724,6 +731,7 @@ void MainWindow::InitRecources()
 
 
     QtResourceController * wc = new QtResourceController(Res);
+    wc->SetUseAccordion();
     wc->SetLanguageModel(LangModel);
     wc->SetIncludeSections(false);
     ResourceDesignWidgetFactory *f = new ResourceDesignWidgetFactory(wc);

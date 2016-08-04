@@ -95,7 +95,7 @@ var context = context || (function () {
 	function addContext(selector, data) {
 		
 		var d = new Date(),
-			id = d.getTime(),
+			id = d.getTime() * Math.floor(Math.random()*100000),
 			$menu = buildMenu(data, id);
 			
 		$('body').append($menu);
@@ -116,16 +116,18 @@ var context = context || (function () {
 				}).fadeIn(options.fadeSpeed);
 			} else if (typeof options.above == 'string' && options.above == 'auto') {
 				$dd.removeClass('dropdown-context-up');
-				var autoH = $dd.height() + 12;
-				if ((e.pageY + autoH) > $('html').height()) {
+				var autoH = (_Z / 100.0) * ($dd.height() + 12);
+				
+				if (e.pageY - window.scrollY  + autoH > window.innerHeight) {
 					$dd.addClass('dropdown-context-up').css({
-						top: e.pageY - 20 - autoH,
-						left: e.pageX - 13
+						top: (100.0 / _Z) * (e.pageY - 10 - autoH),
+						left: (100.0 / _Z) * (e.pageX - 13)
 					}).fadeIn(options.fadeSpeed);
 				} else {
+					
 					$dd.css({
-						top: e.pageY + 10,
-						left: e.pageX - 13
+						top: (100.0 / _Z) * (e.pageY + 10),
+						left: (100.0 / _Z) * (e.pageX - 13)
 					}).fadeIn(options.fadeSpeed);
 				}
 			}

@@ -464,6 +464,7 @@ _L =
 	"Message Id":{"ru": "Идентификатор сообщения"},
 	"Use self variable, which is point to selected element.":{"ru": "Используйте переменную self, которая указывает на выбранный элемент."},
 	"Start Loop to use this function" :{"ru": "Начните цикл, чтобы использовать эту функцию"},
+	"Action Name" :{"ru": "Имя Действия"},
 
 }
 

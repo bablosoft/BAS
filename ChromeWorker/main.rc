@@ -13,3 +13,4 @@
 512 BITMAP "Minimize.bmp"
 513 BITMAP "Maximize.bmp"
 514 BITMAP "Settings.bmp"
+515 BITMAP "hold90.bmp"

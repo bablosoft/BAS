@@ -1371,7 +1371,7 @@ namespace BrowserAutomationStudioFramework
     {
         SetScript(callback);
         SetFailMessage(QString("Failed to post page ") + url + " with HttpClient");
-        Waiter->WaitInfinity(HttpClient,SIGNAL(Finished()),this,SLOT(FollowRedirect()));
+        Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(FollowRedirect()),this,SLOT(FailBecauseOfTimeout()));
         QHash<QString,QString> p;
         bool isname = true;
         QString name = "";
@@ -1413,7 +1413,7 @@ namespace BrowserAutomationStudioFramework
     {
         SetScript(callback);
         SetFailMessage(QString("Failed to post page ") + url + " with HttpClient");
-        Waiter->WaitInfinity(HttpClient,SIGNAL(Finished()),this,SLOT(RunSubScript()));
+        Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(RunSubScript()),this,SLOT(FailBecauseOfTimeout()));
         QHash<QString,QString> p;
         bool isname = true;
         QString name = "";
@@ -1455,7 +1455,7 @@ namespace BrowserAutomationStudioFramework
     {
         SetScript(callback);
         SetFailMessage(QString("Failed to get page ") + url + " with HttpClient");
-        Waiter->WaitInfinity(HttpClient,SIGNAL(Finished()),this,SLOT(RunSubScript()));
+        Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(RunSubScript()),this,SLOT(FailBecauseOfTimeout()));
         HttpClient->Get(url);
     }
 
@@ -1463,7 +1463,7 @@ namespace BrowserAutomationStudioFramework
     {
         SetScript(callback);
         SetFailMessage(QString("Failed to get page ") + url + " with HttpClient");
-        Waiter->WaitInfinity(HttpClient,SIGNAL(Finished()),this,SLOT(FollowRedirect()));
+        Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(FollowRedirect()),this,SLOT(FailBecauseOfTimeout()));
         HttpClient->Get(url);
     }
 

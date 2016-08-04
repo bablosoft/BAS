@@ -9,6 +9,8 @@ namespace BrowserAutomationStudioFramework
         Widget = new DesignResourceWidget();
         connect(Widget,SIGNAL(Up(int)),this,SIGNAL(Up(int)));
         connect(Widget,SIGNAL(Down(int)),this,SIGNAL(Down(int)));
+        connect(Widget,SIGNAL(VariableNameChanged(QString)),this,SIGNAL(VariableNameChanged(QString)));
+        connect(Widget,SIGNAL(WillBeDeleted()),this,SIGNAL(ResourceDestroyed()));
         this->setParent(Widget);
     }
 

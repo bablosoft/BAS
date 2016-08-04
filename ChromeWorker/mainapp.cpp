@@ -20,6 +20,7 @@
 #include "modulesdata.h"
 #include "readallfile.h"
 #include "toolboxpreprocessor.h"
+#include "clipboard.h"
 
 using namespace std::placeholders;
 MainApp * App;
@@ -493,6 +494,14 @@ void MainApp::ScrollCallback(int x, int y)
     {
         SendTextResponce("<Messages><Scroll></Scroll></Messages>");
     }
+}
+
+void MainApp::DebugVariablesResultCallback(const std::string & data)
+{
+    if(BrowserScenario)
+        BrowserScenario->GetMainFrame()->ExecuteJavaScript(std::string("BrowserAutomationStudio_UpdateVariablesResult(") + picojson::value(data).serialize() + std::string(")"),BrowserScenario->GetMainFrame()->GetURL(), 0);
+
+    SendTextResponce("<Messages><DebugVariablesResult></DebugVariablesResult></Messages>");
 }
 
 void MainApp::RenderCallback(int x, int y, int width, int height)
@@ -1364,6 +1373,20 @@ void MainApp::HandleScenarioBrowserEvents()
         SendTextResponce(std::string("<Messages><WaitCode>") + CodeSend + std::string("</WaitCode></Messages>"));
     }
 
+    std::pair<std::string, bool> res6 = scenariov8handler->GetClipboardSetRequest();
+    if(res6.second)
+    {
+        write_clipboard(res6.first);
+    }
+
+    if(scenariov8handler->GetClipboardGetRequest())
+    {
+        std::string res = read_clipboard();
+        std::string script = std::string("BrowserAutomationStudio_GetClipboardResult(") + picojson::value(res).serialize() + std::string(")");
+        if(BrowserScenario)
+            BrowserScenario->GetMainFrame()->ExecuteJavaScript(script,BrowserScenario->GetMainFrame()->GetURL(), 0);
+    }
+
     std::pair<std::string, bool> res5 = scenariov8handler->GetIsEditStart();
     if(res5.second)
     {
@@ -1383,6 +1406,15 @@ void MainApp::HandleScenarioBrowserEvents()
             BrowserToolbox->GetMainFrame()->ExecuteJavaScript(script,BrowserToolbox->GetMainFrame()->GetURL(), 0);
     }
 
+    if(scenariov8handler->GetIsThreadNumberEditStart() && BrowserToolbox)
+        BrowserToolbox->GetMainFrame()->ExecuteJavaScript("BrowserAutomationStudio_ThreadNumberEdit()",BrowserToolbox->GetMainFrame()->GetURL(), 0);
+
+    if(scenariov8handler->GetIsSuccessNumberEditStart() && BrowserToolbox)
+        BrowserToolbox->GetMainFrame()->ExecuteJavaScript("BrowserAutomationStudio_SuccessNumberEdit()",BrowserToolbox->GetMainFrame()->GetURL(), 0);
+
+    if(scenariov8handler->GetIsFailNumberEditStart() && BrowserToolbox)
+        BrowserToolbox->GetMainFrame()->ExecuteJavaScript("BrowserAutomationStudio_FailNumberEdit()",BrowserToolbox->GetMainFrame()->GetURL(), 0);
+
     ScenarioV8Handler::RestartType res3 = scenariov8handler->GetNeedRestart();
 
     if(res3 == ScenarioV8Handler::Restart)
@@ -1401,25 +1433,7 @@ void MainApp::HandleToolboxBrowserEvents()
         if(BrowserScenario)
         {
             int id = std::rand();
-            if(res.first.HowToExecute != ToolboxV8Handler::OnlyExecute)
-            {
-                std::string script = "BrowserAutomationStudio_AddTask(";
-                std::string Name;
-                if(res.first.HowToExecute == ToolboxV8Handler::OnlyAdd && res.first.DisableIfAdd)
-                {
-                    Name += "_";
-                }
-                Name += res.first.Name;
-                script.append(picojson::value(Name).serialize());
-                script.append(",");
-                script.append(picojson::value(res.first.Code).serialize());
-                script.append(",");
-                script.append(std::to_string(id));
-                script.append(");");
-                worker_log(std::string("ScenarioExecuteCode<<") + script);
-                BrowserScenario->GetMainFrame()->ExecuteJavaScript(script.c_str(),BrowserScenario->GetMainFrame()->GetURL(), 0);
-            }
-
+            std::string scriptscenario;
             if(Layout->State == MainLayout::Ready)
             {
                 if(res.first.Name.length() == 0 || res.first.Name.at(0) != '_')
@@ -1441,11 +1455,32 @@ void MainApp::HandleToolboxBrowserEvents()
                     else
                         DelayedSend = DelayedSendCode;
 
-                    BrowserScenario->GetMainFrame()->ExecuteJavaScript("BrowserAutomationStudio_RunningTask()",BrowserScenario->GetMainFrame()->GetURL(), 0);
+                    scriptscenario += "BrowserAutomationStudio_RunningTask();";
+
                 }
             }
 
+            if(res.first.HowToExecute != ToolboxV8Handler::OnlyExecute)
+            {
+                std::string script = "BrowserAutomationStudio_AddTask(";
+                std::string Name;
+                if(res.first.HowToExecute == ToolboxV8Handler::OnlyAdd && res.first.DisableIfAdd)
+                {
+                    Name += "_";
+                }
+                Name += res.first.Name;
+                script.append(picojson::value(Name).serialize());
+                script.append(",");
+                script.append(picojson::value(res.first.Code).serialize());
+                script.append(",");
+                script.append(std::to_string(id));
+                script.append(");");
+                worker_log(std::string("ScenarioExecuteCode<<") + script);
+                scriptscenario += script;
+            }
 
+            if(!scriptscenario.empty())
+                BrowserScenario->GetMainFrame()->ExecuteJavaScript(scriptscenario,BrowserScenario->GetMainFrame()->GetURL(), 0);
         }
     }
 
@@ -1920,6 +1955,11 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
         object->SetValue("BrowserAutomationStudio_Restart", CefV8Value::CreateFunction("BrowserAutomationStudio_Restart", scenariov8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("BrowserAutomationStudio_EditStart", CefV8Value::CreateFunction("BrowserAutomationStudio_EditStart", scenariov8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("BrowserAutomationStudio_EditEnd", CefV8Value::CreateFunction("BrowserAutomationStudio_EditEnd", scenariov8handler), V8_PROPERTY_ATTRIBUTE_NONE);
+        object->SetValue("BrowserAutomationStudio_ThreadNumberEdit", CefV8Value::CreateFunction("BrowserAutomationStudio_ThreadNumberEdit", scenariov8handler), V8_PROPERTY_ATTRIBUTE_NONE);
+        object->SetValue("BrowserAutomationStudio_SuccessNumberEdit", CefV8Value::CreateFunction("BrowserAutomationStudio_SuccessNumberEdit", scenariov8handler), V8_PROPERTY_ATTRIBUTE_NONE);
+        object->SetValue("BrowserAutomationStudio_FailNumberEdit", CefV8Value::CreateFunction("BrowserAutomationStudio_FailNumberEdit", scenariov8handler), V8_PROPERTY_ATTRIBUTE_NONE);
+        object->SetValue("BrowserAutomationStudio_SetClipboard", CefV8Value::CreateFunction("BrowserAutomationStudio_SetClipboard", scenariov8handler), V8_PROPERTY_ATTRIBUTE_NONE);
+        object->SetValue("BrowserAutomationStudio_GetClipboard", CefV8Value::CreateFunction("BrowserAutomationStudio_GetClipboard", scenariov8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("_K", CefV8Value::CreateString(Lang), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("_Z", CefV8Value::CreateInt(Settings->Zoom()), V8_PROPERTY_ATTRIBUTE_NONE);
         return;

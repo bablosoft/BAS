@@ -27,6 +27,24 @@ private:
     std::mutex mut_editstart;
     std::mutex mut_editend;
 
+    bool IsThreadNumberEditStart;
+    bool IsSuccessNumberEditStart;
+    bool IsFailNumberEditStart;
+
+    std::mutex mut_threadnumbereditstart;
+    std::mutex mut_successnumbereditstart;
+    std::mutex mut_failnumbereditstart;
+
+    std::mutex mut_clipboard_get;
+    std::mutex mut_clipboard_set;
+
+    bool IsClipboardGetRequest;
+    bool IsClipboardSetRequest;
+
+    std::string clipboard_set;
+
+
+
     bool IsInitialized;
 
 public:
@@ -38,7 +56,12 @@ public:
     RestartType GetNeedRestart();
     bool GetIsInitialized();
     bool GetIsEditEnd();
+    bool GetIsThreadNumberEditStart();
+    bool GetIsSuccessNumberEditStart();
+    bool GetIsFailNumberEditStart();
     std::pair<std::string, bool> GetIsEditStart();
+    std::pair<std::string, bool> GetClipboardSetRequest();
+    bool GetClipboardGetRequest();
 
 
 private:

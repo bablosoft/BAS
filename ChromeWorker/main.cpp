@@ -23,7 +23,7 @@ CommandParser *Parser;
 HWND MousePositionMouseHandle,hwnd,HButtonUp,HButtonDown,HButtonLeft,HButtonRight,HButtonDevTools,HButtonScenario,HTextHold,HTextFinished;
 enum{IDButtonTerminate = 1000,IDButtonQuit,IDButtonUp,IDButtonDown,IDButtonLeft,IDButtonRight,IDButtonMinimizeMaximize,IDButtonDevTools,IDButtonScenario,IDButtonSettings,IDTextHold,IDTextFinished,IDClick,IDMove,IDMoveAndClick,IDInspect,IDXml,IDText,IDScript,IDClickElement,IDMoveElement,IDMoveAndClickElement,IDClear,IDType,IDExists,IDStyle,IDCheck,IDFocus,IDSet,IDSetInteger,IDSetRandom,IDGetAttr,IDSetAttr,IDCaptcha,IDLength,IDWaitElement,
     IDLoop,IDXmlLoop,IDTextLoop,IDScriptLoop,IDClickElementLoop,IDMoveElementLoop,IDMoveAndClickElementLoop,IDClearLoop,IDTypeLoop,IDExistsLoop,IDStyleLoop,IDCheckLoop,IDFocusLoop,IDSetLoop,IDSetIntegerLoop,IDSetRandomLoop,IDGetAttrLoop,IDSetAttrLoop,IDCaptchaLoop,IDCustom = 30000,IDCustomForeach = 40000};
-HBITMAP BReady,BHold,BFinished;
+HBITMAP BReady,BFinished;
 HCURSOR HCursor;
 using namespace std::placeholders;
 HMENU hPopupMenu = 0;
@@ -80,7 +80,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
 
             BReady = (HBITMAP)LoadImage(hInst, MAKEINTRESOURCEW(IDB_READY), IMAGE_BITMAP, 0, 0, 0);
-            BHold = (HBITMAP)LoadImage(hInst, MAKEINTRESOURCEW(IDB_HOLD), IMAGE_BITMAP, 0, 0, 0);
+            Layout->BHold = (HBITMAP)LoadImage(hInst, MAKEINTRESOURCEW(IDB_HOLD), IMAGE_BITMAP, 0, 0, 0);
+            Layout->BHold90 = (HBITMAP)LoadImage(hInst, MAKEINTRESOURCEW(IDB_HOLD90), IMAGE_BITMAP, 0, 0, 0);
             BFinished = (HBITMAP)LoadImage(hInst, MAKEINTRESOURCEW(IDB_FINISHED), IMAGE_BITMAP, 0, 0, 0);
             HButtonUp = CreateWindow(L"BUTTON", NULL, BS_BITMAP|WS_TABSTOP|WS_VISIBLE|WS_CHILD|BS_PUSHBUTTON, 0, 0, 20, 20, hwnd, (HMENU)IDButtonUp, hInst, NULL);
             Layout->HButtonUp = HButtonUp;
@@ -673,6 +674,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     Parser->Parse(Xml);
 
                 app->Timer();
+
+                Layout->Timer(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
+
             }
         break;
         case WM_PAINT:
@@ -715,7 +719,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                         switch(Layout->State)
                         {
                             case MainLayout::Ready: b = BReady; break;
-                            case MainLayout::Hold: b = BHold; break;
+                            case MainLayout::Hold: b = Layout->GetHoldAnimationButton(); break;
                             case MainLayout::Finished: b = BFinished; break;
                         }
                         HDC hdcMem = CreateCompatibleDC(hdc);
@@ -900,6 +904,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Parser->EventIsUrlLoadedByMask.push_back(std::bind(&MainApp::IsUrlLoadedByMaskCallback,app.get(),_1));
     Parser->EventGetLoadStats.push_back(std::bind(&MainApp::GetLoadStatsCallback,app.get()));
     Parser->EventElementCommand.push_back(std::bind(&MainApp::ElementCommandCallback,app.get(),_1));
+    Parser->EventDebugVariablesResult.push_back(std::bind(&MainApp::DebugVariablesResultCallback,app.get(),_1));
 
 
     app->EventSendTextResponce.push_back(std::bind(&PipesClient::Write,Client,_1));

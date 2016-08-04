@@ -3,6 +3,7 @@ VAR_FOREACH_DATA = ""
 LINK_REGEXP = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
 VAR_FOR_EACH_CSS = "html"
 VAR_FOR_EACH_MATCH = "a"
+IF_ELSE_EXPRESSION = true;
 
 function Cycle(Next,Break)
 {
@@ -46,12 +47,19 @@ function Cycle(Next,Break)
             }
         }else
         {
-            var c = null
-            for(var i = 0;i<arg;i++)
-                c = CYCLES.Pop();
-            if(c)
+            if(arg >= CYCLES.Data.length)
             {
-                c._Break();
+                arg = CYCLES.Data.length;
+            }
+            if(arg > 0)
+            {
+                var c = null
+                for(var i = 0;i<arg;i++)
+                    c = CYCLES.Pop();
+                if(c)
+                {
+                    c._Break();
+                }
             }
         }
 
@@ -110,6 +118,25 @@ function _next()
         success("Ok");
 }
 
+function _next_or_section(id, callback)
+{
+    var c = CYCLES.Current();
+    if(c)
+    {
+        c.Next();
+        _stop_subscript_execution();
+    }
+    else
+        section_start("test",id,callback)
+}
+
+function _kill_call_stack()
+{
+    VAR_CYCLE_INDEX = 0
+    CYCLES = new Cycles();
+}
+
+
 function _break()
 {
     var arg = 1;
@@ -124,8 +151,8 @@ function _break()
         c.Break(arg);
         _stop_subscript_execution();
     }
-    else
-        success("Ok");
+    /*else
+        success("Ok");*/
 
 }
 

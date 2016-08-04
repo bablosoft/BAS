@@ -57,6 +57,8 @@ namespace BrowserAutomationStudioFramework
     signals:
         void Up(int index);
         void Down(int index);
+        void VariableNameChanged(QString name);
+        void ResourceDestroyed();
         void VisibilityChanged(bool Visible);
         void ValidationStateChanged();
         void RequiresValidationStateChanged(bool Visible);

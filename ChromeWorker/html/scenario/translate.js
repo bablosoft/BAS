@@ -34,6 +34,9 @@ _L =
 	"Check All" :{"ru": "Выделить Все"},
 	"Clear Selection" :{"ru": "Очистить Выделение"},
 	"Execute only this action" :{"ru": "Выполнить только это действие"},
+	"Move Execution Point Here" :{"ru": "Переместить точку выполнения"},
+	"Variable Inspector" :{"ru": "Инспектор Переменных"},
+	"Variables will be loaded on next script pause" :{"ru": "Переменные будут загружены при следующей паузе сценария"},
 }
 
 

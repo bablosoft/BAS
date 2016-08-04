@@ -24,14 +24,20 @@
 #include "resourcemodeldatabase.h"
 #include "userresourcewidget.h"
 #include "multilanguagestring.h"
+#include "qAccordion/qaccordion.h"
 #include "every_cpp.h"
 
 namespace BrowserAutomationStudioFramework
 {
     QtResourceController::QtResourceController(QObject *parent) :
-        IResourceController(parent), TabWidget(0), Layout(0)
+        IResourceController(parent), TabWidget(0), Layout(0), UseAccordion(false)
     {
         AllValidator = new GeneralValidator(this);
+    }
+
+    void QtResourceController::SetUseAccordion()
+    {
+        UseAccordion = true;
     }
 
     void QtResourceController::SetLanguage(const QString& Language)
@@ -401,59 +407,60 @@ namespace BrowserAutomationStudioFramework
         if(Clear)
             DeleteAllModel(resources);
 
-
-
-
-
         QList<QWidget *> list = Widget->findChildren<QWidget *>();
         list.append(Widget);
+        QList<QWidget *> listsearch;
+
+
+        bool AccordionFound = false;
         foreach(QWidget * widget,list)
         {
-
-            if(dynamic_cast<FlowLayout *>(widget->layout()))
+            QAccordion* accordion = qobject_cast<QAccordion*>(widget);
+            if(accordion)
             {
-                int ViewToModelIndex = 0;
-                while(ViewToModelIndex < widget->layout()->count())
+                int size = accordion->numberOfContentPanes();
+                for(int i = 0;i<size;i++)
                 {
-                    QLayoutItem* item = widget->layout()->itemAt(ViewToModelIndex);
-                    if(item)
+                    listsearch += accordion->getContentPane(i)->getContentFrame()->findChildren<QWidget *>();
+                }
+                AccordionFound = true;
+                break;
+            }
+        }
+
+        if(!AccordionFound)
+        {
+            listsearch = list;
+        }
+
+        foreach(QWidget * widget,listsearch)
+        {
+            foreach(QObject * i,widget->children())
+            {
+                IResourceWidget* r = qobject_cast<IResourceWidget*>(i);
+
+                if(r)
+                {
+                    IResourceModel *m = GetModelByType(r->GetTypeId(),r);
+                    m->setParent(resources);
+                    resources->GetModelList()->append(m);
+                    QStringList types = r->GetAvailableNames().split(",");
+                    QList<IResourceModel*> Defaults;
+                    foreach(QString type, types)
                     {
-                        QWidget* w = item->widget();
-                        if(w)
+                        if(type != r->GetTypeId())
                         {
-                            foreach(QObject * i,w->children())
+                            IResourceModel *md = GetModelByType(type,r);
+                            if(md)
                             {
-                                IResourceWidget* r = qobject_cast<IResourceWidget*>(i);
-
-                                if(r)
-                                {
-                                    IResourceModel *m = GetModelByType(r->GetTypeId(),r);
-                                    m->setParent(resources);
-                                    resources->GetModelList()->append(m);
-                                    QStringList types = r->GetAvailableNames().split(",");
-                                    QList<IResourceModel*> Defaults;
-                                    foreach(QString type, types)
-                                    {
-                                        if(type != r->GetTypeId())
-                                        {
-                                            IResourceModel *md = GetModelByType(type,r);
-                                            if(md)
-                                            {
-                                                md->setParent(resources);
-                                                Defaults.append(md);
-                                            }
-                                        }
-                                    }
-                                    m->SetDefaults(Defaults);
-
-                                }
+                                md->setParent(resources);
+                                Defaults.append(md);
                             }
                         }
-
                     }
-                    ViewToModelIndex++;
-                }
+                    m->SetDefaults(Defaults);
 
+                }
             }
         }
 
@@ -549,9 +556,59 @@ namespace BrowserAutomationStudioFramework
         str.SetTranslation("ru",QString::fromStdWString(std::wstring(L"\x0412\x0412\x0415\x0414\x0418\x0422\x0415\x0020\x041E\x041F\x0418\x0421\x0410\x041D\x0418\x0415")));
         w->SetDescription(str);
         w->SetTypeId("FixedStringValue");
-        GetLayoutForSection("")->addWidget(w->GetMainWidget());
-        connect(w,SIGNAL(Up(int)),GetLayoutForSection(""),SLOT(moveItemUp(int)));
-        connect(w,SIGNAL(Down(int)),GetLayoutForSection(""),SLOT(moveItemDown(int)));
+
+        if(UseAccordion)
+        {
+            FlowLayout * Layout = GetLayoutForSection("");
+            QAccordion *accordion = 0;
+
+            /* Find accordion */
+            int size = Layout->count();
+            for(int i = 0;i<size;i++)
+            {
+                QLayoutItem *item = Layout->itemAt(i);
+                QWidget *w = item->widget();
+                if(w)
+                {
+
+                    accordion = qobject_cast<QAccordion *>(w);
+                    if(accordion)
+                    {
+                        break;
+                    }
+                }
+            }
+            if(accordion == 0)
+            {
+                accordion = new QAccordion(Widget);
+                Layout->addWidget(accordion);
+            }
+
+            if (accordion->insertContentPane(0,QString::number(qrand() % 100000) + ":place_variable_name"))
+            {
+                QFrame *contentFrame = accordion->getContentPane(0)->getContentFrame();
+                accordion->getContentPane(0)->setMaximumHeight(3000);
+
+                contentFrame->setLayout(new QVBoxLayout());
+                contentFrame->layout()->addWidget(w->GetMainWidget());
+                w->GetMainWidget()->setParent(contentFrame);
+                accordion->getContentPane(0)->headerClicked(QPoint());
+
+                connect(w,SIGNAL(VariableNameChanged(QString)),accordion->getContentPane(0),SLOT(setHeader(QString)));
+                connect(w,SIGNAL(ResourceDestroyed()),accordion->getContentPane(0),SLOT(selfRemove()));
+                connect(w,SIGNAL(ResourceDestroyed()),accordion->getContentPane(0),SLOT(deleteLater()));
+                connect(w,SIGNAL(Up(int)),accordion->getContentPane(0),SLOT(selfUp()));
+                connect(w,SIGNAL(Down(int)),accordion->getContentPane(0),SLOT(selfDown()));
+            }
+
+
+        }
+        else
+        {
+            GetLayoutForSection("")->addWidget(w->GetMainWidget());
+            connect(w,SIGNAL(Up(int)),GetLayoutForSection(""),SLOT(moveItemUp(int)));
+            connect(w,SIGNAL(Down(int)),GetLayoutForSection(""),SLOT(moveItemDown(int)));
+        }
     }
 
     void QtResourceController::CheckIfAllSectionsAreEmpty(IResources * resources)
@@ -813,8 +870,6 @@ namespace BrowserAutomationStudioFramework
         }
     }
 
-
-
     void QtResourceController::FromModelToView(IResources * resources, bool Clear)
     {
         if(Clear)
@@ -822,6 +877,9 @@ namespace BrowserAutomationStudioFramework
         int size = resources->GetModelList()->size();
         CheckIfAllSectionsAreEmpty(resources);
         GetTabWiget();
+
+        QAccordion *accordion = 0;
+
         QHash<QString, QPair<MultiSelect*, IResourceWidget *> > Triggers;
         QHash<QString, QList<IResourceWidget *> > Listeners;
 
@@ -870,10 +928,40 @@ namespace BrowserAutomationStudioFramework
             w->SetEnabledToUser(res->GetEnabledByUser());
             QString SectionName = res->GetSectionName().GetTranslation(Language);
             FlowLayout *FLayout = GetLayoutForSection(SectionName);
-            FLayout->addWidget(w->GetMainWidget());
+            if(UseAccordion)
+            {
+                if(!accordion)
+                {
+                    accordion = new QAccordion(Widget);
+                    FLayout->addWidget(accordion);
+                }
+                int Pane = accordion->addContentPane(QString::number(qrand() % 100000) + ":" + res->GetName());
+                if (Pane != -1)
+                {
+                    QFrame *contentFrame = accordion->getContentPane(Pane)->getContentFrame();
+                    accordion->getContentPane(Pane)->setMaximumHeight(3000);
 
-            connect(w,SIGNAL(Up(int)),FLayout,SLOT(moveItemUp(int)));
-            connect(w,SIGNAL(Down(int)),FLayout,SLOT(moveItemDown(int)));
+                    contentFrame->setLayout(new QVBoxLayout());
+                    contentFrame->layout()->addWidget(w->GetMainWidget());
+                    w->GetMainWidget()->setParent(contentFrame);
+
+                    connect(w,SIGNAL(VariableNameChanged(QString)),accordion->getContentPane(Pane),SLOT(setHeader(QString)));
+                    connect(w,SIGNAL(ResourceDestroyed()),accordion->getContentPane(Pane),SLOT(selfRemove()));
+                    connect(w,SIGNAL(ResourceDestroyed()),accordion->getContentPane(Pane),SLOT(deleteLater()));
+
+                    connect(w,SIGNAL(Up(int)),accordion->getContentPane(Pane),SLOT(selfUp()));
+                    connect(w,SIGNAL(Down(int)),accordion->getContentPane(Pane),SLOT(selfDown()));
+                }
+
+            }else
+            {
+                FLayout->addWidget(w->GetMainWidget());
+                connect(w,SIGNAL(Up(int)),FLayout,SLOT(moveItemUp(int)));
+                connect(w,SIGNAL(Down(int)),FLayout,SLOT(moveItemDown(int)));
+            }
+
+
+
             if(TabWidget)
             {
                 Validator->InsertResourceWidget(TabWidget->pageTitleList().indexOf(SectionName),w);

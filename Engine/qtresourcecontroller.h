@@ -31,6 +31,7 @@ namespace BrowserAutomationStudioFramework
         ILanguageModel* LanguageModel;
         IResourceModel* GetModelByType(const QString& Type, IResourceWidget*r);
         void ShowModel(const QString &Type, IResourceModel* res, IResourceWidget *w, QHash<QString, QPair<MultiSelect*, IResourceWidget *> >& Triggers);
+        bool UseAccordion;
     public:
         explicit QtResourceController(QObject *parent = 0);
 
@@ -44,6 +45,7 @@ namespace BrowserAutomationStudioFramework
         void SetWidget(QWidget *Widget);
         void SetLanguage(const QString& Language);
         void SetLanguageModel(ILanguageModel* LanguageModel);
+        void SetUseAccordion();
         void AddWidgetToView();
         void SetResourceWidgetFactory(IResourceWidgetFactory *WidgetFactory);
         virtual void FromViewToModel(IResources * resources, bool Clear = true);

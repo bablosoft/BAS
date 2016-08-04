@@ -11,6 +11,10 @@ class MainLayout
     void MoveDevTools();
     void CalculateAllSize(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight, RECT& DevToolsRectangle, RECT& ToolboxRectangle, RECT& BrowserRectangle);
     bool DevToolsTab;
+
+    long long LastTimeChangedHoldPicture;
+    int HoldAnimation;
+
 public:
 
     enum StateClass{Ready,Hold,Finished}State;
@@ -23,6 +27,7 @@ public:
     bool IsMinimized;
     bool IsToolboxMaximized;
     HBITMAP ButtonMinimize, ButtonMaximize;
+    HBITMAP BHold,BHold90;
     HWND HButtonMinimizeMaximize;
     LONG SavelStyle,SavelExStyle;
 
@@ -77,6 +82,9 @@ public:
 
     //Helpers
     HWND GetDevToolsHandle();
+
+    void Timer(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
+    HBITMAP GetHoldAnimationButton();
 
 
 };

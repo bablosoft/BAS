@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
 </head>
-<body>
+<body style="display:none;">
   <!-- ========= -->
   <!--   HTML    -->
   <!-- ========= -->
@@ -136,20 +136,41 @@
 
 
   <script type="text/template" id="main">
-    <div class="container-fluid mainscreen" >
-      <div>
-          <% var first = true; %>
-          <% _.each(data, function(task) { %>
-              <% if(typeof(task.type) != "undefined" && task.type == "group") { %>
-                <div class="description"> <%= task.description %>: </div>
-                <% first = true; %>
-              <% } else { %>
-                <div class="tool <%= (first)? "toolfirst" : "" %>" >
-                  <a class="toolbutton" href="#!/<%= task.ref %>" data-placement="right" title="<%= task.description %>" data-name="<%= task.name %>"><i class="fa fa-cog"></i> <%= task.name %> </a>
-                </div>
-                <% first = false; %>
-              <% } %>
-          <% }); %>
+    <div class="searchbar">
+      <div class="container-fluid">
+        <div class="input-group input-group-sm">
+          <span class="input-group-addon" id="basic-addon1"><i class="fa fa-search" aria-hidden="true"></i></span>
+          <input type="text" class="form-control" id="searchinput" placeholder="Action Name" aria-describedby="basic-addon1">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button" id="searchinputclear"><i class="fa fa-times" aria-hidden="true"></i></button>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <div class="container-fluid mainscreen" >
+        <div>
+            <% var first = true; %>
+            <% var firstdescription = true; %>
+            <% _.each(data, function(task) { %>
+                <% if(typeof(task.type) != "undefined" && task.type == "group") { %>
+
+                  <% if(!firstdescription) { %>
+                    </span>
+                  <% } %>
+                  <% firstdescription = false; %>
+                  <span class="toolspanel">
+                  <div class="description"> <%= task.description %>: </div>
+                  <% first = true; %>
+                <% } else { %>
+                  <div class="tool <%= (first)? "toolfirst" : "" %>" >
+                    <a class="toolbutton" href="#!/<%= task.ref %>" data-placement="right" title="<%= task.description %>" data-name="<%= task.name %>"><i class="fa fa-cog"></i> <%= task.name %> </a>
+                  </div>
+                  <% first = false; %>
+                <% } %>
+            <% }); %>
+            </span>
+        </div>
       </div>
     </div>
   </script>
@@ -2287,9 +2308,71 @@
         "change .groupselector": "groupselector",
         "click .variant": "selectvariant",
         "click .addtopost": "addpostdata",
-        "click #use-waiter": "usewaiterchange"
+        "click #use-waiter": "usewaiterchange",
+        "click #searchinputclear": "searchinputclear",
+        "input #searchinput": "searchinput",
+        "keyup #searchinput": "searchinputkeyup"
 
      },
+
+      searchinputkeyup: function(event)
+      {
+        if (event.keyCode === 27)
+        {
+          $("#searchinput").val("")
+          this.searchinput()
+        }
+      },
+
+      searchinput: function(event)
+      {
+        var tools = $(".toolbutton")
+        var searchterm = $("#searchinput").val().toLowerCase()
+        for(var i = 0;i<tools.length;i++)
+        {
+          var tool = $(tools[i])
+          var name = tool.attr("data-name")
+          var description = tool.attr("title")
+          if(name.toLowerCase().indexOf(searchterm) >= 0 || description.toLowerCase().indexOf(searchterm) >= 0 || searchterm.toLowerCase().length == 0)
+          {
+              tool.removeClass("toolbutton-searchfailed")
+          }else
+          {
+              tool.addClass("toolbutton-searchfailed")
+          }
+        }
+
+        var toolpanels = $(".toolspanel")
+        for(var i = 0;i<toolpanels.length;i++)
+        {
+          var toolpannel = $(toolpanels[i])
+          var tools = toolpannel.find(".toolbutton")
+
+          var isvisible = false
+          for(var j = 0;j<tools.length;j++)
+          {
+            var tool = $(tools[j])
+            if(!tool.hasClass("toolbutton-searchfailed"))
+            {
+              isvisible = true
+              break;
+            }
+          }
+
+          if(isvisible)
+              toolpannel.show()
+          else
+              toolpannel.hide()
+        }
+
+      },
+
+      searchinputclear: function(event)
+      {
+        event.preventDefault();
+        $("#searchinput").val("")
+        this.searchinput()
+      },
 
       usewaiterchange: function(event)
       {
@@ -2308,6 +2391,8 @@
         ToolboxMaximizeCallback = function()
         {
           $("#expressioneditor-container").show()
+          document.documentElement.style.zoom = '100%';
+
           //Get original value
           var value = null
           var data = null
@@ -2327,6 +2412,7 @@
             $("#containerdata").show()
             BrowserAutomationStudio_Minimize()
             $("#expressioneditor-container").hide()
+            document.documentElement.style.zoom = _Z + '%'
             if(Result["ok"])
             {
               target.closest("*[data-preserve-id]").attr("data-preserve-json",Result["data"])
@@ -4737,7 +4823,7 @@
 
         $('[data-toggle="tooltip"]').tooltip({trigger:'hover', template:'<div class="mytooltip" role="tooltip"><div class="mytooltip-arrow tooltip-arrow"></div><div class="mytooltip-inner tooltip-inner"></div></div>',delay: { "show": 500, "hide": 100 }})
 
-
+        $("body").show()
       },
 
       /*showtooltip: function(e)
@@ -4871,6 +4957,8 @@
 
         main: function () {
           _GobalModel.set({ state: "main" });
+          $(".actions").css("height", window.innerHeight * (100.0 / _Z) - 47 + "px")
+          $(".actions").css("overflow-y","scroll")
         },
         timeout: function () {
           _GobalModel.set({ state: "timeout" });
@@ -5325,6 +5413,10 @@
 
     $( document ).ready(function() {
         document.documentElement.style.zoom = _Z + '%';
+        $( document.body ).click(function(){
+          $("#searchinput").focus()  
+        })
+
     });
 
     function Invalid(data)
@@ -5366,6 +5458,20 @@
       return "";
     }
 
+    function BrowserAutomationStudio_ThreadNumberEdit()
+    {
+        _Router.navigate("#!/threadnumber", true);
+    }
+
+    function BrowserAutomationStudio_SuccessNumberEdit()
+    {
+        _Router.navigate("#!/successnumber", true);
+    }
+
+    function BrowserAutomationStudio_FailNumberEdit()
+    {
+        _Router.navigate("#!/failnumber", true);
+    }
 
     function BrowserAutomationStudio_SaveControls()
     {

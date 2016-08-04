@@ -176,6 +176,15 @@ void CommandParser::Parse(const std::string& Xml)
                 f(value);
         }
 
+        CommandNode = MessagesNode->first_node("DebugVariablesResult");
+        if(CommandNode)
+        {
+            std::string value = CommandNode->value();
+            worker_log("DebugVariablesResult");
+            for(auto f:EventDebugVariablesResult)
+                f(value);
+        }
+
         CommandNode = MessagesNode->first_node("ScriptFinished");
         if(CommandNode)
         {

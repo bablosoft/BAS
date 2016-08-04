@@ -160,12 +160,17 @@
 <context>
     <name>BrowserAutomationStudioFramework::DesignResourceWidget</name>
     <message>
-        <location filename="../designresourcewidget.cpp" line="453"/>
+        <location filename="../designresourcewidget.cpp" line="81"/>
+        <source>Are you sure, that you want to delete resource?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../designresourcewidget.cpp" line="467"/>
         <source>Hide</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.cpp" line="459"/>
+        <location filename="../designresourcewidget.cpp" line="473"/>
         <source>Show more</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1505,143 +1510,143 @@
 <context>
     <name>DesignResourceWidget</name>
     <message>
-        <location filename="../designresourcewidget.ui" line="41"/>
+        <location filename="../designresourcewidget.ui" line="45"/>
         <source>Property</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="108"/>
+        <location filename="../designresourcewidget.ui" line="112"/>
         <source>Variable Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="131"/>
+        <location filename="../designresourcewidget.ui" line="135"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="141"/>
+        <location filename="../designresourcewidget.ui" line="145"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="173"/>
-        <location filename="../designresourcewidget.ui" line="525"/>
+        <location filename="../designresourcewidget.ui" line="177"/>
+        <location filename="../designresourcewidget.ui" line="529"/>
         <source>FixedString</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="182"/>
-        <location filename="../designresourcewidget.ui" line="508"/>
+        <location filename="../designresourcewidget.ui" line="186"/>
+        <location filename="../designresourcewidget.ui" line="512"/>
         <source>FixedInteger</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="191"/>
-        <location filename="../designresourcewidget.ui" line="552"/>
+        <location filename="../designresourcewidget.ui" line="195"/>
+        <location filename="../designresourcewidget.ui" line="556"/>
         <source>RandomString</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="200"/>
-        <location filename="../designresourcewidget.ui" line="538"/>
+        <location filename="../designresourcewidget.ui" line="204"/>
+        <location filename="../designresourcewidget.ui" line="542"/>
         <source>RandomInteger</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="209"/>
-        <location filename="../designresourcewidget.ui" line="559"/>
+        <location filename="../designresourcewidget.ui" line="213"/>
+        <location filename="../designresourcewidget.ui" line="563"/>
         <source>Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="218"/>
+        <location filename="../designresourcewidget.ui" line="222"/>
         <source>LinesFromFile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="227"/>
+        <location filename="../designresourcewidget.ui" line="231"/>
         <source>LinesFromUrl</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="236"/>
+        <location filename="../designresourcewidget.ui" line="240"/>
         <source>FilesFromDirectory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="245"/>
-        <location filename="../designresourcewidget.ui" line="566"/>
+        <location filename="../designresourcewidget.ui" line="249"/>
+        <location filename="../designresourcewidget.ui" line="570"/>
         <source>Database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="298"/>
+        <location filename="../designresourcewidget.ui" line="302"/>
         <source>Move Up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="309"/>
+        <location filename="../designresourcewidget.ui" line="313"/>
         <source>Move Down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="320"/>
+        <location filename="../designresourcewidget.ui" line="324"/>
         <source>Show more</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="337"/>
+        <location filename="../designresourcewidget.ui" line="341"/>
         <source>Enabled to user</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="347"/>
+        <location filename="../designresourcewidget.ui" line="351"/>
         <source>Visible to user</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="357"/>
+        <location filename="../designresourcewidget.ui" line="361"/>
         <source>Is Advanced</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="368"/>
+        <location filename="../designresourcewidget.ui" line="372"/>
         <source>Section Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="395"/>
+        <location filename="../designresourcewidget.ui" line="399"/>
         <source>Visible if:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="412"/>
+        <location filename="../designresourcewidget.ui" line="416"/>
         <source>Variable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="445"/>
+        <location filename="../designresourcewidget.ui" line="449"/>
         <source>Contains</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="481"/>
+        <location filename="../designresourcewidget.ui" line="485"/>
         <source>Choosable Types:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="518"/>
+        <location filename="../designresourcewidget.ui" line="522"/>
         <source>File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="545"/>
+        <location filename="../designresourcewidget.ui" line="549"/>
         <source>Url</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="501"/>
+        <location filename="../designresourcewidget.ui" line="505"/>
         <source>Directory</source>
         <translation type="unfinished"></translation>
     </message>

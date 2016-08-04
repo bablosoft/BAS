@@ -52,6 +52,8 @@ namespace BrowserAutomationStudioFramework
         virtual void StartSection(const QString& Name, int Id, const QString& callback);
         virtual void Scroll(int x, int y, const QString& callback);
         virtual void Render(int x, int y, int width, int height, const QString& callback);
+        virtual void DebugVariablesResult(const QString& data, const QString& callback);
+
         void MarkBeforeReset();
         void MarkAfterReset();
 
@@ -76,6 +78,7 @@ namespace BrowserAutomationStudioFramework
         void Jquery();
         void OptimizeMemory();
         void WaitCode();
+        void DebugVariablesResult();
 
     private slots:
         void Received(const QString& value);

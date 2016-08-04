@@ -113,6 +113,18 @@ namespace BrowserAutomationStudioFramework
 
     }
 
+    void SubprocessBrowser::DebugVariablesResult(const QString& data, const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("DebugVariablesResult",data);
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(QString("Timeout during DebugVariablesResult"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(DebugVariablesResult()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
     void SubprocessBrowser::SetOpenFileName(const QString & OpenFileName, const QString& callback)
     {
         QString WriteString;
@@ -335,7 +347,11 @@ namespace BrowserAutomationStudioFramework
             }else if(xmlReader.name() == "Jquery" && token == QXmlStreamReader::StartElement)
             {
                 emit Jquery();
-            }else if(xmlReader.name() == "OptimizeMemory" && token == QXmlStreamReader::StartElement)
+            }else if(xmlReader.name() == "DebugVariablesResult" && token == QXmlStreamReader::StartElement)
+            {
+                emit DebugVariablesResult();
+            }
+            else if(xmlReader.name() == "OptimizeMemory" && token == QXmlStreamReader::StartElement)
             {
                 emit OptimizeMemory();
             }else if(xmlReader.name() == "WaitCode" && token == QXmlStreamReader::StartElement)

@@ -271,7 +271,10 @@ SOURCES += engine.cpp \
     splifyheaders.cpp \
     imodulemanager.cpp \
     modulemanager.cpp \
-    modulemanagerwindow.cpp
+    modulemanagerwindow.cpp \
+    accordion/clickableframe.cpp \
+    accordion/contentpane.cpp \
+    accordion/qaccordion.cpp
 
 win32:SOURCES += CrashHandler.cpp
 
@@ -535,7 +538,10 @@ HEADERS += engine.h\
     splifyheaders.h \
     imodulemanager.h \
     modulemanager.h \
-    modulemanagerwindow.h
+    modulemanagerwindow.h \
+    accordion/qAccordion/clickableframe.h \
+    accordion/qAccordion/contentpane.h \
+    accordion/qAccordion/qaccordion.h
 
 win32:HEADERS += CrashHandler.h
 
@@ -625,7 +631,7 @@ OTHER_FILES += \
     scripts/engine/worker/properties.js \
     scripts/engine/worker/record.js
 
-INCLUDEPATH += zip debug_memory
+INCLUDEPATH += zip debug_memory accordion
 
 TRANSLATIONS = translate/ru.ts \
     translate/en.ts

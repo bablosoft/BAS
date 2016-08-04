@@ -190,12 +190,17 @@
 <context>
     <name>BrowserAutomationStudioFramework::DesignResourceWidget</name>
     <message>
-        <location filename="../designresourcewidget.cpp" line="453"/>
+        <location filename="../designresourcewidget.cpp" line="81"/>
+        <source>Are you sure, that you want to delete resource?</source>
+        <translation>Вы уверены, что хотите удалить ресурс?</translation>
+    </message>
+    <message>
+        <location filename="../designresourcewidget.cpp" line="467"/>
         <source>Hide</source>
         <translation>Спрятать</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.cpp" line="459"/>
+        <location filename="../designresourcewidget.cpp" line="473"/>
         <source>Show more</source>
         <translation>Больше</translation>
     </message>
@@ -1662,143 +1667,143 @@
 <context>
     <name>DesignResourceWidget</name>
     <message>
-        <location filename="../designresourcewidget.ui" line="41"/>
+        <location filename="../designresourcewidget.ui" line="45"/>
         <source>Property</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="108"/>
+        <location filename="../designresourcewidget.ui" line="112"/>
         <source>Variable Name</source>
         <translation>Переменная</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="131"/>
+        <location filename="../designresourcewidget.ui" line="135"/>
         <source>Description</source>
         <translation>Описание</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="141"/>
+        <location filename="../designresourcewidget.ui" line="145"/>
         <source>Type</source>
         <translation>Тип</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="173"/>
-        <location filename="../designresourcewidget.ui" line="525"/>
+        <location filename="../designresourcewidget.ui" line="177"/>
+        <location filename="../designresourcewidget.ui" line="529"/>
         <source>FixedString</source>
         <translation>Строка</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="182"/>
-        <location filename="../designresourcewidget.ui" line="508"/>
+        <location filename="../designresourcewidget.ui" line="186"/>
+        <location filename="../designresourcewidget.ui" line="512"/>
         <source>FixedInteger</source>
         <translation>Число</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="191"/>
-        <location filename="../designresourcewidget.ui" line="552"/>
+        <location filename="../designresourcewidget.ui" line="195"/>
+        <location filename="../designresourcewidget.ui" line="556"/>
         <source>RandomString</source>
         <translation>Генератор строк</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="200"/>
-        <location filename="../designresourcewidget.ui" line="538"/>
+        <location filename="../designresourcewidget.ui" line="204"/>
+        <location filename="../designresourcewidget.ui" line="542"/>
         <source>RandomInteger</source>
         <translation>Случайное число</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="209"/>
-        <location filename="../designresourcewidget.ui" line="559"/>
+        <location filename="../designresourcewidget.ui" line="213"/>
+        <location filename="../designresourcewidget.ui" line="563"/>
         <source>Select</source>
         <translation>Список</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="218"/>
+        <location filename="../designresourcewidget.ui" line="222"/>
         <source>LinesFromFile</source>
         <translation>Из Файла</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="227"/>
+        <location filename="../designresourcewidget.ui" line="231"/>
         <source>LinesFromUrl</source>
         <translation>Из Ссылки</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="236"/>
+        <location filename="../designresourcewidget.ui" line="240"/>
         <source>FilesFromDirectory</source>
         <translation>Файлы из папки</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="245"/>
-        <location filename="../designresourcewidget.ui" line="566"/>
+        <location filename="../designresourcewidget.ui" line="249"/>
+        <location filename="../designresourcewidget.ui" line="570"/>
         <source>Database</source>
         <translation>База</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="298"/>
+        <location filename="../designresourcewidget.ui" line="302"/>
         <source>Move Up</source>
         <translation>Вверх</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="309"/>
+        <location filename="../designresourcewidget.ui" line="313"/>
         <source>Move Down</source>
         <translation>Вниз</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="320"/>
+        <location filename="../designresourcewidget.ui" line="324"/>
         <source>Show more</source>
         <translation>Больше</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="337"/>
+        <location filename="../designresourcewidget.ui" line="341"/>
         <source>Enabled to user</source>
         <translation>Доступно</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="347"/>
+        <location filename="../designresourcewidget.ui" line="351"/>
         <source>Visible to user</source>
         <translation>Видимость</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="357"/>
+        <location filename="../designresourcewidget.ui" line="361"/>
         <source>Is Advanced</source>
         <translation>Продвинутые</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="368"/>
+        <location filename="../designresourcewidget.ui" line="372"/>
         <source>Section Name</source>
         <translation>Название секции</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="395"/>
+        <location filename="../designresourcewidget.ui" line="399"/>
         <source>Visible if:</source>
         <translation>Видно если:</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="412"/>
+        <location filename="../designresourcewidget.ui" line="416"/>
         <source>Variable</source>
         <translation>Переменная</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="445"/>
+        <location filename="../designresourcewidget.ui" line="449"/>
         <source>Contains</source>
         <translation>Содержит</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="481"/>
+        <location filename="../designresourcewidget.ui" line="485"/>
         <source>Choosable Types:</source>
         <translation>Доступные типы данных:</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="518"/>
+        <location filename="../designresourcewidget.ui" line="522"/>
         <source>File</source>
         <translation>Из Файла</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="545"/>
+        <location filename="../designresourcewidget.ui" line="549"/>
         <source>Url</source>
         <translation>Из Ссылки</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="501"/>
+        <location filename="../designresourcewidget.ui" line="505"/>
         <source>Directory</source>
         <translation>Файлы из папки</translation>
     </message>

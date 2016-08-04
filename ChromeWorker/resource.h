@@ -15,6 +15,9 @@
 #define IDB_MINIMIZE 512
 #define IDB_MAXIMIZE 513
 #define IDB_SETTINGS 514
+#define IDB_HOLD90 515
+
+
 
 #define IDI_LOGO 400
 
