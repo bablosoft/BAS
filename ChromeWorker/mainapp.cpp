@@ -251,6 +251,9 @@ void MainApp::ResetCallbackFinalize()
         //Open file name
         Data->_OpenFileName.clear();
 
+        //Startup script
+        Data->_StartupScript.clear();
+
         //Headers
         Data->_Headers.clear();
 
@@ -278,6 +281,16 @@ void MainApp::SetOpenFileNameCallback(const std::string& value)
     }
     SendTextResponce("<Messages><SetOpenFileName>1</SetOpenFileName></Messages>");
 }
+
+void MainApp::SetStartupScriptCallback(const std::string& value)
+{
+    {
+        LOCK_BROWSER_DATA
+        Data->_StartupScript = value;
+    }
+    SendTextResponce("<Messages><SetStartupScript></SetStartupScript></Messages>");
+}
+
 
 void MainApp::SetPromptResultCallback(const std::string& value)
 {
@@ -2013,6 +2026,19 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
             }
         }
 
+        {
+            LOCK_BROWSER_DATA
+            if(!Data->_StartupScript.empty())
+            {
+                if(!jscode.empty())
+                    jscode += ";";
+                jscode += "try{";
+                jscode += Data->_StartupScript;
+                jscode += "}catch(e){};";
+            }
+
+        }
+
         if(!jscode.empty())
             frame->ExecuteJavaScript(jscode, frame->GetURL(), NULL);
         if(frame->IsMain())
@@ -2028,7 +2054,7 @@ void MainApp::OnWebKitInitialized()
     worker_log(std::string("OnWebKitInitialized>>"));
 
     JavaScriptExtensions extensions;
-    std::string extensionCode = extensions.GetBasicExtension();
+    std::string extensionCode = extensions.GetBasicExtension(Data->IsRecord);
     CefRegisterExtension("v8/browser_automation_studio", extensionCode, NULL);
 }
 

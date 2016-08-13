@@ -1,0 +1,1 @@
+<%= variable %> = Boolean((<%= string %>).match(new RegExp(<%= regexp %>)))

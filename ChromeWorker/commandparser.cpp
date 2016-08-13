@@ -126,6 +126,15 @@ void CommandParser::Parse(const std::string& Xml)
                 f(value);
         }
 
+        CommandNode = MessagesNode->first_node("SetStartupScript");
+        if(CommandNode)
+        {
+            std::string value = CommandNode->value();
+            worker_log("EventSetStartupScript");
+            for(auto f:EventSetStartupScript)
+                f(value);
+        }
+
         CommandNode = MessagesNode->first_node("SetPromptResult");
         if(CommandNode)
         {

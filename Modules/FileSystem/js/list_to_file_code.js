@@ -1,0 +1,1 @@
+native("filesystem", "writefile", JSON.stringify({path: <%= path %>,value: (<%= save %>).join("\r\n") + "\r\n",base64:false,append:<%= append %>}))

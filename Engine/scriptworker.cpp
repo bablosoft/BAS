@@ -468,6 +468,8 @@ namespace BrowserAutomationStudioFramework
         QScriptValue PropertiesValue = engine->newQObject(Properties);
         engine->globalObject().setProperty("Properties", PropertiesValue);
 
+        engine->globalObject().setProperty("_K", qApp->property("lang").toString());
+
         QHash<QString,QObject*>::iterator i = Modules.begin();
         while (i != Modules.end())
         {
@@ -545,12 +547,23 @@ namespace BrowserAutomationStudioFramework
             }
             if(engine->hasUncaughtException())
             {
-                ResultMessage = engine->uncaughtException().toString();
+                QString Message = engine->uncaughtException().toString();
                 if(DoTrace)
-                     ResultMessage += QString(" Line number:") + QString::number(engine->uncaughtExceptionLineNumber()) + " During execution of script " + Script;
-                ResultStatus = IWorker::FailStatus;
-                ScriptFinished();
-                break;
+                     Message += tr(" Line number:") + QString::number(engine->uncaughtExceptionLineNumber()) + tr(" During execution of script ") + Script;
+
+                if(IsRecord)
+                {
+                    Logger->WriteFail(PrepareMessage(Message));
+                    if(Browser)
+                        Browser->StartSection(QString(),1,"");
+                    break;
+                }else
+                {
+                    ResultMessage = Message;
+                    ResultStatus = IWorker::FailStatus;
+                    ScriptFinished();
+                    break;
+                }
             }else
             {
 
@@ -564,14 +577,14 @@ namespace BrowserAutomationStudioFramework
 
                     if(IsFailExceedRunning)
                     {
-                        ResultMessage = "Fail number exceed";
+                        ResultMessage = tr("Fail number exceed");
                         ResultStatus = IWorker::FailStatus;
                         Abort();
                         break;
                     }
                     if(IsSuccessExceedRunning)
                     {
-                        ResultMessage = "Success number exceed";
+                        ResultMessage = tr("Success number exceed");
                         ResultStatus = IWorker::SuccessStatus;
                         Abort();
                         break;
@@ -616,10 +629,14 @@ namespace BrowserAutomationStudioFramework
     }
 
 
-
+    QString ScriptWorker::Preprocess(const QString& script)
+    {
+        return GetPreprocessor()->Preprocess(script, 0);
+    }
 
     void ScriptWorker::Fail(const QString& message)
     {
+
         if(!FailFunction.isEmpty() && MaxFail <= 0 && !FailExceedFunction.isEmpty())
         {
             SetAsyncResult(QScriptValue(message));
@@ -641,15 +658,27 @@ namespace BrowserAutomationStudioFramework
             RunSubScript();
         }else
         {
+            QString Message;
             if(FailFunction.isEmpty())
             {
-                ResultMessage = message;
+                Message = message;
             }else
             {
-                ResultMessage = "Fail number exceed";
+                Message = tr("Fail number exceed");
             }
-            ResultStatus = IWorker::FailStatus;
-            Abort();
+
+            if(IsRecord)
+            {
+                Logger->WriteFail(PrepareMessage(Message));
+                SetScript("section_start(\"test\",1,function(){})");
+                AbortSubscript();
+                RunSubScript();
+            }else
+            {
+                ResultMessage = Message;
+                ResultStatus = IWorker::FailStatus;
+                Abort();
+            }
         }
 
     }
@@ -661,9 +690,18 @@ namespace BrowserAutomationStudioFramework
 
     void ScriptWorker::Die(const QString& message)
     {
-        ResultMessage = message;
-        ResultStatus = IWorker::DieStatus;
-        Abort();
+        if(IsRecord)
+        {
+            Logger->WriteFail(PrepareMessage(message));
+            SetScript("section_start(\"test\",1,function(){})");
+            AbortSubscript();
+            RunSubScript();
+        }else
+        {
+            ResultMessage = message;
+            ResultStatus = IWorker::DieStatus;
+            Abort();
+        }
     }
     void ScriptWorker::Success(const QString& message)
     {
@@ -694,7 +732,7 @@ namespace BrowserAutomationStudioFramework
                 ResultMessage = message;
             }else
             {
-                ResultMessage = "Success number exceed";
+                ResultMessage = tr("Success number exceed");
             }
             ResultStatus = IWorker::SuccessStatus;
             Abort();
@@ -738,7 +776,7 @@ namespace BrowserAutomationStudioFramework
 
     void ScriptWorker::FailProcessFinished()
     {
-        Fail("Failed because process is stopped");
+        Fail(tr("Failed because process is stopped"));
     }
 
     void ScriptWorker::FailBecauseOfTimeout()
@@ -1007,7 +1045,7 @@ namespace BrowserAutomationStudioFramework
         if(DieOnFailHandler)
         {
 
-            Die("failed to get resource " + LastHandlerName);
+            Die(tr("failed to get resource ") + LastHandlerName);
         }else
         {
             engine->evaluate("_set_result(null)");
@@ -1026,16 +1064,16 @@ namespace BrowserAutomationStudioFramework
         QString status;
         if(ResultStatus == IWorker::SuspendStatus)
         {
-            return PrepareMessage("Thread suspended");
+            return PrepareMessage(tr("Thread suspended"));
         }
 
         switch(ResultStatus)
         {
-            case IWorker::FailStatus: status = "Thread failed"; break;
-            case IWorker::DieStatus: status = "Thread died"; break;
-            case IWorker::SuccessStatus: status = "Thread succeeded"; break;
+            case IWorker::FailStatus: status = tr("Thread failed"); break;
+            case IWorker::DieStatus: status = tr("Thread died"); break;
+            case IWorker::SuccessStatus: status = tr("Thread succeeded"); break;
         }
-        return PrepareMessage(status + " with message \"" + ResultMessage + "\"");
+        return PrepareMessage(status + tr(" with message \"") + ResultMessage + "\"");
     }
 
     QString ScriptWorker::GetResultMessageRaw()
@@ -1047,7 +1085,7 @@ namespace BrowserAutomationStudioFramework
     {
         QString status;
         QString datestring = QTime::currentTime().toString("hh:mm:ss");
-        status  = "[" + datestring + "] Thread #" + QString::number(ThreadNumber) + " : " + message;
+        status  = "[" + datestring + "] " + tr("Thread #") + QString::number(ThreadNumber) + " : " + message;
         return status;
     }
 
@@ -1059,7 +1097,7 @@ namespace BrowserAutomationStudioFramework
         ISolver* solver = GetSolverFactory()->GetSolver(method);
         if(!solver)
         {
-            Fail("CAPTCHA_FAIL : Failed to get solver");
+            Fail(tr("CAPTCHA_FAIL") + " : " + tr("Failed to get solver"));
             return;
         }
         Script = callback;
@@ -1076,7 +1114,7 @@ namespace BrowserAutomationStudioFramework
 
         if(res.startsWith("CAPTCHA_FAIL"))
         {
-            Fail(res);
+            Fail(res.replace("CAPTCHA_FAIL",tr("CAPTCHA_FAIL")));
             return;
         }
         SetAsyncResult(QScriptValue(res));
@@ -1088,7 +1126,7 @@ namespace BrowserAutomationStudioFramework
     void ScriptWorker::SolverFailed()
     {
         engine->globalObject().setProperty("LAST_CAPTCHA_ID", "");
-        Fail("Captcha wait timeout");
+        Fail(tr("Captcha wait timeout"));
     }
 
     QString ScriptWorker::ExecuteNativeModuleCodeSync(const QString& DllName, const QString& FunctionName, const QString& InputParam)
@@ -1101,7 +1139,7 @@ namespace BrowserAutomationStudioFramework
         }
         if(FunctionDataInternal->IsAync)
         {
-            Fail("Async function is called in sync mode");
+            Fail(tr("Async function is called in sync mode"));
             return QString();
         }
 
@@ -1109,7 +1147,7 @@ namespace BrowserAutomationStudioFramework
 
         if(FunctionDataInternal->ExecuteError)
         {
-            Fail(QString("Failed to run function ") + DllName + QString(".") + FunctionName);
+            Fail(tr("Failed to run function ") + DllName + QString(".") + FunctionName);
             return QString();
         }
 
@@ -1128,7 +1166,7 @@ namespace BrowserAutomationStudioFramework
         }
         if(!FunctionData->IsAync)
         {
-            Fail("Sync function is called in async mode");
+            Fail(tr("Sync function is called in async mode"));
             delete FunctionData;
             return;
         }
@@ -1138,7 +1176,7 @@ namespace BrowserAutomationStudioFramework
         FunctionDataList.append(FunctionData);
 
         SetScript(Callback);
-        SetFailMessage(QString("Failed to execute module function ") + DllName + QString(".") + FunctionName);
+        SetFailMessage(tr("Failed to execute module function ") + DllName + QString(".") + FunctionName);
         if(FunctionData->WaitInfinite)
             Waiter->WaitInfinity(FunctionData,SIGNAL(ReadyResult()),this,SLOT(DllResult()));
         else
@@ -1173,7 +1211,7 @@ namespace BrowserAutomationStudioFramework
             return;
         if(FunctionData->ExecuteError)
         {
-            Fail("Failed to run function " + FunctionData->DllName + QString(".") + FunctionData->FunctionName);
+            Fail(tr("Failed to run function ") + FunctionData->DllName + QString(".") + FunctionData->FunctionName);
         }else
         {
             QString Result = QString::fromUtf8(FunctionData->OutputJson.data(),FunctionData->OutputJson.size());
@@ -1198,7 +1236,7 @@ namespace BrowserAutomationStudioFramework
     void ScriptWorker::Pop3ClientLoadMessageNumber(const QString& callback)
     {
         SetScript(callback);
-        SetFailMessage(QString("Failed to get mail number with Pop3CLient"));
+        SetFailMessage(tr("Failed to get mail number with Pop3CLient"));
         Waiter->WaitForSignal(Pop3Client,SIGNAL(Result()),this,SLOT(Pop3ClientResult()),this, SLOT(FailBecauseOfTimeout()));
         Pop3Client->PullNumberOfMessages();
     }
@@ -1206,7 +1244,7 @@ namespace BrowserAutomationStudioFramework
     void ScriptWorker::Pop3ClientLoadMessage(int index, const QString& callback)
     {
         SetScript(callback);
-        SetFailMessage(QString("Failed to get message with Pop3CLient"));
+        SetFailMessage(tr("Failed to get message with Pop3CLient"));
         Waiter->WaitForSignal(Pop3Client,SIGNAL(Result()),this,SLOT(Pop3ClientResult()),this, SLOT(FailBecauseOfTimeout()));
         Pop3Client->PullMessage(index);
     }
@@ -1257,7 +1295,7 @@ namespace BrowserAutomationStudioFramework
     void ScriptWorker::ImapClientPullNumberOfMessages(const QString& callback)
     {
         SetScript(callback);
-        SetFailMessage(QString("Failed to get mail number with ImapCLient"));
+        SetFailMessage(tr("Failed to get mail number with ImapCLient"));
         Waiter->WaitForSignal(ImapClient,SIGNAL(Result()),this,SLOT(ImapClientResult()),this, SLOT(FailBecauseOfTimeout()));
         ImapClient->PullNumberOfMessages();
     }
@@ -1265,7 +1303,7 @@ namespace BrowserAutomationStudioFramework
     void ScriptWorker::ImapClientSearchMessages(const QString& Sender,const QString& Subject,const QString& Body,const QString& callback)
     {
         SetScript(callback);
-        SetFailMessage(QString("Failed to search mail with ImapCLient"));
+        SetFailMessage(tr("Failed to search mail with ImapCLient"));
         Waiter->WaitForSignal(ImapClient,SIGNAL(Result()),this,SLOT(ImapClientResult()),this, SLOT(FailBecauseOfTimeout()));
         ImapClient->SearchMessages(Sender,Subject,Body);
     }
@@ -1273,7 +1311,7 @@ namespace BrowserAutomationStudioFramework
     void ScriptWorker::ImapClientCustomSearchMessages(const QString& Query,const QString& callback)
     {
         SetScript(callback);
-        SetFailMessage(QString("Failed to custom search mail with ImapCLient"));
+        SetFailMessage(tr("Failed to custom search mail with ImapCLient"));
         Waiter->WaitForSignal(ImapClient,SIGNAL(Result()),this,SLOT(ImapClientResult()),this, SLOT(FailBecauseOfTimeout()));
         ImapClient->SearchCustomMessages(Query);
     }
@@ -1281,7 +1319,7 @@ namespace BrowserAutomationStudioFramework
     void ScriptWorker::ImapClientPullMessage(const QString& Uid,const QString& callback)
     {
         SetScript(callback);
-        SetFailMessage(QString("Failed to fetch mail with ImapCLient"));
+        SetFailMessage(tr("Failed to fetch mail with ImapCLient"));
         Waiter->WaitForSignal(ImapClient,SIGNAL(Result()),this,SLOT(ImapClientResult()),this, SLOT(FailBecauseOfTimeout()));
         ImapClient->PullMessage(Uid);
     }
@@ -1289,7 +1327,7 @@ namespace BrowserAutomationStudioFramework
     void ScriptWorker::ImapClientCustomQuery(const QString& Url,const QString& Command,const QString& Filter,const QString& callback)
     {
         SetScript(callback);
-        SetFailMessage(QString("Failed to execute custom query with ImapCLient"));
+        SetFailMessage(tr("Failed to execute custom query with ImapCLient"));
         Waiter->WaitForSignal(ImapClient,SIGNAL(Result()),this,SLOT(ImapClientResult()),this, SLOT(FailBecauseOfTimeout()));
         ImapClient->CustomQuery(Url,Command, Filter);
     }
@@ -1337,7 +1375,7 @@ namespace BrowserAutomationStudioFramework
         HttpClient->Disconnect();
         if(!Location.isEmpty())
         {
-            SetFailMessage(QString("Failed to get page ") + Location + " with HttpClient");
+            SetFailMessage(tr("Failed to get page ") + Location + tr(" with HttpClient"));
             if(IsGet)
             {
                 Waiter->WaitInfinity(HttpClient,SIGNAL(Finished()),this,SLOT(FollowRedirect()));
@@ -1370,7 +1408,7 @@ namespace BrowserAutomationStudioFramework
     void ScriptWorker::HttpClientPostRedirect(const QString& url, const QStringList & params, const QStringList & params_glob, const QString& callback)
     {
         SetScript(callback);
-        SetFailMessage(QString("Failed to post page ") + url + " with HttpClient");
+        SetFailMessage(tr("Failed to post page ") + url + tr(" with HttpClient"));
         Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(FollowRedirect()),this,SLOT(FailBecauseOfTimeout()));
         QHash<QString,QString> p;
         bool isname = true;
@@ -1412,7 +1450,7 @@ namespace BrowserAutomationStudioFramework
     void ScriptWorker::HttpClientPostNoRedirect(const QString& url, const QStringList & params, const QStringList & params_glob, const QString& callback)
     {
         SetScript(callback);
-        SetFailMessage(QString("Failed to post page ") + url + " with HttpClient");
+        SetFailMessage(tr("Failed to post page ") + url + tr(" with HttpClient"));
         Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(RunSubScript()),this,SLOT(FailBecauseOfTimeout()));
         QHash<QString,QString> p;
         bool isname = true;
@@ -1454,7 +1492,7 @@ namespace BrowserAutomationStudioFramework
     void ScriptWorker::HttpClientGetNoRedirect(const QString& url, const QString& callback)
     {
         SetScript(callback);
-        SetFailMessage(QString("Failed to get page ") + url + " with HttpClient");
+        SetFailMessage(tr("Failed to get page ") + url + tr(" with HttpClient"));
         Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(RunSubScript()),this,SLOT(FailBecauseOfTimeout()));
         HttpClient->Get(url);
     }
@@ -1462,7 +1500,7 @@ namespace BrowserAutomationStudioFramework
     void ScriptWorker::HttpClientGetRedirect(const QString& url, const QString& callback)
     {
         SetScript(callback);
-        SetFailMessage(QString("Failed to get page ") + url + " with HttpClient");
+        SetFailMessage(tr("Failed to get page ") + url + tr(" with HttpClient"));
         Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(FollowRedirect()),this,SLOT(FailBecauseOfTimeout()));
         HttpClient->Get(url);
     }
@@ -1470,7 +1508,7 @@ namespace BrowserAutomationStudioFramework
     void ScriptWorker::HttpClientDownload(const QString& url, const QString& file, const QString& callback)
     {
         SetScript(callback);
-        SetFailMessage(QString("Failed to download page ") + url + " with HttpClient");
+        SetFailMessage(tr("Failed to download page ") + url + tr(" with HttpClient"));
         Waiter->WaitInfinity(HttpClient,SIGNAL(Finished()),this,SLOT(FollowRedirectDownload()));
         CurrentFileDownload = file;
         HttpClient->Download(url, file);

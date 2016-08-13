@@ -23,7 +23,7 @@ function wait_url()
 
     if(text_fail)
     {
-        wait("Failed to wait for changing url " + text_success,function(){
+        wait(tr("Failed to wait for changing url ") + text_success,function(){
 
             url(function(){
                 if(_result().indexOf(_arguments()[0])>=0)
@@ -41,7 +41,7 @@ function wait_url()
 
     }else
     {
-        wait("Failed to wait for changing url " + text_success,function(){
+        wait(tr("Failed to wait for changing url ") + text_success,function(){
             url(function(){
                 if(_result().indexOf(_arguments())>=0)
                 {
@@ -74,7 +74,7 @@ function wait_load()
 
     if(text_fail)
     {
-        wait("Failed to wait for loading " + text_success,function(){
+        wait(tr("Failed to wait for loading ") + text_success,function(){
 
             is_load(text_success,function(){
                 if(_result())
@@ -90,7 +90,7 @@ function wait_load()
 
     }else
     {
-        wait("Failed to wait for loading " + text_success,function(){
+        wait(tr("Failed to wait for loading ") + text_success,function(){
             is_load(text_success,function(){
                 if(_result())
                     _set_result(true);
@@ -153,30 +153,25 @@ function wait_content()
 
     if(text_fail)
     {
-        wait("Failed to wait for content " + text_success,function(){
-
-            page().xml(function(){
-                if(_result().indexOf(_arguments()[0])>=0)
-                    _set_result(true);
+        wait(tr("Failed to wait for content ") + text_success,function(){
+            _set_result(false);
+            page().match(_arguments()[0]).exist(function(){
+                _set_result(_result() === 1 || _result() === true);
             })
         },
         function(){
-                    page().xml(function(){
-                        if(_result().indexOf(_arguments()[1])>=0)
-                        {
-                            _set_result(true);
-                        }
-                    })
+            _set_result(false);
+            page().match(_arguments()[1]).exist(function(){
+                 _set_result(_result() === 1 || _result() === true);
+            })
         },[text_success,text_fail],func);
 
     }else
     {
-        wait("Failed to wait for content " + text_success,function(){
-            page().xml(function(){
-                if(_result().indexOf(_arguments())>=0)
-                {
-                    _set_result(true);
-                }
+        wait(tr("Failed to wait for content ") + text_success,function(){
+            _set_result(false);
+            page().match(_arguments()).exist(function(){
+                _set_result(_result() === 1 || _result() === true);
             })
         },text_success,func);
     }
@@ -207,7 +202,7 @@ function wait_css()
     if(text_fail)
     {
         _set_result(false);
-        wait("Failed to wait for css " + text_success,function(){
+        wait(tr("Failed to wait for css ") + text_success,function(){
             _set_result(false);
             page().css(_arguments()[0]).exist(function(){
                 _set_result(_result() === 1 || _result() === true);
@@ -223,7 +218,7 @@ function wait_css()
     }else
     {
         _set_result(false);
-        wait("Failed to wait for css " + text_success, function(){
+        wait(tr("Failed to wait for css ") + text_success, function(){
             _set_result(false);
             page().css(_arguments()).exist(function(){
                 _set_result(_result() === 1 || _result() === true);
@@ -247,7 +242,7 @@ function wait_async_load(func)
 
     WAIT_ASYNC_LOAD_ITERATOR = 0;
 
-    wait("Failed to wait of state complete",function(){
+    wait(tr("Failed to wait of state complete"),function(){
         _set_result(false);
 
         get_load_stats(function(){

@@ -1,0 +1,1 @@
+<%= variable %>.splice(<%= index %>, 0, <%= value %>);

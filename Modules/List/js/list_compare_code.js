@@ -1,0 +1,1 @@
+<%= result %> = JSON.stringify((<%= variable %>).slice().sort()) == JSON.stringify((<%= variable_second %>).slice().sort())

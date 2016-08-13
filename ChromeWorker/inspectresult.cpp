@@ -53,6 +53,11 @@ std::string InspectResult::Serialize()
     picojson::value::object res;
 
     res["css"] = picojson::value(css);
+    res["css1"] = picojson::value(css);
+    if(css2 != css)
+        res["css2"] = picojson::value(css2);
+    if(css3 != css && css3 != css2)
+        res["css3"] = picojson::value(css3);
     res["match"] = picojson::value(match);
     res["mousex"] = picojson::value(std::to_string(mousex));
     res["mousey"] = picojson::value(std::to_string(mousey));

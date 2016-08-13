@@ -7,8 +7,19 @@ IF_ELSE_EXPRESSION = true;
 
 function Cycle(Next,Break)
 {
-    this._Label = [];
+    this.OnFail = "";
+    this.OnSuccess = "";
 
+    {
+        var c = CYCLES.Current()
+        if(c)
+        {
+            this.OnFail = c.OnFail;
+            this.OnSuccess = c.OnSuccess;
+        }
+    }
+
+    this._Label = [];
 
     this._Break = Break;
     this._Next = Next;
@@ -80,10 +91,32 @@ function Cycles()
     this.Push = function(el)
     {
         this.Data.push(el)
+        var c = CYCLES.Current()
+        if(c)
+        {
+            ScriptWorker.SetFailFunction(c.OnFail);
+            ScriptWorker.SetSuccessFunction(c.OnSuccess);
+        }else
+        {
+            ScriptWorker.SetFailFunction("");
+            ScriptWorker.SetSuccessFunction("");
+        }
     }
     this.Pop = function()
     {
-        return this.Data.pop()
+        var r = this.Data.pop()
+        var c = CYCLES.Current()
+        if(c)
+        {
+            ScriptWorker.SetFailFunction(c.OnFail);
+            ScriptWorker.SetSuccessFunction(c.OnSuccess);
+        }else
+        {
+            ScriptWorker.SetFailFunction("");
+            ScriptWorker.SetSuccessFunction("");
+        }
+
+        return r;
     }
     this.Rewind = function(arg)
     {

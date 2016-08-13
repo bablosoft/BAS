@@ -149,27 +149,31 @@
     </div>
     <div class="actions">
       <div class="container-fluid mainscreen" >
-        <div>
+        <div class="panel-group" style="margin-bottom: 0px;">
             <% var first = true; %>
             <% var firstdescription = true; %>
             <% _.each(data, function(task) { %>
                 <% if(typeof(task.type) != "undefined" && task.type == "group") { %>
 
                   <% if(!firstdescription) { %>
-                    </span>
+                    </div>
+                    </div>
                   <% } %>
                   <% firstdescription = false; %>
-                  <span class="toolspanel">
-                  <div class="description"> <%= task.description %>: </div>
+                  <div class="toolspanel panel panel-primary" style="margin: 0px 0px 4px 0px; padding:0px">
+                  <div class="panel-heading" style="padding:2px 10px; font-size:10px"><%= task.description %></div>
+                  <div class="panel-body" style="padding:2px 0px 0px 3px; font-size:13px">
+                  
                   <% first = true; %>
                 <% } else { %>
-                  <div class="tool <%= (first)? "toolfirst" : "" %>" >
+                  <div class="tool" >
                     <a class="toolbutton" href="#!/<%= task.ref %>" data-placement="right" title="<%= task.description %>" data-name="<%= task.name %>"><i class="fa fa-cog"></i> <%= task.name %> </a>
                   </div>
                   <% first = false; %>
                 <% } %>
             <% }); %>
-            </span>
+            </div>
+            </div>
         </div>
       </div>
     </div>
@@ -229,9 +233,28 @@
 
   <script type="text/template" id="path">
     <div class="path" >
+      
+      <ul class="dropdown-menu dropdown-menu-css-options" style="<%= (BrowserAutomationStudio_HasPathChoice()) ? "display:block" : "" %>">
+        <% if("css1" in selector && selector["css1"].length > 0) { %>
+          <li><a href="#" class="dropdown-menu-css-item"><%= selector["css1"] %></a></li>
+        <% }else{ %>  
+          <li><a href="#" class="dropdown-menu-css-item"><%= selector["css"] %></a></li>
+        <% } %>
+        <% if("css2" in selector && selector["css2"].length > 0) { %>
+          <li><a href="#" class="dropdown-menu-css-item"><%= selector["css2"] %></a></li>
+        <% } %>
+
+        <% if("css3" in selector && selector["css3"].length > 0) { %>
+          <li><a href="#" class="dropdown-menu-css-item"><%= selector["css3"] %></a></li>
+        <% } %>
+      </ul>
+
 
       <div class="input-group pull-right">
-        <input type="text" class="form-control" aria-label="..." id="selector-input">
+        <input type="text" class="form-control dropdown-menu-path" aria-label="..." id="selector-input">
+
+
+
         <div class="input-group-btn">
           <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="selector"><%= selector["current"] %></span> <span class="caret"></span></button>
           <ul class="dropdown-menu dropdown-menu-right">
@@ -259,7 +282,7 @@
               <% if(typeof(use_textarea) == "undefined"){ %>
                <div class="input-group">
               <% } %>
-                <<%= (typeof(use_textarea) == "undefined") ? "input type=\"text\"" : "textarea style=\"height:146px\"" %>  class="form-control input_selector_string" id="<%= id %>" <%= (default_selector == "int") ? "style=\"display:none\"" : "" %> placeholder="<%= description %>" value="<%= (typeof(value_string) != "undefined") ? value_string : "" %>" />
+                <<%= (typeof(use_textarea) == "undefined") ? "input type=\"text\"" : ("textarea style=\"height:" + ((typeof(textarea_height) == "undefined") ? 146 : textarea_height ) + "px\"") %>  class="form-control input_selector_string" id="<%= id %>" <%= (default_selector == "int") ? "style=\"display:none\"" : "" %> placeholder="<%= description %>" value="<%= (typeof(value_string) != "undefined") ? value_string : "" %>" />
                 <input class="form-control input_selector_number" type="number" id="<%= id %>_number" <%= (default_selector != "int") ? "style=\"display:none\"" : "" %> placeholder="<%= description %>" value="<%= (typeof(value_number) != "undefined") ? value_number : 1%>" step="<%= (typeof(step_number) != "undefined") ? step_number : 1%>" min="<%= (typeof(min_number) != "undefined") ? min_number : 0%>" max="<%= (typeof(max_number) != "undefined") ? max_number : 10000%>" />
                 <div class="input-group-btn" <%= (typeof(disable_type_chooser) != "undefined") ? "style=\"display:none\"" : "" %>>
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="selector" data-selector-id="<%= id %>"><%= default_selector %></span> <span class="caret"></span></button>
@@ -364,7 +387,7 @@
 
   <script type="text/template" id="success">
     <div class="container-fluid success">
-      <div class="tooltipinternal tr">Finish script with success result.</div>
+      <div class="tooltipinternal tr">Finish thread with success result.</div>
       <%= _.template($('#back').html())({action:"executeandadd", visible:false}) %>
     </div>
   </script>
@@ -373,7 +396,16 @@
     <div class="container-fluid fail">
      <%= _.template($('#input_constructor').html())({id:"FailMessage", description:tr("Fail Message"), default_selector: "string", disable_int:true}) %>
     </div>
-     <div class="tooltipinternal tr">Finish script with fail result.</div>
+     <div class="tooltipinternal tr">Finish thread with fail result.</div>
+     <%= _.template($('#back').html())({action:"executeandadd", visible:false}) %>
+
+  </script>
+
+  <script type="text/template" id="die">
+    <div class="container-fluid fail">
+     <%= _.template($('#input_constructor').html())({id:"FailMessage", description:tr("Fail Message"), default_selector: "string", disable_int:true}) %>
+    </div>
+     <div class="tooltipinternal tr">Finish whole script.</div>
      <%= _.template($('#back').html())({action:"executeandadd", visible:false}) %>
 
   </script>
@@ -381,6 +413,49 @@
   <script type="text/template" id="custom">
     <div class="container-fluid custom">
       <%= _.template($('#input_constructor').html())({id:"Code", description:tr("Custom Code"), default_selector: "expression", disable_int:true, disable_editor:true, disable_string:true, use_textarea:true, size: 8, disable_type_chooser:true}) %>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
+
+  <script type="text/template" id="template">
+    <div class="container-fluid template">
+      <%= _.template($('#input_constructor').html())({id:"Template", description:tr("Template"), default_selector: "expression", disable_int:true, disable_editor:true, disable_string:true, use_textarea:true, size: 8, disable_type_chooser:true,textarea_height:80}) %>
+      <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save Result"), default_variable: "TEMPLATE_RESULT"}) %>
+      <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
+         <input type="checkbox" id="Check"/> <label for="Check" class="tr">Additional processing. Use this option if you want to load template from file or variable.</label>
+      </span>
+      <div class="tooltipinternal tr">Resolves template to variable. Can contain {{Resources}} and [[VARIABLES]]</div>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
+
+  <script type="text/template" id="replacestring">
+    <div class="container-fluid replacestring">
+      <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Original String"), default_selector: "string", disable_int:true}) %>
+      <%= _.template($('#input_constructor').html())({id:"ReplaceFrom", description:tr("Replace From"), default_selector: "string", disable_int:true}) %>
+      <%= _.template($('#input_constructor').html())({id:"ReplaceTo", description:tr("Replace To"), default_selector: "string", disable_int:true}) %>
+      <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save Result"), default_variable: "REPLACE_RESULT"}) %>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
+
+  <script type="text/template" id="randomstring">
+    <div class="container-fluid randomstring">
+      <%= _.template($('#input_constructor').html())({id:"AllowedChars", description:tr("Allowed Chars"), default_selector: "string", disable_int:true, value_string: "abcdefghijklmnopqrstuvwxyz0123456789"}) %>
+      <%= _.template($('#input_constructor').html())({id:"Length", description:tr("Result String Length"), default_selector: "int", disable_string:true, value_number:10, min_number:1, max_number:999999}) %>
+      <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save Result"), default_variable: "RANDOM_STRING"}) %>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
+  <script type="text/template" id="randomint">
+    <div class="container-fluid randomint">
+      <%= _.template($('#input_constructor').html())({id:"MinValue", description:tr("Minimum Value"), default_selector: "int", disable_string:true, value_number:0, min_number:-999999, max_number:999999}) %>
+      <%= _.template($('#input_constructor').html())({id:"MaxValue", description:tr("Maximum Value"), default_selector: "int", disable_string:true, value_number:100, min_number:-999999, max_number:999999}) %>
+      <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save Result"), default_variable: "RANDOM_NUMBER"}) %>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
@@ -459,6 +534,13 @@
       <div class="container-fluid javascript">
         <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "SAVED_SCRIPT_RESULT"}) %>
         <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Script Text"), default_selector: "string", disable_int:true}) %>
+      </div>
+      <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
+  <script type="text/template" id="onloadjavascript">
+      <div class="container-fluid javascript">
+        <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Script Text"), default_selector: "string", disable_int:true, disable_editor:true, use_textarea:true, size: 8, disable_type_chooser:true}) %>
       </div>
       <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
@@ -735,8 +817,8 @@
 
 <script type="text/template" id="globalset">
     <div class="container-fluid globalset">
-      <%= _.template($('#input_constructor').html())({id:"Group", description:tr("Group"), default_selector: "string", disable_int:true}) %>
-      <%= _.template($('#input_constructor').html())({id:"Name", description:tr("Name"), default_selector: "string", disable_int:true}) %>
+
+      <%= _.template($('#input_constructor').html())({id:"Name", description:tr("Variable Name"), default_selector: "string", disable_int:true, disable_editor:true, disable_resource:true, disable_variable:true}) %>
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Value"), default_selector: "string"}) %>
       <div class="tooltipinternal tr">Global variables are availabe during whole script run.</div>
     </div>
@@ -745,8 +827,7 @@
 
   <script type="text/template" id="globalget">
     <div class="container-fluid globalget">
-      <%= _.template($('#input_constructor').html())({id:"Group", description:tr("Group"), default_selector: "string", disable_int:true}) %>
-      <%= _.template($('#input_constructor').html())({id:"Name", description:tr("Name"), default_selector: "string", disable_int:true}) %>
+      <%= _.template($('#input_constructor').html())({id:"Name", description:tr("Variable Name"), default_selector: "string", disable_int:true, disable_editor:true, disable_resource:true, disable_variable:true}) %>
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "GLOBAL_VARIABLE_RESULT"}) %>
       <div class="tooltipinternal">Global variables are availabe during whole script run.</div>
     </div>
@@ -1075,6 +1156,15 @@
     <%= _.template($('#back').html())({action:"add", visible:false}) %>
   </script>
 
+
+  <script type="text/template" id="ignoreerrors">
+    <div class="container-fluid ignoreerrors">
+    </div>
+    <div class="tooltipinternal tr">If error will occur during ignore error block, it will be ignored and execution will continue on next after block instruction.</div>
+
+    <%= _.template($('#back').html())({action:"add", visible:false}) %>
+  </script>
+
   <script type="text/template" id="foreach">
     <div class="container-fluid foreach">
       <%= _.template($('#input_constructor').html())({id:"ForArray", description:tr("Foreach Array"), default_selector: "expression", disable_string:true, disable_int:true}) %>
@@ -1100,9 +1190,20 @@
 
   <script type="text/template" id="setvariable">
     <div class="container-fluid setvariable">
-      <%= _.template($('#variable_constructor').html())({id:"SetVariableName", description:tr("Name of variable"), default_variable: "NEW_VARIABLE", min_number: -9999999}) %>
+      <%= _.template($('#variable_constructor').html())({id:"SetVariableName", description:tr("Name of variable"), default_variable: "NEW_VARIABLE"}) %>
       <%= _.template($('#input_constructor').html())({id:"SetVariableValue", description:tr("Value of variable"), default_selector: "string"}) %>
     </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
+
+  <script type="text/template" id="incvariable">
+    <div class="container-fluid setvariable">
+      <%= _.template($('#variable_constructor').html())({id:"SetVariableName", description:tr("Name of variable"), default_variable: ""}) %>
+      <%= _.template($('#input_constructor').html())({id:"IncVariableValue", description:tr("Increase variable value"), default_selector: "int", min_number: -9999999, value_number: 1}) %>
+    </div>
+    <div class="tooltipinternal tr">This means [[VARIABLE]] = [[VARIABLE]] + num</div>
+
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
 
@@ -1230,7 +1331,21 @@
             <div class="form-group">
               <div class="col-xs-6">
                 <div class="input-group">
-                  <input type="text" class="form-control" aria-label="..." id="selector-input" value="<%= selector["css"] %>">
+                    <ul class="dropdown-menu dropdown-menu-css-options"  style="<%= (BrowserAutomationStudio_HasPathChoice()) ? "display:block" : "" %>">
+                      <% if("css1" in selector && selector["css1"].length > 0) { %>
+                        <li><a href="#" class="dropdown-menu-css-item"><%= selector["css1"] %></a></li>
+                      <% }else{ %>  
+                        <li><a href="#" class="dropdown-menu-css-item"><%= selector["css"] %></a></li>
+                      <% } %>
+                      <% if("css2" in selector && selector["css2"].length > 0) { %>
+                        <li><a href="#" class="dropdown-menu-css-item"><%= selector["css2"] %></a></li>
+                      <% } %>
+
+                      <% if("css3" in selector && selector["css3"].length > 0) { %>
+                        <li><a href="#" class="dropdown-menu-css-item"><%= selector["css3"] %></a></li>
+                      <% } %>
+                    </ul>
+                  <input type="text" class="form-control dropdown-menu-path" aria-label="..." id="selector-input" value="<%= selector["css"] %>">
                   <div class="input-group-btn">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="selector">css</span> <span class="caret"></span></button>
                     <ul class="dropdown-menu dropdown-menu-right">
@@ -1330,7 +1445,21 @@
           <div class="form-group">
             <div class="col-xs-6">
               <div class="input-group">
-                <input type="text" class="form-control" aria-label="..." id="selector-input" value="<%= selector["css"] %>">
+                <ul class="dropdown-menu dropdown-menu-css-options"   style="<%= (BrowserAutomationStudio_HasPathChoice()) ? "display:block" : "" %>">
+                  <% if("css1" in selector && selector["css1"].length > 0) { %>
+                    <li><a href="#" class="dropdown-menu-css-item"><%= selector["css1"] %></a></li>
+                  <% }else{ %>  
+                    <li><a href="#" class="dropdown-menu-css-item"><%= selector["css"] %></a></li>
+                  <% } %>
+                  <% if("css2" in selector && selector["css2"].length > 0) { %>
+                    <li><a href="#" class="dropdown-menu-css-item"><%= selector["css2"] %></a></li>
+                  <% } %>
+
+                  <% if("css3" in selector && selector["css3"].length > 0) { %>
+                    <li><a href="#" class="dropdown-menu-css-item"><%= selector["css3"] %></a></li>
+                  <% } %>
+                </ul>
+                <input type="text" class="form-control dropdown-menu-path" aria-label="..." id="selector-input" value="<%= selector["css"] %>">
                 <div class="input-group-btn">
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="selector" class="tr">css</span> <span class="caret"></span></button>
                   <ul class="dropdown-menu dropdown-menu-right">
@@ -1363,7 +1492,21 @@
           <div class="form-group">
             <div class="col-xs-6">
               <div class="input-group">
-                <input type="text" class="form-control" aria-label="..." id="selector-input" value="<%= selector["css"] %>">
+                <ul class="dropdown-menu dropdown-menu-css-options"   style="<%= (BrowserAutomationStudio_HasPathChoice()) ? "display:block" : "" %>">
+                  <% if("css1" in selector && selector["css1"].length > 0) { %>
+                    <li><a href="#" class="dropdown-menu-css-item"><%= selector["css1"] %></a></li>
+                  <% }else{ %>  
+                    <li><a href="#" class="dropdown-menu-css-item"><%= selector["css"] %></a></li>
+                  <% } %>
+                  <% if("css2" in selector && selector["css2"].length > 0) { %>
+                    <li><a href="#" class="dropdown-menu-css-item"><%= selector["css2"] %></a></li>
+                  <% } %>
+
+                  <% if("css3" in selector && selector["css3"].length > 0) { %>
+                    <li><a href="#" class="dropdown-menu-css-item"><%= selector["css3"] %></a></li>
+                  <% } %>
+                </ul>
+                <input type="text" class="form-control dropdown-menu-path" aria-label="..." id="selector-input" value="<%= selector["css"] %>">
                 <div class="input-group-btn">
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="selector">css</span> <span class="caret"></span></button>
                   <ul class="dropdown-menu dropdown-menu-right">
@@ -1695,6 +1838,29 @@
       <%= variable %> = _result()
   </script>
 
+  <script type="text/template" id="replacestring_code">
+      <%= variable %> = (<%= value %>).split(<%= from %>).join(<%= to %>)
+  </script>
+
+  <script type="text/template" id="template_code">
+      _template(<%= template %>)!
+      <%= variable %> = _result()
+  </script>
+
+
+  <script type="text/template" id="randomstring_code">
+      <%= variable %> = Array(<%= length %>).join().split(',').map(function() { return (<%= chars %>).charAt(Math.floor(Math.random() * <%= chars %>.length)); }).join('')
+  </script>
+
+
+  <script type="text/template" id="randomint_code">
+      <%= variable %> = Math.floor(Math.random() * (<%= max %> - <%= min %> + 1)) + <%= min %>
+  </script>
+
+
+
+  
+
   _MACRO_INSERT_CODE_
 
   <script type="text/template" id="exist_code">
@@ -1856,6 +2022,11 @@
       <%= variable %> = _result()
   </script>
 
+  <script type="text/template" id="onloadjavascript_code">
+      /*Browser*/
+      onloadjavascript(<%= value %>)!
+  </script>
+
   
   <script type="text/template" id="set_code">
       /*Browser*/
@@ -1911,6 +2082,10 @@
       <%= variable_name %> = <%= variable_value %>
   </script>
 
+  <script type="text/template" id="incvariable_code">
+      <%= variable_name %> += <%= variable_value %>
+  </script>
+
   <script type="text/template" id="resource_code">
       RS("<%= je(resource) %>", <%= notreuse %>, <%= onlyfail %>)!
       <%= variable %> = _result().get()
@@ -1962,20 +2137,17 @@
     <% }else{ %>
       <%= variable %> = base64_decode(<%= value %>)
     <% } %>  </script>
+
   <script type="text/template" id="globalset_code">
-    var val = <%= value %>;
-    if(typeof(val) == "number")
-      val = "i" + val.toString();
-    else
-      val = "s" + val.toString();
-    PSet(<%= group %>, <%= key %>, val)
+    var val = JSON.stringify(<%= value %>);
+    PSet("basglobal", <%= key %>, val)
   </script>
+
   <script type="text/template" id="globalget_code">
-    <%= variable %> = P(<%= group %>, <%= key %>)
-    if(<%= variable %>.indexOf("i")==0)
-      <%= variable %> = parseInt(<%= variable %>.slice(1))
-    else if(<%= variable %>.indexOf("s")==0)
-      <%= variable %> = <%= variable %>.slice(1)
+    var text = P("basglobal", <%= key %>)
+    if(text.length == 0)
+      text="\"\""
+    <%= variable %> = JSON.parse(text)
   </script>
 
 
@@ -2119,12 +2291,27 @@
       })!
   </script>
 
+  <script type="text/template" id="ignoreerrors_code">
+    _call(function()
+    {
+      _on_fail(function(){
+       VAR_LAST_ERROR = _result()
+       VAR_WAS_ERROR = true
+       _break()
+       })
+       VAR_WAS_ERROR = false
+       section_insert()
+    },null)!
+
+  </script>
+
   <script type="text/template" id="foreach_code">
-      FOREACH_ARRAY = <%= for_array %>
+      <% var r = Math.floor(Math.random() * (999999 - 100000) + 100000) %>
+      FOREACH_ARRAY_<%= r %> = <%= for_array %>
       _do(function(){
         VAR_CYCLE_INDEX = _iterator() - 1
-        if(VAR_CYCLE_INDEX > FOREACH_ARRAY.length - 1)_break();
-        VAR_FOREACH_DATA = FOREACH_ARRAY[VAR_CYCLE_INDEX]
+        if(VAR_CYCLE_INDEX > FOREACH_ARRAY_<%= r %>.length - 1)_break();
+        VAR_FOREACH_DATA = FOREACH_ARRAY_<%= r %>[VAR_CYCLE_INDEX]
         section_insert()
       })!
   </script>
@@ -2177,6 +2364,10 @@
       fail(<%= message %>)
   </script>
 
+  <script type="text/template" id="die_code">
+      die(<%= message %>)
+  </script>
+
   <script type="text/template" id="custom_code">
       <%= code %>
   </script>
@@ -2194,6 +2385,7 @@
   <script src="expressioneditor.js"></script>
   <script src="rappid.js"></script>
   <script src="tooledViewPlugin.js"></script>
+  <script src="preservemainpage.js"></script>
   
 
   <script type="text/javascript"> _MACRO_INSERT_LOCALIZE_ </script>
@@ -2259,12 +2451,24 @@
     var SelectorModel = Backbone.Model.extend({
         defaults: {
             css: "",
+            css1: "",
+            css2: "",
+            css3: "",
             match: "",
             mousex: 0,
             mousey: 0,
-            current: "css"
+            current: "css",
+            is_editing: false
         }
     });
+
+    function BrowserAutomationStudio_HasPathChoice()
+    {
+      var m = _SelectorModel.toJSON()
+      return m["current"] == "css" && m["is_editing"] == false && (("css1" in m && m["css1"].length > 0) + ("css2" in m && m["css2"].length > 0) + ("css3" in m && m["css3"].length > 0) > 1)
+    }
+
+    
 
     var TaskCollection = Backbone.Collection.extend({
         model: TaskModel
@@ -2311,9 +2515,42 @@
         "click #use-waiter": "usewaiterchange",
         "click #searchinputclear": "searchinputclear",
         "input #searchinput": "searchinput",
-        "keyup #searchinput": "searchinputkeyup"
-
+        "keyup #searchinput": "searchinputkeyup",
+        "focus .dropdown-menu-path": "dropdownmenupathfocus",
+        "blur .dropdown-menu-path": "dropdownmenupathblur",
+        "click .dropdown-menu-path": "stoppropagation",
+        "click .dropdown-menu-css-item": "dropdownmenupathselectitem",
      },
+
+      stoppropagation: function(event)
+      {
+          event.stopPropagation();
+      },
+
+      dropdownmenupathselectitem: function(event)
+      {
+          event.preventDefault();
+          event.stopPropagation();
+
+          $(".dropdown-menu-path").val($(event.target).closest("a").text())
+          $(".dropdown-menu-css-options").hide()
+      },
+
+      dropdownmenupathblur: function(event)
+      {
+          setTimeout(function(){
+            $(".dropdown-menu-css-options").hide()  
+          }, 100)
+      },
+
+      dropdownmenupathfocus: function(event)
+      {
+        var current = _SelectorModel.get("current")
+        if(current == "css")
+        {
+          $(".dropdown-menu-css-options").show()
+        }
+      },
 
       searchinputkeyup: function(event)
       {
@@ -3396,7 +3633,6 @@
           {
             var Name = GetInputConstructorValue("Name",loader)
             var Value = GetInputConstructorValue("Value",loader)
-            var Group = GetInputConstructorValue("Group",loader)
 
             if(Name["original"].length <= 0)
             {
@@ -3408,15 +3644,10 @@
               Invalid("Value is empty");
               return;
             }
-            if(Group["original"].length <= 0)
-            {
-              Invalid("Group is empty");
-              return;
-            }
              try{
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({key:Name["updated"],value:Value["updated"],group:Group["updated"]})
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({key:Name["updated"],value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Global set " + Group["original"] + ":" + Name["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("Global set " + Name["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "globalget")
@@ -3424,7 +3655,6 @@
 
             var Save = this.$el.find("#Save").val().toUpperCase();
             var Name = GetInputConstructorValue("Name", loader);
-            var Group = GetInputConstructorValue("Group",loader)
 
             if(Save.length == 0)
             {
@@ -3436,15 +3666,10 @@
               Invalid("Key is empty");
               return;
             }
-            if(Group["original"].length <= 0)
-            {
-              Invalid("Group is empty");
-              return;
-            }
              try{
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,group: Group["updated"],key: Name["updated"]})
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,key: Name["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Global get " + Group["original"] + ":" + Name["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("Global get " + Name["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3789,6 +4014,17 @@
             }catch(e)
             {}
 
+          }else if(State == "onloadjavascript")
+          {
+            var Value = GetInputConstructorValue("Value", loader);
+
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({value: Value["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("Execute On Every Page Load " + Value["original"].substr(0,30).split(/(?:\r\n|\r|\n)/)[0], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+
           }else if(State == "reset")
           {
              try{
@@ -3827,6 +4063,129 @@
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value: Value["updated"],method: Method["updated"], antigate: Antigate["updated"], dbc: Dbc["updated"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("Solve captcha and save to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+
+          }else if(State == "replacestring")
+          {
+            
+            var Value = GetInputConstructorValue("Value", loader);
+            var ReplaceFrom = GetInputConstructorValue("ReplaceFrom", loader);
+            var ReplaceTo = GetInputConstructorValue("ReplaceTo", loader);
+            var Save = this.$el.find("#Save").val().toUpperCase();
+            
+            if(Save.length == 0)
+            {
+              Invalid("Variable is empty");
+              return;
+            }
+            if(Value["original"].length == 0)
+            {
+              Invalid("Value is empty");
+              return;
+            }
+            if(ReplaceFrom["original"].length == 0)
+            {
+              Invalid("ReplaceFrom is empty");
+              return;
+            }
+
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value: Value["updated"],from: ReplaceFrom["updated"], to: ReplaceTo["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("Replace string to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+
+          }else if(State == "randomstring")
+          {
+            
+            var AllowedChars = GetInputConstructorValue("AllowedChars", loader);
+            var Length = GetInputConstructorValue("Length", loader);
+            var Save = this.$el.find("#Save").val().toUpperCase();
+            
+            if(Save.length == 0)
+            {
+              Invalid("Variable is empty");
+              return;
+            }
+            if(AllowedChars["original"].length == 0)
+            {
+              Invalid("AllowedChars is empty");
+              return;
+            }
+            if(Length["original"].length == 0)
+            {
+              Invalid("Length is empty");
+              return;
+            }
+
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,chars: AllowedChars["updated"],length: Length["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("Random string to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+
+          }else if(State == "randomint")
+          {
+            
+            var MinValue = GetInputConstructorValue("MinValue", loader);
+            var MaxValue = GetInputConstructorValue("MaxValue", loader);
+            var Save = this.$el.find("#Save").val().toUpperCase();
+            
+            if(Save.length == 0)
+            {
+              Invalid("Variable is empty");
+              return;
+            }
+            if(MinValue["original"].length == 0)
+            {
+              Invalid("MinValue is empty");
+              return;
+            }
+            if(MaxValue["original"].length == 0)
+            {
+              Invalid("MaxValue is empty");
+              return;
+            }
+
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,min: MinValue["updated"],max: MaxValue["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("Random number to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+
+          }else if(State == "template")
+          {
+            
+            var Template;
+            if($("#Check").is(':checked'))
+            {
+              Template = GetInputConstructorValue("Template", loader)["updated"];
+            }else
+            {
+              Template = "\"" + je($("#Template").val()) + "\"";
+            }
+            var Save = this.$el.find("#Save").val().toUpperCase();
+            
+            if(Save.length == 0)
+            {
+              Invalid("Variable is empty");
+              return;
+            }
+            
+            if($("#Template").val().length == 0)
+            {
+              Invalid("Template is empty");
+              return;
+            }
+
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,template: Template})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("Template to " + Save, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3913,6 +4272,20 @@
 
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("Fail " + val["original"], BrowserAutomationStudio_SaveControls() + code, 1, false);
+
+            }catch(e)
+            {}
+
+          }else if(State == "die")
+          {
+            var val = GetInputConstructorValue("FailMessage",loader)
+
+
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({message:val["updated"]})
+
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("Die " + val["original"], BrowserAutomationStudio_SaveControls() + code, 1, false);
 
             }catch(e)
             {}
@@ -4116,6 +4489,14 @@
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({expression_from:from["updated"],expression_to:to["updated"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("For " + from["original"] + " : " + to["original"], BrowserAutomationStudio_SaveControls() + code, 1, false);
+            }catch(e)
+            {}
+          }else if(State == "ignoreerrors")
+          {
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("Ignore Errors", BrowserAutomationStudio_SaveControls() + code, 1, false);
             }catch(e)
             {}
           }else if(State == "foreach")
@@ -4344,6 +4725,30 @@
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable_name:"VAR_" + VariableName,variable_value:VariableValue["updated"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("Set " + VariableName + " to " + VariableValue["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+
+          }else if(State == "incvariable")
+          {
+            var VariableName = this.$el.find("#SetVariableName").val().toUpperCase();
+            var VariableValue = GetInputConstructorValue("IncVariableValue", loader)
+
+
+            if(VariableName.length == 0)
+            {
+              Invalid("Variable name is empty");
+              return;
+            }
+
+            if(VariableValue["original"].length == 0)
+            {
+              Invalid("Variable value is empty");
+              return;
+            }
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable_name:"VAR_" + VariableName,variable_value:VariableValue["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("Increase " + VariableName + " with " + VariableValue["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4798,7 +5203,15 @@
           "timeout": _.template($('#timeout').html()),
           "promptresult": _.template($('#promptresult').html()),
           "httpauth": _.template($('#httpauth').html()),
-          "solverfailed": _.template($('#solverfailed').html())
+          "solverfailed": _.template($('#solverfailed').html()),
+          "onloadjavascript": _.template($('#onloadjavascript').html()),
+          "incvariable": _.template($('#incvariable').html()),
+          "ignoreerrors": _.template($('#ignoreerrors').html()),
+          "die": _.template($('#die').html()),
+          "template": _.template($('#template').html()),
+          "replacestring": _.template($('#replacestring').html()),
+          "randomint": _.template($('#randomint').html()),
+          "randomstring": _.template($('#randomstring').html())
           _MACRO_INSERT_TEMPLATES_
         }
         this.model.bind('change', this.render, this);
@@ -4811,6 +5224,8 @@
       },
 
       render: function(){
+        _PreserveMainPosition.BeforUrlChanged(this.model.get("state"))
+
         $("#containerdata").html(this.templates[this.model.get("state")]({data:this.collection.toJSON(),model:this.model.toJSON(),selector:_SelectorModel.toJSON()}))
         $(".variable-input, .function-input").keypress(function(e){
             var charCode = !e.charCode ? e.which : e.charCode;
@@ -4822,6 +5237,8 @@
         tr()
 
         $('[data-toggle="tooltip"]').tooltip({trigger:'hover', template:'<div class="mytooltip" role="tooltip"><div class="mytooltip-arrow tooltip-arrow"></div><div class="mytooltip-inner tooltip-inner"></div></div>',delay: { "show": 500, "hide": 100 }})
+
+        _PreserveMainPosition.AfterUrlChanged(this.model.get("state"))
 
         $("body").show()
       },
@@ -4951,14 +5368,22 @@
             "!/waitelement": "waitelement",
             "!/promptresult": "promptresult",
             "!/httpauth": "httpauth",
-            "!/solverfailed": "solverfailed"
+            "!/solverfailed": "solverfailed",
+            "!/onloadjavascript": "onloadjavascript",
+            "!/incvariable": "incvariable",
+            "!/ignoreerrors": "ignoreerrors",
+            "!/die": "die",
+            "!/template": "template",
+            "!/replacestring": "replacestring",
+            "!/randomstring": "randomstring",
+            "!/randomint": "randomint"
             _MACRO_INSERT_ROUTER_DEF_
         },
 
         main: function () {
           _GobalModel.set({ state: "main" });
-          $(".actions").css("height", window.innerHeight * (100.0 / _Z) - 47 + "px")
-          $(".actions").css("overflow-y","scroll")
+          $(".actions").css("height", window.innerHeight * (100.0 / _Z) - 40 + "px")
+          $(".actions").css("overflow-y","auto")
         },
         timeout: function () {
           _GobalModel.set({ state: "timeout" });
@@ -5283,6 +5708,31 @@
                 },
         solverfailed: function(){
           _GobalModel.set({ state: "solverfailed" });
+        },
+        onloadjavascript: function(){
+          _GobalModel.set({ state: "onloadjavascript" });
+        },
+        incvariable: function(){
+          _GobalModel.set({ state: "incvariable" });
+        },
+        ignoreerrors: function(){
+          _GobalModel.set({ state: "ignoreerrors" });
+        },
+        die: function(){
+          _GobalModel.set({ state: "die" });
+        },
+        template: function(){
+          _GobalModel.set({ state: "template" });
+        },
+        replacestring: function(){
+          _GobalModel.set({ state: "replacestring" });
+        },
+        randomstring: function(){
+          _GobalModel.set({ state: "randomstring" });
+        }
+        ,
+        randomint: function(){
+          _GobalModel.set({ state: "randomint" });
         }
         _MACRO_INSERT_ROUTER_FUNC_
     });
@@ -5298,6 +5748,7 @@
                 { name: tr("Resize"), description: tr("Change browser size"), ref: "resize" },
                 { name: tr("Proxy"), description: tr("Set proxy"), ref: "proxy" },
                 { name: tr("Javascript"), description: tr("Execute javascript"), ref: "javascript" },
+                { name: tr("Execute On Every Page Load In Browser"), description: tr("Execute javascript on every page load in browser"), ref: "onloadjavascript" },
                 { name: tr("Reset"), description: tr("Clear all browser data"), ref: "reset" },
                 { name: tr("Open File Result"), description: tr("Set open file dialog result"), ref: "openfile" },
                 { name: tr("Prompt Result"), description: tr("Set prompt result"), ref: "promptresult" },
@@ -5307,13 +5758,7 @@
                 { name: tr("Solve Captcha"), description: tr("Solve captcha"), ref: "solvecaptcha" },
                 { name: tr("Captcha Failed"), description: tr("Captcha Failed"), ref: "solverfailed" },
                 { name: tr("Timeout"), description: tr("Set Timeout"), ref: "timeout" },
-                { description: tr("Waiters"), type: "group" },
-                { name: tr("Wait Full Page Load"), description: tr("Wait for full page load"), ref: "waitfullload" },
-                { name: tr("Wait Url Loaded"), description: tr("Wait until browser will load url"), ref: "waitload" },
-                { name: tr("Wait Address Bar"), description: tr("Wait address bar will contain url"), ref: "waiturl" },
-                { name: tr("Wait Text"), description: tr("Wait until specific text will be present on page"), ref: "waitcontent" },
-                { name: tr("Wait Css"), description: tr("Wait until specific css selector will return non empty result"), ref: "waitcss" },
-                { name: tr("Sleep"), description: tr("Sleep for a specific time"), ref: "sleep" },
+
                 { description: tr("Script logic"), type: "group" },
                 { name: tr("If"), description: tr("Execute conditional actions"), ref: "if" },
                 { name: tr("While"), description: tr("Execute while loop"), ref: "while" },
@@ -5323,7 +5768,10 @@
                 /*{ name: tr("Continue"), description: tr("Start next loop iteration"), ref: "continue" },*/
                 { name: tr("Success"), description: tr("Finish script with success result"), ref: "success" },
                 { name: tr("Fail"), description: tr("Finish script with fail result"), ref: "fail" },
+                { name: tr("End Script"), description: tr("Immediately End Script"), ref: "die" },
+                { name: tr("Ignore Errors"), description: tr("Ignore errors"), ref: "ignoreerrors" },
                 { name: tr("Set Variable"), description: tr("Sets or creates variable"), ref: "setvariable" },
+                { name: tr("Increase Variable"), description: tr("Increase Variable"), ref: "incvariable" },
                 { name: tr("Call Function"), description: tr("Call function"), ref: "executefunction" },
                 { description: tr("Tools"), type: "group" },
                 { name: tr("Log"), description: tr("Output string to log"), ref: "log" },
@@ -5333,6 +5781,10 @@
                 { name: tr("Set Global Variable"), description: tr("Set global variable"), ref: "globalset" },
                 { name: tr("Get Global Variable"), description: tr("Get global variable"), ref: "globalget" },
                 { name: tr("Parse Line"), description: tr("Parse line like this 'a1:a2:a3' and save to variables"), ref: "parseline" },
+                { name: tr("Template"), description: tr("Use Template"), ref: "template" },
+                { name: tr("Replace String"), description: tr("Replace all occurrences of one string to another"), ref: "replacestring" },
+                { name: tr("Random String"), description: tr("Generate random string"), ref: "randomstring" },
+                { name: tr("Random Number"), description: tr("Generate random integer"), ref: "randomint" },
                 { description: tr("Network"), type: "group" },
                 { name: tr("Set Header"), description: tr("Set HTTP Headers, like user agent, accept language, etc"), ref: "setheader" },
                 { name: tr("Get Cookies For Url"), description: tr("Get cookies for url"), ref: "getcookiesforurl" },
@@ -5347,6 +5799,13 @@
                 { name: tr("Get Status"), description: tr("Get url load status"), ref: "getstatus" },
                 { name: tr("Is Loaded"), description: tr("Check if url is loaded"), ref: "isloaded" },
                 { name: tr("Get Cached Item"), description: tr("Get base64 encoded cached page"), ref: "getfromcache" },
+                { description: tr("Waiters"), type: "group" },
+                { name: tr("Wait Full Page Load"), description: tr("Wait for full page load"), ref: "waitfullload" },
+                { name: tr("Wait Url Loaded"), description: tr("Wait until browser will load url"), ref: "waitload" },
+                { name: tr("Wait Address Bar"), description: tr("Wait address bar will contain url"), ref: "waiturl" },
+                { name: tr("Wait Text"), description: tr("Wait until specific text will be present on page"), ref: "waitcontent" },
+                { name: tr("Wait Css"), description: tr("Wait until specific css selector will return non empty result"), ref: "waitcss" },
+                { name: tr("Sleep"), description: tr("Sleep for a specific time"), ref: "sleep" },
                 { description: tr("Email"), type: "group" },
                 { name: tr("Configure"), description: tr("Configure email settings"), ref: "emailsettings" },
                 { name: tr("Proxy"), description: tr("Configure email proxy"), ref: "emailproxy" },
@@ -5354,10 +5813,6 @@
                 { name: tr("Search First"), description: tr("Search for first message"), ref: "emailsearchfirst" },
                 { name: tr("Search All"), description: tr("Search for all messages"), ref: "emailsearchall" },
                 { name: tr("Get Message"), description: tr("Pull message"), ref: "emailpull" },
-                { description: tr("Script properties"), type: "group" },
-                { name: tr("Threads"), description: tr("Set thread number"), ref: "threadnumber" },
-                { name: tr("Success Number"), description: tr("Set success number. When script will be executed successfully 'success number' of times, application will stop"), ref: "successnumber" },
-                { name: tr("Fail Number"), description: tr("Set fail number. When script will fail 'fail number' of times, application will stop"), ref: "failnumber" },
                 { description: tr("Http Client"), type: "group" },
                 { name: tr("Proxy"), description: tr("Set proxy for http client"), ref: "httpclientproxy" },
                 { name: tr("Reset"), description: tr("Reset http client"), ref: "httpclientreset" },
@@ -5384,6 +5839,8 @@
 
             ]);
 
+    var _PreserveMainPosition = new PreserveMainPosition();
+
     var _GobalModel = new GobalModel();
 
     var _SelectorModel = new SelectorModel();
@@ -5400,6 +5857,7 @@
 
     var ToolboxMaximizeCallback = null;
 
+
     function BrowserAutomationStudio_MaximizeCallback()
     {
       if(ToolboxMaximizeCallback)
@@ -5415,6 +5873,10 @@
         document.documentElement.style.zoom = _Z + '%';
         $( document.body ).click(function(){
           $("#searchinput").focus()  
+
+        })
+        $( document ).click(function(){
+          $(".dropdown-menu-css-options").hide()
         })
 
     });
@@ -5436,6 +5898,8 @@
       .replace(new RegExp("\"","g"),"\\u0022")
       .replace(new RegExp("'","g"),"\\u0027")
       .replace(new RegExp("&","g"),"\\u0026")
+      .replace(new RegExp("\\n","g"),"\\n")
+      .replace(new RegExp("\\r","g"),"\\r")
     }
 
     function utf8_to_b64( str ) {
@@ -5530,6 +5994,9 @@
 
         
         all["css"] = json["css"]
+        all["css1"] = ("css1" in json) ? json["css1"] : ""
+        all["css2"] = ("css2" in json) ? json["css2"] : ""
+        all["css3"] = ("css3" in json) ? json["css3"] : ""
         all["current"] = current
         all["match"] = json["match"]
         all["at"] = json["mousex"] + ", " + json["mousey"]
@@ -5546,12 +6013,29 @@
 
     function BrowserAutomationStudio_EditStart(dataraw)
     {
+      _SelectorModel.set("is_editing",true)
       var data = JSON.parse(b64_to_utf8(dataraw))
 
       if("p" in data)
       {
         var selector = data["p"]
         _SelectorModel.set("css",selector["css"])
+
+        if("css1" in selector)
+          _SelectorModel.set("css1",selector["css1"])
+        else
+          _SelectorModel.set("css1","")
+        
+        if("css2" in selector)
+          _SelectorModel.set("css2",selector["css2"])
+        else
+          _SelectorModel.set("css2","")
+        
+        if("css3" in selector)
+          _SelectorModel.set("css3",selector["css3"])
+        else
+          _SelectorModel.set("css3","")
+
         _SelectorModel.set("match",selector["match"])
         var split = selector["at"].split(",")
         _SelectorModel.set("mousex",split[0].replace(/\s/g, ''))
@@ -5680,7 +6164,7 @@
     {
       var current = _SelectorModel.get("current")
       if(current == "none")
-        return {path:"page()",waiter:"",raw:"", querycss: je(_SelectorModel.get("css")), querymatch: je(_SelectorModel.get("match"))}
+        return {path:"page()",waiter:"",raw:"", querycss: je(_SelectorModel.get("css")), querycss2: je(_SelectorModel.get("css2")), querycss3: je(_SelectorModel.get("css3")), querymatch: je(_SelectorModel.get("match"))}
 
       var raw_not_escaped = $("#selector-input").val()
       var raw_original = $("#selector-input").val()
@@ -5714,7 +6198,7 @@
         if(index.length > 0)
           path += ".at(" + index + ")"
 
-        return {path:path,waiter:"wait_css(" + raw + ")!",raw:"css " + raw_not_escaped, querycss: je(raw_original), querymatch: je(_SelectorModel.get("match"))}
+        return {path:path,waiter:"wait_css(" + raw + ")!",raw:"css " + raw_not_escaped, querycss: je(raw_original), querycss2: je(_SelectorModel.get("css2")), querycss3: je(_SelectorModel.get("css3")), querymatch: je(_SelectorModel.get("match"))}
       }
 
       if(current == "match")
@@ -5729,13 +6213,13 @@
         if(index.length > 0)
           path += ".at(" + index + ")"
 
-        return {path:path,waiter:"wait_content(" + raw + ")!", raw:"match " + raw_not_escaped, querycss: je(_SelectorModel.get("css")), querymatch: je(raw_original)}
+        return {path:path,waiter:"wait_content(" + raw + ")!", raw:"match " + raw_not_escaped, querycss: je(_SelectorModel.get("css")), querycss2: je(_SelectorModel.get("css2")), querycss3: je(_SelectorModel.get("css3")), querymatch: je(raw_original)}
       }
 
       if(current == "at")
-        return {path:"position(" + raw + ")",waiter:"", raw:"position " + raw_not_escaped, querycss: je(_SelectorModel.get("css")), querymatch: je(_SelectorModel.get("match"))}
+        return {path:"position(" + raw + ")",waiter:"", raw:"position " + raw_not_escaped, querycss: je(_SelectorModel.get("css")), querycss2: je(_SelectorModel.get("css2")), querycss3: je(_SelectorModel.get("css3")), querymatch: je(_SelectorModel.get("match"))}
 
-      return {path:"page()",waiter:"",raw:"", query: "", querycss: je(_SelectorModel.get("css")), querymatch: je(_SelectorModel.get("match"))}
+      return {path:"page()",waiter:"",raw:"", query: "", querycss: je(_SelectorModel.get("css")), querycss2: je(_SelectorModel.get("css2")), querycss3: je(_SelectorModel.get("css3")), querymatch: je(_SelectorModel.get("match"))}
     }
 
     function InsertAtCaret(areaId,text)
@@ -5939,10 +6423,22 @@
 
     function BrowserAutomationStudio_ElementFunction(selector, name, is_loop)
     {
+      _SelectorModel.set("is_editing",false)
       _Router.navigate("#", true);
       if(is_loop !== 1)
       {
         _SelectorModel.set("css",selector["css"])
+        _SelectorModel.set("css1",selector["css1"])
+        if("css2" in selector)
+          _SelectorModel.set("css2",selector["css2"])
+        else
+          _SelectorModel.set("css2","")
+
+        if("css3" in selector)
+          _SelectorModel.set("css3",selector["css3"])
+        else
+          _SelectorModel.set("css3","")
+
         _SelectorModel.set("match",selector["match"])
       }
       else
@@ -5954,6 +6450,9 @@
         }
 
         _SelectorModel.set("css","[[FOR_EACH_CSS]]<[[CYCLE_INDEX]]>")
+        _SelectorModel.set("css1","[[FOR_EACH_CSS]]<[[CYCLE_INDEX]]>")
+        _SelectorModel.set("css2","")
+        _SelectorModel.set("css3","")
         _SelectorModel.set("match","[[FOR_EACH_MATCH]]<[[CYCLE_INDEX]]>")
       }
       _SelectorModel.set("mousex",parseInt(selector["mousex"]))

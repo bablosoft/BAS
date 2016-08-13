@@ -48,6 +48,7 @@ namespace BrowserAutomationStudioFramework
         connect(LanguageModel,SIGNAL(DefaultLanguageChanged(QString)),this,SLOT(DefaultLanguageChanged(QString)));
         MultilanguageText.Clear();
         UpdateLanguageModel();
+        DefaultLanguageChanged(LanguageModel->GetInterfaceLanguage());
 
 
     }

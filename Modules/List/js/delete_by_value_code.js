@@ -1,0 +1,1 @@
+<%= variable %> = <%= variable %>.filter(function(e){return e!== <%= value %> })

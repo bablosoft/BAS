@@ -1,0 +1,1 @@
+<%= variable %>[(<%= index %> < 0) ? (<%= variable %>.length + <%= index %>) : <%= index %>] = <%= value %>;

@@ -4,7 +4,7 @@
 	"description":"Interact with filesystem",
 	"description_small":{"en": "Filesystem", "ru": "Файловая система"},
 	"major_version": 1,
-	"minor_version": 0,
+	"minor_version": 2,
 	"developer_name": "bablosoft", 
 	"developer_email": "mail.to.twaego@gmail.com", 
 	"developer_site": "https://bablosoft.com",
@@ -67,6 +67,20 @@
 			"interface": "search_interface.js",
 			"select": "search_select.js",
 			"code": [{"file":"search_code.js", "name": "search_code"}]
+		},{
+			"name":"filesystem_file_to_list",
+			"description":{"en": "Read File To List","ru": "Читать Файл В Список"},
+			"is_element": false,
+			"interface": "file_to_list_interface.js",
+			"select": "file_to_list_select.js",
+			"code": [{"file":"file_to_list_code.js", "name": "file_to_list_code"}]
+		},{
+			"name":"filesystem_list_to_file",
+			"description":{"en": "Write List To File","ru": "Записать Список В Файл"},
+			"is_element": false,
+			"interface": "list_to_file_interface.js",
+			"select": "list_to_file_select.js",
+			"code": [{"file":"list_to_file_code.js", "name": "list_to_file_code"}]
 		}
 	],
 	"localize": 
@@ -92,7 +106,12 @@
 		"File Data Must Contain. Can Be Blank" : {"ru": "Файл Должен Содержать"},
 		"Include Folders" : {"ru": "Искать Папки"},
 		"Include Files" : {"ru": "Искать Файлы"},
-		"Search In Subfolders" : {"ru": "Поиск В Подпапках"}
+		"Search In Subfolders" : {"ru": "Поиск В Подпапках"},
+		"Add line ending symbol" : {"ru": "Добавить символ окончания строки"},
+		"It is better to use <a href=\"#!/result\">Result</a> action to output result." : {"ru": "Лучше использовать действие <a href=\"#!/result\">Результат</a> для вывода результатов"},
+		"List To Save" : {"ru": "Список Для Сохранения Содержимого"},
+		"List To Write To File" : {"ru": "Список Для Записи В Файл"}
+		
 	},
 	"engine": [],
 	"browser": [],

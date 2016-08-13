@@ -24,7 +24,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("MouseClick",QString("%1,%2").arg(QString::number(x)).arg(QString::number(y)));
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during MouseClick"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("MouseClick"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(MouseClick()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -36,7 +36,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("MouseMove",QString("%1,%2").arg(QString::number(x)).arg(QString::number(y)));
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during MouseMove"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("MouseMove"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(MouseMove()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -48,7 +48,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("Scroll",QString("%1,%2").arg(QString::number(x)).arg(QString::number(y)));
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during scroll"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("scroll"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Scroll()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -60,7 +60,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("Render",QString("%1,%2,%3,%4").arg(QString::number(x)).arg(QString::number(y)).arg(QString::number(width)).arg(QString::number(height)));
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during render"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("render"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Render()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -72,7 +72,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("WaitCode","");
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during WaitCode"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("WaitCode"));
         Worker->GetWaiter()->WaitInfinity(this,SIGNAL(WaitCode()),Worker,SLOT(RunSubScript()));
         if(Worker->GetProcessComunicator())
             Worker->GetProcessComunicator()->Send(WriteString);
@@ -87,7 +87,7 @@ namespace BrowserAutomationStudioFramework
             xmlWriter.writeTextElement("StartSection",QString("%1").arg(QString::number(Id)));
 
             Worker->SetScript(callback);
-            Worker->SetFailMessage(QString("Timeout during StartSection"));
+            Worker->SetFailMessage(tr("Timeout during ") + QString("StartSection"));
             Worker->GetWaiter()->WaitInfinity(this,SIGNAL(WaitCode()), Worker,SLOT(RunSubScript()));
             if(Worker->GetProcessComunicator())
                 Worker->GetProcessComunicator()->Send(WriteString);
@@ -107,7 +107,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("Load",url);
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during LoadPage ") + url);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("LoadPage ") + url);
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Loaded()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
 
@@ -120,7 +120,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("DebugVariablesResult",data);
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during DebugVariablesResult"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("DebugVariablesResult"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(DebugVariablesResult()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -132,10 +132,23 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("SetOpenFileName",OpenFileName);
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during OpenFileName ") + OpenFileName);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("OpenFileName ") + OpenFileName);
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SetOpenFileName()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
+
+    void SubprocessBrowser::SetStartupScript(const QString& script, const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("SetStartupScript",script);
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("SetStartupScript"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SetStartupScript()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
 
     void SubprocessBrowser::SetPromptResult(const QString & Text, const QString& callback)
     {
@@ -144,7 +157,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("SetPromptResult",Text);
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during SetPromptResult ") + Text);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("SetPromptResult ") + Text);
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SetPromptResult()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -156,7 +169,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("SetHttpAuthResult",Login + ":" + Password);
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during SetHttpAuthResult ") + Login);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("SetHttpAuthResult ") + Login);
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SetHttpAuthResult()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -168,7 +181,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("SetUserAgent",agent);
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during SetUserAgent"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("SetUserAgent"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SetUserAgent()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -180,7 +193,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("Resize",QString::number(x) + "," + QString::number(y));
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during Resize"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("Resize"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Resize()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -192,7 +205,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("Reset","");
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during Reset"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("Reset"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Reset()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -204,7 +217,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("Jquery","");
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during Jquery"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("Jquery"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Jquery()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -216,7 +229,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("OptimizeMemory","");
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during OptimizeMemory"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("OptimizeMemory"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(OptimizeMemory()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -228,7 +241,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("GetCookiesForUrl",url);
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during GetCookiesForUrl ") + url);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("GetCookiesForUrl ") + url);
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(GetCookiesForUrl()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -240,7 +253,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("SaveCookies", "");
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during SaveCookies"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("SaveCookies"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SaveCookies()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -252,7 +265,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("RestoreCookies", cookies);
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during RestoreCookies"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("RestoreCookies"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(RestoreCookies()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -271,7 +284,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("GetUrl","");
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during GetUrl"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("GetUrl"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(GetUrl()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -303,7 +316,11 @@ namespace BrowserAutomationStudioFramework
             }else if(xmlReader.name() == "SetOpenFileName" && token == QXmlStreamReader::StartElement)
             {
                 emit SetOpenFileName();
-            }else if(xmlReader.name() == "SetPromptResult" && token == QXmlStreamReader::StartElement)
+            }else if(xmlReader.name() == "SetStartupScript" && token == QXmlStreamReader::StartElement)
+            {
+                emit SetStartupScript();
+            }
+            else if(xmlReader.name() == "SetPromptResult" && token == QXmlStreamReader::StartElement)
             {
                 emit SetPromptResult();
             }

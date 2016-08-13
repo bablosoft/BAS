@@ -1,0 +1,1 @@
+<%= variable_length %> = (<%= variable %>).length

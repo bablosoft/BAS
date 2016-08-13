@@ -1,0 +1,1 @@
+<%= variable %> = (<%= variable %>).concat(<%= variable_second %>.slice())

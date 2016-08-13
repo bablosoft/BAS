@@ -281,73 +281,73 @@
         <translation type="vanished">Весь лог</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1467"/>
+        <location filename="../mainwindow.cpp" line="1468"/>
         <source>All log</source>
         <translation>Весь лог</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="498"/>
-        <location filename="../mainwindow.cpp" line="664"/>
+        <location filename="../mainwindow.cpp" line="499"/>
+        <location filename="../mainwindow.cpp" line="665"/>
         <source>Error saving file</source>
         <translation>Ошибка сохранения файла</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="173"/>
-        <location filename="../mainwindow.cpp" line="186"/>
-        <location filename="../mainwindow.cpp" line="199"/>
+        <location filename="../mainwindow.cpp" line="174"/>
+        <location filename="../mainwindow.cpp" line="187"/>
+        <location filename="../mainwindow.cpp" line="200"/>
         <source>Database Error</source>
         <translation>Ошибка базы</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="311"/>
+        <location filename="../mainwindow.cpp" line="312"/>
         <source>Need to restart after edit</source>
         <translation>Нужно перезапустить приложение после редактирования</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="336"/>
+        <location filename="../mainwindow.cpp" line="337"/>
         <source>Need to restart application</source>
         <translation>Нужно перезапустить приложение</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="498"/>
-        <location filename="../mainwindow.cpp" line="664"/>
+        <location filename="../mainwindow.cpp" line="499"/>
+        <location filename="../mainwindow.cpp" line="665"/>
         <source>Error saving file : %1</source>
         <translation>Ошибка сохранения файла : %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="523"/>
+        <location filename="../mainwindow.cpp" line="524"/>
         <source>Application is still running</source>
         <translation>Приложение еще работает</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="523"/>
+        <location filename="../mainwindow.cpp" line="524"/>
         <source>Use exit menu item to shut it down</source>
         <translation>Используйте кнопку выход, чтобы закрыть его</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="548"/>
+        <location filename="../mainwindow.cpp" line="549"/>
         <source>Open Project</source>
         <translation>Открыть проект</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="548"/>
-        <location filename="../mainwindow.cpp" line="675"/>
-        <location filename="../mainwindow.cpp" line="694"/>
+        <location filename="../mainwindow.cpp" line="549"/>
+        <location filename="../mainwindow.cpp" line="676"/>
+        <location filename="../mainwindow.cpp" line="695"/>
         <source>Project Files (*.xml);;All Files (*.*)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="561"/>
+        <location filename="../mainwindow.cpp" line="562"/>
         <source>Error loading file</source>
         <translation>Ошибка загрузки файла</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="561"/>
+        <location filename="../mainwindow.cpp" line="562"/>
         <source>Error loading file : %1</source>
         <translation>Ошибка загрузки файла : %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="675"/>
+        <location filename="../mainwindow.cpp" line="676"/>
         <source>Save Project</source>
         <translation>Сохранить проект</translation>
     </message>
@@ -356,7 +356,7 @@
         <translation type="vanished">Вы хотите сохранить предыдущий проект?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="694"/>
+        <location filename="../mainwindow.cpp" line="695"/>
         <source>Create Project</source>
         <translation>Создать проект</translation>
     </message>
@@ -377,12 +377,12 @@
         <translation type="vanished">Отмена</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="810"/>
+        <location filename="../mainwindow.cpp" line="811"/>
         <source>Captcha (%1)</source>
         <translation>Капча (%1)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1215"/>
+        <location filename="../mainwindow.cpp" line="1216"/>
         <source>Running ...</source>
         <translation>Скрипт работает ...</translation>
     </message>

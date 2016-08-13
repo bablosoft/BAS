@@ -1,0 +1,50 @@
+{
+	
+	"name":"RegularExpression",
+	"description":"Regular Expession",
+	"description_small":{"en": "Regular expressions", "ru": "Регулярные выражения"},
+	"major_version": 1,
+	"minor_version": 0,
+	"developer_name": "bablosoft", 
+	"developer_email": "mail.to.twaego@gmail.com", 
+	"developer_site": "https://bablosoft.com",
+	"api_version": 1,
+	"actions":
+	[
+		{
+			"name":"RegexpScan",
+			"description":{"en": "Exctract data with regexp","ru": "Извлечь данные"},
+			"is_element": false,
+			"interface": "regexp_scan_interface.js",
+			"select": "regexp_scan_select.js",
+			"code": [{"file":"regexp_scan_code.js", "name": "regexp_scan_code"}]
+		},
+		{
+			"name":"RegexpMatch",
+			"description":{"en": "Check if string matches regexp","ru": "Подходит ли строка под регулярное выражение"},
+			"is_element": false,
+			"interface": "regexp_match_interface.js",
+			"select": "regexp_match_select.js",
+			"code": [{"file":"regexp_match_code.js", "name": "regexp_match_code"}]
+		},
+		{
+			"name":"RegexpSplit",
+			"description":{"en": "Split text with regexp","ru": "Разделить строку"},
+			"is_element": false,
+			"interface": "regexp_split_interface.js",
+			"select": "regexp_split_select.js",
+			"code": [{"file":"regexp_split_code.js", "name": "regexp_split_code"}]
+		}
+		
+	],
+	"localize": 
+	{
+		"String To Apply Regexp" : {"ru": "Строка Для Применения Регулярного Выражения"},
+		"Regular Expression" : {"ru": "Регулярное Выражение"},
+		"Separator Regular Expression" : {"ru": "Регулярное Выражение Разделитель"}
+	},
+	"engine": [],
+	"browser": [],
+	"depends": []	
+}
+

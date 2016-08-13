@@ -4,7 +4,7 @@
 	"description":"Advanced way to manipulate resources",
 	"description_small":{"en": "Resources", "ru": "Ресурсы"},
 	"major_version": 1,
-	"minor_version": 0,
+	"minor_version": 1,
 	"developer_name": "bablosoft", 
 	"developer_email": "mail.to.twaego@gmail.com", 
 	"developer_site": "https://bablosoft.com",
@@ -29,12 +29,28 @@
 			"code": [{"file":"delete_current_element_code.js", "name": "delete_current_element_code"}]
 		},
 		{
-			"name":"AddElement",
+			"name":"ResourceAddElement",
 			"description":{"en": "Add Element","ru": "Добавить Элемент"},
 			"is_element": false,
-			"interface": "add_element_interface.js",
-			"select": "add_element_select.js",
-			"code": [{"file":"add_element_code.js", "name": "add_element_code"}]
+			"interface": "resource_add_element_interface.js",
+			"select": "resource_add_element_select.js",
+			"code": [{"file":"resource_add_element_code.js", "name": "resource_add_element_code"}]
+		},
+		{
+			"name":"GetResouceLocation",
+			"description":{"en": "Resource Location","ru": "Расположение Ресурса"},
+			"is_element": false,
+			"interface": "get_resource_location_interface.js",
+			"select": "get_resource_location_select.js",
+			"code": [{"file":"get_resource_location_code.js", "name": "get_resource_location_code"}]
+		},
+		{
+			"name":"ResourceToArray",
+			"description":{"en": "Resource To List","ru": "Ресурс В Список"},
+			"is_element": false,
+			"interface": "resource_to_array_interface.js",
+			"select": "resource_to_array_select.js",
+			"code": [{"file":"resource_to_array_code.js", "name": "resource_to_array_code"}]
 		}
 	],
 	"localize": 
@@ -51,7 +67,10 @@
 		"Simultaneous Usage" : {"ru": "Одновременных использований"},
 		"Interval Between Usage" : {"ru": "Интервалы между использованиями"},
 		"Greedy Usage Algorithm" : {"ru": "Жадный алгоритм"},
-		"Wait For Resource" : {"ru": "Ждать появления"}
+		"Wait For Resource" : {"ru": "Ждать появления"},
+		"Resource Location is filename for LinesFromFile resource, url for LinesFromUrl and directory location for FilesFromDirectory resource type." : {"ru": "Расположение Ресурса является именем файла для ресурса типа Из Файла, url для типа Из Ссылки и путь к папке для ресурса типа Файлы Из Папки."},
+    	"List To Save" : {"ru": "Список Для Сохранения Данных"}
+
 
 	},
 	"engine": [],

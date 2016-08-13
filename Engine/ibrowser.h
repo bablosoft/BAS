@@ -39,10 +39,12 @@ namespace BrowserAutomationStudioFramework
         virtual void SetWorker(IWorker* Worker) = 0;
         virtual IWorker* GetWorker() = 0;
         virtual void SetOpenFileName(const QString & OpenFileName, const QString& callback) = 0;
+        virtual void SetStartupScript(const QString& script, const QString& callback) = 0;
         virtual void SetPromptResult(const QString & Text, const QString& callback) = 0;
         virtual void SetHttpAuthResult(const QString & Login, const QString & Password, const QString& callback) = 0;
         virtual void MouseClickInstant(int x, int y) = 0;
         virtual void MouseClick(int x, int y, const QString& callback) = 0;
+
         virtual void MouseMove(int x, int y, const QString& callback) = 0;
         virtual void Scroll(int x, int y, const QString& callback) = 0;
         virtual void Render(int x, int y, int width, int height, const QString& callback) = 0;

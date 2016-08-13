@@ -108,7 +108,7 @@ namespace BrowserAutomationStudioFramework
 
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during AddHeader"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("AddHeader"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(AddHeader()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -120,7 +120,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("CleanHeader","");
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during CleanHeader"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("CleanHeader"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(CleanHeader()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -147,7 +147,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeEndElement();
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during SetProxy"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("SetProxy"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SetProxy()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -159,7 +159,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("AddCacheMaskAllow",Mask);
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during AddCacheMaskAllow"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("AddCacheMaskAllow"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(AddCacheMaskAllow()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -170,7 +170,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("AddCacheMaskDeny",Mask);
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during AddCacheMaskDeny"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("AddCacheMaskDeny"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(AddCacheMaskDeny()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -181,7 +181,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("AddRequestMaskAllow",Mask);
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during AddRequestMaskAllow"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("AddRequestMaskAllow"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(AddRequestMaskAllow()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -192,7 +192,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("AddRequestMaskDeny",Mask);
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during AddRequestMaskDeny"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("AddRequestMaskDeny"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(AddRequestMaskDeny()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -203,7 +203,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("ClearCacheMask","");
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during ClearCacheMask"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("ClearCacheMask"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(ClearCacheMask()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -214,7 +214,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("ClearRequestMask","");
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during ClearRequestMask"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("ClearRequestMask"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(ClearRequestMask()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -225,7 +225,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("ClearLoadedUrl","");
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during ClearLoadedUrl"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("ClearLoadedUrl"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(ClearLoadedUrl()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -236,7 +236,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("ClearCachedData","");
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during ClearCachedData"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("ClearCachedData"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(ClearCachedData()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -247,7 +247,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("ClearAll","");
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during ClearAll"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("ClearAll"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(ClearAll()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -258,7 +258,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("ClearMasks","");
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during ClearMasks"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("ClearMasks"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(ClearMasks()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -269,7 +269,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("ClearData","");
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during ClearData"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("ClearData"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(ClearData()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -282,7 +282,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("FindCacheByMaskBase64",Mask);
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during FindCacheByMaskBase64"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("FindCacheByMaskBase64"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(FindCacheByMaskBase64()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -294,7 +294,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("FindStatusByMask",Mask);
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during FindStatusByMask"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("FindStatusByMask"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(FindStatusByMask()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -306,7 +306,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("FindCacheByMaskString",Mask);
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during FindCacheByMaskString"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("FindCacheByMaskString"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(FindCacheByMaskString()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -318,7 +318,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("IsUrlLoadedByMask",Mask);
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during IsUrlLoadedByMask"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("IsUrlLoadedByMask"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(IsUrlLoadedByMask()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
@@ -330,7 +330,7 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("GetLoadStats","");
 
         Worker->SetScript(callback);
-        Worker->SetFailMessage(QString("Timeout during GetLoadStats"));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("GetLoadStats"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(GetLoadStats()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }

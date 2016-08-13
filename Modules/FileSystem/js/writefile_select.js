@@ -2,6 +2,7 @@ var File = GetInputConstructorValue("File",loader)
 var Value = GetInputConstructorValue("Value",loader)
 var append = $("#Check").is(':checked')
 var base64 = $("#Check2").is(':checked')
+var eol = $("#Check3").is(':checked')
 
 
 if(File["original"].length <= 0)
@@ -17,7 +18,7 @@ if(Value["original"].length <= 0)
 }
 
  try{
-  var code = loader.GetAdditionalData() + _.template($('#writefile_code').html())({path:File["updated"],value:Value["updated"],append:append,base64:base64})
+  var code = loader.GetAdditionalData() + _.template($('#writefile_code').html())({path:File["updated"],value:Value["updated"],append:append,base64:base64,eol:eol})
   code = Normalize(code,0)
   BrowserAutomationStudio_Append("Write file " + File["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)

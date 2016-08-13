@@ -81,5 +81,7 @@
         <file>scripts/engine/worker/record.js</file>
         <file>images/Record.png</file>
         <file>images/modules.png</file>
+        <file>scripts/engine/worker/translate.js</file>
+        <file>scripts/engine/worker/template.js</file>
     </qresource>
 </RCC>

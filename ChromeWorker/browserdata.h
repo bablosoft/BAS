@@ -17,6 +17,7 @@ public:
 
     std::map<std::string,std::string> _Headers;
     std::string _OpenFileName;
+    std::string _StartupScript;
     ProxyData _Proxy;
     CefWindowHandle _MainWindowHandle;
     CefWindowHandle _ParentWindowHandle;
@@ -41,7 +42,6 @@ public:
     std::string _PromptResult;
     std::string _HttpAuthLogin;
     std::string _HttpAuthPassword;
-
 
     //Reset
     std::atomic_bool IsReset;

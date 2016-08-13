@@ -157,7 +157,8 @@ MainWindow::MainWindow(QWidget *parent) :
         Settings->setValue("DefaultLanguageInterface",LanguageInterface);
     }
 
-    LanguageScript = Settings->value("DefaultLanguageScript","en").toString().toLower();
+    LangModel->SetInterfaceLanguage(LanguageInterface);
+    LanguageScript = Settings->value("DefaultLanguageScript",LanguageInterface).toString().toLower();
     _DataBaseConnector->Init(LanguageScript);
     _DataBaseConnector2->Init(LanguageScript);
     if(!_DataBaseConnector->Start())
@@ -1192,7 +1193,7 @@ void MainWindow::RunInternal(bool IsRecord)
         {
             IRecordProcessCommunication::ResourceDescription desc;
             desc.Name = Model->GetName();
-            desc.Description = Model->GetDescription().GetTranslation("");
+            desc.Description = Model->GetDescription().GetTranslation(LangModel->GetInterfaceLanguage());
             LastResourceList.append(desc);
         }
 

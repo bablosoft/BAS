@@ -84,7 +84,7 @@ body
   margin: 5px auto !important;
 }
 
-.waitfullload, .promptresult, .waitelement, .waitasyncload, .httpclientget, .httpclientdownload, .httpclientreset, .isloaded, .getstatus, .cachemaskallow,.cachemaskdeny,.cachemaskclear,.requestmaskallow,.requestmaskdeny,.requestmaskclear,.clearcache,.clearrequests, .html, .getcookiesforurl, .openfile, .reset, .moveelement,.moveandclickelement, .clickelement, .length, .set_attr, .attr, .set_random, .set_integer, .set, .focus, .check, .style, .exist, .clear, .load, .url, .xml, .log, .setvariable, .if, .while, .executefunction, .for, .sleep, .resize, .click, .move, .moveandclick, .break, .continue, .success, .fail, .text, .foreach
+.ignoreerrors, .waitfullload, .promptresult, .waitelement, .waitasyncload, .httpclientget, .httpclientdownload, .httpclientreset, .isloaded, .getstatus, .cachemaskallow,.cachemaskdeny,.cachemaskclear,.requestmaskallow,.requestmaskdeny,.requestmaskclear,.clearcache,.clearrequests, .html, .getcookiesforurl, .openfile, .reset, .moveelement,.moveandclickelement, .clickelement, .length, .set_attr, .attr, .set_random, .set_integer, .set, .focus, .check, .style, .exist, .clear, .load, .url, .xml, .log, .setvariable, .if, .while, .executefunction, .for, .sleep, .resize, .click, .move, .moveandclick, .break, .continue, .success, .fail, .text, .foreach
 {
   padding-top:35px;
 }
@@ -211,8 +211,8 @@ input[type="number"]::-webkit-outer-spin-button {
 .searchbar
 {
   width:100%;
-  height:42px;
-  padding-top:3px;
+  height: 36px;
+  padding-top: 1px;
   padding-left:12px;
   padding-right:12px;
 }
@@ -221,3 +221,10 @@ input[type="number"]::-webkit-outer-spin-button {
 {
   color:gray !important;
 }
+
+.dropdown-menu-css-options
+{
+  max-width:250px;
+  overflow: hidden
+}
+

@@ -1,0 +1,1 @@
+<%= variable_save %> = (<%= variable %>).indexOf(<%= value %>)

@@ -194,6 +194,11 @@ body
   z-index:9999999;
 }
 
+.bootbox-alert
+{
+ z-index:99999999;  
+}
+
 #VariableModal
 {
  z-index:99999999; 

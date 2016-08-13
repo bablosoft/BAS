@@ -133,6 +133,7 @@ public:
     void GetUrlCallback();
     void SetUserAgentCallback(const std::string& value);
     void SetOpenFileNameCallback(const std::string& value);
+    void SetStartupScriptCallback(const std::string& value);
     void SetPromptResultCallback(const std::string& value);
     void SetHttpAuthResultCallback(const std::string& login,const std::string& password);
     void GetCookiesForUrlCallback(const std::string& value);

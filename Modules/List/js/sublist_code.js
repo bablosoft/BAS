@@ -1,0 +1,1 @@
+<%= variable_new %> = (<%= variable %>).slice().splice(<%= index_start %>,<%= index_end %>)

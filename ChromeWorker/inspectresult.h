@@ -13,6 +13,8 @@ struct InspectResult
   int height;
   std::string label;
   std::string css;
+  std::string css2;
+  std::string css3;
   std::string match;
   int mousex;
   int mousey;

@@ -1,5 +1,6 @@
 #include "translator.h"
 #include <QCoreApplication>
+#include <QVariant>
 #include "every_cpp.h"
 
 
@@ -23,7 +24,7 @@ namespace BrowserAutomationStudioFramework
         LastLanguage = new QTranslator(this);
         bool res = LastLanguage->load(lang, Directory);
         QCoreApplication::installTranslator(LastLanguage);
-
+        qApp->setProperty("lang",QVariant(lang));
 
     }
 

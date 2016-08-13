@@ -8,7 +8,22 @@ namespace BrowserAutomationStudioFramework
     {
         EngineAvailableLanguages = QStringList()<<"en"<<"ru";
         ScriptAvailableLanguages = QList<int>()<<0;
+        InterfaceLanguage = "en";
+    }
 
+    void LanguageModel::SetInterfaceLanguage(const QString& lang)
+    {
+        if(lang == "ru")
+        {
+            ScriptAvailableLanguages = QList<int>()<<0<<1;
+            emit DefaultLanguageChanged("ru");
+        }
+        InterfaceLanguage = lang;
+    }
+
+    QString LanguageModel::GetInterfaceLanguage()
+    {
+        return InterfaceLanguage;
     }
 
     void LanguageModel::ChangeDefaultLanguage(const QString& lang)

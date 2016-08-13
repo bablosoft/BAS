@@ -114,6 +114,14 @@
     </message>
 </context>
 <context>
+    <name>BrowserAutomationStudioFramework::CurlHttpClient</name>
+    <message>
+        <location filename="../curlhttpclient.cpp" line="260"/>
+        <source>Failed to load file %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BrowserAutomationStudioFramework::DatabaseAdmin</name>
     <message>
         <location filename="../databaseadmin.cpp" line="633"/>
@@ -374,6 +382,264 @@
     </message>
 </context>
 <context>
+    <name>BrowserAutomationStudioFramework::ScriptMultiWorker</name>
+    <message>
+        <location filename="../scriptmultiworker.cpp" line="479"/>
+        <source>Script finished with error :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptmultiworker.cpp" line="483"/>
+        <source> Line number:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptmultiworker.cpp" line="483"/>
+        <source> During execution of script </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptmultiworker.cpp" line="485"/>
+        <source>[%1] Script finished with error : </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptmultiworker.cpp" line="529"/>
+        <location filename="../scriptmultiworker.cpp" line="699"/>
+        <location filename="../scriptmultiworker.cpp" line="700"/>
+        <source>Ended with message: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptmultiworker.cpp" line="545"/>
+        <source>Aborted By User</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptmultiworker.cpp" line="563"/>
+        <source>[%1] Script finished correctly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptmultiworker.cpp" line="594"/>
+        <source>Success</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptmultiworker.cpp" line="619"/>
+        <source>Stage Timeout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptmultiworker.cpp" line="690"/>
+        <source>Too Much Fails</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptmultiworker.cpp" line="969"/>
+        <source>Failed to get resource inside core</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptmultiworker.cpp" line="970"/>
+        <source>failed to get resource</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BrowserAutomationStudioFramework::ScriptWorker</name>
+    <message>
+        <location filename="../scriptworker.cpp" line="550"/>
+        <source> Line number:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="550"/>
+        <source> During execution of script </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="578"/>
+        <location filename="../scriptworker.cpp" line="662"/>
+        <source>Fail number exceed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="585"/>
+        <location filename="../scriptworker.cpp" line="730"/>
+        <source>Success number exceed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="774"/>
+        <source>Failed because process is stopped</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1043"/>
+        <source>failed to get resource </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1062"/>
+        <source>Thread suspended</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1067"/>
+        <source>Thread failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1068"/>
+        <source>Thread died</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1069"/>
+        <source>Thread succeeded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1071"/>
+        <source> with message &quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1083"/>
+        <source>Thread #</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1095"/>
+        <location filename="../scriptworker.cpp" line="1112"/>
+        <source>CAPTCHA_FAIL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1095"/>
+        <source>Failed to get solver</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1124"/>
+        <source>Captcha wait timeout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1137"/>
+        <source>Async function is called in sync mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1145"/>
+        <location filename="../scriptworker.cpp" line="1209"/>
+        <source>Failed to run function </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1164"/>
+        <source>Sync function is called in async mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1174"/>
+        <source>Failed to execute module function </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1234"/>
+        <source>Failed to get mail number with Pop3CLient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1242"/>
+        <source>Failed to get message with Pop3CLient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1293"/>
+        <source>Failed to get mail number with ImapCLient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1301"/>
+        <source>Failed to search mail with ImapCLient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1309"/>
+        <source>Failed to custom search mail with ImapCLient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1317"/>
+        <source>Failed to fetch mail with ImapCLient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1325"/>
+        <source>Failed to execute custom query with ImapCLient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1373"/>
+        <location filename="../scriptworker.cpp" line="1490"/>
+        <location filename="../scriptworker.cpp" line="1498"/>
+        <source>Failed to get page </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1373"/>
+        <location filename="../scriptworker.cpp" line="1406"/>
+        <location filename="../scriptworker.cpp" line="1448"/>
+        <location filename="../scriptworker.cpp" line="1490"/>
+        <location filename="../scriptworker.cpp" line="1498"/>
+        <location filename="../scriptworker.cpp" line="1506"/>
+        <source> with HttpClient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1406"/>
+        <location filename="../scriptworker.cpp" line="1448"/>
+        <source>Failed to post page </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1506"/>
+        <source>Failed to download page </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BrowserAutomationStudioFramework::SubprocessBrowser</name>
+    <message>
+        <location filename="../subprocessbrowser.cpp" line="27"/>
+        <location filename="../subprocessbrowser.cpp" line="39"/>
+        <location filename="../subprocessbrowser.cpp" line="51"/>
+        <location filename="../subprocessbrowser.cpp" line="63"/>
+        <location filename="../subprocessbrowser.cpp" line="75"/>
+        <location filename="../subprocessbrowser.cpp" line="90"/>
+        <location filename="../subprocessbrowser.cpp" line="110"/>
+        <location filename="../subprocessbrowser.cpp" line="123"/>
+        <location filename="../subprocessbrowser.cpp" line="135"/>
+        <location filename="../subprocessbrowser.cpp" line="147"/>
+        <location filename="../subprocessbrowser.cpp" line="160"/>
+        <location filename="../subprocessbrowser.cpp" line="172"/>
+        <location filename="../subprocessbrowser.cpp" line="184"/>
+        <location filename="../subprocessbrowser.cpp" line="196"/>
+        <location filename="../subprocessbrowser.cpp" line="208"/>
+        <location filename="../subprocessbrowser.cpp" line="220"/>
+        <location filename="../subprocessbrowser.cpp" line="232"/>
+        <location filename="../subprocessbrowser.cpp" line="244"/>
+        <location filename="../subprocessbrowser.cpp" line="256"/>
+        <location filename="../subprocessbrowser.cpp" line="268"/>
+        <location filename="../subprocessbrowser.cpp" line="287"/>
+        <source>Timeout during </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BrowserAutomationStudioFramework::SubprocessListWidget</name>
     <message>
         <location filename="../subprocesslistwidget.cpp" line="19"/>
@@ -383,6 +649,62 @@
     <message>
         <location filename="../subprocesslistwidget.cpp" line="82"/>
         <source>Browser # %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BrowserAutomationStudioFramework::SubprocessNetworkAccessManager</name>
+    <message>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="111"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="123"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="150"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="162"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="173"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="184"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="195"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="206"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="217"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="228"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="239"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="250"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="261"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="272"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="285"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="297"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="309"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="321"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="333"/>
+        <source>Timeout during </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BrowserAutomationStudioFramework::SubprocessWebElement</name>
+    <message>
+        <location filename="../subprocesswebelement.cpp" line="213"/>
+        <location filename="../subprocesswebelement.cpp" line="221"/>
+        <location filename="../subprocesswebelement.cpp" line="228"/>
+        <location filename="../subprocesswebelement.cpp" line="234"/>
+        <location filename="../subprocesswebelement.cpp" line="247"/>
+        <location filename="../subprocesswebelement.cpp" line="255"/>
+        <location filename="../subprocesswebelement.cpp" line="263"/>
+        <location filename="../subprocesswebelement.cpp" line="271"/>
+        <location filename="../subprocesswebelement.cpp" line="278"/>
+        <location filename="../subprocesswebelement.cpp" line="289"/>
+        <location filename="../subprocesswebelement.cpp" line="296"/>
+        <location filename="../subprocesswebelement.cpp" line="303"/>
+        <location filename="../subprocesswebelement.cpp" line="310"/>
+        <location filename="../subprocesswebelement.cpp" line="317"/>
+        <location filename="../subprocesswebelement.cpp" line="324"/>
+        <location filename="../subprocesswebelement.cpp" line="331"/>
+        <location filename="../subprocesswebelement.cpp" line="338"/>
+        <location filename="../subprocesswebelement.cpp" line="345"/>
+        <location filename="../subprocesswebelement.cpp" line="352"/>
+        <location filename="../subprocesswebelement.cpp" line="359"/>
+        <location filename="../subprocesswebelement.cpp" line="396"/>
+        <location filename="../subprocesswebelement.cpp" line="422"/>
+        <location filename="../subprocesswebelement.cpp" line="429"/>
+        <source>Timeout during </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -728,48 +1050,48 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="490"/>
+        <location filename="../chooserresourcewidget.cpp" line="524"/>
         <source>No groups selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="511"/>
+        <location filename="../chooserresourcewidget.cpp" line="545"/>
         <source>Field is empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="550"/>
+        <location filename="../chooserresourcewidget.cpp" line="584"/>
         <source>File not exists</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="587"/>
+        <location filename="../chooserresourcewidget.cpp" line="621"/>
         <source>Url not valid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="616"/>
+        <location filename="../chooserresourcewidget.cpp" line="650"/>
         <source>Directory not exists</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="705"/>
+        <location filename="../chooserresourcewidget.cpp" line="739"/>
         <source>Open File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="705"/>
-        <location filename="../chooserresourcewidget.cpp" line="712"/>
+        <location filename="../chooserresourcewidget.cpp" line="739"/>
+        <location filename="../chooserresourcewidget.cpp" line="746"/>
         <source>All Files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="712"/>
+        <location filename="../chooserresourcewidget.cpp" line="746"/>
         <source>Save File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="723"/>
+        <location filename="../chooserresourcewidget.cpp" line="757"/>
         <source>Open Directory</source>
         <translation type="unfinished"></translation>
     </message>

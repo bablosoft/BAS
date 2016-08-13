@@ -162,6 +162,7 @@ void MainWindow::Start()
 
         Settings->setValue("DefaultLanguageScript",Language);
     }
+    LangModel->SetInterfaceLanguage(Language);
     qDebug()<<"Start 036";
     if(!DataBaseConnectorPreserved)
     {

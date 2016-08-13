@@ -870,6 +870,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Parser->EventScroll.push_back(std::bind(&MainApp::ScrollCallback,app.get(),_1,_2));
     Parser->EventRender.push_back(std::bind(&MainApp::RenderCallback,app.get(),_1,_2,_3,_4));
     Parser->EventSetOpenFileName.push_back(std::bind(&MainApp::SetOpenFileNameCallback,app.get(),_1));
+    Parser->EventSetStartupScript.push_back(std::bind(&MainApp::SetStartupScriptCallback,app.get(),_1));
     Parser->EventSetPromptResult.push_back(std::bind(&MainApp::SetPromptResultCallback,app.get(),_1));
     Parser->EventSetHttpAuthResult.push_back(std::bind(&MainApp::SetHttpAuthResultCallback,app.get(),_1,_2));
     Parser->EventGetCookiesForUrl.push_back(std::bind(&MainApp::GetCookiesForUrlCallback,app.get(),_1));

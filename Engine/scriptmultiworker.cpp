@@ -476,13 +476,13 @@ namespace BrowserAutomationStudioFramework
             if(engine->hasUncaughtException())
             {
                 ResourceHandlers->Fail();
-                ReportData->Final(QString("Script finished with error :") + engine->uncaughtException().toString());
+                ReportData->Final(tr("Script finished with error :") + engine->uncaughtException().toString());
                 ReportData->Stop();
                 QString Exception = engine->uncaughtException().toString();
                 if(DoTrace)
-                    Exception += QString(" Line number:") + QString::number(engine->uncaughtExceptionLineNumber()) +  " During execution of script " + Script;
+                    Exception += tr(" Line number:") + QString::number(engine->uncaughtExceptionLineNumber()) +  tr(" During execution of script ") + Script;
 
-                Logger->WriteFail(QString("[%1] Script finished with error : ").arg(CurrentTimeString()) + Exception );
+                Logger->WriteFail(tr("[%1] Script finished with error : ").arg(CurrentTimeString()) + Exception );
                 emit Finished();
                 break;
             }else
@@ -526,7 +526,7 @@ namespace BrowserAutomationStudioFramework
     void ScriptMultiWorker::FailInternal(const QString&  message)
     {
         Logger->WriteFail(message);
-        ReportData->Fail(QString("Ended with message: ") + message);
+        ReportData->Fail(tr("Ended with message: ") + message);
         ReportData->Final(message);
         ReportData->Stop();
         Abort();
@@ -542,7 +542,7 @@ namespace BrowserAutomationStudioFramework
         if(Waiter)
             Waiter->Abort();
 
-        ReportData->Final("Aborted By User");
+        ReportData->Final(tr("Aborted By User"));
         ReportData->Stop();
 
         AbortWorkers();
@@ -560,7 +560,7 @@ namespace BrowserAutomationStudioFramework
         AbortFunction.clear();
         IsAborted = true;
         ResourceHandlers->Success();
-        Logger->Write(QString("[%1] Script finished correctly").arg(CurrentTimeString()));
+        Logger->Write(tr("[%1] Script finished correctly").arg(CurrentTimeString()));
         emit Finished();
     }
 
@@ -591,7 +591,7 @@ namespace BrowserAutomationStudioFramework
             MaximumFailure = 1;
             MaxRunTime = 0;
         }
-        ReportData->Final("Success");
+        ReportData->Final(tr("Success"));
         Script = callback;
         SuccessLeft = MaximumSuccess;
         FailLeft = MaximumFailure;
@@ -616,7 +616,7 @@ namespace BrowserAutomationStudioFramework
 
     void ScriptMultiWorker::StageTimeout()
     {
-        ReportData->Final("Stage Timeout");
+        ReportData->Final(tr("Stage Timeout"));
         StageTimeoutTimer->deleteLater();
         StageTimeoutTimer = 0;
         NoNeedToCreateWorkersMore = true;
@@ -655,9 +655,10 @@ namespace BrowserAutomationStudioFramework
         {
             case IWorker::SuccessStatus:
             {
-                Logger->WriteSuccess(w->GetResultMessage());
                 if(w->GetResultMessageRaw() != "none")
                 {
+                    Logger->WriteSuccess(w->GetResultMessage());
+
                     if(!NoNeedToCreateWorkersMore)
                     {
                         ReportData->Success(w->GetResultMessageRaw());
@@ -686,7 +687,7 @@ namespace BrowserAutomationStudioFramework
                 FailLeft--;
                 if(FailLeft<=0)
                 {
-                    ReportData->Final("Too Much Fails");
+                    ReportData->Final(tr("Too Much Fails"));
                     NoNeedToCreateWorkersMore = true;
                 }
             }break;
@@ -695,8 +696,8 @@ namespace BrowserAutomationStudioFramework
                 Logger->Write(w->GetResultMessage());
                 if(!NoNeedToCreateWorkersMore)
                 {
-                    ReportData->Fail(QString("Ended with message: ") + w->GetResultMessageRaw());
-                    ReportData->Final(QString("Ended with message: ") + w->GetResultMessageRaw());
+                    ReportData->Fail(tr("Ended with message: ") + w->GetResultMessageRaw());
+                    ReportData->Final(tr("Ended with message: ") + w->GetResultMessageRaw());
                     NoNeedToCreateWorkersMore = true;
                 }
             }break;
@@ -732,7 +733,7 @@ namespace BrowserAutomationStudioFramework
 
         if(WorkerRunning == 0 && NoNeedToCreateWorkersMore)
         {
-            Logger->Write("Stage Finished");
+            //Logger->Write("Stage Finished");
             if(StageTimeoutTimer)
             {
                 StageTimeoutTimer->deleteLater();
@@ -965,8 +966,8 @@ namespace BrowserAutomationStudioFramework
         if(DieOnFailHandler)
         {
             ResourceHandlers->Fail();
-            ReportData->Final("Failed to get resource inside core");
-            Logger->Write("failed to get resource");
+            ReportData->Final(tr("Failed to get resource inside core"));
+            Logger->Write(tr("failed to get resource"));
             emit Finished();
         }else
         {

@@ -13,6 +13,7 @@ namespace BrowserAutomationStudioFramework
         Q_OBJECT
         QStringList EngineAvailableLanguages;
         QList<int> ScriptAvailableLanguages;
+        QString InterfaceLanguage;
     public:
         explicit LanguageModel(QObject *parent = 0);
         virtual QStringList GetEngineAvailableLanguages();
@@ -21,6 +22,8 @@ namespace BrowserAutomationStudioFramework
         virtual QString GetScriptAvailableLanguagesString();
         virtual void SetScriptAvailableLanguagesString(const QString& val);
         virtual void ChangeDefaultLanguage(const QString& lang);
+        virtual void SetInterfaceLanguage(const QString& lang);
+        virtual QString GetInterfaceLanguage();
     signals:
 
     public slots:

@@ -1,5 +1,31 @@
 _L = 
 {
+
+	"End Script": {"ru": "Прервать Скрипт"},
+	"Immediately End Script": {"ru": "Немедленно Прервать Скрипт"},
+	"Use Template": {"ru": "Использовать Шаблон"},
+	"Template": {"ru": "Шаблон"},
+	"Replace String": {"ru": "Заменить Строку"},
+	"Random Number": {"ru": "Случайное Число"},
+	"Replace all occurrences of one string to another": {"ru": "Заменить все вхождения одной строки на другую"},
+	"Resolves template to variable. Can contain {{Resources}} and [[VARIABLES]]": {"ru": "Генерирует строку по шаблону. Шаблон может содержать {{Ресурсы}} и [[ПЕРЕМЕННЫЕ]]"},
+	"Replace From": {"ru": "Заменить Из"},
+	"Original String": {"ru": "Оригинальная Строка"},
+	"Replace To": {"ru": "Заменить На"},
+	"Allowed Chars": {"ru": "Разрешенные Символы"},
+	"Result String Length": {"ru": "Длина Генерируемой Строки"},
+	"Minimum Value": {"ru": "Минимальное Значение"},
+	"Maximum Value": {"ru": "Максимальное Значение"},
+	"Random String": {"ru": "Случайная строка"},
+	"Additional processing. Use this option if you want to load template from file or variable.": {"ru": "Дополнительная обработка. Используйте эту настройку, чтобы грузить шаблон из файла или переменной."},
+	
+	"If error will occur during ignore error block, it will be ignored and execution will continue on next after block instruction.": {"ru": "Если ошибка произойдет во время блока игнорирования ошибок, то ошибка будет проигнорирована, а выполнение продолжится на следующем после блока действии."},
+	"Ignore Errors": {"ru": "Игнорировать Ошибки"},
+	"Ignore errors": {"ru": "Игнорировать ошибки"},
+	"Increase variable value": {"ru": "На сколько увеличить переменную"},
+	"This means [[VARIABLE]] = [[VARIABLE]] + num": {"ru": "Это означает [[VARIABLE]] = [[VARIABLE]] + num"},
+	"Increase Variable": {"ru": "Увеличить переменную"},
+	"Variable Name": {"ru": "Имя Переменной"},
 	"Wait full page load after this action": {"ru": "Ждать полной загрузки страницы после этого действия"},
 	"Wait for full page load": {"ru": "Ждать полной загрузки"},
 	"Wait Full Page Load": {"ru": "Ждать Полной Загрузки"},
@@ -317,8 +343,9 @@ _L =
 	"Ok" : {"ru": "Ок"},
 	"Cancel" : {"ru": "Отмена"},
 	"Start next loop iteration." : {"ru" : "Начать следующую итерацию."},
-	"Finish script with success result." : {"ru" : "Завершить поток с успешным результатом."},
-	"Finish script with fail result." : {"ru" : "Завершить поток с неуспешным результатом."},
+	"Finish thread with success result." : {"ru" : "Завершить поток с успешным результатом."},
+	"Finish thread with fail result." : {"ru" : "Завершить поток с неуспешным результатом."},
+	"Finish whole script." : {"ru" : "Завершить весь скрипт."},
 	"Break depth. If blank will break current loop, if integer will break with desired depth, if string will break until desired function." : {"ru" : "Глубина."},
 	"Wait address bar will contain url" : {"ru": "Ждать пока адресная строка будет содержать URL"},
 	"Select Resource" : {"ru": "Выбрать ресурс"},
@@ -465,6 +492,8 @@ _L =
 	"Use self variable, which is point to selected element.":{"ru": "Используйте переменную self, которая указывает на выбранный элемент."},
 	"Start Loop to use this function" :{"ru": "Начните цикл, чтобы использовать эту функцию"},
 	"Action Name" :{"ru": "Имя Действия"},
+	"Execute On Every Page Load In Browser" :{"ru": "Выполнять при каждой загрузке страницы в браузере"},
+	"Execute javascript on every page load in browser" :{"ru": "Выполнять яваскрипт при каждой загрузке страницы в браузере"},
 
 }
 

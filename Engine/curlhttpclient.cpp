@@ -257,7 +257,7 @@ namespace BrowserAutomationStudioFramework
             else
             {
                 was_error =  true;
-                last_error = QString("Failed to load file %1").arg(Data.DataString);
+                last_error = tr("Failed to load file %1").arg(Data.DataString);
 
                 disconnected = false;
                 emit Finished();

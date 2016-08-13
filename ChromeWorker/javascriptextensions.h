@@ -10,7 +10,7 @@ public:
     std::string GetUserAgentExtension(const std::string& UserAgent);
     std::string GetLanguage(const std::string& Language);
 
-    std::string GetBasicExtension();
+    std::string GetBasicExtension(bool IsRecord);
     std::string GetJqueryExtension();
 };
 

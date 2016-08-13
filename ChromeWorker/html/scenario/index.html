@@ -51,9 +51,6 @@
             <div class="form-group">
               <button type="button" class="btn btn-default onapplicationstart tr">OnApplicationStart</button> <span class="tr">function will be run at first place.</span>
             </div>
-            <div class="form-group">
-              <input type="checkbox" id="FunctionDontRecoverFailure"/> <label for="FunctionDontRecoverFailure" class="tr">Don't recover after failure</label>
-            </div>
           </div>
           <div class="modal-footer">
             <span id="validation"></span>
@@ -79,9 +76,9 @@
 
       </div>
       <div style="width:50%;float:left">
-        <div><a href="#" id="thread-number-edit"><i class="fa fa-pencil" aria-hidden="true"></i></a> <span class="tr small">Thread Number</span>: <strong><%= global["threadnumber"] %></strong></div>
-        <div><a href="#" id="success-number-edit"><i class="fa fa-pencil" aria-hidden="true"></i></a> <span class="tr small">Success Number</span>: <strong><%= global["successnumber"] %></strong></div>
-        <div><a href="#" id="fail-number-edit"><i class="fa fa-pencil" aria-hidden="true"></i></a> <span class="tr small">Fail Number</span>: <strong><%= global["failnumber"] %></strong></div>
+        <div class="nowrap"><a href="#" id="thread-number-edit"><i class="fa fa-pencil" aria-hidden="true"></i></a> <span class="tr small">Thread Number</span>: <strong><%= global["threadnumber"] %></strong></div>
+        <div class="nowrap"><a href="#" id="success-number-edit"><i class="fa fa-pencil" aria-hidden="true"></i></a> <span style="white-space: nowrap;"><span class="tr small">Success Number</span>: <strong><%= global["successnumber"] %></strong></span></div>
+        <div class="nowrap"><a href="#" id="fail-number-edit"><i class="fa fa-pencil" aria-hidden="true"></i></a> <span style="white-space: nowrap;"><span class="tr small">Fail Number</span>: <strong><%= global["failnumber"] %></strong></span></div>
       </div>
       <div class="maintoolbox">
         <div style="width:50%;float:left;text-align:center">
@@ -201,17 +198,7 @@
   <script type="text/template" id="function_code">
       function <%= name %>()
       {
-        <% if(recover){ %>
-          _on_fail(function(){
-            log("Fail and recover " + _result())
-            _clear_on_fail()
-            _break()
-          })
-        <% }else{ %>
-            _clear_on_fail()
-        <% } %>
         section_insert()
-        _clear_on_fail()
       }
   </script>
 
@@ -387,7 +374,7 @@
             return
           }
           var id = Math.floor(Math.random() * (100000 - 100)) + 100
-          var code = Normalize(_.template($('#function_code').html())({name:name,recover:true != $("#FunctionDontRecoverFailure").prop('checked')}))
+          var code = Normalize(_.template($('#function_code').html())({name:name}))
           var task = { name: name, code: code, id: id, donotexecuteduringrecord: false, parentid: 0}
           _TaskCollection.add(task,{at: 1})
           this.model.set("function_name",name)
@@ -420,7 +407,7 @@
           if(found)
           {
             task.set("name",name)
-            task.set("code",Normalize(_.template($('#function_code').html())({name:name,recover:name == "OnApplicationStart" || true != $("#FunctionDontRecoverFailure").prop('checked')})))
+            task.set("code",Normalize(_.template($('#function_code').html())({name:name})))
           }
           this.model.set("function_name",name)
           this.SetDefaultInsert()
@@ -473,7 +460,6 @@
       {
         this.currentFuncName = ""
         $("#EditFunctionName").val("")
-        $("#FunctionDontRecoverFailure").prop("checked",false)
         $("#validation").html("")
         $("#editfunctionmodal").modal({})
       },
@@ -482,7 +468,6 @@
       {
         this.currentFuncName = this.model.get("function_name")
         $("#EditFunctionName").val(this.currentFuncName)
-        $("#FunctionDontRecoverFailure").prop("checked",GetFunctionBody(this.currentFuncName).indexOf("_on_fail(function()") < 0)
         $("#validation").html("")
         $("#editfunctionmodal").modal({})
       },
@@ -1342,7 +1327,12 @@
       BrowserAutomationStudio_StopSaveToUndoManager = false
     }
 
-    
+    /*
+         =========
+          INITIALIZE HANDLERS
+         =========
+
+    */    
 
     function BrowserAutomationStudio_HandlersInitialize()
     {
@@ -1473,7 +1463,6 @@
     function GetFunctionBody(name)
     {
       var task = FindTaskById(0)
-      var recover = false
       while(true)
       {
         if(!task)
@@ -1481,14 +1470,9 @@
 
         var id = parseInt(task.get("id"))
 
-        if(IsFunctionNode(id) && GetFunctionData(id)["name"] == name)
-        {
-          recover = task.get("code").indexOf("_on_fail(function()") >= 0
-        }
-
         if(!IsFunctionNode(id) && GetFunctionData(id)["name"] == name)
         {
-          var code = _.template($('#function_code').html())({name:name,recover:recover})
+          var code = _.template($('#function_code').html())({name:name})
           code = code.replace("section_insert()","section_start(\"test\", " + id + ")!")
           return code
         }

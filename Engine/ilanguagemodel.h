@@ -17,6 +17,8 @@ namespace BrowserAutomationStudioFramework
         virtual QString GetScriptAvailableLanguagesString() = 0;
         virtual void SetScriptAvailableLanguagesString(const QString& val) = 0;
         virtual void ChangeDefaultLanguage(const QString& lang) = 0;
+        virtual void SetInterfaceLanguage(const QString& lang) = 0;
+        virtual QString GetInterfaceLanguage() = 0;
     signals:
         void ScriptAvailableLanguagesChanged();
         void DefaultLanguageChanged(const QString& lang);

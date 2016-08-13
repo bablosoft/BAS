@@ -210,7 +210,7 @@ namespace BrowserAutomationStudioFramework
     void SubprocessWebElement::xml(const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during xml for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("xml for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(xml()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("xml"));
     }
@@ -218,20 +218,20 @@ namespace BrowserAutomationStudioFramework
     void SubprocessWebElement::text(const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during text for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("text for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(text()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("text"));
     }
     void SubprocessWebElement::script(const QString& javascript, const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during script for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("script for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(script()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("script",javascript));
     }
     void SubprocessWebElement::RunScriptAsync(const QString& javascript, const QObject *object_success,const char * slot_success)
     {
-        Worker->SetFailMessage(QString("Timeout during RunScriptAsync for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("RunScriptAsync for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(javascript()), object_success,slot_success, Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("javascript",javascript));
     }
@@ -244,7 +244,7 @@ namespace BrowserAutomationStudioFramework
     void SubprocessWebElement::click(const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during click for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("click for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(click()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("click"));
     }
@@ -252,7 +252,7 @@ namespace BrowserAutomationStudioFramework
     void SubprocessWebElement::system_click(const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during system_click for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("system_click for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(system_click()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("system_click"));
     }
@@ -260,7 +260,7 @@ namespace BrowserAutomationStudioFramework
     void SubprocessWebElement::move(const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during move for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("move for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(move()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("move"));
     }
@@ -268,14 +268,14 @@ namespace BrowserAutomationStudioFramework
     void SubprocessWebElement::clear(const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during clear for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("clear for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(clear()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("clear"));
     }
     void SubprocessWebElement::type(const QString& text, int interval, const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during type for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("type for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(type()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("type",text, QString::number(interval)));
     }
@@ -286,77 +286,77 @@ namespace BrowserAutomationStudioFramework
     void SubprocessWebElement::fill(const QString& text, const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during fill for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("fill for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(fill()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("fill",text));
     }
     void SubprocessWebElement::exist(const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during exist for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("exist for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(exist()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("exist"));
     }
     void SubprocessWebElement::submit(const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during submit for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("submit for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(submit()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("submit"));
     }
     void SubprocessWebElement::style(const QString& text, const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during style for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("style for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(style()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("style", text));
     }
     void SubprocessWebElement::check(const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during check for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("check for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(check()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("check"));
     }
     void SubprocessWebElement::focus(const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during focus for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("focus for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(focus()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("focus"));
     }
     void SubprocessWebElement::set(const QString& text,const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during set for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("set for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(set()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("set",text));
     }
     void SubprocessWebElement::set_integer(int index,const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during set_integer for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("set_integer for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(set_integer()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("set_integer", QString::number(index)));
     }
     void SubprocessWebElement::set_random(const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during set_random for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("set_random for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(set_random()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("set_random"));
     }
     void SubprocessWebElement::attr(const QString& text,const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during attr for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("attr for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(attr()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("attr", text));
     }
     void SubprocessWebElement::set_attr(const QString& val,const QString& text,const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during set_attr for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("set_attr for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(set_attr()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("set_attr", val, text));
     }
@@ -393,7 +393,7 @@ namespace BrowserAutomationStudioFramework
     void SubprocessWebElement::length(const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during length for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("length for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(length()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("length"));
     }
@@ -419,14 +419,14 @@ namespace BrowserAutomationStudioFramework
     void SubprocessWebElement::render_file(const QString& path,const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during render_file for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("render_file for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(render_file()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("render_file", path));
     }
     void SubprocessWebElement::render_base64(const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));
-        Worker->SetFailMessage(QString("Timeout during render_base64 for") + GetSelectorString());
+        Worker->SetFailMessage(tr("Timeout during ") + QString("render_base64 for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(render_base64()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("render_base64"));
     }

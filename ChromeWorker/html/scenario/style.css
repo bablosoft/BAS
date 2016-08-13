@@ -295,3 +295,8 @@ label
 .main, #functions, .threads{
   -webkit-user-select: none; 
 }
+
+.nowrap
+{
+  white-space: nowrap;
+}

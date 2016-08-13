@@ -63,37 +63,54 @@ std::string JavaScriptExtensions::GetLanguage(const std::string& Language)
 }
 
 
-std::string JavaScriptExtensions::GetBasicExtension()
+std::string JavaScriptExtensions::GetBasicExtension(bool IsRecord)
 {
-    std::string additional;
-    try
-    {
-        std::ifstream ifs("html/main/css_path.js");
-        additional = std::string((std::istreambuf_iterator<char>(ifs)),(std::istreambuf_iterator<char>()));
-    }catch(...){}
-    worker_log(additional);
 
+    std::string additional;
+    if(IsRecord)
+    {
+        try
+        {
+            std::ifstream ifs("html/main/css_path.js");
+            additional = std::string((std::istreambuf_iterator<char>(ifs)),(std::istreambuf_iterator<char>()));
+        }catch(...){}
+        //worker_log(additional);
+    }
+
+    std::string inspect_script;
+
+    if(IsRecord)
+    {
+        inspect_script = std::string(
+        "var BrowserAutomationStudio_CssSelectorGenerator2 = new CssSelectorGenerator({selectors: ['tag', 'nthchild']});"
+        "var BrowserAutomationStudio_CssSelectorGenerator = new CssSelectorGenerator({selectors: ['id', 'tag', 'nthchild']});"
+        "var BrowserAutomationStudio_CssSelectorGenerator3 = new CssSelectorGenerator({selectors: ['id', 'class', 'tag', 'nthchild']});"
+        "function BrowserAutomationStudio_InspectElement(x,y)"
+        "{"
+            "var el = document.elementFromPoint(x,y);"
+            "if(el){"
+                "var rect = el.getBoundingClientRect();"
+                "var css = '';"
+                "var css2 = '';"
+                "var css3 = '';"
+                "var match = '';"
+                "try"
+                "{"
+                    "css = BrowserAutomationStudio_CssSelectorGenerator.getSelector(el);"
+                    "css2 = BrowserAutomationStudio_CssSelectorGenerator2.getSelector(el);"
+                    "css3 = BrowserAutomationStudio_CssSelectorGenerator3.getSelector(el);"
+                    "match = el.outerHTML.substr(0,40).replace(/(?:\\r\\n|\\r|\\n)/g, ' ');"
+                "}catch(e){}"
+                "browser_automation_studio_inspect_result(parseInt(rect.left),parseInt(rect.top),parseInt(rect.width),parseInt(rect.height),css,css,css2,css3,match,x + window.scrollX,y + window.scrollY,true);"
+            "}else{"
+                "browser_automation_studio_inspect_result(0,0,0,0,'','','','','',x,y,false);"
+            "}"
+        "}");
+    }
     return
     additional +
-    std::string(
-    "var BrowserAutomationStudio_CssSelectorGenerator = new CssSelectorGenerator();"
-    "function BrowserAutomationStudio_InspectElement(x,y)"
-    "{"
-        "var el = document.elementFromPoint(x,y);"
-        "if(el){"
-            "var rect = el.getBoundingClientRect();"
-            "var css = '';"
-            "var match = '';"
-            "try"
-            "{"
-                "css = BrowserAutomationStudio_CssSelectorGenerator.getSelector(el);"
-                "match = el.outerHTML.substr(0,40).replace(/(?:\\r\\n|\\r|\\n)/g, ' ');"
-            "}catch(e){}"
-            "browser_automation_studio_inspect_result(parseInt(rect.left),parseInt(rect.top),parseInt(rect.width),parseInt(rect.height),css,css,match,x + window.scrollX,y + window.scrollY,true);"
-        "}else{"
-            "browser_automation_studio_inspect_result(0,0,0,0,'','','',x,y,false);"
-        "}"
-    "}"
+    inspect_script
+     + std::string(
     "function BrowserAutomationStudio_ScrollTo(x,y,el)"
     "{"
         "x = Math.floor(x);y = Math.floor(y);"

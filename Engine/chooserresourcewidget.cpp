@@ -389,6 +389,8 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
             ui->formLayout_9->addRow(ui->label_36,ui->UrlRenewInterval);
 
         }
+        ui->label_13->setVisible(Visible);
+        ui->UrlMix->setVisible(Visible);
         ui->label_28->setVisible(Visible);
         ui->label_29->setVisible(Visible);
         ui->UrlReloadInterval->setVisible(Visible);
@@ -419,6 +421,18 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
     {
         if(!Visible)
         {
+            ui->formLayout_10->removeWidget(ui->label_16);
+            ui->formLayout_10->removeWidget(ui->DirectoryWildcard);
+            ui->formLayout_10->removeWidget(ui->label_14);
+            ui->formLayout_10->removeWidget(ui->DirectoryClean);
+            ui->formLayout_10->removeWidget(ui->label_15);
+            ui->formLayout_10->removeWidget(ui->DirectoryMix);
+            ui->formLayout_10->removeWidget(ui->label_6);
+            ui->formLayout_10->removeWidget(ui->DirectoryReload);
+            ui->formLayout_10->removeWidget(ui->label_30);
+            ui->formLayout_10->removeWidget(ui->DirectoryReloadInterval);
+
+
             ui->formLayout_10->removeWidget(ui->DirectoryMaxFail);
             ui->formLayout_10->removeWidget(ui->DirectoryMaxSimultaneous);
             ui->formLayout_10->removeWidget(ui->DirectoryMaxSuccess);
@@ -436,14 +450,31 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
             ui->formLayout_10->removeWidget(ui->label_34);
         }else
         {
-            ui->formLayout_10->insertRow(3,ui->label_113,ui->DirectoryMaxSuccess);
-            ui->formLayout_10->insertRow(4,ui->label_23,ui->DirectoryMaxFail);
-            ui->formLayout_10->insertRow(5,ui->label_24,ui->DirectoryMaxSimultaneous);
-            ui->formLayout_10->insertRow(6,ui->label_25,ui->DirectoryInterval);
-            ui->formLayout_10->insertRow(7,ui->label_32,ui->DirectoryGreedy);
+            ui->formLayout_10->insertRow(1,ui->label_16,ui->DirectoryWildcard);
+            ui->formLayout_10->insertRow(2,ui->label_14,ui->DirectoryClean);
+            ui->formLayout_10->insertRow(3,ui->label_15,ui->DirectoryMix);
+            ui->formLayout_10->insertRow(4,ui->label_113,ui->DirectoryMaxSuccess);
+            ui->formLayout_10->insertRow(5,ui->label_23,ui->DirectoryMaxFail);
+            ui->formLayout_10->insertRow(6,ui->label_24,ui->DirectoryMaxSimultaneous);
+            ui->formLayout_10->insertRow(7,ui->label_25,ui->DirectoryInterval);
+            ui->formLayout_10->insertRow(8,ui->label_32,ui->DirectoryGreedy);
+            ui->formLayout_10->insertRow(9,ui->label_6,ui->DirectoryReload);
+            ui->formLayout_10->insertRow(10,ui->label_30,ui->DirectoryReloadInterval);
             ui->formLayout_10->addRow(ui->label_33,ui->DirectoryRenew);
             ui->formLayout_10->addRow(ui->label_34,ui->DirectoryRenewInterval);
         }
+
+        ui->label_16->setVisible(Visible);
+        ui->DirectoryWildcard->setVisible(Visible);
+        ui->label_14->setVisible(Visible);
+        ui->DirectoryClean->setVisible(Visible);
+        ui->label_15->setVisible(Visible);
+        ui->DirectoryMix->setVisible(Visible);
+        ui->label_6->setVisible(Visible);
+        ui->DirectoryReload->setVisible(Visible);
+        ui->label_30->setVisible(Visible);
+        ui->DirectoryReloadInterval->setVisible(Visible);
+
 
         ui->label_113->setVisible(Visible);
         ui->label_23->setVisible(Visible);
@@ -461,7 +492,10 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
         ui->label_34->setVisible(Visible);
 
         if(Visible)
+        {
             on_DirectoryRenew_toggled(ui->DirectoryRenew->isChecked());
+            on_DirectoryReload_toggled(ui->DirectoryReload->isChecked());
+        }
     }
 
 

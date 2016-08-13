@@ -12,7 +12,7 @@ settings::settings()
     use_flash = false;
     force_utf8 = true;
     skip_frames = 74;
-    toolbox_height = 221;
+    toolbox_height = 250;
     scenario_width = 500;
     zoom = 100;
     maximized = false;

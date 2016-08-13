@@ -21,6 +21,7 @@ public:
     std::vector<std::function<void(const std::string&, const std::string&)> > EventAddHeader;
     std::vector<std::function<void(const std::string&)> > EventSetUserAgent;
     std::vector<std::function<void(const std::string&)> > EventSetOpenFileName;
+    std::vector<std::function<void(const std::string&)> > EventSetStartupScript;
     std::vector<std::function<void(const std::string&)> > EventSetPromptResult;
     std::vector<std::function<void(const std::string&,const std::string&)> > EventSetHttpAuthResult;
 

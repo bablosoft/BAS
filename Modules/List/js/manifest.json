@@ -1,0 +1,225 @@
+{
+	
+	"name":"List",
+	"description":"Improved list support",
+	"description_small":{"en": "List", "ru": "Список"},
+	"major_version": 1,
+	"minor_version": 0,
+	"developer_name": "bablosoft", 
+	"developer_email": "mail.to.twaego@gmail.com", 
+	"developer_site": "https://bablosoft.com",
+	"api_version": 1,
+	"actions":
+	[
+
+		{
+			"name":"CreateList",
+			"description":{"en": "Create List","ru": "Создать Список"},
+			"is_element": false,
+			"interface": "create_list_interface.js",
+			"select": "create_list_select.js",
+			"code": [{"file":"create_list_code.js", "name": "create_list_code"}]
+		},
+		{
+			"name":"AddElement",
+			"description":{"en": "Add Element","ru": "Добавить Элемент"},
+			"is_element": false,
+			"interface": "add_element_to_list_interface.js",
+			"select": "add_element_to_list_select.js",
+			"code": [{"file":"add_element_to_list_code.js", "name": "add_element_to_list_code"}]
+		},
+		{
+			"name":"GetElementByIndex",
+			"description":{"en": "Get Element","ru": "Получить Элемент"},
+			"is_element": false,
+			"interface": "get_list_element_by_index_interface.js",
+			"select": "get_list_element_by_index_select.js",
+			"code": [{"file":"get_list_element_by_index_code.js", "name": "get_list_element_by_index_code"}]
+		},
+		{
+			"name":"FirstListElement",
+			"description":{"en": "First Element","ru": "Первый Элемент"},
+			"is_element": false,
+			"interface": "first_list_element_interface.js",
+			"select": "first_list_element_select.js",
+			"code": [{"file":"first_list_element_code.js", "name": "first_list_element_code"}]
+		},
+		{
+			"name":"LastListElement",
+			"description":{"en": "Last Element","ru": "Последний Элемент"},
+			"is_element": false,
+			"interface": "last_list_element_interface.js",
+			"select": "last_list_element_select.js",
+			"code": [{"file":"last_list_element_code.js", "name": "last_list_element_code"}]
+		},
+		{
+			"name":"RandomListElement",
+			"description":{"en": "Random Element","ru": "Случайный Элемент"},
+			"is_element": false,
+			"interface": "random_list_element_interface.js",
+			"select": "random_list_element_select.js",
+			"code": [{"file":"random_list_element_code.js", "name": "random_list_element_code"}]
+		},
+		{
+			"name":"InsertElement",
+			"description":{"en": "Insert Element","ru": "Вставить Элемент"},
+			"is_element": false,
+			"interface": "insert_element_to_list_interface.js",
+			"select": "insert_element_to_list_select.js",
+			"code": [{"file":"insert_element_to_list_code.js", "name": "insert_element_to_list_code"}]
+		},
+		{
+			"name":"ListSetElement",
+			"description":{"en": "Set Element","ru": "Установить Элемент"},
+			"is_element": false,
+			"interface": "list_set_element_interface.js",
+			"select": "list_set_element_select.js",
+			"code": [{"file":"list_set_element_code.js", "name": "list_set_element_code"}]
+		},
+		{
+			"name":"DeleteByIndex",
+			"description":{"en": "Delete By Index","ru": "Удалить По Индексу"},
+			"is_element": false,
+			"interface": "delete_by_index_interface.js",
+			"select": "delete_by_index_select.js",
+			"code": [{"file":"delete_by_index_code.js", "name": "delete_by_index_code"}]
+		},
+		{
+			"name":"DeleteByValue",
+			"description":{"en": "Delete By Value","ru": "Удалить По Значению"},
+			"is_element": false,
+			"interface": "delete_by_value_interface.js",
+			"select": "delete_by_value_select.js",
+			"code": [{"file":"delete_by_value_code.js", "name": "delete_by_value_code"}]
+		},
+		{
+			"name":"ListLength",
+			"description":{"en": "Element Number","ru": "Количество Элементов"},
+			"is_element": false,
+			"interface": "list_length_interface.js",
+			"select": "list_length_select.js",
+			"code": [{"file":"list_length_code.js", "name": "list_length_code"}]
+		},
+		{
+			"name":"ListContains",
+			"description":{"en": "Contains","ru": "Содержит"},
+			"is_element": false,
+			"interface": "list_contains_interface.js",
+			"select": "list_contains_select.js",
+			"code": [{"file":"list_contains_code.js", "name": "list_contains_code"}]
+		},
+		{
+			"name":"Sublist",
+			"description":{"en": "Sublist","ru": "Подсписок"},
+			"is_element": false,
+			"interface": "sublist_interface.js",
+			"select": "sublist_select.js",
+			"code": [{"file":"sublist_code.js", "name": "sublist_code"}]
+		},
+		{
+			"name":"RemoveListPart",
+			"description":{"en": "Remove Part","ru": "Удалить Часть"},
+			"is_element": false,
+			"interface": "remove_list_part_interface.js",
+			"select": "remove_list_part_select.js",
+			"code": [{"file":"remove_list_part_code.js", "name": "remove_list_part_code"}]
+		},
+		{
+			"name":"RemoveDuplicates",
+			"description":{"en": "Remove Duplicates","ru": "Удалить Дубликаты"},
+			"is_element": false,
+			"interface": "remove_duplicates_interface.js",
+			"select": "remove_duplicates_select.js",
+			"code": [{"file":"remove_duplicates_code.js", "name": "remove_duplicates_code"}]
+		},
+		{
+			"name":"ListJoin",
+			"description":{"en": "Join To String","ru": "Объединить в строку"},
+			"is_element": false,
+			"interface": "join_list_interface.js",
+			"select": "join_list_select.js",
+			"code": [{"file":"join_list_code.js", "name": "join_list_code"}]
+		},
+		{
+			"name":"ParseStringToList",
+			"description":{"en": "Parse String","ru": "Парсить Строку"},
+			"is_element": false,
+			"interface": "parse_string_to_list_interface.js",
+			"select": "parse_string_to_list_select.js",
+			"code": [{"file":"parse_string_to_list_code.js", "name": "parse_string_to_list_code"}]
+		},
+		{
+			"name":"GetElementIndex",
+			"description":{"en": "Get Index","ru": "Получить Индекс"},
+			"is_element": false,
+			"interface": "get_index_from_list_interface.js",
+			"select": "get_index_from_list_select.js",
+			"code": [{"file":"get_index_from_list_code.js", "name": "get_index_from_list_code"}]
+		},
+		{
+			"name":"CopyList",
+			"description":{"en": "Copy List","ru": "Копировать Список"},
+			"is_element": false,
+			"interface": "list_copy_interface.js",
+			"select": "list_copy_select.js",
+			"code": [{"file":"list_copy_code.js", "name": "list_copy_code"}]
+		},
+		{
+			"name":"ListSort",
+			"description":{"en": "Sort","ru": "Сортировать"},
+			"is_element": false,
+			"interface": "list_sort_interface.js",
+			"select": "list_sort_select.js",
+			"code": [{"file":"list_sort_code.js", "name": "list_sort_code"}]
+		},
+		{
+			"name":"ShuffleList",
+			"description":{"en": "Shuffle List","ru": "Перемешать Список"},
+			"is_element": false,
+			"interface": "list_shuffle_interface.js",
+			"select": "list_shuffle_select.js",
+			"code": [{"file":"list_shuffle_code.js", "name": "list_shuffle_code"}]
+		},
+		{
+			"name":"ListMerge",
+			"description":{"en": "Merge Lists","ru": "Объединить Списки"},
+			"is_element": false,
+			"interface": "list_merge_interface.js",
+			"select": "list_merge_select.js",
+			"code": [{"file":"list_merge_code.js", "name": "list_merge_code"}]
+		},
+		{
+			"name":"ListCompare",
+			"description":{"en": "Compare Lists","ru": "Сравнить Списки"},
+			"is_element": false,
+			"interface": "list_compare_interface.js",
+			"select": "list_compare_select.js",
+			"code": [{"file":"list_compare_code.js", "name": "list_compare_code"}]
+		}
+	],
+	"localize": 
+	{
+		"Variable To Save List" : {"ru": "Переменная для сохранения списка"},
+		"Value 1. Can be empty" : {"ru": "Значение 1. Может быть пустым"},
+		"Value 2. Can be empty" : {"ru": "Значение 2. Может быть пустым"},
+		"Value 3. Can be empty" : {"ru": "Значение 3. Может быть пустым"},
+		"Value to add" : {"ru": "Значение для добавления"},
+		"Index" : {"ru": "Индекс"},
+		"Variable With List" : {"ru": "Переменная, содержащая список"},
+		"Variable To Save Length" : {"ru": "Переменная Которая Будет Содержать Количество Элементов"},
+		"Start Index" : {"ru": "Начальный Индекс"},
+		"End Index" : {"ru": "Конечный Индекс"},
+		"New List" : {"ru": "Новый Список"},
+		"Separator" : {"ru": "Разделитель"},
+		"String To Parse" : {"ru": "Строка Для Парсинга"},
+		"Result List" : {"ru": "Результат В Виде Списка"},
+		"Remove From List" : {"ru": "Удалить Из Списка"},
+		"List Element" : {"ru": "Элемент Списка"},
+		"List To Merge" : {"ru": "Список Для Объединения"},
+		"List To Compare" : {"ru": "Список Для Сравнения"}
+	},
+	"engine": [],
+	"browser": [],
+	"depends": []	
+}
+

@@ -5,6 +5,12 @@ function _stop_subscript_execution()
 
 function fail(text)
 {
+    /*var c = CYCLES.Current()
+    if(c)
+        ScriptWorker.SetFailFunction(c.OnFail);
+    else
+        ScriptWorker.SetFailFunction("");*/
+
     ScriptWorker.Fail(text);
 }
 
@@ -15,6 +21,12 @@ function die(text)
 
 function success(text)
 {
+    /*var c = CYCLES.Current()
+    if(c)
+        ScriptWorker.SetSuccessFunction(c.OnSuccess);
+    else
+        ScriptWorker.SetSuccessFunction("");*/
+
     ScriptWorker.Success(text);
 }
 

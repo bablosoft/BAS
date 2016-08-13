@@ -70,10 +70,12 @@ bool V8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> object, con
 
         _InspectResult.label = arguments[4]->GetStringValue().ToString();
         _InspectResult.css = arguments[5]->GetStringValue().ToString();
-        _InspectResult.match = arguments[6]->GetStringValue().ToString();
-        _InspectResult.mousex = arguments[7]->GetIntValue();
-        _InspectResult.mousey = arguments[8]->GetIntValue();
-        _InspectResult.active = arguments[9]->GetBoolValue();
+        _InspectResult.css2 = arguments[6]->GetStringValue().ToString();
+        _InspectResult.css3 = arguments[7]->GetStringValue().ToString();
+        _InspectResult.match = arguments[8]->GetStringValue().ToString();
+        _InspectResult.mousex = arguments[9]->GetIntValue();
+        _InspectResult.mousey = arguments[10]->GetIntValue();
+        _InspectResult.active = arguments[11]->GetBoolValue();
 
         ChangedInspect = true;
     }

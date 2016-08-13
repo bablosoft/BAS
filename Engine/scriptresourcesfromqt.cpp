@@ -19,6 +19,7 @@ namespace BrowserAutomationStudioFramework
         QFile f(res);
         if (!f.open(QFile::ReadOnly | QFile::Text)) return QString();
         QTextStream in(&f);
+        in.setCodec("UTF-8");
         QString ret = in.readAll();
         f.close();
         return ret;
@@ -41,6 +42,8 @@ namespace BrowserAutomationStudioFramework
     QList<QString> ScriptResourcesFromQt::GetEngineScripts()
     {
         QList<QString> res;
+        res.append(GetFromRes(":/engine/scripts/engine/worker/template.js"));
+        res.append(GetFromRes(":/engine/scripts/engine/worker/translate.js"));
         res.append(GetFromRes(":/engine/scripts/engine/common/cycles.js"));
         res.append(GetFromRes(":/engine/scripts/engine/common/memory.js"));
         res.append(GetFromRes(":/engine/scripts/engine/common/html_parser.js"));

@@ -1,7 +1,7 @@
 # Browser Automation Studio
 Stop paying to developers! With BrowserAutomationStudio you can create rich and powerfull network applications with no coding skills!
 
-![Bas Interface](https://bablosoft.com/uploads/BasInterface14.png)
+![Bas Interface](https://bablosoft.com/uploads/BasInterface15.png)
 ![Visual Editor](https://bablosoft.com/uploads/ExpressionEditorEn.png)
 
 

@@ -1,3 +1,6 @@
+VAR_WAS_ERROR = false;
+VAR_LAST_ERROR = "";
+
 function _ensure_browser_created()
 {
     if(typeof(NetworkAccessManager)=='undefined')
@@ -64,7 +67,7 @@ function load(text, callback)
 {
     _ensure_browser_created();
     LOAD_TEXT = text;
-    Browser.LoadPage(text,"if(_result() == false){fail('Failed to load page ' + LOAD_TEXT)};" + _get_function_body(callback));
+    Browser.LoadPage(text,"if(_result() == false){fail(tr('Failed to load page ') + LOAD_TEXT)};" + _get_function_body(callback));
 }
 
 function open_file_dialog(text, callback)
@@ -289,6 +292,12 @@ function script(text, callback)
     page().script(text,callback);
 }
 
+function onloadjavascript(text, callback)
+{
+    _ensure_browser_created();
+    Browser.SetStartupScript(text,_get_function_body(callback));
+}
+
 function agent(text, callback)
 {
     _ensure_browser_created();
@@ -410,11 +419,13 @@ function clear_on_success()
     ScriptWorker.SetSuccessFunction("");
 }
 
-
 function _on_fail(callback)
 {
     var label = rand()
     _set_label(label)
+    var c = CYCLES.Current()
+    if(c)
+        c.OnFail = "_rewind('" + label + "');" + _get_function_body(callback)
     ScriptWorker.SetFailFunction("_rewind('" + label + "');" + _get_function_body(callback));
 }
 
@@ -439,6 +450,10 @@ function _finnaly(callback)
 
 function _clear_on_fail()
 {
+    var c = CYCLES.Current()
+    if(c)
+        c.OnFail = ""
+
     ScriptWorker.SetFailFunction("");
 }
 
@@ -446,11 +461,18 @@ function _on_success(callback)
 {
     var label = rand()
     _set_label(label)
+    var c = CYCLES.Current()
+    if(c)
+        c.OnSuccess = "_rewind('" + label + "');" + _get_function_body(callback)
     ScriptWorker.SetSuccessFunction("_rewind('" + label + "');" + _get_function_body(callback));
 }
 
 function _clear_on_success()
 {
+    var c = CYCLES.Current()
+    if(c)
+        c.OnSuccess = ""
+
     ScriptWorker.SetSuccessFunction("");
 }
 
@@ -529,4 +551,9 @@ function async_load_timeout(timeout)
 function solver_timeout(timeout)
 {
     ScriptWorker.SetSolverWaitTimeout(timeout);
+}
+
+function _preprocess(script)
+{
+    return ScriptWorker.Preprocess(script);
 }

@@ -194,6 +194,7 @@ namespace BrowserAutomationStudioFramework
 
     signals:
     public slots:
+        QString Preprocess(const QString& script);
         virtual void Fail(const QString& message);
         void SetMaxFail(int MaxFail);
         virtual void Die(const QString& message);

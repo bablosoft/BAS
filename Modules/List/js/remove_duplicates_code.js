@@ -1,0 +1,1 @@
+<%= variable %> = (function(){var seen = {}; return (<%= variable %>).filter(function(item) { return seen.hasOwnProperty(item) ? false : (seen[item] = true); });})();

@@ -236,6 +236,7 @@ namespace BrowserAutomationStudioFramework
                    EngineResourceStringBox * n = new EngineResourceStringBox(EngineRes);
                    n->SetInfo("Type",m->GetTypeId());
                    n->SetInfo("FileName",r->GetFilename());
+                   n->SetInfo("Location",r->GetFilename());
                    n->SetInfo("SuccessAttempts",QString::number(r->GetSuccessAttempts()));
                    n->SetInfo("FailAttempts",QString::number(r->GetFailAttempts()));
 
@@ -338,6 +339,7 @@ namespace BrowserAutomationStudioFramework
                    n->SetInfo("Type",m->GetTypeId());
 
                    n->SetInfo("Url",r->GetUrl());
+                   n->SetInfo("Location",r->GetUrl());
                    n->SetInfo("SuccessAttempts",QString::number(r->GetSuccessAttempts()));
                    n->SetInfo("FailAttempts",QString::number(r->GetFailAttempts()));
 
@@ -398,6 +400,7 @@ namespace BrowserAutomationStudioFramework
                    EngineResourceStringBox * n = new EngineResourceStringBox(EngineRes);
                    n->SetInfo("Type",m->GetTypeId());
                    n->SetInfo("Directory",r->GetDirectory());
+                   n->SetInfo("Location",r->GetDirectory());
                    n->SetInfo("SuccessAttempts",QString::number(r->GetSuccessAttempts()));
                    n->SetInfo("FailAttempts",QString::number(r->GetFailAttempts()));
 

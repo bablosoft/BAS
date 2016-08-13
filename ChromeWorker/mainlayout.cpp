@@ -48,7 +48,7 @@ MainLayout::MainLayout(int ToolboxHeight, int ScenarioWidth)
     State = Hold;
 
     DevToolsRectWidth = (ScenarioWidth == 0)?500:ScenarioWidth;
-    ToolBoxRectHeight = (ToolboxHeight == 0)?221:ToolboxHeight;
+    ToolBoxRectHeight = (ToolboxHeight == 0)?250:ToolboxHeight;
 
     LastTimeChangedHoldPicture = 0;
     HoldAnimation = 0;
