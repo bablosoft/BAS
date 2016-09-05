@@ -248,6 +248,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionEdit_Schema,SIGNAL(triggered()),this,SLOT(EditSchema()));
     connect(ui->actionDelete_Schema,SIGNAL(triggered()),this,SLOT(DeleteSchema()));
     connect(ui->actionModules_Manager,SIGNAL(triggered()),this,SLOT(ShowModuleManager()));
+    connect(ui->actionRegexp_Constructor,SIGNAL(triggered()),this,SLOT(RegexpConstructor()));
 
     connect(TrayNotifier,SIGNAL(Show()),this,SLOT(show()));
     QMenu *Menu = new QMenu(this);
@@ -449,6 +450,12 @@ void MainWindow::AboutEngine()
     VersionInfo info;
     info.SetServerName(Server);
     info.ShowAboutWindow();
+}
+
+void MainWindow::RegexpConstructor()
+{
+    QString Regexp = Settings->value("RegexpConstructor","https://bablosoft.github.io/RegexpConstructor/").toString();
+    QDesktopServices::openUrl(QUrl(Regexp));
 }
 
 void MainWindow::ShowModuleManager()

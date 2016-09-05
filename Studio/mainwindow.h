@@ -175,6 +175,7 @@ private slots:
     void ChooseLogLocation();
 
     void AboutEngine();
+    void RegexpConstructor();
     void ShowModuleManager();
     void SetDefaultText();
 

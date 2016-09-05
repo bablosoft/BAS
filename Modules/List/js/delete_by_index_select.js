@@ -16,6 +16,6 @@ if(Variable.length == 0)
 try{
   var code = loader.GetAdditionalData() + _.template($("#delete_by_index_code").html())({variable:"VAR_" + Variable,index: Value["updated"]})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("Delete by index from " + Variable, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {}

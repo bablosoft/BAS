@@ -32,6 +32,8 @@ public:
     std::vector<std::function<void(int, int)> > EventScroll;
     std::vector<std::function<void(int, int, int, int)> > EventRender;
     std::vector<std::function<void(int, int)> > EventMouseMove;
+    std::vector<std::function<void(int)> > EventPopupClose;
+    std::vector<std::function<void(int)> > EventPopupSelect;
     std::vector<std::function<void()> > EventCleanHeader;
     std::vector<std::function<void(const std::string&)> > EventGetCookiesForUrl;
     std::vector<std::function<void()> > EventSaveCookies;

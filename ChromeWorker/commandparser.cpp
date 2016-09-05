@@ -270,6 +270,25 @@ void CommandParser::Parse(const std::string& Xml)
             }
         }
 
+
+        CommandNode = MessagesNode->first_node("PopupClose");
+        if(CommandNode)
+        {
+            std::string value = CommandNode->value();
+            worker_log("PopupClose");
+            for(auto f:EventPopupClose)
+                f(std::stoi(value));
+        }
+
+        CommandNode = MessagesNode->first_node("PopupSelect");
+        if(CommandNode)
+        {
+            std::string value = CommandNode->value();
+            worker_log("PopupSelect");
+            for(auto f:EventPopupSelect)
+                f(std::stoi(value));
+        }
+
         CommandNode = MessagesNode->first_node("MouseMove");
         if(CommandNode)
         {

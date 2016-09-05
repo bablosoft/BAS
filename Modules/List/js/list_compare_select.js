@@ -24,6 +24,6 @@ if(Result.length == 0)
 try{
   var code = loader.GetAdditionalData() + _.template($("#list_compare_code").html())({variable:"VAR_" + Variable,variable_second:"VAR_" + VariableSecond, result: "VAR_" + Result})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("Compare " + Variable + " and " + VariableSecond, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {}

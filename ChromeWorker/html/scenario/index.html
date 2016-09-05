@@ -69,8 +69,8 @@
     <div class="threads" >
       <div class="text-center toolbox" style="width:50%; float:left">
         <i class="fa fa-play-circle-o action-button text-success <%= (global["isscriptexecuting"] || global.execute_next_id == 1) ? "actionbuttongray" : "" %>" id="play"></i>
-        <i class="fa fa-step-forward action-button text-warning <%= (global["isscriptexecuting"] || global.execute_next_id == 1) ? "actionbuttongray" : "" %>" id="stepnext"></i>
-        <i class="fa fa-pause-circle-o action-button text-info <%= (global["isscriptexecuting"]) ? "" : "actionbuttongray" %>" id="pause"></i>
+        <i class="fa fa-step-forward action-button text-warning <%= (global["isscriptexecuting"] || global.execute_next_id == 1) ? "actionbuttongray2" : "" %>" id="stepnext"></i>
+        <i class="fa fa-pause-circle-o action-button text-info <%= (global["isscriptexecuting"]) ? "" : ((global["isscriptexecuting"] || global.execute_next_id == 1) ? "actionbuttongray" : "actionbuttongray2") %>" id="pause"></i>
         <i class="fa fa-stop-circle-o  action-button text-danger" id="stop"></i>
         <i class="fa fa-repeat action-button text-info" id="restart"></i>
 
@@ -145,11 +145,17 @@
                 <div class="toolinsert toolinsertdata <%= (global.insert_index == -index && global.insert_parent == task.parentid || global.insert_index == 0 && (parseInt(task["id"]) == parseInt(GetFirstNotFunctionId())) ) ? "toolselected":"" %>" data-insert-index="-<%= index %>" data-insert-parent="<%= task.parentid %>"></div>
               <% } %>
               <div class=" <%= (task.donotexecuteduringrecord)? "notactive" : "" %> tool <%= (index==0)? "toolmenufirst" : (AllowToExecuteOnce(task["id"]) ? "toolmenuextended" : "toolmenu") %> <%= ((parseInt(task["id"]) == parseInt(GetFirstNotFunctionId()) && global.execute_next_id == 0 || global.execute_next_id == task.id) && index != 0)? "toolexecutecurrent" : "toolnotexecute" %>" data-index="<%= index %>">
-                <span class="executing"><i class="fa fa-share"></i></span>
-                <% if(task.is_selected){ %>
-                  <i class="fa fa-check-square-o selected"></i>
-                <% } %>
-                <%= _.escape(max_length(task.name,40)) %>
+                <div class="tooltitle <%= prepare_styles(task.code,task.name) %>"><%= prepare_title(task.code,task.name) %></div>
+
+                <div class="titlebody">
+                  <% if(task["id"]!=0){ %>
+                    <span class="executing"><i class="fa fa-share"></i></span>
+                  <% } %>
+                  <% if(task.is_selected){ %>
+                    <i class="fa fa-check-square-o selected"></i>
+                  <% } %>
+                  <%= prepare_body(task.code,task.name) %>
+                </div>
               </div>
 
               <% if(NeedToShowLowerInsert(index)){ %>
@@ -213,9 +219,14 @@
   <script src="bootstrap.min.js"></script>
   <script src="context.js"></script>
   <script src="bootbox.min.js"></script>
+  <script src="../actions/actions.js"></script>
   <script src="translate.js"></script>
   <script src="undo.js"></script>
   <script src="jsontree.js"></script>
+
+  <script type="text/javascript"> _L = $.extend(_L, _AL)</script>
+  <script type="text/javascript"> _MACRO_INSERT_LOCALIZE_ </script>
+  <script type="text/javascript"> _MACRO_INSERT_ACTIONS_ </script>
 
 
   <!-- ========= -->
@@ -276,6 +287,7 @@
       currentFuncName: "",
 
       events: {
+        "click .executing": "moveexecutionpointfast",
         "mousedown .tool": "mousedowntool",
         "click .resok": "taskedit",
         "hidden.bs.modal #editmodal": "taskcancel",
@@ -301,8 +313,28 @@
         "click #thread-number-edit": "threadnumberedit",
         "click #success-number-edit": "successnumberedit",
         "click #fail-number-edit": "failnumberedit",
-        "click #closevariableinspector": "closevariableinspector", 
+        "click #closevariableinspector": "closevariableinspector"
       },
+
+      moveexecutionpointfast: function(event)
+      {
+        if(_GobalModel.get("isscriptexecuting"))
+            return;
+
+        var task = this.collection.at(parseInt($(event.target).closest("*[data-index]").attr("data-index")));
+
+        if(task && task.get("id") != this.model.get("execute_next_id"))
+        {
+          var second_line = "section_start(\"test\", " + task.get("id") + ")!"
+          var code = "_kill_call_stack()" + "\n" + second_line
+
+          BrowserAutomationStudio_Execute(code)
+        }
+
+        
+        event.preventDefault();
+      },
+
 
       threadnumberedit: function(event)
       {
@@ -517,8 +549,13 @@
         this.play()
       },
 
-      pause: function()
+      pause: function(event)
       {
+        if($("#pause").hasClass("actionbuttongray"))
+        {
+          event.preventDefault();
+          return;
+        }
         this.model.set("isscriptexecuting", false)
       },
 
@@ -532,8 +569,13 @@
         BrowserAutomationStudio_Restart(true);
       },
 
-      play: function()
+      play: function(event)
       {
+        if($("#play").hasClass("actionbuttongray"))
+        {
+          event.preventDefault();
+          return;
+        }
         this.model.set("isscriptexecuting", true)
         if(!this.model.get("istaskexecuting"))
         {
@@ -575,23 +617,36 @@
         this.send()
       },
 
-
-
       mousedowntool: function(e){
-        if($(e.target).attr("data-index") == 0)
+        if(!!$('.executing').filter(function() { return $(this).is(":hover"); }).length)
+        {
+          return
+        }
+        if($(e.target).closest("*[data-index]").attr("data-index") == 0)
         {
           $("#editmodal input,#editmodal textarea").attr("readonly","readonly")
         }else
         {
           $("#editmodal input,#editmodal textarea").removeAttr("readonly")
         }
-        if( e.button == 2 ) {
-          this.currentTargetId = parseInt($(e.target).attr("data-index"))
-        }else if(e.button == 0)
+        if($(e.target).closest("*[data-index]").attr("data-index") != 0)
         {
-          this.currentTargetId = parseInt($(e.target).attr("data-index"))
-          if(this.currentTargetId != 0)
+          if( e.button == 2 ) {
+            this.currentTargetId = parseInt($(e.target).closest("*[data-index]").attr("data-index"))
+          }else if(e.button == 0)
+          {
+            this.currentTargetId = parseInt($(e.target).closest("*[data-index]").attr("data-index"))
             this.ToggleSelection()
+
+            var now = Date.now()
+            if(now - BrowserAutomationStudio_DoubleClickTime < 500 && BrowserAutomationStudio_DoubleClickId == this.currentTargetId)
+            {
+                this.Edit()
+            }
+            BrowserAutomationStudio_DoubleClickId = this.currentTargetId
+            BrowserAutomationStudio_DoubleClickTime = Date.now()
+
+          }
         }
       },
 
@@ -1067,8 +1122,8 @@
 
       Edit: function(){
         this.isEdit = true
-        $("#TaskName").val(this.collection.at(this.currentTargetId).get("name"))
         var code = this.collection.at(this.currentTargetId).get("code")
+        $("#TaskName").val(prepare_edit_body(code, this.collection.at(this.currentTargetId).get("name")))
 
 
         $("#TaskDontRunWhenRecording").prop('checked', this.collection.at(this.currentTargetId).get("donotexecuteduringrecord"))
@@ -1265,6 +1320,9 @@
         })
     });
 
+
+    var BrowserAutomationStudio_DoubleClickId = -1
+    var BrowserAutomationStudio_DoubleClickTime = 0
 
     /*
          =========
@@ -2121,7 +2179,7 @@
     function BrowserAutomationStudio_Parse(Code)
     {
 
-      var RegexpStart = new RegExp("section_start\\(\\s*\\\"([^\\\"]+)\\\"\\s*\\,\\s*(\\-?\\d*)\\)\\!")
+      var RegexpStart = new RegExp("section_start\\(\\s*\\\"([^\\\"]*)\\\"\\s*\\,\\s*(\\-?\\d*)\\)\\!")
       var RegexpInsert = new RegExp("section_insert\\(\\)")
       var RegexpEnd = new RegExp("section_end\\(\\)\\!")
       var RegexpThreadNumber = new RegExp("section\\(\\s*([^\\s\\,]+)\\s*(\\/\\*([^\\*]*))?")
@@ -2764,18 +2822,9 @@
 
 
 
-    function max_length(data,len)
-    {
-      var res = data
-      if(res.length > len)
-      {
-        res = res.substr(0,len - 4)
-        res+=" ..."
-      }
-      return res
+    
 
-    }
-
+    
   </script>
 
 </body>

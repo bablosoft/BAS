@@ -20,7 +20,7 @@ if(Value["original"].length <= 0)
  try{
   var code = loader.GetAdditionalData() + _.template($('#writefile_code').html())({path:File["updated"],value:Value["updated"],append:append,base64:base64,eol:eol})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("Write file " + File["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {
 }

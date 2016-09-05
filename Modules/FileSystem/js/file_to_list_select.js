@@ -16,6 +16,6 @@ if(Value["original"].length == 0)
  try{
   var code = loader.GetAdditionalData() + _.template($("#file_to_list_code").html())({variable:"VAR_" + Save,value: Value["updated"]})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("Read file to " + Save + " list", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {}

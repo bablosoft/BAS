@@ -5,6 +5,7 @@
 #include "include/wrapper/cef_helpers.h"
 #include "match.h"
 #include "multithreading.h"
+#include "startwith.h"
 
 using namespace std::placeholders;
 
@@ -149,6 +150,12 @@ CefRefPtr<CefResourceHandler> MainHandler::GetResourceHandler(CefRefPtr<CefBrows
     {
         return 0;
     }
+
+    if(starts_with(url,"chrome-extension:"))
+    {
+        return 0;
+    }
+
     CurlResourceHandler* h = new CurlResourceHandler(Data);
     h->SetForceUtf8(Settings->ForceUtf8());
 

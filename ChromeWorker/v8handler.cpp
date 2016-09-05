@@ -5,6 +5,7 @@ V8Handler::V8Handler()
 {
     Changed = false;
     ChangedInspect = false;
+    ChangedLocalStorage = false;
 }
 
 std::pair<std::string,bool> V8Handler::GetResult()
@@ -15,6 +16,17 @@ std::pair<std::string,bool> V8Handler::GetResult()
     r.first = Result;
     r.second = Changed;
     //Changed = false;
+    return r;
+}
+
+std::pair<std::string,bool> V8Handler::GetLocalStorage()
+{
+    std::lock_guard<std::mutex> lock(mut_local_storage);
+
+    std::pair<std::string,bool> r;
+    r.first = NewLocalStorage;
+    r.second = ChangedLocalStorage;
+    ChangedLocalStorage = false;
     return r;
 }
 
@@ -37,6 +49,7 @@ std::pair<InspectResult,bool> V8Handler::GetInspectResult()
     ChangedInspect = false;
     return r;
 }
+
 
 
 bool V8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> object, const CefV8ValueList& arguments, CefRefPtr<CefV8Value>& retval, CefString& exception)
@@ -78,6 +91,14 @@ bool V8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> object, con
         _InspectResult.active = arguments[11]->GetBoolValue();
 
         ChangedInspect = true;
+    }else if(name == std::string("BrowserAutomationStudio_SaveLocalStorage"))
+    {
+        if (arguments.size() == 1 && arguments[0]->IsString())
+        {
+            std::lock_guard<std::mutex> lock(mut_local_storage);
+            NewLocalStorage = arguments[0]->GetStringValue().ToString();
+            ChangedLocalStorage = true;
+        }
     }
     return true;
 }

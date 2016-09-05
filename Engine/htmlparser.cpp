@@ -46,8 +46,81 @@ namespace BrowserAutomationStudioFramework
         Page.clear();
     }
 
+    QStringList HtmlParser::XpathXmlList(const QString& query)
+    {
+        if(NeedParse)
+            ParseInternal();
 
+        QStringList res;
+        xmlXPathContextPtr context = xmlXPathNewContext ( htmlDoc );
+        xmlXPathObjectPtr result = xmlXPathEvalExpression ((xmlChar*) query.toUtf8().constData(), context);
 
+        xmlXPathFreeContext(context);
+        if (result == NULL) {
+
+        }
+        else {
+            xmlNodeSetPtr nodeSet = result->nodesetval;
+            if ( !xmlXPathNodeSetIsEmpty ( nodeSet ) ) {
+                for (int i = 0; i < nodeSet->nodeNr; i++ ) {
+                    xmlNodePtr  nodePtr;
+                    nodePtr = nodeSet->nodeTab[i];
+                    if(nodePtr && nodePtr->type == XML_ATTRIBUTE_NODE && nodePtr->children && nodePtr->children->content)
+                    {
+                        QString xml = QString::fromUtf8((char*)nodePtr->children->content);
+                        res.append(xml);
+                        //break;
+                    }else
+                    {
+                        xmlBufferPtr buffer = xmlBufferCreate();
+                            xmlNodeDump(buffer,htmlDoc,nodePtr,10,1);
+                            res.append(QString::fromUtf8((char*)buffer->content));
+                        xmlBufferFree(buffer);
+                        //break;
+                    }
+                }
+            }
+        }
+
+        xmlXPathFreeObject (result);
+
+        return res;
+    }
+
+    QStringList HtmlParser::XpathTextList(const QString& query)
+    {
+        if(NeedParse)
+            ParseInternal();
+
+        QStringList res;
+        xmlXPathContextPtr context = xmlXPathNewContext ( htmlDoc );
+        xmlXPathObjectPtr result = xmlXPathEvalExpression ((xmlChar*) query.toUtf8().constData(), context);
+
+        xmlXPathFreeContext(context);
+        if (result == NULL) {
+
+        }
+        else {
+            xmlNodeSetPtr nodeSet = result->nodesetval;
+            if ( !xmlXPathNodeSetIsEmpty ( nodeSet ) ) {
+                for (int i = 0; i < nodeSet->nodeNr; i++ ) {
+                    xmlNodePtr  nodePtr;
+                    nodePtr = nodeSet->nodeTab[i];
+                    if(nodePtr)
+                    {
+                        QString r;
+                        RecursiveGetText(nodePtr,&r);
+                        res.append(r);
+                        //break;
+                    }
+                }
+            }
+        }
+
+        xmlXPathFreeObject (result);
+
+        return res;
+    }
 
     QString HtmlParser::XpathXml(const QString& query)
     {

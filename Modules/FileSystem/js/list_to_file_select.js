@@ -18,7 +18,7 @@ if(Save.length <= 0)
  try{
   var code = loader.GetAdditionalData() + _.template($('#list_to_file_code').html())({path:File["updated"],save:"VAR_" + Save,append:append})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("Write list to file " + File["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {
 }

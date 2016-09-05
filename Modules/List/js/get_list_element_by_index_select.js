@@ -25,6 +25,6 @@ if(Index["original"].length == 0)
 try{
   var code = loader.GetAdditionalData() + _.template($("#get_list_element_by_index_code").html())({variable:"VAR_" + Variable,variable_result:"VAR_" + VariableResult,index: Index["updated"],remove:RemoveAfterUse})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("Get " + Index["original"] + " from " + Variable, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {}

@@ -48,7 +48,8 @@ SOURCES += main.cpp \
     centralhandler.cpp \
     centralv8handler.cpp \
     clipboard.cpp \
-    startwith.cpp
+    startwith.cpp \
+    processlocation.cpp
 
 INCLUDEPATH += $(BAS_PATH_WORKER)/include
 
@@ -107,7 +108,8 @@ HEADERS += \
     handlersmanager.h \
     centralv8handler.h \
     clipboard.h \
-    startwith.h
+    startwith.h \
+    processlocation.h
 
 INCLUDEPATH += xml json png
 

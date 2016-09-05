@@ -1,0 +1,54 @@
+{
+	
+	"name":"Processes",
+	"description":"Run Process",
+	"description_small":{"en": "Process Manager", "ru": "Управление Процессами"},
+	"major_version": 1,
+	"minor_version": 0,
+	"developer_name": "bablosoft", 
+	"developer_email": "mail.to.twaego@gmail.com", 
+	"developer_site": "https://bablosoft.com",
+	"api_version": 1,
+	"actions":
+	[
+		{
+			"name":"ExecuteProcess",
+			"description":{"en": "Run Process","ru": "Запустить Процесс"},
+			"template":"{{Location}} -> {{Save}}",
+			"is_element": false,
+			"interface": "execute_process_interface.js",
+			"select": "execute_process_select.js",
+			"code": [{"file":"execute_process_code.js", "name": "execute_process_code"}]
+		}
+		
+	],
+	"localize": 
+	{
+		"Wait while process will finish": {"ru": "Ждать завершения"},
+		"Command line": {"ru": "Аргументы командной строки"},
+		"Executable location": {"ru": "Месторасположение exe"}
+	},
+	"engine": [],
+	"browser": [],
+	"depends": [],
+	"dll": [
+			{
+				"name": "processmanager", 
+				"filename32": "processmanager32.dll", 
+				"filename64": "processmanager64.dll", 
+				"startdllfunction": "StartDll", 
+				"enddllfunction": "EndDll", 
+				"startthreadfunction": "StartThread", 
+				"endthreadfunction": "EndThread", 
+				"exportlist":[
+					{
+						"name": "start",
+						"isasync": true,
+						"waitinfinite": true,
+						"workfunction": "ProcessManagerRunExe"
+					}
+				]
+			}
+		  ]
+}
+

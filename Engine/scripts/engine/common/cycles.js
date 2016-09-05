@@ -27,15 +27,50 @@ function Cycle(Next,Break)
     this._Iterator = 0;
     this.WasNextOrBreak = false;
 
-    this.Next = function()
+    this.Next = function(arg)
     {
-        this._Next(this._Iterator++);
+        if(typeof(arg) === "number")
+        {
+            if(arg >= CYCLES.Data.length)
+            {
+                arg = CYCLES.Data.length;
+            }
+            if(arg > 0)
+            {
+                for(var i = 0;i<arg - 1;i++)
+                {
+                    CYCLES.Pop();
+                }
+
+                var c = CYCLES.Current();
+
+                if(c)
+                {
+                    c._Next(c._Iterator++);
+                }
+            }
+        }
+
+        if(typeof(arg) === "undefined")
+            this._Next(this._Iterator++);
     }
 
     this.SetLabel = function(label)
     {
         if(this._Label.indexOf(label)<0)
             this._Label.push(label);
+    }
+
+    this.HasLabel = function(label)
+    {
+        return this._Label.indexOf(label) >= 0;
+    }
+
+    this.RemoveLabel = function(label)
+    {
+        var index = this._Label.indexOf(label);
+        if(index>=0)
+            this._Label.splice(index,1);
     }
 
     this.Break = function(arg)
@@ -132,20 +167,48 @@ function Cycles()
     {
         return (this.Data.length>0)? this.Data[this.Data.length - 1] : null;
     }
+    this.FindLabelDepth = function(label)
+    {
+        var res = 1
+        for(var i = this.Data.length - 1;i>=0;i--)
+        {
+            var c = this.Data[i]
+            if(c.HasLabel(label))
+            {
+                return res
+            }
+            res += 1
+        }
+        return -1
+    }
 }
 CYCLES = new Cycles();
 
 
 function _next()
 {
+    var usearg = false;
+    var arg = 1;
+    if(arguments.length === 1)
+    {
+        arg = arguments[0];
+        usearg = true;
+    }
+    if(typeof(arg) == "string")
+    {
+        arg = CYCLES.FindLabelDepth(arg)
+        if(arg === -1)
+            return
+    }
 
     var c = CYCLES.Current();
-
     if(c)
     {
-        c.Next();
+        if(usearg)
+            c.Next(arg);
+        else
+            c.Next();
         _stop_subscript_execution();
-
     }
     else
         success("Ok");
@@ -176,6 +239,12 @@ function _break()
     if(arguments.length === 1)
     {
         arg = arguments[0];
+    }
+    if(typeof(arg) == "string")
+    {
+        arg = CYCLES.FindLabelDepth(arg)
+        if(arg === -1)
+            arg = 99999
     }
 
     var c = CYCLES.Current();
@@ -220,6 +289,7 @@ function _arguments()
 function _do(n,b)
 {
     var c = new Cycle(n,b);
+    c.SetLabel("function");
     c.Start();
 }
 
@@ -238,6 +308,9 @@ function _repeat(t,n,b)
 function _if(c,f,n)
 {
     _do(function(i){
+        var cc = CYCLES.Current();
+        if(cc)
+            cc.RemoveLabel("function");
         if(i>0 || !c)
         {
             _break();
@@ -251,6 +324,9 @@ function _if(c,f,n)
 function _if_else(c, f1, f2,n)
 {
     _do(function(i){
+        var cc = CYCLES.Current();
+        if(cc)
+            cc.RemoveLabel("function");
         if(i>0)
         {
             _break();
@@ -276,6 +352,7 @@ function _call(f,a,n)
         f();
 
     },n);
+    c.SetLabel("function");
     c._Arguments = a;
     c.Start();
 

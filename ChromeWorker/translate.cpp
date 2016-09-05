@@ -28,6 +28,10 @@ std::map<std::wstring,std::wstring> Translate::KeysRu = {
     {L"Wait While Element Exists", L"\x0416\x0434\x0430\x0442\x044C \x041F\x043E\x044F\x0432\x043B\x0435\x043D\x0438\x044F \x042D\x043B\x0435\x043C\x0435\x043D\x0442\x0430"},
     {L"Inspect", L"\u0418\u0437\u0443\u0447\u0438\u0442\u044C"},
     {L"For Each Element", L"\u0414\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u0430"},
+    {L"Tabs", L"\u0412\u043A\u043B\u0430\u0434\u043A\u0438"},
+    {L"Add New Tab", L"\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u0412\u043A\u043B\u0430\u0434\u043A\u0443"},
+    {L"Select Tab (", L"\u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0438\u0442\u044C\u0441\u044F ("},
+    {L"Remove Tab (", L"\u0417\u0430\u043A\u0440\u044B\u0442\u044C ("}
 
 };
 

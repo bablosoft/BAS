@@ -33,6 +33,18 @@ function mouse(x, y, callback)
     Browser.MouseClick(x,y,_get_function_body(callback))
 }
 
+function popupclose(index, callback)
+{
+    _ensure_browser_created();
+    Browser.PopupClose(index,_get_function_body(callback))
+}
+
+function popupselect(index, callback)
+{
+    _ensure_browser_created();
+    Browser.PopupSelect(index,_get_function_body(callback))
+}
+
 function render(x, y, width, height, callback)
 {
     _ensure_browser_created();
@@ -318,6 +330,11 @@ function rucaptcha(key)
 function twocaptcha(key)
 {
     ScriptWorker.GetSolver("2captcha").SetProperty("key",key);
+}
+
+function capmonster(key)
+{
+    ScriptWorker.GetSolver("capmonster").SetProperty("key",key);
 }
 
 function solver_property(solver,key,value)

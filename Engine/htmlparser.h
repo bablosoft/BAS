@@ -28,6 +28,8 @@ namespace BrowserAutomationStudioFramework
         virtual void Parse(const QString& page);
         virtual QString XpathXml(const QString& query);
         virtual QString XpathText(const QString& query);
+        virtual QStringList XpathXmlList(const QString& query);
+        virtual QStringList XpathTextList(const QString& query);
         virtual int XpathCount(const QString& query);
         virtual bool XpathExist(const QString& query);
 

@@ -11,6 +11,7 @@ struct multithreading
     base::Lock _LockNewContextList;
     base::Lock _LockPrompt;
     base::Lock _LockHttpAuth;
+    base::Lock _LockLocalStorage;
 };
 extern multithreading mthreading;
 
@@ -19,6 +20,7 @@ extern multithreading mthreading;
 #define LOCK_CONTEXT_LIST base::AutoLock lock_scope(mthreading._LockNewContextList);
 #define LOCK_PROMPT base::AutoLock lock_scope(mthreading._LockPrompt);
 #define LOCK_HTTP_AUTH base::AutoLock lock_scope(mthreading._LockHttpAuth);
+#define LOCK_LOCAL_STORAGE base::AutoLock lock_scope(mthreading._LockLocalStorage);
 
 std::string GetCurrentThreadString();
 

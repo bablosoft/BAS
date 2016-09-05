@@ -44,6 +44,8 @@ namespace BrowserAutomationStudioFramework
         virtual void SetHttpAuthResult(const QString & Login, const QString & Password, const QString& callback);
         virtual void MouseClickInstant(int x, int y);
         virtual void MouseClick(int x, int y, const QString& callback);
+        virtual void PopupClose(int index, const QString& callback);
+        virtual void PopupSelect(int index, const QString& callback);
         virtual void MouseMove(int x, int y, const QString& callback);
         virtual void Resize(int x, int y, const QString& callback);
         virtual void Reset(const QString& callback);
@@ -72,6 +74,8 @@ namespace BrowserAutomationStudioFramework
         void SetHttpAuthResult();
         void SetPromptResult();
         void MouseClick();
+        void PopupSelect();
+        void PopupClose();
         void MouseMove();
         void Resize();
         void Reset();

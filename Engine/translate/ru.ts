@@ -513,164 +513,164 @@
 <context>
     <name>BrowserAutomationStudioFramework::ScriptWorker</name>
     <message>
-        <location filename="../scriptworker.cpp" line="550"/>
+        <location filename="../scriptworker.cpp" line="552"/>
         <source> Line number:</source>
         <translation> Номер строки:</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="550"/>
+        <location filename="../scriptworker.cpp" line="552"/>
         <source> During execution of script </source>
         <translation> Во время выполнения скрипта </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="578"/>
-        <location filename="../scriptworker.cpp" line="662"/>
+        <location filename="../scriptworker.cpp" line="580"/>
+        <location filename="../scriptworker.cpp" line="667"/>
         <source>Fail number exceed</source>
         <translation>Превышено количество ошибок</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="585"/>
-        <location filename="../scriptworker.cpp" line="730"/>
+        <location filename="../scriptworker.cpp" line="587"/>
+        <location filename="../scriptworker.cpp" line="735"/>
         <source>Success number exceed</source>
         <translation>Превышено количество успехов</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="774"/>
+        <location filename="../scriptworker.cpp" line="779"/>
         <source>Failed because process is stopped</source>
         <translation>Процесс остановлен</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1043"/>
+        <location filename="../scriptworker.cpp" line="1048"/>
         <source>failed to get resource </source>
         <translation>не удалось получить ресурс </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1062"/>
+        <location filename="../scriptworker.cpp" line="1067"/>
         <source>Thread suspended</source>
         <translation>Поток приостановлен</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1067"/>
+        <location filename="../scriptworker.cpp" line="1072"/>
         <source>Thread failed</source>
         <translation>Поток аварийно завершился</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1068"/>
+        <location filename="../scriptworker.cpp" line="1073"/>
         <source>Thread died</source>
         <translation>Поток аварийно завершился</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1069"/>
+        <location filename="../scriptworker.cpp" line="1074"/>
         <source>Thread succeeded</source>
         <translation type="unfinished">Поток выполнен успешно</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1071"/>
+        <location filename="../scriptworker.cpp" line="1076"/>
         <source> with message &quot;</source>
         <translation> с сообщением &quot;</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1083"/>
+        <location filename="../scriptworker.cpp" line="1088"/>
         <source>Thread #</source>
         <translation>Поток №</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1095"/>
-        <location filename="../scriptworker.cpp" line="1112"/>
+        <location filename="../scriptworker.cpp" line="1100"/>
+        <location filename="../scriptworker.cpp" line="1117"/>
         <source>CAPTCHA_FAIL</source>
         <translation>Ошибка решения капчи</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1095"/>
+        <location filename="../scriptworker.cpp" line="1100"/>
         <source>Failed to get solver</source>
         <translation>Неизвестный метод решения капчи</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1124"/>
+        <location filename="../scriptworker.cpp" line="1129"/>
         <source>Captcha wait timeout</source>
         <translation>Время ожидания решения капчи истекло</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1137"/>
+        <location filename="../scriptworker.cpp" line="1142"/>
         <source>Async function is called in sync mode</source>
         <translation>Асинхронная функция вызвана синхронно</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1145"/>
-        <location filename="../scriptworker.cpp" line="1209"/>
+        <location filename="../scriptworker.cpp" line="1150"/>
+        <location filename="../scriptworker.cpp" line="1214"/>
         <source>Failed to run function </source>
         <translation>Ошибка при запуске функции </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1164"/>
+        <location filename="../scriptworker.cpp" line="1169"/>
         <source>Sync function is called in async mode</source>
         <translation>Синхронная функция вызвана асинхронно</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1174"/>
+        <location filename="../scriptworker.cpp" line="1179"/>
         <source>Failed to execute module function </source>
         <translation>Не удалось выполнить функцию </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1234"/>
+        <location filename="../scriptworker.cpp" line="1239"/>
         <source>Failed to get mail number with Pop3CLient</source>
         <translation>Не удалось получить количество писем с помощью Pop3 клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1242"/>
+        <location filename="../scriptworker.cpp" line="1247"/>
         <source>Failed to get message with Pop3CLient</source>
         <translation>Не удалось получить письмо с помощью Pop3 клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1293"/>
+        <location filename="../scriptworker.cpp" line="1298"/>
         <source>Failed to get mail number with ImapCLient</source>
         <translation>Не удалось получить количество писем с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1301"/>
+        <location filename="../scriptworker.cpp" line="1306"/>
         <source>Failed to search mail with ImapCLient</source>
         <translation>Не удалось выполнить поиск с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1309"/>
+        <location filename="../scriptworker.cpp" line="1314"/>
         <source>Failed to custom search mail with ImapCLient</source>
         <translation>Не удалось выполнить специальный поиск с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1317"/>
+        <location filename="../scriptworker.cpp" line="1322"/>
         <source>Failed to fetch mail with ImapCLient</source>
         <translation>Не удалось получить письмо с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1325"/>
+        <location filename="../scriptworker.cpp" line="1330"/>
         <source>Failed to execute custom query with ImapCLient</source>
         <translation>Не удалось выполнить специальный запрос с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1373"/>
-        <location filename="../scriptworker.cpp" line="1490"/>
-        <location filename="../scriptworker.cpp" line="1498"/>
+        <location filename="../scriptworker.cpp" line="1378"/>
+        <location filename="../scriptworker.cpp" line="1495"/>
+        <location filename="../scriptworker.cpp" line="1503"/>
         <source>Failed to get page </source>
         <translation>Не удалось получить страницу </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1373"/>
-        <location filename="../scriptworker.cpp" line="1406"/>
-        <location filename="../scriptworker.cpp" line="1448"/>
-        <location filename="../scriptworker.cpp" line="1490"/>
-        <location filename="../scriptworker.cpp" line="1498"/>
-        <location filename="../scriptworker.cpp" line="1506"/>
+        <location filename="../scriptworker.cpp" line="1378"/>
+        <location filename="../scriptworker.cpp" line="1411"/>
+        <location filename="../scriptworker.cpp" line="1453"/>
+        <location filename="../scriptworker.cpp" line="1495"/>
+        <location filename="../scriptworker.cpp" line="1503"/>
+        <location filename="../scriptworker.cpp" line="1511"/>
         <source> with HttpClient</source>
         <translation> с помошью ХТТП клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1406"/>
-        <location filename="../scriptworker.cpp" line="1448"/>
+        <location filename="../scriptworker.cpp" line="1411"/>
+        <location filename="../scriptworker.cpp" line="1453"/>
         <source>Failed to post page </source>
         <translation>Не удалось выполнить пост запрос </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1506"/>
+        <location filename="../scriptworker.cpp" line="1511"/>
         <source>Failed to download page </source>
         <translation>Не удалось скачать страницу </translation>
     </message>

@@ -22,6 +22,6 @@ if(Value["original"].length == 0)
  try{
   var code = loader.GetAdditionalData() + _.template($("#fileinfo_code").html())({variable_exists:"VAR_" + SaveExists,variable_size:"VAR_" + SaveSize,variable_directory:"VAR_" + SaveDirectory,variable_is_directory:"VAR_" + SaveIsDirectory,variable_last_modified:"VAR_" + SaveLastModified,value: Value["updated"]})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("Get File Info " + Value["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {}

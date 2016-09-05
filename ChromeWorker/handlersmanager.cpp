@@ -38,14 +38,39 @@ void HandlersManager::Init2(CefRefPtr<CefBrowser> Browser)
 
 void HandlersManager::UpdateCurrent()
 {
+    int PrevBrowserId = CurrentBrowserId;
     bool IsPopupActive = false;
-    for(HandlerUnit h:HandlerUnits)
+
+    if(OriginalHandler && OriginalHandler->ForceShow)
     {
-        if(h->IsActive && !h->DontUseAsActive && h->IsContextCreated)
+        IsPopupActive = true;
+        Handler = OriginalHandler->Handler;
+        Browser = OriginalHandler->Browser;
+    }
+
+    if(!IsPopupActive)
+    {
+        for(HandlerUnit h:HandlerUnits)
         {
-            IsPopupActive = true;
-            Handler = h->Handler;
-            Browser = h->Browser;
+            if(h->ForceShow && h->IsActive && !h->DontUseAsActive && h->IsContextCreated)
+            {
+                IsPopupActive = true;
+                Handler = h->Handler;
+                Browser = h->Browser;
+            }
+        }
+    }
+
+    if(!IsPopupActive)
+    {
+        for(HandlerUnit h:HandlerUnits)
+        {
+            if(h->IsActive && !h->DontUseAsActive && h->IsContextCreated)
+            {
+                IsPopupActive = true;
+                Handler = h->Handler;
+                Browser = h->Browser;
+            }
         }
     }
 
@@ -58,6 +83,11 @@ void HandlersManager::UpdateCurrent()
     CurrentBrowserId = -1;
     if(Browser)
         CurrentBrowserId = Browser->GetIdentifier();
+
+    if(PrevBrowserId != CurrentBrowserId && Browser)
+    {
+        Browser->GetHost()->Invalidate(PET_VIEW);
+    }
 }
 
 MainHandler* HandlersManager::GetHandler()
@@ -131,8 +161,12 @@ void HandlersManager::Reset()
     for(HandlerUnit h:HandlerUnits)
     {
         h->DontUseAsActive = true;
+        h->ForceShow = false;
         h->Browser->GetHost()->CloseBrowser(true);
     }
+    if(OriginalHandler)
+        OriginalHandler->ForceShow = false;
+
     UpdateCurrent();
 
 }
@@ -167,6 +201,11 @@ void HandlersManager::PopupCreated(CefRefPtr<MainHandler> new_handler,CefRefPtr<
     p->Handler->EventPopupCreated.push_back(std::bind(&HandlersManager::PopupCreated,this,_1,_2));
 
     HandlerUnits.push_back(p);
+
+    OriginalHandler->ForceShow = false;
+
+    for(HandlerUnit ht:HandlerUnits)
+        ht->ForceShow = false;
 
     UpdateCurrent();
 }
@@ -225,6 +264,60 @@ void HandlersManager::NewContextCreated(int ContextId)
 void HandlersManager::SetDevToolsBorwserId(int DevToolsBorwserId)
 {
     this->DevToolsBorwserId = DevToolsBorwserId;
+}
+
+std::vector<std::string> HandlersManager::GetAllUrls()
+{
+    std::vector<std::string> res;
+    if(OriginalHandler)
+        res.push_back(OriginalHandler->Browser->GetMainFrame()->GetURL().ToString());
+    for(HandlerUnit h:HandlerUnits)
+    {
+        if(!h->DontUseAsActive && h->IsContextCreated)
+        {
+            res.push_back(h->Browser->GetMainFrame()->GetURL().ToString());
+        }
+    }
+    return res;
+}
+
+void HandlersManager::CloseByIndex(int index)
+{
+    if(index <= 0 || index - 1 >= HandlerUnits.size())
+        return;
+
+    HandlerUnit h = HandlerUnits[index - 1];
+
+    h->DontUseAsActive = true;
+    h->ForceShow = false;
+    h->Browser->GetHost()->CloseBrowser(true);
+
+    UpdateCurrent();
+}
+
+void HandlersManager::SwitchByIndex(int index)
+{
+    HandlerUnit h;
+    if(index <= 0)
+    {
+        h = OriginalHandler;
+    }else if(index - 1 < HandlerUnits.size())
+    {
+        h = HandlerUnits[index - 1];
+    }
+    if(OriginalHandler)
+        OriginalHandler->ForceShow = false;
+
+    for(HandlerUnit ht:HandlerUnits)
+        ht->ForceShow = false;
+
+    if(h && !h->DontUseAsActive)
+    {
+        h->ForceShow = true;
+    }
+
+    UpdateCurrent();
+
 }
 
 

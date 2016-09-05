@@ -5,7 +5,7 @@ namespace BrowserAutomationStudioFramework
 {
 
     SolverFactory::SolverFactory(QObject *parent) :
-        ISolverFactory(parent),ManualSolver(0),AntigateSolver(0), DbcSolver(0),RucaptchaSolver(0),TwocaptchaSolver(0)
+        ISolverFactory(parent),ManualSolver(0),AntigateSolver(0), DbcSolver(0),RucaptchaSolver(0),TwocaptchaSolver(0),CapMonsterSolver(0)
     {
     }
 
@@ -32,6 +32,11 @@ namespace BrowserAutomationStudioFramework
     void SolverFactory::Used2Captcha()
     {
         emit UsedSolver("2Captcha");
+    }
+
+    void SolverFactory::UsedCapmonster()
+    {
+        emit UsedSolver("Capmonster");
     }
 
 
@@ -62,6 +67,11 @@ namespace BrowserAutomationStudioFramework
         emit FailedSolver("2Captcha");
     }
 
+    void SolverFactory::FailedCapmonster()
+    {
+        emit FailedSolver("Capmonster");
+    }
+
 
     ISolver* SolverFactory::GetSolver(const QString& name)
     {
@@ -87,6 +97,19 @@ namespace BrowserAutomationStudioFramework
                 connect(AntigateSolver,SIGNAL(Failed()),this,SLOT(FailedAntigate()));
             }
             return AntigateSolver;
+        }
+        if(name == "capmonster")
+        {
+            if(CapMonsterSolver == 0)
+            {
+                CapMonsterSolver = new AntigateCaptchaSolver(this);
+                CapMonsterSolver->SetServer("");
+                CapMonsterSolver->SetMultipleIds(false);
+                CapMonsterSolver->SetHttpClientFactory(HttpClientFactory);
+                connect(CapMonsterSolver,SIGNAL(Used()),this,SLOT(UsedCapmonster()));
+                connect(CapMonsterSolver,SIGNAL(Failed()),this,SLOT(FailedCapmonster()));
+            }
+            return CapMonsterSolver;
         }
         if(name == "dbc")
         {

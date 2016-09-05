@@ -17,6 +17,6 @@ if(Variable.length == 0)
 try{
   var code = loader.GetAdditionalData() +  _.template($("#list_length_code").html())({variable:"VAR_" + Variable,variable_length:"VAR_" + VariableLength})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("Get list length " + Variable, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {}

@@ -6,7 +6,7 @@
 namespace BrowserAutomationStudioFramework
 {
     AntigateCaptchaSolver::AntigateCaptchaSolver(QObject *parent) :
-        ISolver(parent),Iterator(0),StartedMonitor(false),timeout(8000)
+        ISolver(parent),Iterator(0),StartedMonitor(false),timeout(8000), MultipleIds(true)
     {
         Server = "http://antigate.com/";
     }
@@ -14,6 +14,11 @@ namespace BrowserAutomationStudioFramework
     void AntigateCaptchaSolver::SetSoftId(const QString& SoftId)
     {
         this->SoftId = SoftId;
+    }
+
+    void AntigateCaptchaSolver::SetMultipleIds(bool MultipleIds)
+    {
+        this->MultipleIds = MultipleIds;
     }
 
     void AntigateCaptchaSolver::StartMonitor()
@@ -33,6 +38,28 @@ namespace BrowserAutomationStudioFramework
     void AntigateCaptchaSolver::SetServer(const QString& Server)
     {
         this->Server = Server;
+    }
+
+    void AntigateCaptchaSolver::StartSingleIteration()
+    {
+        QTimer * Timer = qobject_cast<QTimer*>(sender());
+
+        if(!Timer)
+            return;
+
+        SingleIdWorker *Worker = 0;
+        for(SingleIdWorker* w: Workers)
+        {
+            if(Timer == w->timer)
+                Worker = w;
+        }
+        if(!Worker)
+            return;
+
+        Worker->client->Connect(this,SLOT(DoneSignleIteration()));
+        QString url = QString(Server + "res.php?key=%1&action=get&id=%2").arg(key).arg(Worker->antigate_id);
+        Worker->client->Get(url);
+        //qDebug()<<"Sending"<<url<<"Length"<<Workers.size();
     }
 
     void AntigateCaptchaSolver::StartIteration()
@@ -56,6 +83,51 @@ namespace BrowserAutomationStudioFramework
         }
     }
 
+
+    void AntigateCaptchaSolver::DoneSignleIteration()
+    {
+        IHttpClient * Client = qobject_cast<IHttpClient*>(sender());
+
+        if(!Client)
+            return;
+
+        SingleIdWorker *Worker = 0;
+        for(SingleIdWorker* w: Workers)
+        {
+            if(Client == w->client)
+                Worker = w;
+        }
+        if(!Worker)
+            return;
+
+        if(Worker->client->WasError())
+        {
+            Worker->timer->start(timeout);
+            return;
+        }
+
+        QString res = Worker->client->GetContent();
+
+        //qDebug()<<"Received"<<res<<"Length"<<Workers.size();
+
+        if(res!="CAPCHA_NOT_READY")
+        {
+            bool Success = false;
+            if(res.startsWith("OK|"))
+            {
+                res = res.remove(0,3);
+                Success = true;
+            }
+            emit Done(res,Worker->id,Success,Worker->antigate_id);
+            Workers.removeAll(Worker);
+            Worker->deleteLater();
+
+            //qDebug()<<"Finished"<<res<<Worker->id<<Success<<Worker->antigate_id<<"Length"<<Workers.size();
+        }else
+        {
+            Worker->timer->start(timeout);
+        }
+    }
 
     void AntigateCaptchaSolver::DoneIteration()
     {
@@ -110,8 +182,26 @@ namespace BrowserAutomationStudioFramework
         sender()->deleteLater();
         if(res)
         {
-            IdToAntigateIdList[antigate_id] = id;
-            StartMonitor();
+            if(MultipleIds)
+            {
+                IdToAntigateIdList[antigate_id] = id;
+                StartMonitor();
+            }else
+            {
+                //qDebug()<<"!!!!!!Start"<<antigate_id;
+                SingleIdWorker * Worker = new SingleIdWorker();
+                Worker->setParent(this);
+                Worker->id = id;
+                Worker->antigate_id = antigate_id;
+                Worker->timer = new QTimer(Worker);
+
+                Worker->client = HttpClientFactory->GetHttpClient();
+                Worker->client->setParent(Worker);
+                Worker->timer->setSingleShot(true);
+                Worker->timer->start(timeout);
+                connect(Worker->timer, SIGNAL(timeout()), this, SLOT(StartSingleIteration()));
+                Workers.append(Worker);
+            }
         }
         else
             emit Done(antigate_id,id,false,0);
@@ -143,6 +233,11 @@ namespace BrowserAutomationStudioFramework
         }else if(name == "timeout")
         {
             timeout = value.toInt();
+        }else if(name == "serverurl")
+        {
+            this->Server = value;
+            if(!this->Server.endsWith("/"))
+                this->Server += "/";
         }else
         {
             if(value.isEmpty())

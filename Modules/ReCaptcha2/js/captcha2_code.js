@@ -15,8 +15,18 @@ if(<%= method %> == "antigate")
 }
 if(<%= method %> == "dbc")
 {
-  dbc(<%= dbc %>)
+  dbc(<%= rucaptcha %>)
 }
+if(<%= method %> == "capmonster")
+{
+  solver_property("capmonster","serverurl",<%= serverurl %>)
+  capmonster(<%= rucaptcha %>)
+}
+
+_if(<%= method %> == "capmonster", function(){
+  cache_allow("recaptcha/api2/payload")!
+})!
+
 
 RECAPTCHA2_FIRST_TIME = true
 
@@ -94,54 +104,32 @@ _do(function(){
   sleep(3000)!
 
   match("src=\"https://www.google.com/recaptcha/api2/frame").focus()!
-
-
-
-
-  match("src=\"https://www.google.com/recaptcha/api2/frame").script("self.getBoundingClientRect().top + window.scrollY")!
-  TOP = parseInt(_result())
-  match("src=\"https://www.google.com/recaptcha/api2/frame").script("self.getBoundingClientRect().left + window.scrollX")!
-  LEFT = parseInt(_result())
-
-
-  frame("google.com/recaptcha/api2/frame").script("document.getElementById('rc-imageselect-target').getBoundingClientRect().top")!
-  TOP_PIC = parseInt(_result())
-
-  frame("google.com/recaptcha/api2/frame").script("document.getElementById('rc-imageselect-target').getBoundingClientRect().bottom")!
-  BOTTOM_PIC = parseInt(_result())
-
-  frame("google.com/recaptcha/api2/frame").script("document.getElementById('rc-imageselect-target').getBoundingClientRect().left")!
-  LEFT_PIC = parseInt(_result())
-
-  frame("google.com/recaptcha/api2/frame").script("document.getElementById('rc-imageselect-target').getBoundingClientRect().right")!
-  RIGHT_PIC = parseInt(_result())
   
+  _do(function(){
 
-  frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-table-33').length")!
-  IS33 = parseInt(_result()) > 0
+    frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-table-44').length")!
+    IS44 = parseInt(_result()) > 0
 
-  frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-table-44').length")!
-  IS44 = parseInt(_result()) > 0
+    frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-tileselected').length")!
+    RECAPTCHA2_TOTAL_SELECTED = parseInt(_result())
 
-  frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-table-42').length")!
-  IS42 = parseInt(_result()) > 0
+    if(!(RECAPTCHA2_TOTAL_SELECTED>0 || IS44 && (<%= method %> == "capmonster")))
+      _break()
 
+    if(_iterator() > 10)
+        fail("Too many recaptcha 2 reloads")
 
-  if(!IS33 && !IS44 && !IS42)
-  {
-    fail("Unknown captcha type")
-  }
-
-
-  frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-tileselected').length")!
-  RECAPTCHA2_TOTAL_SELECTED = parseInt(_result())
-
-  _if(RECAPTCHA2_TOTAL_SELECTED>0, function(){
     frame("google.com/recaptcha/api2/frame").script("document.getElementById('recaptcha-reload-button').getBoundingClientRect().top")!
     TOP_RECAPTCHA_RELOAD_BUTTON = parseInt(_result())
 
     frame("google.com/recaptcha/api2/frame").script("document.getElementById('recaptcha-reload-button').getBoundingClientRect().left")!
     LEFT_RECAPTCHA_RELOAD_BUTTON = parseInt(_result())
+
+    match("src=\"https://www.google.com/recaptcha/api2/frame").script("self.getBoundingClientRect().top + window.scrollY")!
+    TOP = parseInt(_result())
+
+    match("src=\"https://www.google.com/recaptcha/api2/frame").script("self.getBoundingClientRect().left + window.scrollX")!
+    LEFT = parseInt(_result())
 
     move(LEFT + LEFT_RECAPTCHA_RELOAD_BUTTON + 12, TOP + TOP_RECAPTCHA_RELOAD_BUTTON + 12)!
     cache_data_clear()!
@@ -159,10 +147,45 @@ _do(function(){
   frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-challenge')[0].getBoundingClientRect().top")!
   TOP_IMAGE = parseInt(_result())
 
+  frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-table-33').length")!
+  IS33 = parseInt(_result()) > 0
 
-  match("src=\"https://www.google.com/recaptcha/api2/frame").render_base64()!
+  frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-table-44').length")!
+  IS44 = parseInt(_result()) > 0
+
+  frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-table-42').length")!
+  IS42 = parseInt(_result()) > 0
+
+  if(!IS33 && !IS44 && !IS42)
+  {
+    fail("Unknown captcha type")
+  }
+
+  _if_else(<%= method %> == "capmonster", function(){
+    frame("google.com/recaptcha/api2/frame").script("(function(){var tmp = document.createElement('DIV');tmp.innerHTML = document.getElementsByClassName('rc-imageselect-desc-wrapper')[0].innerHTML.split('<br>')[0];return tmp.textContent})()")!
+    solver_property("capmonster","Task",_result())
+    cache_get_base64("recaptcha/api2/payload")!
+  },function(){
+    match("src=\"https://www.google.com/recaptcha/api2/frame").render_base64()!
+  })!
+
   solve_base64(<%= method %>, _result())!
   RECAPTCHA2_SOLVED = _result()
+
+
+  frame("google.com/recaptcha/api2/frame").script("document.getElementById('rc-imageselect-target').getBoundingClientRect().top")!
+  TOP_PIC = parseInt(_result())
+
+  frame("google.com/recaptcha/api2/frame").script("document.getElementById('rc-imageselect-target').getBoundingClientRect().bottom")!
+  BOTTOM_PIC = parseInt(_result())
+
+  frame("google.com/recaptcha/api2/frame").script("document.getElementById('rc-imageselect-target').getBoundingClientRect().left")!
+  LEFT_PIC = parseInt(_result())
+
+  frame("google.com/recaptcha/api2/frame").script("document.getElementById('rc-imageselect-target').getBoundingClientRect().right")!
+  RIGHT_PIC = parseInt(_result())
+
+  
   CLICKS = NumbersParseRecaptcha2(RECAPTCHA2_SOLVED,IS33,IS44,IS42,TOP_PIC,LEFT_PIC,BOTTOM_PIC,RIGHT_PIC,BOTTOM_IMAGE,TOP_IMAGE)
   
   match("src=\"https://www.google.com/recaptcha/api2/frame").script("window.getComputedStyle(self)['visibility']")!

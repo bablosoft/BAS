@@ -41,6 +41,6 @@ if(Interval["original"].length == 0)
 try{
   var code = loader.GetAdditionalData() + _.template($("#create_resource_code").html())({name: Name["updated"],success: SuccessNumber["updated"],fail: FailNumber["updated"],simultaneous: SimultaneousUsage["updated"],interval: Interval["updated"],greedy: Greedy,dontgiveup: DontGiveUp})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("Create resource " + Name["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {}

@@ -19,6 +19,7 @@ struct ActionDataClass
 {
     std::string Name;
     std::string Description;
+    std::string Template;
     bool IsElement;
     std::string InterfaceScript;
     std::string SelectScript;

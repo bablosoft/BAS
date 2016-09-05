@@ -183,7 +183,7 @@
     <div class="container-fluid back" >
       <div class="col-xs-12">
         <% if(typeof(use_waiter) != "undefined"){ %>
-          <a href="#" id="use-waiter" class="use-waiter-disabled trtitle" data-enabled="false" data-toggle="tooltip" data-placement="top" title="Wait full page load after this action"><i class="fa fa-clock-o" aria-hidden="true"></i></a>
+          <a href="#" id="use-waiter" class="<%= (typeof(waiter_enabled) != "undefined" && waiter_enabled) ? "" : "use-waiter-disabled" %> trtitle" data-enabled="<%= (typeof(waiter_enabled) != "undefined" && waiter_enabled) ? "true" : "false" %>" data-toggle="tooltip" data-placement="top" title="Wait full page load after this action"><i class="fa fa-clock-o" aria-hidden="true"></i></a>
 
         <% } %>
         <a class="btn btn-success standartbutton tr" id="ok">Ok</a> <a class="btn btn-danger standartbutton tr" href="#!/" id="backtomain">Cancel</a>
@@ -371,11 +371,10 @@
 
 
   <script type="text/template" id="break">
-    <div class="container-fluid break">
-      <%= _.template($('#input_constructor').html())({id:"BreakDepth", description:tr("Break depth"), default_selector: "int"}) %>
+    <div class="container-fluid continue">
+      <div class="tooltipinternal tr">Stop loop.</div>
+      <%= _.template($('#back').html())({action:"executeandadd", visible:false}) %>
     </div>
-    <div class="tooltipinternal tr">Break depth. If blank will break current loop, if integer will break with desired depth, if string will break until desired function.</div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:false}) %>
   </script>
 
    <script type="text/template" id="continue">
@@ -387,6 +386,7 @@
 
   <script type="text/template" id="success">
     <div class="container-fluid success">
+      <%= _.template($('#input_constructor').html())({id:"SuccessMessage", description:tr("Success Message"), default_selector: "string", disable_int:true}) %>
       <div class="tooltipinternal tr">Finish thread with success result.</div>
       <%= _.template($('#back').html())({action:"executeandadd", visible:false}) %>
     </div>
@@ -522,9 +522,9 @@
   <script type="text/template" id="solvecaptcha">
     <div class="container-fluid solvecaptcha">
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Captcha picture data encoded in base64"), default_selector: "expression", disable_int:true, disable_string:true}) %>
-      <%= _.template($('#input_constructor').html())({id:"Method", description:tr("Solve Method"), default_selector: "string", disable_int:true, value_string: "manual", variants: ["manual","antigate","rucaptcha","2captcha","dbc"], size: 3}) %>
-      <%= _.template($('#input_constructor').html())({id:"Antigate", description:tr("Antigate/Rucaptcha/2captcha Key. Can be blank"), default_selector: "string", disable_int:true}) %>
-      <%= _.template($('#input_constructor').html())({id:"Dbc", description:tr("DBC Login:Password. Can be blank"), default_selector: "string", disable_int:true}) %>
+      <%= _.template($('#input_constructor').html())({id:"Method", description:tr("Solve Method"), default_selector: "string", disable_int:true, value_string: "manual", variants: ["manual","antigate","rucaptcha","2captcha","capmonster","dbc"], size: 3}) %>
+      <%= _.template($('#input_constructor').html())({id:"Antigate", description:tr("Antigate/Rucaptcha/2captcha/DBC Key. Can be blank"), default_selector: "string", disable_int:true}) %>
+      <%= _.template($('#input_constructor').html())({id:"Server", description:tr("Server url. Can be blank"), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save Result"), default_variable: "CAPTCHA_RESULT"}) %>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
@@ -1091,7 +1091,7 @@
   </script>
 
   <script type="text/template" id="httpclientxpathxml">
-    <div class="container-fluid httpclientxpathxml">
+    <div class="container-fluid httpclientxpath">
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Xpath Query"), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "XPATH_XML"}) %>
       <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
@@ -1100,9 +1100,17 @@
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
+
+  <script type="text/template" id="httpclientxpathxmllist">
+    <div class="container-fluid httpclientxpath">
+      <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Xpath Query"), default_selector: "string", disable_int:true}) %>
+      <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "XPATH_XML_LIST"}) %>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
   
   <script type="text/template" id="httpclientxpathtext">
-    <div class="container-fluid httpclientxpathtext">
+    <div class="container-fluid httpclientxpath">
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Xpath Query"), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "XPATH_TEXT"}) %>
       <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
@@ -1113,9 +1121,18 @@
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
+
+
+  <script type="text/template" id="httpclientxpathtextlist">
+    <div class="container-fluid httpclientxpath">
+      <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Xpath Query"), default_selector: "string", disable_int:true}) %>
+      <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "XPATH_TEXT_LIST"}) %>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
   
   <script type="text/template" id="httpclientxpathcount">
-    <div class="container-fluid httpclientxpathcount">
+    <div class="container-fluid httpclientxpath">
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Xpath Query"), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "XPATH_COUNT"}) %>
     </div>
@@ -1123,7 +1140,7 @@
   </script>
   
   <script type="text/template" id="httpclientxpathexists">
-    <div class="container-fluid httpclientxpathexists">
+    <div class="container-fluid httpclientxpath">
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Xpath Query"), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "XPATH_EXISTS"}) %>
     </div>
@@ -1244,6 +1261,9 @@
   <script type="text/template" id="clickelement">
     <div class="container-fluid clickelement">
       <div class="tooltipinternal tr">Click on element.</div>
+      <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
+        <input type="checkbox" id="Check"/> <label for="Check" class="tr">Disable mouse emulation.</label>
+      </span>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true, visible:true, name: tr("Click On Element")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
@@ -1260,6 +1280,9 @@
   <script type="text/template" id="moveandclickelement">
     <div class="container-fluid moveandclickelement">
       <div class="tooltipinternal tr">Move mouse pointer and click on element.</div>
+      <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
+        <input type="checkbox" id="Check"/> <label for="Check" class="tr">Disable mouse emulation.</label>
+      </span>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true, visible:true, name: tr("Move And Click On Element")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
@@ -1279,7 +1302,9 @@
       <%= _.template($('#input_constructor').html())({id:"TypeInterval", description:tr("Interval in milliseconds"), default_selector: "int", disable_string:true, value_number: 100, step_number: 100, min_number: 0, max_number:10000}) %>
 
       <%= _.template($('#special_buttons').html())({}) %>
-
+      <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
+         <input type="checkbox" id="Check"/> <label for="Check" class="tr">Disable mouse and keyboard emulation.</label>
+      </span>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true, use_waiter:true, name: tr("Type Text")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
@@ -1363,7 +1388,7 @@
 
         <div class="tooltipinternal tr">Wait while matching query element exists on page.</div>
       </div>
-      <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+      <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Wait While Element Exists")}) %>
     </span>
   </script>
 
@@ -1425,9 +1450,9 @@
   <script type="text/template" id="captcha">
     <div class="container-fluid captcha">
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "CAPTCHA_RESULT"}) %>
-      <%= _.template($('#input_constructor').html())({id:"Method", description:tr("Solve Method"), default_selector: "string", disable_int:true, value_string: "manual", variants: ["manual","antigate","rucaptcha","2captcha","dbc"], size: 3}) %>
-      <%= _.template($('#input_constructor').html())({id:"Antigate", description:tr("Antigate/Rucaptcha/2captcha Key. Can be blank"), default_selector: "string", disable_int:true}) %>
-      <%= _.template($('#input_constructor').html())({id:"Dbc", description:tr("DBC Login:Password. Can be blank"), default_selector: "string", disable_int:true}) %>
+      <%= _.template($('#input_constructor').html())({id:"Method", description:tr("Solve Method"), default_selector: "string", disable_int:true, value_string: "manual", variants: ["manual","antigate","rucaptcha","2captcha","capmonster","dbc"], size: 3}) %>
+      <%= _.template($('#input_constructor').html())({id:"Antigate", description:tr("Antigate/Rucaptcha/2captcha/DBC Key. Can be blank"), default_selector: "string", disable_int:true}) %>
+      <%= _.template($('#input_constructor').html())({id:"Server", description:tr("Server url. Can be blank"), default_selector: "string", disable_int:true}) %>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Solve Captcha")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
@@ -1544,6 +1569,27 @@
     <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true, visible:true, name: tr("Click")}) %>
   </script>
 
+  <script type="text/template" id="addtab">
+    <div class="container-fluid addtab">
+      <%= _.template($('#input_constructor').html())({id:"Url", description:tr("Url"), default_selector: "string", disable_int:true}) %>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true, waiter_enabled: true, visible:true, name: tr("Add Tab")}) %>
+  </script>
+
+  <script type="text/template" id="selecttab">
+    <div class="container-fluid selecttab">
+      <%= _.template($('#input_constructor').html())({id:"Index", description:tr("Tab Index"), default_selector: "int", disable_string:true, value_number: model['index'], min_number:0, max_number:999999}) %>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Select Tab")}) %>
+  </script>
+
+  <script type="text/template" id="closetab">
+    <div class="container-fluid closetab">
+      <%= _.template($('#input_constructor').html())({id:"Index", description:tr("Tab Index"), default_selector: "int", disable_string:true, value_number: model['index'], min_number:1, max_number:999999}) %>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd",visible:true, name: tr("Close Tab")}) %>
+  </script>
+
   <script type="text/template" id="threadnumber">
     <div class="container-fluid threadnumber">
       <%= _.template($('#input_constructor').html())({id:"ThreadNumber", description:tr("Thread number"), default_selector: "int", disable_string:true, disable_string:true, disable_variable:true, min_number: 1}) %>
@@ -1577,7 +1623,6 @@
     <div class="container-fluid type">
       <%= _.template($('#input_constructor').html())({id:"TypeData", description:tr("Text to type"), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#input_constructor').html())({id:"TypeInterval", description:tr("Interval in milliseconds"), default_selector: "int", disable_string:true, value_number: 100, step_number: 100, min_number: 0, max_number:10000}) %>
-
       <%= _.template($('#special_buttons').html())({}) %>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true, use_waiter:true, name: tr("Type Text")}) %>
@@ -1786,10 +1831,16 @@
     <%= variable %> = http_client_error_string()
   </script>
   <script type="text/template" id="httpclientxpathxml_code">
-    <%= variable %> = http_client_xpath_xml(<%= value %>,<%= fail %>)
+    <%= variable %> = http_client_xpath_xml(<%= value %>,!(<%= fail %>))
+  </script>
+  <script type="text/template" id="httpclientxpathxmllist_code">
+    <%= variable %> = http_client_xpath_xml_list(<%= value %>,true)
   </script>
   <script type="text/template" id="httpclientxpathtext_code">
-    <%= variable %> = http_client_xpath_text(<%= value %>,<%= fail %>)
+    <%= variable %> = http_client_xpath_text(<%= value %>,!(<%= fail %>))
+  </script>
+  <script type="text/template" id="httpclientxpathtextlist_code">
+    <%= variable %> = http_client_xpath_text_list(<%= value %>,true)
   </script>
   <script type="text/template" id="httpclientxpathcount_code">
     <%= variable %> = http_client_xpath_count(<%= value %>)
@@ -1823,12 +1874,17 @@
       }
       if(<%= method %> == "dbc")
       {
-        dbc(<%= dbc %>)
+        dbc(<%= antigate %>)
       }
       if(<%= method %> == "2captcha")
       {
         solver_property("2captcha","coordinatescaptcha","")
         twocaptcha(<%= antigate %>)
+      }
+      if(<%= method %> == "capmonster")
+      {
+        solver_property("capmonster","serverurl",<%= serverurl %>)
+        capmonster(<%= antigate %>)
       }
 
       <%= waiter %>
@@ -1887,7 +1943,29 @@
 
   <script type="text/template" id="restorecookies_code">
       /*Browser*/
-      restore_cookies(<%= value %>)!
+
+      VALUE = <%= value %>
+      COOKIES = ""
+      LOCALSTORAGE = ""
+      if(VALUE.length > 0)
+      {
+        COOKIES = JSON.parse(VALUE)["cookies"]
+        if(typeof(COOKIES) == "undefined")
+          COOKIES = ""
+        else
+          COOKIES = JSON.stringify(COOKIES)
+
+        LOCALSTORAGE = JSON.parse(<%= value %>)["localstorage"]
+        if(typeof(LOCALSTORAGE) == "undefined")
+          LOCALSTORAGE = ""
+        else
+          LOCALSTORAGE = JSON.stringify(LOCALSTORAGE)
+      }
+
+      page().script("BrowserAutomationStudio_RestoreLocalStorage(" + JSON.stringify(LOCALSTORAGE) + ")")!
+      page().script("BrowserAutomationStudio_SaveLocalStorage(" + JSON.stringify(LOCALSTORAGE) + ")")!
+      
+      restore_cookies(COOKIES)!
   </script>
 
   <script type="text/template" id="setheader_code">
@@ -1908,12 +1986,17 @@
       }
       if(<%= method %> == "dbc")
       {
-        dbc(<%= dbc %>)
+        dbc(<%= antigate %>)
       }
       if(<%= method %> == "2captcha")
       {
         solver_property("2captcha","coordinatescaptcha","")
         twocaptcha(<%= antigate %>)
+      }
+      if(<%= method %> == "capmonster")
+      {
+        solver_property("capmonster","serverurl",<%= serverurl %>)
+        capmonster(<%= antigate %>)
       }
 
 
@@ -1935,7 +2018,12 @@
   <script type="text/template" id="savecookies_code">
       /*Browser*/
       save_cookies()!
-      <%= variable %> = _result()
+      COOKIES = JSON.parse(_result())
+      page().script("JSON.stringify(window.BrowserAutomationStudio_LocalStorages)")!
+      LOCALSTORAGE = ""
+      if(_result().length > 0)
+        LOCALSTORAGE = JSON.parse(_result())
+      <%= variable %> = JSON.stringify({cookies:COOKIES,localstorage:LOCALSTORAGE})
   </script>
 
   <script type="text/template" id="style_code">
@@ -1948,8 +2036,12 @@
   <script type="text/template" id="typeelement_code">
       /*Browser*/
       <%= waiter %>
-      <%= path %>.move()!
-      <%= path %>.type(<%= text %>,<%= interval %>)!
+      <% if(!disableemulation){ %>
+        <%= path %>.move()!
+        <%= path %>.type(<%= text %>,<%= interval %>)!
+      <% }else{ %>
+        <%= path %>.script("self.value=(" + JSON.stringify(<%= text %>) + ")")!
+      <% } %>
   </script>
 
   <script type="text/template" id="clear_code">
@@ -1962,7 +2054,11 @@
   <script type="text/template" id="clickelement_code">
       /*Browser*/
       <%= waiter %>
-      <%= path %>.system_click()!
+      <% if(!disableemulation){ %>
+        <%= path %>.system_click()!
+      <% }else{ %>
+        <%= path %>.script("self.click()")!
+      <% } %>
   </script>
 
   <script type="text/template" id="check_code">
@@ -1992,8 +2088,12 @@
   <script type="text/template" id="moveandclickelement_code">
       /*Browser*/
       <%= waiter %>
-      <%= path %>.move()!
-      <%= path %>.system_click()!
+      <% if(!disableemulation){ %>
+        <%= path %>.move()!
+        <%= path %>.system_click()!
+      <% }else{ %>
+        <%= path %>.script("self.click()")!
+      <% } %>
   </script>
 
   <script type="text/template" id="text_code">
@@ -2099,6 +2199,21 @@
   <script type="text/template" id="move_code">
       /*Browser*/
       move(<%= x %>,<%= y %>)!
+  </script>
+
+  <script type="text/template" id="addtab_code">
+      /*Browser*/
+      page().script("window.open(" + JSON.stringify(<%= url %>) + ")")!
+  </script>
+
+  <script type="text/template" id="closetab_code">
+      /*Browser*/
+      popupclose(<%= index %>)!
+  </script>
+
+  <script type="text/template" id="selecttab_code">
+      /*Browser*/
+      popupselect(<%= index %>)!
   </script>
 
   <script type="text/template" id="moveandclick_code">
@@ -2349,15 +2464,15 @@
   </script>
 
   <script type="text/template" id="break_code">
-      _break(<%= depth %>)
+      _break("function")
   </script>
 
   <script type="text/template" id="continue_code">
-      _next()
+      _next("function")
   </script>
 
   <script type="text/template" id="success_code">
-      success()
+      success(<%= message %>)
   </script>
 
   <script type="text/template" id="fail_code">
@@ -2381,14 +2496,16 @@
   <script src="backbone.js" type="text/javascript"></script>
   <script src="bootstrap.min.js"></script>
   <script src="bootbox.min.js"></script>
+  <script src="../actions/actions.js"></script>
   <script src="translate.js"></script>
   <script src="expressioneditor.js"></script>
   <script src="rappid.js"></script>
   <script src="tooledViewPlugin.js"></script>
   <script src="preservemainpage.js"></script>
   
-
+  <script type="text/javascript"> _L = $.extend(_L, _AL)</script>
   <script type="text/javascript"> _MACRO_INSERT_LOCALIZE_ </script>
+  <script type="text/javascript"> _MACRO_INSERT_ACTIONS_ </script>
 
   <!-- ========= -->
   <!--   Styles  -->
@@ -2433,7 +2550,8 @@
             state: "main",
             isedit: false,
             x: "",
-            y: ""
+            y: "",
+            index: 0
         },
         GetPageInfo: function()
         {
@@ -3006,7 +3124,7 @@
                 var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({url:val["updated"]})
                 code = Normalize(code,0)
 
-                BrowserAutomationStudio_Append("Load " + val["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+                BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e)
               {}
             }else
@@ -3035,7 +3153,30 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value: Value["updated"], fail:fail})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Get xml from xpath " + Value["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+
+          }else if(State == "httpclientxpathxmllist")
+          {
+
+            var Save = this.$el.find("#Save").val().toUpperCase();
+            var Value = GetInputConstructorValue("Value", loader);
+
+            if(Save.length == 0)
+            {
+              Invalid("Variable is empty");
+              return;
+            }
+            if(Value["original"].length == 0)
+            {
+              Invalid("Query is empty");
+              return;
+            }
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value: Value["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3045,7 +3186,7 @@
               var path = GetPath(loader,true)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({waiter: path["waiter"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Wait while element " + path["raw"] + " appear on page", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "httpclientxpathtext")
@@ -3069,7 +3210,30 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value: Value["updated"], fail:fail})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Get text from xpath " + Value["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+
+          }else if(State == "httpclientxpathtextlist")
+          {
+
+            var Save = this.$el.find("#Save").val().toUpperCase();
+            var Value = GetInputConstructorValue("Value", loader);
+
+            if(Save.length == 0)
+            {
+              Invalid("Variable is empty");
+              return;
+            }
+            if(Value["original"].length == 0)
+            {
+              Invalid("Query is empty");
+              return;
+            }
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value: Value["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3092,7 +3256,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value: Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Get count from xpath " + Value["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3115,7 +3279,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value: Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Check if xpath exists", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3132,7 +3296,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Set http client fail on error", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           
@@ -3150,7 +3314,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Http client get url and save to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3167,7 +3331,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Http client get content and save to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3184,7 +3348,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Http client get is error and save to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3201,7 +3365,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Http client get error string and save to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3218,7 +3382,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Http client get status and save to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3241,7 +3405,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value: Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Get header and save to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3259,7 +3423,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({name:Name["updated"],value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Set " + Name["original"] + " header" , BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("" , BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
             
@@ -3282,7 +3446,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value: Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Get cookies for url and save to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3293,7 +3457,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Restore cookies " + Value["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
             
@@ -3311,7 +3475,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Save cookies to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3321,7 +3485,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Clear http headers" , BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("" , BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
             
@@ -3339,7 +3503,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({follow:follow,value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Get " + Value["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           
@@ -3371,7 +3535,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({follow:follow,value:Value["updated"],multipart:multipart,params:params})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Post " + Value["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           
@@ -3409,7 +3573,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({list:List,value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Split line " + Value["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           
@@ -3434,10 +3598,7 @@
               try{
                 var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({ProxyText:ProxyText["updated"], ProxyType:ProxyType,ProxyLogin:ProxyLogin["updated"],ProxyPassword:ProxyPassword["updated"]})
                 code = Normalize(code,0)
-                var text = "Http client proxy " + ProxyText["original"]
-                if(IsEmptyProxy)
-                  text = "Clear http client proxy"
-                BrowserAutomationStudio_Append(text, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+                BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e){}
 
 
@@ -3447,7 +3608,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Reset http client", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "solverfailed")
@@ -3455,7 +3616,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Captcha Failed", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }
@@ -3479,7 +3640,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({file:File["updated"],value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Download " + Value["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           
@@ -3508,7 +3669,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({link_list:List,variable:"VAR_" + Save,value: Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Pull message with to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3541,7 +3702,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({link_list:List,variable:"VAR_" + Save,sender:Sender["updated"],subject:Subject["updated"],body:Body["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Search in mailbox and save to " + Save, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           
@@ -3570,7 +3731,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,sender:Sender["updated"],subject:Subject["updated"],body:Body["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Search all in mailbox and save to " + Save, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           
@@ -3610,7 +3771,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({host:Host["updated"], username:Username["updated"], password: Password["updated"], port:Port["updated"], encryption:"\"" + je(Secure) + "\"", inbox:Inbox["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Setup imap" , BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("" , BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "emaillength")
@@ -3625,7 +3786,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Get email length to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
             
@@ -3647,7 +3808,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({key:Name["updated"],value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Global set " + Name["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "globalget")
@@ -3669,7 +3830,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,key: Name["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Global get " + Name["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3692,7 +3853,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value: Value["updated"], encode: encode})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Base64 encode decode to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3709,7 +3870,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({number:parseInt(num)-1,value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Save result " + Value["original"] , BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
             
@@ -3726,7 +3887,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Cache allow " + Value["original"] , BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "cachemaskdeny")
@@ -3742,7 +3903,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Cache deny " + Value["original"] , BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "requestmaskallow")
@@ -3758,7 +3919,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Request allow " + Value["original"] , BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "requestmaskdeny")
@@ -3774,7 +3935,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Request deny " + Value["original"] , BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "cleardata")
@@ -3782,7 +3943,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Clear cached data", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "clearmasks")
@@ -3790,7 +3951,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Clear masks", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "getstatus")
@@ -3812,7 +3973,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Get status of " + Value["original"] , BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "isloaded")
@@ -3835,7 +3996,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Is loaded " + Value["original"] , BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "getfromcache")
@@ -3859,7 +4020,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value:Value["updated"],base64:base64})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Get from cache " + Value["original"] , BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "html")
@@ -3875,7 +4036,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Save source to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3897,7 +4058,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value: Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Save cookies for url to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3913,7 +4074,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Restore cookies from " + Value["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
             
@@ -3929,7 +4090,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Save cookies to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -3946,7 +4107,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Set open file " + Value["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
             
@@ -3963,7 +4124,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Prompt result " + Value["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
             
@@ -3988,7 +4149,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({login:Login["updated"],password:Password["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Http Auth " + Login["original"] + ":" + Password["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
             
@@ -4010,7 +4171,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value: Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Execute javascript and save to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4021,7 +4182,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({value: Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Execute On Every Page Load " + Value["original"].substr(0,30).split(/(?:\r\n|\r|\n)/)[0], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4030,7 +4191,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Reset all browser data", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4041,7 +4202,7 @@
             var Save = this.$el.find("#Save").val().toUpperCase();
             var Value = GetInputConstructorValue("Value", loader);
             var Antigate = GetInputConstructorValue("Antigate", loader);
-            var Dbc = GetInputConstructorValue("Dbc", loader);
+            var Server = GetInputConstructorValue("Server", loader);
 
             if(Save.length == 0)
             {
@@ -4060,9 +4221,9 @@
             }
 
              try{
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value: Value["updated"],method: Method["updated"], antigate: Antigate["updated"], dbc: Dbc["updated"]})
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value: Value["updated"],method: Method["updated"], antigate: Antigate["updated"], serverurl: Server["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Solve captcha and save to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4093,7 +4254,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,value: Value["updated"],from: ReplaceFrom["updated"], to: ReplaceTo["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Replace string to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4123,7 +4284,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,chars: AllowedChars["updated"],length: Length["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Random string to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4153,7 +4314,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,min: MinValue["updated"],max: MaxValue["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Random number to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4185,7 +4346,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,template: Template})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Template to " + Save, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4204,7 +4365,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({name:Name["updated"],value:Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Set " + Name["original"] + " header" , BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("" , BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           
@@ -4218,7 +4379,7 @@
                try{
                 var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({code:val["updated"]})
                 code = Normalize(code,0)
-                BrowserAutomationStudio_Append("Execute " + val["original"].substr(0,30).split(/(?:\r\n|\r|\n)/)[0], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+                BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e)
               {}
             }else
@@ -4228,14 +4389,12 @@
             }
           }else if(State == "break")
           {
-            var val = GetInputConstructorValue("BreakDepth",loader)
-
 
              try{
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({depth:val["updated"]})
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
 
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Break " + val["original"], BrowserAutomationStudio_SaveControls() + code, 1, false);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
 
             }catch(e)
             {}
@@ -4246,18 +4405,20 @@
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
 
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Continue", BrowserAutomationStudio_SaveControls() + code, 1, false);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
 
             }catch(e)
             {}
 
           }else if(State == "success")
           {
+            var val = GetInputConstructorValue("SuccessMessage",loader)
+
              try{
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({message:val["updated"]})
 
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Success", BrowserAutomationStudio_SaveControls() + code, 1, false);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
 
             }catch(e)
             {}
@@ -4271,7 +4432,7 @@
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({message:val["updated"]})
 
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Fail " + val["original"], BrowserAutomationStudio_SaveControls() + code, 1, false);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
 
             }catch(e)
             {}
@@ -4285,7 +4446,7 @@
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({message:val["updated"]})
 
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Die " + val["original"], BrowserAutomationStudio_SaveControls() + code, 1, false);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
 
             }catch(e)
             {}
@@ -4312,7 +4473,7 @@
               try{
                 var code = loader.GetAdditionalData() + _.template($('#' + State + "_fromto_code").html())({from:from["updated"], to:to["updated"]})
                 code = Normalize(code,0)
-                BrowserAutomationStudio_Append("Sleep from " + from["original"] + " to " + to["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+                BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e){}
             }else
             {
@@ -4327,7 +4488,7 @@
               try{
                 var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({t:t["updated"]})
                 code = Normalize(code,0)
-                BrowserAutomationStudio_Append("Sleep " + t["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+                BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e){}
             }
 
@@ -4356,10 +4517,7 @@
               try{
                 var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({ProxyText:ProxyText["updated"], ProxyType:ProxyType,ProxyLogin:ProxyLogin["updated"],ProxyPassword:ProxyPassword["updated"]})
                 code = Normalize(code,0)
-                var text = "Proxy " + ProxyText["original"]
-                if(IsEmptyProxy)
-                  text = "Clear proxy"
-                BrowserAutomationStudio_Append(text, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+                BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e){}
 
 
@@ -4388,10 +4546,7 @@
               try{
                 var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({ProxyText:ProxyText["updated"], ProxyType:ProxyType,ProxyLogin:ProxyLogin["updated"],ProxyPassword:ProxyPassword["updated"]})
                 code = Normalize(code,0)
-                var text = "Email proxy " + ProxyText["original"]
-                if(IsEmptyProxy)
-                  text = "Clear email proxy"
-                BrowserAutomationStudio_Append(text, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+                BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e){}
 
 
@@ -4404,7 +4559,7 @@
                try{
                 var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({waiter:val["updated"]})
                 code = Normalize(code,0)
-                BrowserAutomationStudio_Append("Wait " + val["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+                BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e)
               {}
             }else
@@ -4417,7 +4572,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Wait Full Page Load", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "if")
@@ -4432,14 +4587,14 @@
                 {
                   var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({expression:val["updated"]})
                   code = Normalize(code,0)
-                  BrowserAutomationStudio_Append("If " + val["original"], BrowserAutomationStudio_SaveControls() + code, 1, false);
+                  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
                 }else
                 {
                   var code = loader.GetAdditionalData() + "\n" + "IF_ELSE_EXPRESSION = " + val["updated"] + ";\n"
 
                   code += _.template($('#' + State + "_code").html())({expression:"IF_ELSE_EXPRESSION"})
                   code = Normalize(code,0)
-                  BrowserAutomationStudio_Append("If " + val["original"], BrowserAutomationStudio_SaveControls() + code, 1, false);
+                  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
 
                   if(!_GobalModel.get("isedit"))
                   {
@@ -4463,7 +4618,7 @@
                try{
                 var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({expression:val["updated"],additional:loader.GetAdditionalData()})
                 code = Normalize(code,0)
-                BrowserAutomationStudio_Append("While " + val["original"], BrowserAutomationStudio_SaveControls() + code, 1, false);
+                BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
               }catch(e)
               {}
             }else
@@ -4488,7 +4643,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({expression_from:from["updated"],expression_to:to["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("For " + from["original"] + " : " + to["original"], BrowserAutomationStudio_SaveControls() + code, 1, false);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
             }catch(e)
             {}
           }else if(State == "ignoreerrors")
@@ -4496,7 +4651,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Ignore Errors", BrowserAutomationStudio_SaveControls() + code, 1, false);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
             }catch(e)
             {}
           }else if(State == "foreach")
@@ -4510,7 +4665,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({for_array:ForArray["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Foreach " + ForArray["original"], BrowserAutomationStudio_SaveControls() + code, 1, false);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
             }catch(e)
             {}
           }else if(State == "resize")
@@ -4534,7 +4689,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({width:width["updated"],height:height["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Resize " + width["original"] + " : " + height["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "type")
@@ -4556,7 +4711,7 @@
             try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({text:TypeData["updated"],interval:TypeInterval["updated"]}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Type " + TypeData["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4564,6 +4719,7 @@
           {
             var TypeData = GetInputConstructorValue("TypeData",loader);
             var TypeInterval = GetInputConstructorValue("TypeInterval",loader);
+            var Check = $("#Check").is(':checked')
 
             if(TypeInterval["original"].length == 0)
             {
@@ -4578,9 +4734,9 @@
 
             try{
               var path = GetPath(loader)
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({text:TypeData["updated"],interval:TypeInterval["updated"],path: path["path"],waiter: path["waiter"]}) + BrowserAutomationStudio_GetWaitCode()
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({text:TypeData["updated"],interval:TypeInterval["updated"],path: path["path"],waiter: path["waiter"], disableemulation: Check}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Type " + TypeData["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4599,7 +4755,7 @@
               var path = GetPath(loader)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({set:Value["updated"],path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Set " + Value["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4618,7 +4774,7 @@
               var path = GetPath(loader)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({set:Value["updated"],path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Set integer " + Value["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4629,7 +4785,7 @@
               var path = GetPath(loader)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Set random", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4644,7 +4800,7 @@
                try{
                 var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({text:val["updated"]})
                 code = Normalize(code,0)
-                BrowserAutomationStudio_Append("Log " + val["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+                BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e)
               {}
             }else
@@ -4662,7 +4818,7 @@
                try{
                 var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({timeout:val["updated"], type: type})
                 code = Normalize(code,0)
-                BrowserAutomationStudio_Append("Set Timeout " + val["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+                BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e)
               {}
             }else
@@ -4679,7 +4835,7 @@
                try{
                 var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Variable})
                 code = Normalize(code,0)
-                BrowserAutomationStudio_Append("Save current url to " + Variable, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+                BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e)
               {}
             }else
@@ -4696,7 +4852,7 @@
                try{
                 var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({name:FunctionName})
                 code = Normalize(code,0)
-                BrowserAutomationStudio_Append("Call " + FunctionName, BrowserAutomationStudio_SaveControls() + code, 1, false);
+                BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
               }catch(e)
               {}
             }else
@@ -4724,7 +4880,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable_name:"VAR_" + VariableName,variable_value:VariableValue["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Set " + VariableName + " to " + VariableValue["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4748,7 +4904,7 @@
              try{
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable_name:"VAR_" + VariableName,variable_value:VariableValue["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Increase " + VariableName + " with " + VariableValue["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4762,7 +4918,7 @@
                 var path = GetPath(loader)
                 var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Variable,path: path["path"],waiter: path["waiter"]})
                 code = Normalize(code,0)
-                BrowserAutomationStudio_Append("Save element xml to " + Variable + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+                BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e)
               {}
             }else
@@ -4781,7 +4937,7 @@
                 var path = GetPath(loader)
                 var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Variable,path: path["path"],waiter: path["waiter"], isvisible: CheckIsvisible})
                 code = Normalize(code,0)
-                BrowserAutomationStudio_Append("Check if exists, save to " + Variable + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+                BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e)
               {}
             }else
@@ -4791,11 +4947,13 @@
             }
           }else if(State == "clickelement")
           {
+             var Check = $("#Check").is(':checked')
+
              try{
               var path = GetPath(loader)
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]}) + BrowserAutomationStudio_GetWaitCode()
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"], disableemulation: Check}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Click on " + path["raw"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "check")
@@ -4804,7 +4962,7 @@
               var path = GetPath(loader)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Check " + path["raw"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "focus")
@@ -4813,7 +4971,7 @@
               var path = GetPath(loader)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Scroll to " + path["raw"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "moveelement")
@@ -4822,16 +4980,18 @@
               var path = GetPath(loader)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Move on " + path["raw"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "moveandclickelement")
           {
+            var Check = $("#Check").is(':checked')
+
              try{
               var path = GetPath(loader)
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]}) + BrowserAutomationStudio_GetWaitCode()
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"], disableemulation: Check}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Move and click on " + path["raw"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "clear")
@@ -4840,7 +5000,7 @@
               var path = GetPath(loader)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Clear on " + path["raw"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "script")
@@ -4862,7 +5022,7 @@
               var path = GetPath(loader)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Variable,path: path["path"],waiter: path["waiter"],script: Script["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Execute javascript and save to " + Variable + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4871,7 +5031,7 @@
             var Variable = this.$el.find("#Save").val().toUpperCase();
             var Method = GetInputConstructorValue("Method", loader);
             var Antigate = GetInputConstructorValue("Antigate", loader);
-            var Dbc = GetInputConstructorValue("Dbc", loader);
+            var Server = GetInputConstructorValue("Server", loader);
             if(Variable.length == 0)
             {
               Invalid("Variable is empty");
@@ -4886,9 +5046,9 @@
              try{
 
               var path = GetPath(loader)
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Variable,path: path["path"],waiter: path["waiter"],method: Method["updated"], antigate: Antigate["updated"], dbc: Dbc["updated"]})
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Variable,path: path["path"],waiter: path["waiter"],method: Method["updated"], antigate: Antigate["updated"], serverurl: Server["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Solve captcha and save to " + Variable + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4911,7 +5071,7 @@
               var path = GetPath(loader)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,path: path["path"],waiter: path["waiter"],attr: Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Save attribute to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4928,7 +5088,7 @@
               var path = GetPath(loader,true)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Save element count to " + Save + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4940,7 +5100,7 @@
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"], querycss: path["querycss"], querymatch: path["querymatch"]})
 
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Foreach in " + path["raw"], BrowserAutomationStudio_SaveControls() + code, 1, false);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
             }catch(e)
             {}
 
@@ -4963,7 +5123,7 @@
               var path = GetPath(loader)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"],value: Value["updated"],name: Name["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Set attribute " + Name["original"] + " to " + Value["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -4986,7 +5146,7 @@
               var path = GetPath(loader)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Variable,path: path["path"],waiter: path["waiter"],style: Value["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Save element style to " + Variable + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -5000,7 +5160,7 @@
                 var path = GetPath(loader)
                 var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Variable,path: path["path"],waiter: path["waiter"]})
                 code = Normalize(code,0)
-                BrowserAutomationStudio_Append("Save element text to " + Variable + " variable", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+                BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e)
               {}
             }else
@@ -5016,7 +5176,7 @@
             try{
               var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({x:MoveX["updated"],y:MoveY["updated"]}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Click " + MoveX["original"] + "," + MoveY["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "move")
@@ -5027,7 +5187,7 @@
             try{
               var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({x:MoveX["updated"],y:MoveY["updated"]})
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Move " + MoveX["original"] + "," + MoveY["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -5039,7 +5199,7 @@
             try{
               var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({x:X["updated"],y:Y["updated"]}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Scroll to " + X["original"] + "," + Y["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -5054,7 +5214,7 @@
               var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({variable:"VAR_" + Variable, x:X["updated"],y:Y["updated"],width:Width["updated"],height:Height["updated"]})
 
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Render " + X["original"] + "," + Y["original"]+ "," + Width["original"] + "," + Height["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
 
@@ -5066,7 +5226,49 @@
             try{
               var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({x:MoveX["updated"],y:MoveY["updated"]}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
-              BrowserAutomationStudio_Append("Move and click " + MoveX["original"] + "," + MoveY["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+          }else if(State == "addtab")
+          {
+            var Url = GetInputConstructorValue("Url", loader);
+            if(Url["original"].length == 0)
+            {
+              Invalid("Url is empty");
+              return;
+            }
+            try{
+              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({url:Url["updated"]}) + BrowserAutomationStudio_GetWaitCode()
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+          }else if(State == "selecttab")
+          {
+            var Index = GetInputConstructorValue("Index", loader);
+            if(Index["original"].length == 0)
+            {
+              Invalid("Index is empty");
+              return;
+            }
+            try{
+              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({index:Index["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+          }else if(State == "closetab")
+          {
+            var Index = GetInputConstructorValue("Index", loader);
+            if(Index["original"].length == 0)
+            {
+              Invalid("Index is empty");
+              return;
+            }
+            try{
+              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({index:Index["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
           }else if(State == "threadnumber")
@@ -5195,7 +5397,9 @@
           "httpclientiserror": _.template($('#httpclientiserror').html()),
           "httpclientgeterrorstring": _.template($('#httpclientgeterrorstring').html()),
           "httpclientxpathxml": _.template($('#httpclientxpathxml').html()),
+          "httpclientxpathxmllist": _.template($('#httpclientxpathxmllist').html()),
           "httpclientxpathtext": _.template($('#httpclientxpathtext').html()),
+          "httpclientxpathtextlist": _.template($('#httpclientxpathtextlist').html()),
           "httpclientxpathcount": _.template($('#httpclientxpathcount').html()),
           "httpclientxpathexists": _.template($('#httpclientxpathexists').html()),
           "parseline": _.template($('#parseline').html()),
@@ -5211,7 +5415,10 @@
           "template": _.template($('#template').html()),
           "replacestring": _.template($('#replacestring').html()),
           "randomint": _.template($('#randomint').html()),
-          "randomstring": _.template($('#randomstring').html())
+          "randomstring": _.template($('#randomstring').html()),
+          "addtab": _.template($('#addtab').html()),
+          "selecttab": _.template($('#selecttab').html()),
+          "closetab": _.template($('#closetab').html())
           _MACRO_INSERT_TEMPLATES_
         }
         this.model.bind('change', this.render, this);
@@ -5235,6 +5442,9 @@
         })
         this.updatepath()
         tr()
+        
+        $(".actions").css("height", window.innerHeight * (100.0 / _Z) - 40 + "px")
+        $(".actions").css("overflow-y","auto")
 
         $('[data-toggle="tooltip"]').tooltip({trigger:'hover', template:'<div class="mytooltip" role="tooltip"><div class="mytooltip-arrow tooltip-arrow"></div><div class="mytooltip-inner tooltip-inner"></div></div>',delay: { "show": 500, "hide": 100 }})
 
@@ -5361,7 +5571,9 @@
             "!/httpclientiserror": "httpclientiserror",
             "!/httpclientgeterrorstring": "httpclientgeterrorstring",
             "!/httpclientxpathxml": "httpclientxpathxml",
+            "!/httpclientxpathxmllist": "httpclientxpathxmllist",
             "!/httpclientxpathtext": "httpclientxpathtext",
+            "!/httpclientxpathtextlist": "httpclientxpathtextlist",
             "!/httpclientxpathcount": "httpclientxpathcount",
             "!/httpclientxpathexists": "httpclientxpathexists",
             "!/parseline": "parseline",
@@ -5376,14 +5588,15 @@
             "!/template": "template",
             "!/replacestring": "replacestring",
             "!/randomstring": "randomstring",
-            "!/randomint": "randomint"
+            "!/addtab": "addtab",
+            "!/selecttab": "selecttab",
+            "!/closetab": "closetab"
             _MACRO_INSERT_ROUTER_DEF_
         },
 
         main: function () {
           _GobalModel.set({ state: "main" });
-          $(".actions").css("height", window.innerHeight * (100.0 / _Z) - 40 + "px")
-          $(".actions").css("overflow-y","auto")
+          
         },
         timeout: function () {
           _GobalModel.set({ state: "timeout" });
@@ -5685,8 +5898,14 @@
         httpclientxpathxml: function(){
                   _GobalModel.set({ state: "httpclientxpathxml" });
                 },
+        httpclientxpathxmllist: function(){
+                  _GobalModel.set({ state: "httpclientxpathxmllist" });
+                },
         httpclientxpathtext: function(){
                   _GobalModel.set({ state: "httpclientxpathtext" });
+                },
+        httpclientxpathtextlist: function(){
+                  _GobalModel.set({ state: "httpclientxpathtextlist" });
                 },
         httpclientxpathcount: function(){
                   _GobalModel.set({ state: "httpclientxpathcount" });
@@ -5734,6 +5953,18 @@
         randomint: function(){
           _GobalModel.set({ state: "randomint" });
         }
+        ,
+        addtab: function(){
+          _GobalModel.set({ state: "addtab" });
+        }
+        ,
+        selecttab: function(){
+          _GobalModel.set({ state: "selecttab" });
+        }
+        ,
+        closetab: function(){
+          _GobalModel.set({ state: "closetab" });
+        }
         _MACRO_INSERT_ROUTER_FUNC_
     });
 
@@ -5741,100 +5972,102 @@
 
     var _TaskCollection = new TaskCollection([
                 { description: tr("Browser"), type: "group" },
-                { name: tr("Load"), description: tr("Load specific url"), ref: "load" },
-                { name: tr("Current Url"), description: tr("Get current url"), ref: "url" },
-                { name: tr("Page Html"), description: tr("Save page html to variable"), ref: "html" },
-                { name: tr("Type"), description: tr("Type text on page. For example, put email in input field"), ref: "type" },
-                { name: tr("Resize"), description: tr("Change browser size"), ref: "resize" },
-                { name: tr("Proxy"), description: tr("Set proxy"), ref: "proxy" },
-                { name: tr("Javascript"), description: tr("Execute javascript"), ref: "javascript" },
-                { name: tr("Execute On Every Page Load In Browser"), description: tr("Execute javascript on every page load in browser"), ref: "onloadjavascript" },
-                { name: tr("Reset"), description: tr("Clear all browser data"), ref: "reset" },
-                { name: tr("Open File Result"), description: tr("Set open file dialog result"), ref: "openfile" },
-                { name: tr("Prompt Result"), description: tr("Set prompt result"), ref: "promptresult" },
-                { name: tr("Http Auth"), description: tr("Set http auth login and password"), ref: "httpauth" },
-                { name: tr("Scroll"), description: tr("Scroll to position"), ref: "scroll" },
-                { name: tr("Render"), description: tr("Render screen part to variable as png base64 encoded"), ref: "renderscreen" },
-                { name: tr("Solve Captcha"), description: tr("Solve captcha"), ref: "solvecaptcha" },
-                { name: tr("Captcha Failed"), description: tr("Captcha Failed"), ref: "solverfailed" },
-                { name: tr("Timeout"), description: tr("Set Timeout"), ref: "timeout" },
+                { name: tr(_A["load"]["name"]), description: tr(_A["load"]["description"]), ref: "load" },
+                { name: tr(_A["url"]["name"]), description: tr(_A["url"]["description"]), ref: "url" },
+                { name: tr(_A["html"]["name"]), description: tr(_A["html"]["description"]), ref: "html" },
+                { name: tr(_A["type"]["name"]), description: tr(_A["type"]["description"]), ref: "type" },
+                { name: tr(_A["resize"]["name"]), description: tr(_A["resize"]["description"]), ref: "resize" },
+                { name: tr(_A["proxy"]["name"]), description: tr(_A["proxy"]["description"]), ref: "proxy" },
+                { name: tr(_A["javascript"]["name"]), description: tr(_A["javascript"]["description"]), ref: "javascript" },
+                { name: tr(_A["onloadjavascript"]["name"]), description: tr(_A["onloadjavascript"]["description"]), ref: "onloadjavascript" },
+                { name: tr(_A["reset"]["name"]), description: tr(_A["reset"]["description"]), ref: "reset" },
+                { name: tr(_A["openfile"]["name"]), description: tr(_A["openfile"]["description"]), ref: "openfile" },
+                { name: tr(_A["promptresult"]["name"]), description: tr(_A["promptresult"]["description"]), ref: "promptresult" },
+                { name: tr(_A["httpauth"]["name"]), description: tr(_A["httpauth"]["description"]), ref: "httpauth" },
+                { name: tr(_A["scroll"]["name"]), description: tr(_A["scroll"]["description"]), ref: "scroll" },
+                { name: tr(_A["renderscreen"]["name"]), description: tr(_A["renderscreen"]["description"]), ref: "renderscreen" },
+                { name: tr(_A["solvecaptcha"]["name"]), description: tr(_A["solvecaptcha"]["description"]), ref: "solvecaptcha" },
+                { name: tr(_A["solverfailed"]["name"]), description: tr(_A["solverfailed"]["description"]), ref: "solverfailed" },
+                { name: tr(_A["timeout"]["name"]), description: tr(_A["timeout"]["description"]), ref: "timeout" },
 
                 { description: tr("Script logic"), type: "group" },
-                { name: tr("If"), description: tr("Execute conditional actions"), ref: "if" },
-                { name: tr("While"), description: tr("Execute while loop"), ref: "while" },
-                { name: tr("For"), description: tr("Execute for loop"), ref: "for" },
-                { name: tr("Foreach"), description: tr("Execute foreach loop"), ref: "foreach" },
-                { name: tr("Break"), description: tr("Stop loop"), ref: "break" },
-                /*{ name: tr("Continue"), description: tr("Start next loop iteration"), ref: "continue" },*/
-                { name: tr("Success"), description: tr("Finish script with success result"), ref: "success" },
-                { name: tr("Fail"), description: tr("Finish script with fail result"), ref: "fail" },
-                { name: tr("End Script"), description: tr("Immediately End Script"), ref: "die" },
-                { name: tr("Ignore Errors"), description: tr("Ignore errors"), ref: "ignoreerrors" },
-                { name: tr("Set Variable"), description: tr("Sets or creates variable"), ref: "setvariable" },
-                { name: tr("Increase Variable"), description: tr("Increase Variable"), ref: "incvariable" },
-                { name: tr("Call Function"), description: tr("Call function"), ref: "executefunction" },
+                { name: tr(_A["if"]["name"]), description: tr(_A["if"]["description"]), ref: "if" },
+                { name: tr(_A["while"]["name"]), description: tr(_A["while"]["description"]), ref: "while" },
+                { name: tr(_A["for"]["name"]), description: tr(_A["for"]["description"]), ref: "for" },
+                { name: tr(_A["foreach"]["name"]), description: tr(_A["foreach"]["description"]), ref: "foreach" },
+                { name: tr(_A["break"]["name"]), description: tr(_A["break"]["description"]), ref: "break" },
+                { name: tr(_A["continue"]["name"]), description: tr(_A["continue"]["description"]), ref: "continue" },
+                { name: tr(_A["success"]["name"]), description: tr(_A["success"]["description"]), ref: "success" },
+                { name: tr(_A["fail"]["name"]), description: tr(_A["fail"]["description"]), ref: "fail" },
+                { name: tr(_A["die"]["name"]), description: tr(_A["die"]["description"]), ref: "die" },
+                { name: tr(_A["ignoreerrors"]["name"]), description: tr(_A["ignoreerrors"]["description"]), ref: "ignoreerrors" },
+                { name: tr(_A["setvariable"]["name"]), description: tr(_A["setvariable"]["description"]), ref: "setvariable" },
+                { name: tr(_A["incvariable"]["name"]), description: tr(_A["incvariable"]["description"]), ref: "incvariable" },
+                { name: tr(_A["executefunction"]["name"]), description: tr(_A["executefunction"]["description"]), ref: "executefunction" },
                 { description: tr("Tools"), type: "group" },
-                { name: tr("Log"), description: tr("Output string to log"), ref: "log" },
-                { name: tr("Result"), description: tr("Save result"), ref: "result" },
-                { name: tr("Custom"), description: tr("Execute custom code"), ref: "custom" },
-                { name: tr("Base64 Encode/Decode"), description: tr("Base64 encode or decode"), ref: "base64" },
-                { name: tr("Set Global Variable"), description: tr("Set global variable"), ref: "globalset" },
-                { name: tr("Get Global Variable"), description: tr("Get global variable"), ref: "globalget" },
-                { name: tr("Parse Line"), description: tr("Parse line like this 'a1:a2:a3' and save to variables"), ref: "parseline" },
-                { name: tr("Template"), description: tr("Use Template"), ref: "template" },
-                { name: tr("Replace String"), description: tr("Replace all occurrences of one string to another"), ref: "replacestring" },
-                { name: tr("Random String"), description: tr("Generate random string"), ref: "randomstring" },
-                { name: tr("Random Number"), description: tr("Generate random integer"), ref: "randomint" },
+                { name: tr(_A["log"]["name"]), description: tr(_A["log"]["description"]), ref: "log" },
+                { name: tr(_A["result"]["name"]), description: tr(_A["result"]["description"]), ref: "result" },
+                { name: tr(_A["custom"]["name"]), description: tr(_A["custom"]["description"]), ref: "custom" },
+                { name: tr(_A["base64"]["name"]), description: tr(_A["base64"]["description"]), ref: "base64" },
+                { name: tr(_A["globalset"]["name"]), description: tr(_A["globalset"]["description"]), ref: "globalset" },
+                { name: tr(_A["globalget"]["name"]), description: tr(_A["globalget"]["description"]), ref: "globalget" },
+                { name: tr(_A["parseline"]["name"]), description: tr(_A["parseline"]["description"]), ref: "parseline" },
+                { name: tr(_A["template"]["name"]), description: tr(_A["template"]["description"]), ref: "template" },
+                { name: tr(_A["replacestring"]["name"]), description: tr(_A["replacestring"]["description"]), ref: "replacestring" },
+                { name: tr(_A["randomstring"]["name"]), description: tr(_A["randomstring"]["description"]), ref: "randomstring" },
+                { name: tr(_A["randomint"]["name"]), description: tr(_A["randomint"]["description"]), ref: "randomint" },
                 { description: tr("Network"), type: "group" },
-                { name: tr("Set Header"), description: tr("Set HTTP Headers, like user agent, accept language, etc"), ref: "setheader" },
-                { name: tr("Get Cookies For Url"), description: tr("Get cookies for url"), ref: "getcookiesforurl" },
-                { name: tr("Save Cookies"), description: tr("Save all cookies to variable"), ref: "savecookies" },
-                { name: tr("Restore Cookies"), description: tr("Restore cookies, which is saved with Save Cookies command"), ref: "restorecookies" },
-                { name: tr("Cache Mask Allow"), description: tr("Allow save loaded url content to cache"), ref: "cachemaskallow" },
-                { name: tr("Cache Mask Deny"), description: tr("Deny save loaded url content to cache"), ref: "cachemaskdeny" },
-                { name: tr("Request Mask Allow"), description: tr("Allow load url, which matching mask"), ref: "requestmaskallow" },
-                { name: tr("Request Mask Deny"), description: tr("Deny load url, which matching mask"), ref: "requestmaskdeny" },
-                { name: tr("Clear Cached Data"), description: tr("Clear loaded cache data"), ref: "cleardata" },
-                { name: tr("Clear Cache Masks"), description: tr("Clear cache masks"), ref: "clearmasks" },
-                { name: tr("Get Status"), description: tr("Get url load status"), ref: "getstatus" },
-                { name: tr("Is Loaded"), description: tr("Check if url is loaded"), ref: "isloaded" },
-                { name: tr("Get Cached Item"), description: tr("Get base64 encoded cached page"), ref: "getfromcache" },
+                { name: tr(_A["setheader"]["name"]), description: tr(_A["setheader"]["description"]), ref: "setheader" },
+                { name: tr(_A["getcookiesforurl"]["name"]), description: tr(_A["getcookiesforurl"]["description"]), ref: "getcookiesforurl" },
+                { name: tr(_A["savecookies"]["name"]), description: tr(_A["savecookies"]["description"]), ref: "savecookies" },
+                { name: tr(_A["restorecookies"]["name"]), description: tr(_A["restorecookies"]["description"]), ref: "restorecookies" },
+                { name: tr(_A["cachemaskallow"]["name"]), description: tr(_A["cachemaskallow"]["description"]), ref: "cachemaskallow" },
+                { name: tr(_A["cachemaskdeny"]["name"]), description: tr(_A["cachemaskdeny"]["description"]), ref: "cachemaskdeny" },
+                { name: tr(_A["requestmaskallow"]["name"]), description: tr(_A["requestmaskallow"]["description"]), ref: "requestmaskallow" },
+                { name: tr(_A["requestmaskdeny"]["name"]), description: tr(_A["requestmaskdeny"]["description"]), ref: "requestmaskdeny" },
+                { name: tr(_A["cleardata"]["name"]), description: tr(_A["cleardata"]["description"]), ref: "cleardata" },
+                { name: tr(_A["clearmasks"]["name"]), description: tr(_A["clearmasks"]["description"]), ref: "clearmasks" },
+                { name: tr(_A["getstatus"]["name"]), description: tr(_A["getstatus"]["description"]), ref: "getstatus" },
+                { name: tr(_A["isloaded"]["name"]), description: tr(_A["isloaded"]["description"]), ref: "isloaded" },
+                { name: tr(_A["getfromcache"]["name"]), description: tr(_A["getfromcache"]["description"]), ref: "getfromcache" },
                 { description: tr("Waiters"), type: "group" },
-                { name: tr("Wait Full Page Load"), description: tr("Wait for full page load"), ref: "waitfullload" },
-                { name: tr("Wait Url Loaded"), description: tr("Wait until browser will load url"), ref: "waitload" },
-                { name: tr("Wait Address Bar"), description: tr("Wait address bar will contain url"), ref: "waiturl" },
-                { name: tr("Wait Text"), description: tr("Wait until specific text will be present on page"), ref: "waitcontent" },
-                { name: tr("Wait Css"), description: tr("Wait until specific css selector will return non empty result"), ref: "waitcss" },
-                { name: tr("Sleep"), description: tr("Sleep for a specific time"), ref: "sleep" },
+                { name: tr(_A["waitfullload"]["name"]), description: tr(_A["waitfullload"]["description"]), ref: "waitfullload" },
+                { name: tr(_A["waitload"]["name"]), description: tr(_A["waitload"]["description"]), ref: "waitload" },
+                { name: tr(_A["waiturl"]["name"]), description: tr(_A["waiturl"]["description"]), ref: "waiturl" },
+                { name: tr(_A["waitcontent"]["name"]), description: tr(_A["waitcontent"]["description"]), ref: "waitcontent" },
+                { name: tr(_A["waitcss"]["name"]), description: tr(_A["waitcss"]["description"]), ref: "waitcss" },
+                { name: tr(_A["sleep"]["name"]), description: tr(_A["sleep"]["description"]), ref: "sleep" },
                 { description: tr("Email"), type: "group" },
-                { name: tr("Configure"), description: tr("Configure email settings"), ref: "emailsettings" },
-                { name: tr("Proxy"), description: tr("Configure email proxy"), ref: "emailproxy" },
-                { name: tr("Messages Length"), description: tr("Get messages length"), ref: "emaillength" },
-                { name: tr("Search First"), description: tr("Search for first message"), ref: "emailsearchfirst" },
-                { name: tr("Search All"), description: tr("Search for all messages"), ref: "emailsearchall" },
-                { name: tr("Get Message"), description: tr("Pull message"), ref: "emailpull" },
+                { name: tr(_A["emailsettings"]["name"]), description: tr(_A["emailsettings"]["description"]), ref: "emailsettings" },
+                { name: tr(_A["emailproxy"]["name"]), description: tr(_A["emailproxy"]["description"]), ref: "emailproxy" },
+                { name: tr(_A["emaillength"]["name"]), description: tr(_A["emaillength"]["description"]), ref: "emaillength" },
+                { name: tr(_A["emailsearchfirst"]["name"]), description: tr(_A["emailsearchfirst"]["description"]), ref: "emailsearchfirst" },
+                { name: tr(_A["emailsearchall"]["name"]), description: tr(_A["emailsearchall"]["description"]), ref: "emailsearchall" },
+                { name: tr(_A["emailpull"]["name"]), description: tr(_A["emailpull"]["description"]), ref: "emailpull" },
                 { description: tr("Http Client"), type: "group" },
-                { name: tr("Proxy"), description: tr("Set proxy for http client"), ref: "httpclientproxy" },
-                { name: tr("Reset"), description: tr("Reset http client"), ref: "httpclientreset" },
-                { name: tr("Get"), description: tr("Make GET request"), ref: "httpclientget" },
-                { name: tr("Post"), description: tr("Make POST request"), ref: "httpclientpost" },
-                { name: tr("Download"), description: tr("Download to file"), ref: "httpclientdownload" },
-                { name: tr("Current Url"), description: tr("Get http client current url"), ref: "httpclienturl" },
-                { name: tr("Content"), description: tr("Get http client request result"), ref: "httpclientcontent" },
-                { name: tr("Status"), description: tr("Get http client request status"), ref: "httpclientstatus" },
-                { name: tr("Get Header"), description: tr("Get http client header"), ref: "httpclientgetheader" },
-                { name: tr("Set Header"), description: tr("Set http client header"), ref: "httpclientsetheader" },
-                { name: tr("Clear Headers"), description: tr("Clear http client request headers"), ref: "httpclientclearheader" },
-                { name: tr("Get Cookies For Url"), description: tr("Get cookies for url"), ref: "httpclientgetcookiesforurl" },
-                { name: tr("Save Cookies"), description: tr("Save all cookies to variable"), ref: "httpclientsavecookies" },
-                { name: tr("Restore Cookies"), description: tr("Restore cookies, which is saved with Save Cookies command"), ref: "httpclientrestorecookies" },
-                { name: tr("Set Fail On Error"), description: tr("Fail if error during http request"), ref: "httpclientfailonerror" },
-                { name: tr("Is Error"), description: tr("Check if error"), ref: "httpclientiserror" },
-                { name: tr("Get Error String"), description: tr("Get last error string"), ref: "httpclientgeterrorstring" },
-                { name: tr("Xpath Get Xml"), description: tr("Execute xpath query and get result xml"), ref: "httpclientxpathxml" },
-                { name: tr("Xpath Get Text"), description: tr("Execute xpath query and get result text"), ref: "httpclientxpathtext" },
-                { name: tr("Xpath Get Count"), description: tr("Execute xpath query and get result count"), ref: "httpclientxpathcount" },
-                { name: tr("Xpath Get Exists"), description: tr("Execute xpath query and check if exists"), ref: "httpclientxpathexists" }
+                { name: tr(_A["httpclientproxy"]["name"]), description: tr(_A["httpclientproxy"]["description"]), ref: "httpclientproxy" },
+                { name: tr(_A["httpclientreset"]["name"]), description: tr(_A["httpclientreset"]["description"]), ref: "httpclientreset" },
+                { name: tr(_A["httpclientget"]["name"]), description: tr(_A["httpclientget"]["description"]), ref: "httpclientget" },
+                { name: tr(_A["httpclientpost"]["name"]), description: tr(_A["httpclientpost"]["description"]), ref: "httpclientpost" },
+                { name: tr(_A["httpclientdownload"]["name"]), description: tr(_A["httpclientdownload"]["description"]), ref: "httpclientdownload" },
+                { name: tr(_A["httpclienturl"]["name"]), description: tr(_A["httpclienturl"]["description"]), ref: "httpclienturl" },
+                { name: tr(_A["httpclientcontent"]["name"]), description: tr(_A["httpclientcontent"]["description"]), ref: "httpclientcontent" },
+                { name: tr(_A["httpclientstatus"]["name"]), description: tr(_A["httpclientstatus"]["description"]), ref: "httpclientstatus" },
+                { name: tr(_A["httpclientgetheader"]["name"]), description: tr(_A["httpclientgetheader"]["description"]), ref: "httpclientgetheader" },
+                { name: tr(_A["httpclientsetheader"]["name"]), description: tr(_A["httpclientsetheader"]["description"]), ref: "httpclientsetheader" },
+                { name: tr(_A["httpclientclearheader"]["name"]), description: tr(_A["httpclientclearheader"]["description"]), ref: "httpclientclearheader" },
+                { name: tr(_A["httpclientgetcookiesforurl"]["name"]), description: tr(_A["httpclientgetcookiesforurl"]["description"]), ref: "httpclientgetcookiesforurl" },
+                { name: tr(_A["httpclientsavecookies"]["name"]), description: tr(_A["httpclientsavecookies"]["description"]), ref: "httpclientsavecookies" },
+                { name: tr(_A["httpclientrestorecookies"]["name"]), description: tr(_A["httpclientrestorecookies"]["description"]), ref: "httpclientrestorecookies" },
+                { name: tr(_A["httpclientfailonerror"]["name"]), description: tr(_A["httpclientfailonerror"]["description"]), ref: "httpclientfailonerror" },
+                { name: tr(_A["httpclientiserror"]["name"]), description: tr(_A["httpclientiserror"]["description"]), ref: "httpclientiserror" },
+                { name: tr(_A["httpclientgeterrorstring"]["name"]), description: tr(_A["httpclientgeterrorstring"]["description"]), ref: "httpclientgeterrorstring" },
+                { name: tr(_A["httpclientxpathxml"]["name"]), description: tr(_A["httpclientxpathxml"]["description"]), ref: "httpclientxpathxml" },
+                { name: tr(_A["httpclientxpathxmllist"]["name"]), description: tr(_A["httpclientxpathxmllist"]["description"]), ref: "httpclientxpathxmllist" },
+                { name: tr(_A["httpclientxpathtext"]["name"]), description: tr(_A["httpclientxpathtext"]["description"]), ref: "httpclientxpathtext" },
+                { name: tr(_A["httpclientxpathtextlist"]["name"]), description: tr(_A["httpclientxpathtextlist"]["description"]), ref: "httpclientxpathtextlist" },
+                { name: tr(_A["httpclientxpathcount"]["name"]), description: tr(_A["httpclientxpathcount"]["description"]), ref: "httpclientxpathcount" },
+                { name: tr(_A["httpclientxpathexists"]["name"]), description: tr(_A["httpclientxpathexists"]["description"]), ref: "httpclientxpathexists" }
                 _MACRO_INSERT_ACTION_LIST_
 
             ]);
@@ -5871,10 +6104,10 @@
 
     $( document ).ready(function() {
         document.documentElement.style.zoom = _Z + '%';
-        $( document.body ).click(function(){
+        /*$( document.body ).click(function(){
           $("#searchinput").focus()  
 
-        })
+        })*/
         $( document ).click(function(){
           $(".dropdown-menu-css-options").hide()
         })
@@ -5939,7 +6172,7 @@
 
     function BrowserAutomationStudio_SaveControls()
     {
-      var ControlsText = {s:_GobalModel.get("state"),e:$("#executetype .btn-info").attr("data-action")}
+      var ControlsText = {s:_GobalModel.get("state"),e:$("#executetype .btn-info").attr("data-action"),v: 1}
       
       var usewaiter = $("#use-waiter")
       if(usewaiter.length > 0 && usewaiter.attr("data-enabled") == "true")  
@@ -6043,8 +6276,8 @@
         _SelectorModel.set("current",selector["current"])
       }
 
-      _GobalModel.set("isedit",true)
       _GobalModel.set({ state: data["s"] });
+      _GobalModel.set("isedit",true)
 
       $("#executetype button").removeClass("btn-info")
       $("#executetype button").addClass("btn-default")
@@ -6396,29 +6629,45 @@
 
     }
 
+    function BrowserAutomationStudio_AddTab()
+    {
+      _Router.navigate("#!/addtab", true);
+    }
+
+    function BrowserAutomationStudio_SelectTab(i)
+    {
+      _Router.navigate("#!/selecttab", true);
+      _GobalModel.set("index",i)
+    }
+
+    function BrowserAutomationStudio_CloseTab(i)
+    {
+      _Router.navigate("#!/closetab", true);
+      _GobalModel.set("index",i)
+    }
 
 
     function BrowserAutomationStudio_Click(x, y)
     {
-      _Router.navigate("#", true);
+      _Router.navigate("#!/click", true);
       _GobalModel.set("x",x.toString())
       _GobalModel.set("y",y.toString())
-      _Router.navigate("#!/click", true);
     }
 
     function BrowserAutomationStudio_Move(x, y)
     {
-      _Router.navigate("#", true);
+      _Router.navigate("#!/move", true);
       _GobalModel.set("x",x.toString())
       _GobalModel.set("y",y.toString())
-      _Router.navigate("#!/move", true);
+      
     }
 
     function BrowserAutomationStudio_MoveAndClick(x, y)
     {
+      _Router.navigate("#!/moveandclick", true);
       _GobalModel.set("x",x.toString())
       _GobalModel.set("y",y.toString())
-      _Router.navigate("#!/moveandclick", true);
+      
     }
 
     function BrowserAutomationStudio_ElementFunction(selector, name, is_loop)

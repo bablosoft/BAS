@@ -230,6 +230,26 @@ function http_client_xpath_text(query, do_not_fail)
     return html_parser_xpath_text(query)
 }
 
+
+function http_client_xpath_xml_list(query, do_not_fail)
+{
+    http_client_xpath_parse()
+    if(!do_not_fail && !http_client_xpath_exist(query))
+        fail("Can't resolve query " + query);
+
+
+    return html_parser_xpath_xml_list(query)
+}
+
+function http_client_xpath_text_list(query, do_not_fail)
+{
+    http_client_xpath_parse()
+    if(!do_not_fail && !http_client_xpath_exist(query))
+        fail("Can't resolve query " + query);
+
+    return html_parser_xpath_text_list(query)
+}
+
 function http_client_xpath_count(query)
 {
     http_client_xpath_parse()

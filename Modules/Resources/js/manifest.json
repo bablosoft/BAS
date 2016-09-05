@@ -4,7 +4,7 @@
 	"description":"Advanced way to manipulate resources",
 	"description_small":{"en": "Resources", "ru": "Ресурсы"},
 	"major_version": 1,
-	"minor_version": 1,
+	"minor_version": 2,
 	"developer_name": "bablosoft", 
 	"developer_email": "mail.to.twaego@gmail.com", 
 	"developer_site": "https://bablosoft.com",
@@ -15,6 +15,7 @@
 		{
 			"name":"CreateResource",
 			"description":{"en": "Create Resource","ru": "Создать Ресурс"},
+			"template": "{{Name}}",
 			"is_element": false,
 			"interface": "create_resource_interface.js",
 			"select": "create_resource_select.js",
@@ -23,6 +24,7 @@
 		{
 			"name":"DeleteCurrentElement",
 			"description":{"en": "Delete Current Element","ru": "Удалить Текущий Элемент"},
+			"template": "{{ResourceName}}",
 			"is_element": false,
 			"interface": "delete_current_element_interface.js",
 			"select": "delete_current_element_select.js",
@@ -31,6 +33,7 @@
 		{
 			"name":"ResourceAddElement",
 			"description":{"en": "Add Element","ru": "Добавить Элемент"},
+			"template": "{{Data}} -> {{ResourceName}}",
 			"is_element": false,
 			"interface": "resource_add_element_interface.js",
 			"select": "resource_add_element_select.js",
@@ -39,6 +42,7 @@
 		{
 			"name":"GetResouceLocation",
 			"description":{"en": "Resource Location","ru": "Расположение Ресурса"},
+			"template": "{{ResourceName}} -> {{Save}}",
 			"is_element": false,
 			"interface": "get_resource_location_interface.js",
 			"select": "get_resource_location_select.js",
@@ -47,6 +51,7 @@
 		{
 			"name":"ResourceToArray",
 			"description":{"en": "Resource To List","ru": "Ресурс В Список"},
+			"template": "{{ResourceName}} -> {{Save}}",
 			"is_element": false,
 			"interface": "resource_to_array_interface.js",
 			"select": "resource_to_array_select.js",

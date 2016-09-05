@@ -4,6 +4,7 @@
 #include "split.h"
 #include "convertencoding.h"
 #include "trim.h"
+#include "startwith.h"
 #include "log.h"
 
 FixContentCharset::FixContentCharset()
@@ -59,7 +60,7 @@ bool FixContentCharset::NeedToFix(const std::string& ContentTypeHeader, const st
     std::string Mime = ExtractMime(ContentTypeHeader);
 
     //bool IsOk = IsUtf8(Charset) || Mime != "text/html" && Charset.empty();
-    bool IsOk = Mime != "text/html" && Charset.empty();
+    bool IsOk = Mime != "text/html" && (Charset.empty() || starts_with(Mime,"image") || starts_with(Mime,"audio") || starts_with(Mime,"video"));
     return !IsOk;
 }
 

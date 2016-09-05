@@ -299,9 +299,16 @@
     <addaction name="actionShow_Report"/>
     <addaction name="actionResourcesReport"/>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionRegexp_Constructor"/>
+   </widget>
    <addaction name="menuProject"/>
    <addaction name="menuReports"/>
    <addaction name="menuBuild"/>
+   <addaction name="menuTools"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
@@ -782,6 +789,15 @@
     <string>Module Manager</string>
    </property>
   </action>
+  <action name="actionRegexp_Constructor">
+   <property name="icon">
+    <iconset resource="studio.qrc">
+     <normaloff>:/studio/images/regexp.png</normaloff>:/studio/images/regexp.png</iconset>
+   </property>
+   <property name="text">
+    <string>Regular Expression Constructor</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -793,8 +809,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../Engine/engine.qrc"/>
   <include location="studio.qrc"/>
+  <include location="../Engine/engine.qrc"/>
  </resources>
  <connections/>
 </ui>

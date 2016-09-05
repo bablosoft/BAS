@@ -1,0 +1,1 @@
+<%= variable %> = (function(){var m = (new RegExp(<%= regexp %>,"m")).exec(<%= string %>); if(m){return ((m.length>1) ? m[1] : m[0]);} return null;})()

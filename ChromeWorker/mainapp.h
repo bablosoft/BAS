@@ -73,6 +73,7 @@ class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderP
 
     //Render
     bool NeedRenderNextFrame;
+    int SkipBeforeRenderNextFrame;
     bool IsElementRender;
     int RenderX,RenderY,RenderWidth,RenderHeight;
 
@@ -93,7 +94,7 @@ class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderP
 
     std::string Code, Resources, AdditionalResources, Variables, Functions;
     bool ResourcesChanged;
-
+    void UpdateScrolls(std::string& data);
     void HandleMainBrowserEvents();
     void HandleToolboxBrowserEvents();
     void HandleScenarioBrowserEvents();
@@ -110,6 +111,7 @@ public:
     void SetSettings(settings *Settings);
     void SetLayout(MainLayout *Layout);
     BrowserData * GetData();
+    std::vector<std::string> GetAllPopupsUrls();
 
     virtual CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler() OVERRIDE;
     virtual CefRefPtr<CefRenderProcessHandler> GetRenderProcessHandler() OVERRIDE;
@@ -170,6 +172,8 @@ public:
     void DebugVariablesResultCallback(const std::string & data);
 
     void MouseClickCallback(int x, int y);
+    void PopupCloseCallback(int index);
+    void PopupSelectCallback(int index);
     void MouseMoveCallback(int x, int y);
     void LoadSuccessCallback();
     void ResizeCallback(int width, int height);
@@ -178,6 +182,7 @@ public:
     void UrlLoaded(const std::string&, int);
     void AfterReadyToCreateBrowser(bool Reload);
     void Timer();
+    void CefMessageLoop();
     void ExecuteTypeText();
     void ExecuteMouseMove();
     void FinishedLastCommand(const std::string& data);
@@ -192,6 +197,11 @@ public:
     void EmulateClick(int x, int y);
     void EmulateMove(int x, int y);
     void EmulateMoveAndClick(int x, int y);
+
+    //Tabs
+    void AddTab();
+    void SelectTab(int i);
+    void CloseTab(int i);
 
     //Events
     std::vector<std::function<void(const std::string&)> > EventSendTextResponce;
@@ -228,3 +238,4 @@ private:
 };
 
 #endif // MAINAPP_H
+

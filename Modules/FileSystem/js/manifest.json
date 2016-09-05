@@ -14,6 +14,7 @@
 		{
 			"name":"filesystem_readfile",
 			"description":{"en": "Read File","ru": "Читать Файл"},
+			"template": "{{Value}} -> {{Save}}",
 			"is_element": false,
 			"interface": "readfile_interface.js",
 			"select": "readfile_select.js",
@@ -21,6 +22,7 @@
 		},{
 			"name":"filesystem_writefile",
 			"description":{"en": "Write File","ru": "Запись В Файл"},
+			"template": "{{Value}} -> {{File}}",
 			"is_element": false,
 			"interface": "writefile_interface.js",
 			"select": "writefile_select.js",
@@ -28,6 +30,7 @@
 		},{
 			"name":"filesystem_fileinfo",
 			"description":{"en": "File/Folder Info","ru": "Информация О Файле/Папке"},
+			"template": "{{Value}}",
 			"is_element": false,
 			"interface": "fileinfo_interface.js",
 			"select": "fileinfo_select.js",
@@ -35,6 +38,7 @@
 		},{
 			"name":"filesystem_createdir",
 			"description":{"en": "Create Folder","ru": "Создать Папку"},
+			"template": "{{Value}}",
 			"is_element": false,
 			"interface": "createdir_interface.js",
 			"select": "createdir_select.js",
@@ -42,6 +46,7 @@
 		},{
 			"name":"filesystem_removefile",
 			"description":{"en": "Remove File/Folder","ru": "Удалить Файл/Папку"},
+			"template": "{{Value}}",
 			"is_element": false,
 			"interface": "removefile_interface.js",
 			"select": "removefile_select.js",
@@ -49,6 +54,7 @@
 		},{
 			"name":"filesystem_movefile",
 			"description":{"en": "Move File/Folder","ru": "Переместить Файл/Папку"},
+			"template": "{{Value}} -> {{ValueDest}}",
 			"is_element": false,
 			"interface": "movefile_interface.js",
 			"select": "movefile_select.js",
@@ -56,6 +62,7 @@
 		},{
 			"name":"filesystem_copyfile",
 			"description":{"en": "Copy File/Folder","ru": "Копировать Файл/Папку"},
+			"template": "{{Value}} -> {{ValueDest}}",
 			"is_element": false,
 			"interface": "copyfile_interface.js",
 			"select": "copyfile_select.js",
@@ -63,6 +70,7 @@
 		},{
 			"name":"filesystem_search",
 			"description":{"en": "File Search","ru": "Поиск Файлов"},
+			"template": "{{Folder}} -> {{Save}}",
 			"is_element": false,
 			"interface": "search_interface.js",
 			"select": "search_select.js",
@@ -70,6 +78,7 @@
 		},{
 			"name":"filesystem_file_to_list",
 			"description":{"en": "Read File To List","ru": "Читать Файл В Список"},
+			"template": "{{Value}} -> {{Save}}",
 			"is_element": false,
 			"interface": "file_to_list_interface.js",
 			"select": "file_to_list_select.js",
@@ -77,6 +86,7 @@
 		},{
 			"name":"filesystem_list_to_file",
 			"description":{"en": "Write List To File","ru": "Записать Список В Файл"},
+			"template": "{{Save}} -> {{File}}",
 			"is_element": false,
 			"interface": "list_to_file_interface.js",
 			"select": "list_to_file_select.js",

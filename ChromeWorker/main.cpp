@@ -22,12 +22,13 @@ PipesClient *Client;
 CommandParser *Parser;
 HWND MousePositionMouseHandle,hwnd,HButtonUp,HButtonDown,HButtonLeft,HButtonRight,HButtonDevTools,HButtonScenario,HTextHold,HTextFinished;
 enum{IDButtonTerminate = 1000,IDButtonQuit,IDButtonUp,IDButtonDown,IDButtonLeft,IDButtonRight,IDButtonMinimizeMaximize,IDButtonDevTools,IDButtonScenario,IDButtonSettings,IDTextHold,IDTextFinished,IDClick,IDMove,IDMoveAndClick,IDInspect,IDXml,IDText,IDScript,IDClickElement,IDMoveElement,IDMoveAndClickElement,IDClear,IDType,IDExists,IDStyle,IDCheck,IDFocus,IDSet,IDSetInteger,IDSetRandom,IDGetAttr,IDSetAttr,IDCaptcha,IDLength,IDWaitElement,
-    IDLoop,IDXmlLoop,IDTextLoop,IDScriptLoop,IDClickElementLoop,IDMoveElementLoop,IDMoveAndClickElementLoop,IDClearLoop,IDTypeLoop,IDExistsLoop,IDStyleLoop,IDCheckLoop,IDFocusLoop,IDSetLoop,IDSetIntegerLoop,IDSetRandomLoop,IDGetAttrLoop,IDSetAttrLoop,IDCaptchaLoop,IDCustom = 30000,IDCustomForeach = 40000};
+    IDLoop,IDXmlLoop,IDTextLoop,IDScriptLoop,IDClickElementLoop,IDMoveElementLoop,IDMoveAndClickElementLoop,IDClearLoop,IDTypeLoop,IDExistsLoop,IDStyleLoop,IDCheckLoop,IDFocusLoop,IDSetLoop,IDSetIntegerLoop,IDSetRandomLoop,IDGetAttrLoop,IDSetAttrLoop,IDCaptchaLoop,IDCustom = 30000,IDCustomForeach = 40000,IDCustomPopups = 50000};
 HBITMAP BReady,BFinished;
 HCURSOR HCursor;
 using namespace std::placeholders;
 HMENU hPopupMenu = 0;
 HMENU hForEachMenu = 0;
+HMENU hTabsMenu = 0;
 HINSTANCE hInst;
 MainLayout *Layout;
 int MouseMenuPositionX,MouseMenuPositionY;
@@ -185,6 +186,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     DestroyMenu(hForEachMenu);
                     hForEachMenu = 0;
                 }
+                if(hTabsMenu)
+                {
+                    DestroyMenu(hTabsMenu);
+                    hTabsMenu = 0;
+                }
 
                 if(xPos >= r.left && xPos <= r.right && yPos >= r.top && yPos <= r.bottom && Layout->State == MainLayout::Ready)
                 {
@@ -192,6 +198,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     GetCursorPos(&p);
                     hPopupMenu = CreatePopupMenu();
                     hForEachMenu = CreatePopupMenu();
+                    hTabsMenu = CreatePopupMenu();
                     MouseMenuPositionX = (float)(xPos - r.left) * (float)(app->GetData()->WidthBrowser) / (float)(r.right - r.left),MouseMenuPositionY = (float)(yPos - r.top) * (float)(app->GetData()->HeightBrowser) / (float)(r.bottom - r.top);
                     InspectLastX = MouseMenuPositionX + app->GetData()->ScrollX;
                     InspectLastY = MouseMenuPositionY + app->GetData()->ScrollY;
@@ -208,28 +215,52 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     InsertMenu(hPopupMenu, 3, MF_SEPARATOR, 0, NULL);
                     InsertMenu(hPopupMenu, 4, MF_BYPOSITION | MF_STRING, IDInspect, Translate::Tr(L"Inspect").c_str());
                     InsertMenu(hPopupMenu, 5, MF_SEPARATOR, 0, NULL);
-                    InsertMenu(hPopupMenu, 6, MF_BYPOSITION | MF_STRING, IDXml, Translate::Tr(L"Get Element Content").c_str());
-                    InsertMenu(hPopupMenu, 7, MF_BYPOSITION | MF_STRING, IDText, Translate::Tr(L"Get Element Text").c_str());
-                    InsertMenu(hPopupMenu, 8, MF_BYPOSITION | MF_STRING, IDScript, Translate::Tr(L"Execute Javascript On Element").c_str());
-                    InsertMenu(hPopupMenu, 9, MF_BYPOSITION | MF_STRING, IDClickElement, Translate::Tr(L"Click On Element").c_str());
-                    InsertMenu(hPopupMenu, 10, MF_BYPOSITION | MF_STRING, IDMoveElement, Translate::Tr(L"Move On Element").c_str());
-                    InsertMenu(hPopupMenu, 11, MF_BYPOSITION | MF_STRING, IDMoveAndClickElement, Translate::Tr(L"Move And Click On Element").c_str());
-                    InsertMenu(hPopupMenu, 12, MF_BYPOSITION | MF_STRING, IDClear, Translate::Tr(L"Clear Edit").c_str());
-                    InsertMenu(hPopupMenu, 13, MF_BYPOSITION | MF_STRING, IDType, Translate::Tr(L"Type Text").c_str());
-                    InsertMenu(hPopupMenu, 14, MF_BYPOSITION | MF_STRING, IDExists, Translate::Tr(L"Is Element Exists").c_str());
-                    InsertMenu(hPopupMenu, 15, MF_BYPOSITION | MF_STRING, IDStyle, Translate::Tr(L"Get Element Style").c_str());
-                    InsertMenu(hPopupMenu, 16, MF_BYPOSITION | MF_STRING, IDWaitElement, Translate::Tr(L"Wait While Element Exists").c_str());
-                    InsertMenu(hPopupMenu, 17, MF_BYPOSITION | MF_STRING, IDCheck, Translate::Tr(L"Set Checkbox").c_str());
-                    InsertMenu(hPopupMenu, 18, MF_BYPOSITION | MF_STRING, IDFocus, Translate::Tr(L"Scroll To Element").c_str());
-                    InsertMenu(hPopupMenu, 19, MF_BYPOSITION | MF_STRING, IDSet, Translate::Tr(L"Set Combobox Value").c_str());
-                    InsertMenu(hPopupMenu, 20, MF_BYPOSITION | MF_STRING, IDSetInteger, Translate::Tr(L"Set Combobox Index").c_str());
-                    InsertMenu(hPopupMenu, 21, MF_BYPOSITION | MF_STRING, IDSetRandom, Translate::Tr(L"Set Combobox To Random").c_str());
-                    InsertMenu(hPopupMenu, 22, MF_BYPOSITION | MF_STRING, IDGetAttr, Translate::Tr(L"Get Element Attribute").c_str());
-                    InsertMenu(hPopupMenu, 23, MF_BYPOSITION | MF_STRING, IDSetAttr, Translate::Tr(L"Set Element Attribute").c_str());
-                    InsertMenu(hPopupMenu, 24, MF_BYPOSITION | MF_STRING, IDCaptcha, Translate::Tr(L"Solve Captcha").c_str());
-                    InsertMenu(hPopupMenu, 25, MF_BYPOSITION | MF_STRING, IDLength, Translate::Tr(L"Get Element Count").c_str());
+                    InsertMenu(hPopupMenu, 6, MF_POPUP | MF_STRING, (UINT_PTR)hTabsMenu, Translate::Tr(L"Tabs").c_str());
+                    {
+                        int iterator = 0;
+                        int IdIterator = IDCustomPopups;
 
-                    int iterator = 26;
+                        InsertMenu(hTabsMenu, iterator++, MF_BYPOSITION | MF_STRING, IdIterator++, Translate::Tr(L"Add New Tab").c_str());
+
+                        bool first = true;
+
+                        for(std::string url:app->GetAllPopupsUrls())
+                        {
+                            InsertMenu(hTabsMenu, iterator++, MF_SEPARATOR, 0, NULL);
+                            std::string miniurl = (url.length()>30) ? (url.substr(0,26) + " ...") : url;
+                            InsertMenu(hTabsMenu, iterator++, MF_BYPOSITION | MF_STRING, IdIterator++, (Translate::Tr(L"Select Tab (") + s2ws(miniurl) + L")").c_str());
+                            if(!first)
+                            {
+                                InsertMenu(hTabsMenu, iterator++, MF_BYPOSITION | MF_STRING, IdIterator++, (Translate::Tr(L"Remove Tab (") + s2ws(miniurl) + L")").c_str());
+                            }
+                            first = false;
+
+                        }
+                    }
+
+                    InsertMenu(hPopupMenu, 7, MF_SEPARATOR, 0, NULL);
+                    InsertMenu(hPopupMenu, 8, MF_BYPOSITION | MF_STRING, IDXml, Translate::Tr(L"Get Element Content").c_str());
+                    InsertMenu(hPopupMenu, 9, MF_BYPOSITION | MF_STRING, IDText, Translate::Tr(L"Get Element Text").c_str());
+                    InsertMenu(hPopupMenu, 10, MF_BYPOSITION | MF_STRING, IDScript, Translate::Tr(L"Execute Javascript On Element").c_str());
+                    InsertMenu(hPopupMenu, 11, MF_BYPOSITION | MF_STRING, IDClickElement, Translate::Tr(L"Click On Element").c_str());
+                    InsertMenu(hPopupMenu, 12, MF_BYPOSITION | MF_STRING, IDMoveElement, Translate::Tr(L"Move On Element").c_str());
+                    InsertMenu(hPopupMenu, 13, MF_BYPOSITION | MF_STRING, IDMoveAndClickElement, Translate::Tr(L"Move And Click On Element").c_str());
+                    InsertMenu(hPopupMenu, 14, MF_BYPOSITION | MF_STRING, IDClear, Translate::Tr(L"Clear Edit").c_str());
+                    InsertMenu(hPopupMenu, 15, MF_BYPOSITION | MF_STRING, IDType, Translate::Tr(L"Type Text").c_str());
+                    InsertMenu(hPopupMenu, 16, MF_BYPOSITION | MF_STRING, IDExists, Translate::Tr(L"Is Element Exists").c_str());
+                    InsertMenu(hPopupMenu, 17, MF_BYPOSITION | MF_STRING, IDStyle, Translate::Tr(L"Get Element Style").c_str());
+                    InsertMenu(hPopupMenu, 18, MF_BYPOSITION | MF_STRING, IDWaitElement, Translate::Tr(L"Wait While Element Exists").c_str());
+                    InsertMenu(hPopupMenu, 19, MF_BYPOSITION | MF_STRING, IDCheck, Translate::Tr(L"Set Checkbox").c_str());
+                    InsertMenu(hPopupMenu, 20, MF_BYPOSITION | MF_STRING, IDFocus, Translate::Tr(L"Scroll To Element").c_str());
+                    InsertMenu(hPopupMenu, 21, MF_BYPOSITION | MF_STRING, IDSet, Translate::Tr(L"Set Combobox Value").c_str());
+                    InsertMenu(hPopupMenu, 22, MF_BYPOSITION | MF_STRING, IDSetInteger, Translate::Tr(L"Set Combobox Index").c_str());
+                    InsertMenu(hPopupMenu, 23, MF_BYPOSITION | MF_STRING, IDSetRandom, Translate::Tr(L"Set Combobox To Random").c_str());
+                    InsertMenu(hPopupMenu, 24, MF_BYPOSITION | MF_STRING, IDGetAttr, Translate::Tr(L"Get Element Attribute").c_str());
+                    InsertMenu(hPopupMenu, 25, MF_BYPOSITION | MF_STRING, IDSetAttr, Translate::Tr(L"Set Element Attribute").c_str());
+                    InsertMenu(hPopupMenu, 26, MF_BYPOSITION | MF_STRING, IDCaptcha, Translate::Tr(L"Solve Captcha").c_str());
+                    InsertMenu(hPopupMenu, 27, MF_BYPOSITION | MF_STRING, IDLength, Translate::Tr(L"Get Element Count").c_str());
+
+                    int iterator = 28;
                     int IdIterator = IDCustom;
                     for(ModulesData Module:app->GetData()->_ModulesData)
                     {
@@ -335,6 +366,23 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                                  }
                              }
                         }
+                    }
+                }
+
+                if(Command >= IDCustomPopups)
+                {
+                    int diff = Command - IDCustomPopups;
+
+                    if(diff == 0)
+                        app->AddTab();
+                    else if(diff == 1)
+                        app->SelectTab(0);
+                    else
+                    {
+                        if(diff % 2 == 0)
+                            app->SelectTab(diff / 2);
+                        if(diff % 2 == 1)
+                            app->CloseTab(diff / 2);
                     }
                 }
 
@@ -661,10 +709,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     TimerLoop++;
                     TimerLoop %= SkipFrames;
                     if(TimerLoop == 0)
+                    {
                         CefDoMessageLoopWork();
+                        app->CefMessageLoop();
+                    }
                 }else
                 {
                     CefDoMessageLoopWork();
+                    app->CefMessageLoop();
                 }
 
                 if(app->IsNeedQuit())
@@ -812,6 +864,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Data->_ParentWindowHandle = 0;
     Data->CursorX = 0;
     Data->CursorY = 0;
+    Data->ScrollX = 0;
+    Data->ScrollY = 0;
     Data->_Inspect.active = false;
     Data->IsReset = false;
     Data->IsAboutBlankLoaded = false;
@@ -866,6 +920,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Parser->EventResize.push_back(std::bind(&MainApp::ResizeCallback,app.get(),_1,_2));
     Parser->EventSetWindow.push_back(std::bind(&MainApp::SetWindowCallback,app.get(),_1));
     Parser->EventMouseClick.push_back(std::bind(&MainApp::MouseClickCallback,app.get(),_1,_2));
+    Parser->EventPopupClose.push_back(std::bind(&MainApp::PopupCloseCallback,app.get(),_1));
+    Parser->EventPopupSelect.push_back(std::bind(&MainApp::PopupSelectCallback,app.get(),_1));
     Parser->EventMouseMove.push_back(std::bind(&MainApp::MouseMoveCallback,app.get(),_1,_2));
     Parser->EventScroll.push_back(std::bind(&MainApp::ScrollCallback,app.get(),_1,_2));
     Parser->EventRender.push_back(std::bind(&MainApp::RenderCallback,app.get(),_1,_2,_3,_4));

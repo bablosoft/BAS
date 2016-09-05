@@ -19,7 +19,7 @@ if(Variable.length == 0)
 try{
   var code = loader.GetAdditionalData() + _.template($("#list_set_element_code").html())({variable:"VAR_" + Variable,index:Index["updated"],value: Value["updated"]})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("Set " + Index["original"] + " value of " + Variable, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {
   alert(e)

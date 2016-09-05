@@ -32,6 +32,10 @@ private:
     std::mutex mut_maximize;
     std::mutex mut_minimize;
     std::mutex mut_editcancel;
+    std::mutex url_mut;
+    std::string url;
+    bool url_changed;
+
 
 
 public:
@@ -40,6 +44,8 @@ public:
     bool GetIsEditCancel();
     bool GetIsMaximize();
     bool GetIsMinimize();
+    std::pair<std::string, bool> GetLoadUrl();
+
 
     virtual bool Execute(const CefString& name, CefRefPtr<CefV8Value> object, const CefV8ValueList& arguments, CefRefPtr<CefV8Value>& retval, CefString& exception) OVERRIDE;
     std::pair<ResultClass, bool> GetResult();

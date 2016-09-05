@@ -25,6 +25,6 @@ if(Result.length == 0)
 try{
   var code = loader.GetAdditionalData() + _.template($("#regexp_scan_code").html())({variable:"VAR_" + Result,string:Value["updated"],regexp:Regexp["updated"]})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("Scan " + Value["original"] + " with " + Regexp["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {}

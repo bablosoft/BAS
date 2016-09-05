@@ -19,6 +19,6 @@ if(Variable.length == 0)
 try{
   var code = loader.GetAdditionalData() + _.template($("#list_contains_code").html())({variable:"VAR_" + Variable,variable_save:"VAR_" + VariableSave,value:Value["updated"]})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("List Contains " + Value["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {}

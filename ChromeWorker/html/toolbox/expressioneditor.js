@@ -445,7 +445,7 @@
     			{name: "split with string", description: "Splits string with defined separator. Returns array of strings", code: "(<<0>>).split(<<1>>)", params: [{name: "array"},{name: "separator"}]},
                 {name: "split with regexp", description: "Splits string with defined regexp. Returns array of strings", code: "(<<0>>).split(/<<1>>/)", params: [{name: "string"},{name: "regexp"}]},
                 {name: "matches", description: "Returns true if string matches given regexp", code: "Boolean((<<0>>).match(/<<1>>/))", params: [{name: "string"},{name: "regexp"}]},
-                {name: "scan", description: "Extract string part with regular expression. For example, string : abc 123 xyz 456, regexp: \\d+ extracts all numbers", code: "(function(){var rs = []; var r = /<<1>>/g; var s = <<0>>; var m; while(m = r.exec(s)){rs.push((m.length>1) ? m[1] : m[0]);} return rs;})()", params: [{name: "string"},{name: "regexp"}]},
+                {name: "scan", description: "Extract string part with regular expression. For example, string : abc 123 xyz 456, regexp: \\d+ extracts all numbers", code: "(function(){var rs = []; var r = /<<1>>/gm; var s = <<0>>; var m; var i = -1; while(m = r.exec(s)){if(i == m.index) break; i = m.index; rs.push((m.length>1) ? m[1] : m[0]);} return rs;})()", params: [{name: "string"},{name: "regexp"}]},
 
                 /* Random */
                 {name: "random number", description: "Generate random number", code: "Math.floor(Math.random() * (<<0>> - <<1>> + 1)) + <<1>>", params: [{name: "max"},{name: "min"}]},

@@ -1,1 +1,1 @@
-(<%= variable %>).sort()
+;(<%= variable %>).sort()

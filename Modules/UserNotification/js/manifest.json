@@ -1,0 +1,50 @@
+{
+	
+	"name":"UserNotification",
+	"description":"User Notification",
+	"description_small":{"en": "User notification", "ru": "Уведомление пользователя"},
+	"major_version": 1,
+	"minor_version": 0,
+	"developer_name": "bablosoft", 
+	"developer_email": "mail.to.twaego@gmail.com", 
+	"developer_site": "https://bablosoft.com",
+	"api_version": 1,
+	"actions":
+	[
+		{
+			"name":"user_notification_play_sound",
+			"description":{"en": "Play Sound","ru": "Воспроизвести Звук"},
+			"template": "",
+			"is_element": false,
+			"interface": "user_notification_play_sound_interface.js",
+			"select": "user_notification_play_sound_select.js",
+			"code": [{"file":"user_notification_play_sound_code.js", "name": "user_notification_play_sound_code"}]
+		}
+	],
+	"localize": 
+	{
+		"Play Sound" : {"ru": "Воспроизвести Звук"}
+	},
+	"engine": [],
+	"browser": [],
+	"depends": [],
+	"dll": [
+			{
+				"name": "usernotification", 
+				"filename32": "usernotification32.dll", 
+				"filename64": "usernotification64.dll", 
+				"startdllfunction": "StartDll", 
+				"enddllfunction": "EndDll", 
+				"startthreadfunction": "StartThread", 
+				"endthreadfunction": "EndThread", 
+				"exportlist":[
+					{
+						"name": "playsound",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "PlayDefaultSound"
+					}
+				]
+			}
+		  ]
+}

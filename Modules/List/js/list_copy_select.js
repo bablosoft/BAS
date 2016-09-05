@@ -17,6 +17,6 @@ if(VariableNewList.length == 0)
 try{
   var code = loader.GetAdditionalData() + _.template($("#list_copy_code").html())({variable:"VAR_" + Variable,variable_new:"VAR_" + VariableNewList})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("List Copy " + Variable, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {}

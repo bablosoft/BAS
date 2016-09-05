@@ -21,5 +21,6 @@
         <file>images/resources_ok.png</file>
         <file>images/Record.png</file>
         <file>data/new.txt</file>
+        <file>images/regexp.png</file>
     </qresource>
 </RCC>

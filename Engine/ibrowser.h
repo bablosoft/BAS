@@ -46,6 +46,8 @@ namespace BrowserAutomationStudioFramework
         virtual void MouseClick(int x, int y, const QString& callback) = 0;
 
         virtual void MouseMove(int x, int y, const QString& callback) = 0;
+        virtual void PopupClose(int index, const QString& callback) = 0;
+        virtual void PopupSelect(int index, const QString& callback) = 0;
         virtual void Scroll(int x, int y, const QString& callback) = 0;
         virtual void Render(int x, int y, int width, int height, const QString& callback) = 0;
         virtual void DebugVariablesResult(const QString& data, const QString& callback) = 0;

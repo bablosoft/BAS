@@ -17,6 +17,6 @@ if(Variable.length == 0)
 try{
   var code = loader.GetAdditionalData() + _.template($("#insert_element_to_list_code").html())({variable:"VAR_" + Variable,value: Value["updated"], index: Index["updated"]})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("Insert element in " + Variable, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {}

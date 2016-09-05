@@ -29,6 +29,30 @@ namespace BrowserAutomationStudioFramework
         Worker->GetProcessComunicator()->Send(WriteString);
     }
 
+    void SubprocessBrowser::PopupClose(int index, const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("PopupClose",QString("%1").arg(QString::number(index)));
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("PopupClose"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(PopupClose()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
+    void SubprocessBrowser::PopupSelect(int index, const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("PopupSelect",QString("%1").arg(QString::number(index)));
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("PopupSelect"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(PopupSelect()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
     void SubprocessBrowser::MouseMove(int x, int y, const QString& callback)
     {
         QString WriteString;
@@ -371,6 +395,14 @@ namespace BrowserAutomationStudioFramework
             else if(xmlReader.name() == "OptimizeMemory" && token == QXmlStreamReader::StartElement)
             {
                 emit OptimizeMemory();
+            }
+            else if(xmlReader.name() == "PopupClose" && token == QXmlStreamReader::StartElement)
+            {
+                emit PopupClose();
+            }
+            else if(xmlReader.name() == "PopupSelect" && token == QXmlStreamReader::StartElement)
+            {
+                emit PopupSelect();
             }else if(xmlReader.name() == "WaitCode" && token == QXmlStreamReader::StartElement)
             {
                 xmlReader.readNext();

@@ -19,6 +19,6 @@ if(VariableResult.length == 0)
 try{
   var code = loader.GetAdditionalData() + _.template($("#parse_string_to_list_code").html())({stirng:StringValue["updated"],variable_result:"VAR_" + VariableResult,separator: Separator["updated"],})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("Parse to list " + VariableResult, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {}

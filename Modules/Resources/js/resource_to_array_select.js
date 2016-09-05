@@ -16,6 +16,6 @@ if(Save.length <= 0)
 try{
   var code = loader.GetAdditionalData() + _.template($("#resource_to_array_code").html())({key: "\"" + je(ResourceName) + "\"",save: "VAR_" + Save})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("Resource to list " + ResourceName, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {}

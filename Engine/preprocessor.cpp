@@ -135,11 +135,11 @@ namespace BrowserAutomationStudioFramework
         if(!IsRecord)
         {
             {
-                QRegExp Regexp("section\\_start\\(\\s*\\\"[^\\\"]+\\\"\\s*\\,\\s*\\-?\\d*\\)\\!");
+                QRegExp Regexp("section\\_start\\(\\s*\\\"[^\\\"]*\\\"\\s*\\,\\s*\\-?\\d*\\)\\!");
                 int pos = 0;
                 while ((pos = Regexp.indexIn(Res, pos)) != -1)
                 {
-                    Res.replace(Regexp.pos(),Regexp.matchedLength(),"");
+                    Res.replace(Regexp.pos(),Regexp.matchedLength(),";");
                 }
             }
 
@@ -148,7 +148,7 @@ namespace BrowserAutomationStudioFramework
                 int pos = 0;
                 while ((pos = Regexp.indexIn(Res, pos)) != -1)
                 {
-                    Res.replace(Regexp.pos(),Regexp.matchedLength(),"");
+                    Res.replace(Regexp.pos(),Regexp.matchedLength(),";");
                 }
             }
 

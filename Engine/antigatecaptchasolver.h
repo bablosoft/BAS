@@ -12,6 +12,16 @@
 namespace BrowserAutomationStudioFramework
 {
 
+    class SingleIdWorker : public QObject
+    {
+      Q_OBJECT
+      public:
+          QString id;
+          QString antigate_id;
+          IHttpClient * client;
+          QTimer* timer;
+    };
+
     class ENGINESHARED_EXPORT AntigateCaptchaSolver : public ISolver
     {
         Q_OBJECT
@@ -19,6 +29,7 @@ namespace BrowserAutomationStudioFramework
         IHttpClientFactory * HttpClientFactory;
         IHttpClient * HttpClient;
         QHash<QString,QString> IdToAntigateIdList;
+        QList<SingleIdWorker*> Workers;
         bool StartedMonitor;
         int Iterator;
         QTimer timer;
@@ -26,6 +37,7 @@ namespace BrowserAutomationStudioFramework
         QString Server;
         QString SoftId;
         void StartMonitor();
+        bool MultipleIds;
         QMap<QString, QString> Properties;
     public:
         explicit AntigateCaptchaSolver(QObject *parent = 0);
@@ -39,12 +51,15 @@ namespace BrowserAutomationStudioFramework
         virtual bool TimeLimited();
         virtual void SetProperty(const QString& name,const QString& value);
         void SetHttpClientFactory(IHttpClientFactory * HttpClientFactory);
+        void SetMultipleIds(bool MultipleIds);
         IHttpClientFactory * GetHttpClientFactory();
 
     private slots:
         void DeleteSender();
         void StartIteration();
+        void StartSingleIteration();
         void DoneIteration();
+        void DoneSignleIteration();
         void PostedToAntigate(const QString& antigate_id, const QString& id, bool res);
     };
 }

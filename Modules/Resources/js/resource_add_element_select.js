@@ -19,6 +19,6 @@ if(Data["original"].length <= 0)
 try{
   var code = loader.GetAdditionalData() + _.template($("#resource_add_element_code").html())({key: "\"" + je(ResourceName) + "\"",sync:Sync,data:Data["updated"],onlywrite:OnlyWrite})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("Add resource " + ResourceName, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {}

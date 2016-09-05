@@ -24,6 +24,6 @@ if(Variable.length == 0)
 try{
   var code = loader.GetAdditionalData() + _.template($("#remove_list_part_code").html())({variable:"VAR_" + Variable,index_start: IndexStart["updated"],index_end: IndexEnd["updated"]})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("Remove list part from " + Variable, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {}

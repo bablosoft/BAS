@@ -3,6 +3,50 @@
 #include "log.h"
 #include "picojson.h"
 
+void ScenarioPreprocess(const ModulesDataList & Modules, std::string& OriginalScript)
+{
+    std::string Localize;
+    picojson::value::object LocalizeObject;
+    for(ModulesData Module:Modules)
+    {
+        for(LocalizeData Localize:Module->Localization)
+        {
+            picojson::value::object LocalizeItemObject;
+            for(std::map<std::string,std::string>::iterator it = Localize->Items.begin(); it != Localize->Items.end(); ++it)
+            {
+                LocalizeItemObject[it->first] = picojson::value(it->second);
+            }
+            LocalizeObject[Localize->Key] = picojson::value(LocalizeItemObject);
+        }
+    }
+    Localize = "_L = $.extend(_L," +  picojson::value(LocalizeObject).serialize() + ");";
+    worker_log("_MACRO_INSERT_LOCALIZE_");
+    worker_log(Localize);
+    ReplaceAllInPlace(OriginalScript,"_MACRO_INSERT_LOCALIZE_",Localize);
+
+    std::string Actions;
+    picojson::value::object ActionsObject;
+    for(ModulesData Module:Modules)
+    {
+
+        for(ActionData a:Module->Actions)
+        {
+            picojson::value::object Object;
+            Object["name"] = picojson::value(a->Description);
+            Object["description"] = picojson::value(a->Description);
+            Object["template"] = picojson::value(a->Template);
+
+            ActionsObject[a->Name] = picojson::value(Object);
+        }
+
+    }
+    Actions = "_A = $.extend(_A," +  picojson::value(ActionsObject).serialize() + ");";
+    worker_log("_MACRO_INSERT_ACTIONS_");
+    worker_log(Actions);
+    ReplaceAllInPlace(OriginalScript,"_MACRO_INSERT_ACTIONS_",Actions);
+}
+
+
 void ToolboxPreprocess(const ModulesDataList & Modules, std::string& OriginalScript)
 {
     std::string ActionList;

@@ -16,6 +16,6 @@ if(VariableSecond.length == 0)
 try{
   var code = loader.GetAdditionalData() + _.template($("#list_merge_code").html())({variable:"VAR_" + Variable,variable_second:"VAR_" + VariableSecond})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("Merge " + Variable + " and " + VariableSecond, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {}

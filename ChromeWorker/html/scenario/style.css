@@ -15,15 +15,67 @@
 
 .tool
 {
-    padding-top:8px;
-    padding-bottom:8px;
-    padding-left:15px;
-    padding-right:15px;
-  	border: 1px solid gray;
+    padding-top:0px;
+    padding-bottom:3px;
+    padding-left:0px;
+    padding-right:0px;
+  	border: 1px solid #ddd;
   	border-radius:3px;
   	cursor: pointer;
     text-align: center;
     min-width: 150px
+}
+
+.titlebody
+{
+  padding-top:3px;
+  padding-left:10px;
+  padding-right:20px;
+  font-size: 12px;
+  color:#777;
+
+}
+
+.textitemsignificant
+{
+  color:#529653;
+}
+
+.fa-check-square-o
+{
+ font-size: 13px !important;
+ color:#464545 !important;
+}
+
+.tooltitle
+{
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: left !important;
+    
+    font-size: 75% !important;
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.tooltitle-red
+{
+  color: #944c4b !important;
+}
+
+.tooltitle-blue
+{
+  color: #0077b3 !important;
+}
+
+.tooltitle-green
+{
+  color:#3c763d !important;
+}
+
+.tooltitle-gray
+{
+  color:#777 !important;
 }
 
 .notactive
@@ -34,7 +86,7 @@
 .toolinsert
 {
     height: 6px;
-    border: 1px solid #E3E3E3;
+    border: 1px solid #c1c1c1;
     border-radius: 3px;
     cursor: pointer;
     margin-top: 5px;
@@ -70,7 +122,7 @@
 
 .toolselected,.toolselected:hover
 {
-  border: 1px solid #A8A8A8 !important;
+  border: 1px solid #808080 !important;
 }
 
 .tool:hover
@@ -241,6 +293,11 @@ label
 .actionbuttongray
 {
   color:gray !important;
+}
+
+.actionbuttongray2
+{
+  color:gray !important;
   display:none !important;
 }
 
@@ -250,15 +307,32 @@ label
     cursor: default !important;
 }
 
-.executing
-{
-  color:#D44646;
-}
 
 .toolnotexecute .executing
 {
-    display:none;
+    color:gray;
+    opacity: 0;
 }
+
+.tool:hover .executing
+{
+    color:gray;
+    opacity: 0.5;
+}
+
+.executing:hover
+{
+    color:#D44646 !important;
+    opacity: 1 !important;
+}
+
+.toolexecutecurrent .executing
+{
+    color:#D44646 !important;
+    opacity: 1 !important;
+
+}
+
 
 .notactive
 {

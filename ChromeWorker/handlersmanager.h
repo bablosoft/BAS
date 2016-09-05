@@ -16,6 +16,7 @@ class HandlersManager
         bool IsActive = true;
         bool DontUseAsActive = false;
         bool IsContextCreated = false;
+        bool ForceShow = false;
     };
     using HandlerUnit = std::shared_ptr<HandlerUnitClass>;
 
@@ -66,6 +67,10 @@ public:
 
     std::vector<std::function<void()> > EventNeedToCloseDevTools;
     void SetDevToolsBorwserId(int DevToolsBorwserId);
+
+    std::vector<std::string> GetAllUrls();
+    void CloseByIndex(int index);
+    void SwitchByIndex(int index);
 };
 
 #endif // HANDLERSMANAGER_H

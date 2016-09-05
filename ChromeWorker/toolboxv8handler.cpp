@@ -6,6 +6,7 @@ ToolboxV8Handler::ToolboxV8Handler()
     IsEditCancel = false;
     IsMaximize = false;
     IsMinimize = false;
+    url_changed = false;
 }
 
 
@@ -96,7 +97,29 @@ bool ToolboxV8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> obje
     {
         std::lock_guard<std::mutex> lock(mut_minimize);
         IsMinimize = true;
+    }else if(name == std::string("BrowserAutomationStudio_OpenUrl"))
+    {
+        if (arguments.size() == 1 && arguments[0]->IsString())
+        {
+            std::lock_guard<std::mutex> lock(url_mut);
+            url = arguments[0]->GetStringValue().ToString();
+            url_changed = true;
+        }
     }
     return true;
 }
 
+std::pair<std::string, bool> ToolboxV8Handler::GetLoadUrl()
+{
+    std::lock_guard<std::mutex> lock(url_mut);
+
+    std::pair<std::string, bool> r;
+    r.first = url;
+    r.second = url_changed;
+
+    url_changed = false;
+
+    url.clear();
+
+    return r;
+}

@@ -19,6 +19,6 @@ if(VariableResult.length == 0)
 try{
   var code = loader.GetAdditionalData() + _.template($("#first_list_element_code").html())({variable:"VAR_" + Variable,variable_result:"VAR_" + VariableResult,remove:RemoveAfterUse})
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("Get first element from " + Variable, BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {}

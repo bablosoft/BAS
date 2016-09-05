@@ -40,7 +40,7 @@ if(Save.length == 0)
 	  	}
   	)
   code = Normalize(code,0)
-  BrowserAutomationStudio_Append("File Search " + Folder["original"], BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)
 {
 }

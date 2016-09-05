@@ -4,7 +4,7 @@
 	"description":"Solve Recaptcha 2.0",
 	"description_small":{"en": "Recaptcha 2.0", "ru": "Recaptcha 2.0"},
 	"major_version": 3,
-	"minor_version": 1,
+	"minor_version": 0,
 	"developer_name": "bablosoft", 
 	"developer_email": "mail.to.twaego@gmail.com", 
 	"developer_site": "https://bablosoft.com",
@@ -14,6 +14,7 @@
 		{
 			"name":"ReCaptcha2",
 			"description":{"en": "Solve Recaptcha 2.0","ru": "Решить Recaptcha 2.0"},
+			"template":"{{PATH}}",
 			"is_element": true,
 			"interface": "captcha2_interface.js",
 			"select": "captcha2_select.js",

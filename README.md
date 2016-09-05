@@ -1,7 +1,7 @@
 # Browser Automation Studio
 Stop paying to developers! With BrowserAutomationStudio you can create rich and powerfull network applications with no coding skills!
 
-![Bas Interface](https://bablosoft.com/uploads/BasInterface15.png)
+![Bas Interface](https://bablosoft.com/uploads/BasInterface153En.png)
 ![Visual Editor](https://bablosoft.com/uploads/ExpressionEditorEn.png)
 
 
@@ -18,6 +18,7 @@ Stop paying to developers! With BrowserAutomationStudio you can create rich and 
 * Email module. Search in mailbox.
 * 100% browser emulation with chrome.
 * Native mouse click and move. Native keyboard emulation.
+* Tabs support.
 * Special keys emulation: Tab, Ctrl, etc.
 * Disabled ip tracking through WebRTC.
 * Very fast http client(up to 2000 threads).

@@ -188,6 +188,7 @@ ModulesDataList LoadModulesData(const std::string& Locale)
 
                         ActionData ActionItem = std::make_shared<ActionDataClass>();
                         ActionItem->Name = ActionObject["name"].get<std::string>();
+                        ActionItem->Template = ActionObject["template"].get<std::string>();
 
                         worker_log(std::string("Found some action with name ") + ActionItem->Name);
 
@@ -200,6 +201,8 @@ ModulesDataList LoadModulesData(const std::string& Locale)
                         {
                             ActionItem->Description = ActionDescriptionObject["en"].get<std::string>();
                         }
+
+
                         worker_log(std::string("Action description ") + ActionItem->Description);
 
 

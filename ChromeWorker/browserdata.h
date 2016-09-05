@@ -46,6 +46,10 @@ public:
     //Reset
     std::atomic_bool IsReset;
     std::atomic_bool IsAboutBlankLoaded;
+
+    //LocalStorage
+    std::string _LocalStorageData;
+
 };
 
 #endif // BROWSERDATA_H

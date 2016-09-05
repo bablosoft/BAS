@@ -19,3 +19,12 @@ function html_parser_xpath_text(query)
     return HtmlParser.XpathText(query);
 }
 
+function html_parser_xpath_xml_list(query)
+{
+    return HtmlParser.XpathXmlList(query);
+}
+function html_parser_xpath_text_list(query)
+{
+    return HtmlParser.XpathTextList(query);
+}
+

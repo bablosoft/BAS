@@ -4,11 +4,12 @@
 #include "split.h"
 #include "readallfile.h"
 #include "match.h"
-#include <network/uri.hpp>
-#include <network/uri/uri_builder.hpp>
+#include "processlocation.h"
 #include "multithreading.h"
 #include "fixcontentcharset.h"
 #include <chrono>
+#include <algorithm>
+#include <iterator>
 
 using namespace std::chrono;
 
@@ -218,7 +219,7 @@ void CurlThreadFunction(CurlResourceHandler::CurlThreadDataClass * Data)
         }
         if(Header.first != "X-DevTools-Emulate-Network-Conditions-Client-Id")
         {
-            std::string h = Header.first + std::string(":") + Header.second;
+            std::string h = Header.first + std::string(": ") + Header.second;
             headers = curl_slist_append(headers, h.c_str());
         }
     }
@@ -529,60 +530,9 @@ void CurlResourceHandler::GetResponseHeaders(CefRefPtr<CefResponse> response, in
     {
         std::string RedirectUrl = CurlThreadData.RedirectUrl;
         std::string OriginalUrl = CurlThreadData.Url;
-        //worker_log(std::string("!!!RedirectUrl : ") + RedirectUrl);
-        //worker_log(std::string("!!!OriginalUrl : ") + OriginalUrl);
-        std::string Result = RedirectUrl;
-        try
-        {
-            bool IsGood = false;
-            try{
-                network::uri RedirectUrlParsed(RedirectUrl);
-                IsGood = true;
-            }catch(...)
-            {
-
-            }
-            if(!IsGood)
-            {
-                network::uri OriginalUrlParsed(OriginalUrl);
-                network::uri_builder builder(OriginalUrlParsed);
-                if(OriginalUrlParsed.has_fragment())
-                {
-                    builder.clear_fragment();
-                }
-                if(OriginalUrlParsed.has_path())
-                {
-                    builder.clear_path();
-                }
-                if(OriginalUrlParsed.has_query())
-                {
-                    builder.clear_query();
-                }
-
-                Result = builder.uri().string();
-                if((RedirectUrl.length() > 1 && RedirectUrl[0] == '/' && RedirectUrl[1] == '/'))
-                {
-                    Result = OriginalUrlParsed.scheme().to_string() + ":" + RedirectUrl;
-                }else if(!RedirectUrl.empty() && RedirectUrl.at(0)!='/')
-                {
-                    Result += "/";
-                    Result += RedirectUrl;
-                }else
-                {
-                    Result += RedirectUrl;
-                }
-
-            }
-        }catch(...)
-        {
-            Result = RedirectUrl;
-        }
-
-
-        //worker_log(std::string("!!!FinalLocationUrl : ") + Result);
+        std::string Result = ProcessLocation(RedirectUrl,OriginalUrl);
 
         redirectUrl = Result;
-
     }
 
     /* Responce Length */
