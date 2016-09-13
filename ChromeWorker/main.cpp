@@ -21,7 +21,7 @@ CefRefPtr<MainApp> app;
 PipesClient *Client;
 CommandParser *Parser;
 HWND MousePositionMouseHandle,hwnd,HButtonUp,HButtonDown,HButtonLeft,HButtonRight,HButtonDevTools,HButtonScenario,HTextHold,HTextFinished;
-enum{IDButtonTerminate = 1000,IDButtonQuit,IDButtonUp,IDButtonDown,IDButtonLeft,IDButtonRight,IDButtonMinimizeMaximize,IDButtonDevTools,IDButtonScenario,IDButtonSettings,IDTextHold,IDTextFinished,IDClick,IDMove,IDMoveAndClick,IDInspect,IDXml,IDText,IDScript,IDClickElement,IDMoveElement,IDMoveAndClickElement,IDClear,IDType,IDExists,IDStyle,IDCheck,IDFocus,IDSet,IDSetInteger,IDSetRandom,IDGetAttr,IDSetAttr,IDCaptcha,IDLength,IDWaitElement,
+enum{IDButtonTerminate = 1000,IDButtonQuit,IDButtonUp,IDButtonDown,IDButtonLeft,IDButtonRight,IDButtonMinimizeMaximize,IDButtonDevTools,IDButtonScenario,IDButtonSettings,IDTextHold,IDTextFinished,IDClick,IDMove,IDMoveAndClick,IDDrag,IDDrop,IDDragElement,IDDropElement,IDInspect,IDXml,IDText,IDScript,IDClickElement,IDMoveElement,IDMoveAndClickElement,IDClear,IDType,IDExists,IDStyle,IDCheck,IDFocus,IDSet,IDSetInteger,IDSetRandom,IDGetAttr,IDSetAttr,IDCaptcha,IDLength,IDWaitElement,
     IDLoop,IDXmlLoop,IDTextLoop,IDScriptLoop,IDClickElementLoop,IDMoveElementLoop,IDMoveAndClickElementLoop,IDClearLoop,IDTypeLoop,IDExistsLoop,IDStyleLoop,IDCheckLoop,IDFocusLoop,IDSetLoop,IDSetIntegerLoop,IDSetRandomLoop,IDGetAttrLoop,IDSetAttrLoop,IDCaptchaLoop,IDCustom = 30000,IDCustomForeach = 40000,IDCustomPopups = 50000};
 HBITMAP BReady,BFinished;
 HCURSOR HCursor;
@@ -208,14 +208,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     std::string Position = std::string("(") + std::to_string(MouseMenuPositionX) + std::string(",") + std::to_string(MouseMenuPositionY) + std::string(")");
                     std::wstring Click = Translate::Tr(L"Click") + s2ws(std::string(" ") + Position);
                     std::wstring Move = Translate::Tr(L"Move") + s2ws(std::string(" ") + Position);
+                    std::wstring Drag = Translate::Tr(L"Drag") + s2ws(std::string(" ") + Position);
+                    std::wstring Drop = Translate::Tr(L"Drop") + s2ws(std::string(" ") + Position);
                     std::wstring MoveAndClick = Translate::Tr(L"Move And Click") + s2ws(std::string(" ") + Position);
                     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, IDMoveAndClick, MoveAndClick.c_str());
                     InsertMenu(hPopupMenu, 1, MF_BYPOSITION | MF_STRING, IDClick, Click.c_str());
                     InsertMenu(hPopupMenu, 2, MF_BYPOSITION | MF_STRING, IDMove, Move.c_str());
-                    InsertMenu(hPopupMenu, 3, MF_SEPARATOR, 0, NULL);
-                    InsertMenu(hPopupMenu, 4, MF_BYPOSITION | MF_STRING, IDInspect, Translate::Tr(L"Inspect").c_str());
+                    InsertMenu(hPopupMenu, 3, MF_BYPOSITION | MF_STRING, IDDrag, Drag.c_str());
+                    InsertMenu(hPopupMenu, 4, MF_BYPOSITION | MF_STRING, IDDrop, Drop.c_str());
                     InsertMenu(hPopupMenu, 5, MF_SEPARATOR, 0, NULL);
-                    InsertMenu(hPopupMenu, 6, MF_POPUP | MF_STRING, (UINT_PTR)hTabsMenu, Translate::Tr(L"Tabs").c_str());
+                    InsertMenu(hPopupMenu, 6, MF_BYPOSITION | MF_STRING, IDInspect, Translate::Tr(L"Inspect").c_str());
+                    InsertMenu(hPopupMenu, 7, MF_SEPARATOR, 0, NULL);
+                    InsertMenu(hPopupMenu, 8, MF_POPUP | MF_STRING, (UINT_PTR)hTabsMenu, Translate::Tr(L"Tabs").c_str());
                     {
                         int iterator = 0;
                         int IdIterator = IDCustomPopups;
@@ -238,29 +242,31 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                         }
                     }
 
-                    InsertMenu(hPopupMenu, 7, MF_SEPARATOR, 0, NULL);
-                    InsertMenu(hPopupMenu, 8, MF_BYPOSITION | MF_STRING, IDXml, Translate::Tr(L"Get Element Content").c_str());
-                    InsertMenu(hPopupMenu, 9, MF_BYPOSITION | MF_STRING, IDText, Translate::Tr(L"Get Element Text").c_str());
-                    InsertMenu(hPopupMenu, 10, MF_BYPOSITION | MF_STRING, IDScript, Translate::Tr(L"Execute Javascript On Element").c_str());
-                    InsertMenu(hPopupMenu, 11, MF_BYPOSITION | MF_STRING, IDClickElement, Translate::Tr(L"Click On Element").c_str());
-                    InsertMenu(hPopupMenu, 12, MF_BYPOSITION | MF_STRING, IDMoveElement, Translate::Tr(L"Move On Element").c_str());
-                    InsertMenu(hPopupMenu, 13, MF_BYPOSITION | MF_STRING, IDMoveAndClickElement, Translate::Tr(L"Move And Click On Element").c_str());
-                    InsertMenu(hPopupMenu, 14, MF_BYPOSITION | MF_STRING, IDClear, Translate::Tr(L"Clear Edit").c_str());
-                    InsertMenu(hPopupMenu, 15, MF_BYPOSITION | MF_STRING, IDType, Translate::Tr(L"Type Text").c_str());
-                    InsertMenu(hPopupMenu, 16, MF_BYPOSITION | MF_STRING, IDExists, Translate::Tr(L"Is Element Exists").c_str());
-                    InsertMenu(hPopupMenu, 17, MF_BYPOSITION | MF_STRING, IDStyle, Translate::Tr(L"Get Element Style").c_str());
-                    InsertMenu(hPopupMenu, 18, MF_BYPOSITION | MF_STRING, IDWaitElement, Translate::Tr(L"Wait While Element Exists").c_str());
-                    InsertMenu(hPopupMenu, 19, MF_BYPOSITION | MF_STRING, IDCheck, Translate::Tr(L"Set Checkbox").c_str());
-                    InsertMenu(hPopupMenu, 20, MF_BYPOSITION | MF_STRING, IDFocus, Translate::Tr(L"Scroll To Element").c_str());
-                    InsertMenu(hPopupMenu, 21, MF_BYPOSITION | MF_STRING, IDSet, Translate::Tr(L"Set Combobox Value").c_str());
-                    InsertMenu(hPopupMenu, 22, MF_BYPOSITION | MF_STRING, IDSetInteger, Translate::Tr(L"Set Combobox Index").c_str());
-                    InsertMenu(hPopupMenu, 23, MF_BYPOSITION | MF_STRING, IDSetRandom, Translate::Tr(L"Set Combobox To Random").c_str());
-                    InsertMenu(hPopupMenu, 24, MF_BYPOSITION | MF_STRING, IDGetAttr, Translate::Tr(L"Get Element Attribute").c_str());
-                    InsertMenu(hPopupMenu, 25, MF_BYPOSITION | MF_STRING, IDSetAttr, Translate::Tr(L"Set Element Attribute").c_str());
-                    InsertMenu(hPopupMenu, 26, MF_BYPOSITION | MF_STRING, IDCaptcha, Translate::Tr(L"Solve Captcha").c_str());
-                    InsertMenu(hPopupMenu, 27, MF_BYPOSITION | MF_STRING, IDLength, Translate::Tr(L"Get Element Count").c_str());
+                    InsertMenu(hPopupMenu, 9, MF_SEPARATOR, 0, NULL);
+                    InsertMenu(hPopupMenu, 10, MF_BYPOSITION | MF_STRING, IDXml, Translate::Tr(L"Get Element Content").c_str());
+                    InsertMenu(hPopupMenu, 11, MF_BYPOSITION | MF_STRING, IDText, Translate::Tr(L"Get Element Text").c_str());
+                    InsertMenu(hPopupMenu, 12, MF_BYPOSITION | MF_STRING, IDScript, Translate::Tr(L"Execute Javascript On Element").c_str());
+                    InsertMenu(hPopupMenu, 13, MF_BYPOSITION | MF_STRING, IDClickElement, Translate::Tr(L"Click On Element").c_str());
+                    InsertMenu(hPopupMenu, 14, MF_BYPOSITION | MF_STRING, IDMoveElement, Translate::Tr(L"Move On Element").c_str());
+                    InsertMenu(hPopupMenu, 15, MF_BYPOSITION | MF_STRING, IDMoveAndClickElement, Translate::Tr(L"Move And Click On Element").c_str());
+                    InsertMenu(hPopupMenu, 16, MF_BYPOSITION | MF_STRING, IDDragElement, Translate::Tr(L"Drag On Element").c_str());
+                    InsertMenu(hPopupMenu, 17, MF_BYPOSITION | MF_STRING, IDDropElement, Translate::Tr(L"Drop On Element").c_str());
+                    InsertMenu(hPopupMenu, 18, MF_BYPOSITION | MF_STRING, IDClear, Translate::Tr(L"Clear Edit").c_str());
+                    InsertMenu(hPopupMenu, 19, MF_BYPOSITION | MF_STRING, IDType, Translate::Tr(L"Type Text").c_str());
+                    InsertMenu(hPopupMenu, 20, MF_BYPOSITION | MF_STRING, IDExists, Translate::Tr(L"Is Element Exists").c_str());
+                    InsertMenu(hPopupMenu, 21, MF_BYPOSITION | MF_STRING, IDStyle, Translate::Tr(L"Get Element Style").c_str());
+                    InsertMenu(hPopupMenu, 22, MF_BYPOSITION | MF_STRING, IDWaitElement, Translate::Tr(L"Wait While Element Exists").c_str());
+                    InsertMenu(hPopupMenu, 23, MF_BYPOSITION | MF_STRING, IDCheck, Translate::Tr(L"Set Checkbox").c_str());
+                    InsertMenu(hPopupMenu, 24, MF_BYPOSITION | MF_STRING, IDFocus, Translate::Tr(L"Scroll To Element").c_str());
+                    InsertMenu(hPopupMenu, 25, MF_BYPOSITION | MF_STRING, IDSet, Translate::Tr(L"Set Combobox Value").c_str());
+                    InsertMenu(hPopupMenu, 26, MF_BYPOSITION | MF_STRING, IDSetInteger, Translate::Tr(L"Set Combobox Index").c_str());
+                    InsertMenu(hPopupMenu, 27, MF_BYPOSITION | MF_STRING, IDSetRandom, Translate::Tr(L"Set Combobox To Random").c_str());
+                    InsertMenu(hPopupMenu, 28, MF_BYPOSITION | MF_STRING, IDGetAttr, Translate::Tr(L"Get Element Attribute").c_str());
+                    InsertMenu(hPopupMenu, 28, MF_BYPOSITION | MF_STRING, IDSetAttr, Translate::Tr(L"Set Element Attribute").c_str());
+                    InsertMenu(hPopupMenu, 29, MF_BYPOSITION | MF_STRING, IDCaptcha, Translate::Tr(L"Solve Captcha").c_str());
+                    InsertMenu(hPopupMenu, 30, MF_BYPOSITION | MF_STRING, IDLength, Translate::Tr(L"Get Element Count").c_str());
 
-                    int iterator = 28;
+                    int iterator = 31;
                     int IdIterator = IDCustom;
                     for(ModulesData Module:app->GetData()->_ModulesData)
                     {
@@ -442,6 +448,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                             return 0;
                         }
                     break;
+                    case IDDrag:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->EmulateDrag(MouseMenuPositionX,MouseMenuPositionY);
+                            return 0;
+                        }
+                    break;
+                    case IDDrop:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->EmulateDrop(MouseMenuPositionX,MouseMenuPositionY);
+                            return 0;
+                        }
+                    break;
                     case IDMoveAndClick:
                         if(Layout->State == MainLayout::Ready)
                         {
@@ -487,6 +507,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                         if(Layout->State == MainLayout::Ready)
                         {
                             app->ExecuteElementFunction("MoveElement");
+                        }
+                    break;
+                    case IDDragElement:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("DragElement");
+                        }
+                    break;
+                    case IDDropElement:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("DropElement");
                         }
                     break;
                     case IDMoveAndClickElement:
@@ -920,6 +952,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Parser->EventResize.push_back(std::bind(&MainApp::ResizeCallback,app.get(),_1,_2));
     Parser->EventSetWindow.push_back(std::bind(&MainApp::SetWindowCallback,app.get(),_1));
     Parser->EventMouseClick.push_back(std::bind(&MainApp::MouseClickCallback,app.get(),_1,_2));
+    Parser->EventMouseClickUp.push_back(std::bind(&MainApp::MouseClickUpCallback,app.get(),_1,_2));
+    Parser->EventMouseClickDown.push_back(std::bind(&MainApp::MouseClickDownCallback,app.get(),_1,_2));
     Parser->EventPopupClose.push_back(std::bind(&MainApp::PopupCloseCallback,app.get(),_1));
     Parser->EventPopupSelect.push_back(std::bind(&MainApp::PopupSelectCallback,app.get(),_1));
     Parser->EventMouseMove.push_back(std::bind(&MainApp::MouseMoveCallback,app.get(),_1,_2));

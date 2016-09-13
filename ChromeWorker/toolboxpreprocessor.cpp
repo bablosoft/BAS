@@ -49,6 +49,29 @@ void ScenarioPreprocess(const ModulesDataList & Modules, std::string& OriginalSc
 
 void ToolboxPreprocess(const ModulesDataList & Modules, std::string& OriginalScript)
 {
+    {
+        std::string Actions;
+        picojson::value::object ActionsObject;
+        for(ModulesData Module:Modules)
+        {
+
+            for(ActionData a:Module->Actions)
+            {
+                picojson::value::object Object;
+                Object["name"] = picojson::value(a->Description);
+                Object["description"] = picojson::value(a->Description);
+                Object["template"] = picojson::value(a->Template);
+
+                ActionsObject[a->Name] = picojson::value(Object);
+            }
+
+        }
+        Actions = "_A = $.extend(_A," +  picojson::value(ActionsObject).serialize() + ");";
+        worker_log("_MACRO_INSERT_ACTIONS_");
+        worker_log(Actions);
+        ReplaceAllInPlace(OriginalScript,"_MACRO_INSERT_ACTIONS_",Actions);
+    }
+
     std::string ActionList;
     for(ModulesData Module:Modules)
     {

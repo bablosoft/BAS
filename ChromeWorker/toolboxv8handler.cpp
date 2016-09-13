@@ -3,6 +3,7 @@
 ToolboxV8Handler::ToolboxV8Handler()
 {
     IsInitialized = false;
+    IsInterrupt = false;
     IsEditCancel = false;
     IsMaximize = false;
     IsMinimize = false;
@@ -56,6 +57,14 @@ bool ToolboxV8Handler::GetIsEditCancel()
     return res;
 }
 
+bool ToolboxV8Handler::GetIsInterrupt()
+{
+    std::lock_guard<std::mutex> lock(mut_interrupt);
+    bool res = IsInterrupt;
+    IsInterrupt = false;
+
+    return res;
+}
 
 
 bool ToolboxV8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> object, const CefV8ValueList& arguments, CefRefPtr<CefV8Value>& retval, CefString& exception)
@@ -97,6 +106,10 @@ bool ToolboxV8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> obje
     {
         std::lock_guard<std::mutex> lock(mut_minimize);
         IsMinimize = true;
+    }else if(name == std::string("BrowserAutomationStudio_Interrupt"))
+    {
+        std::lock_guard<std::mutex> lock(mut_interrupt);
+        IsInterrupt = true;
     }else if(name == std::string("BrowserAutomationStudio_OpenUrl"))
     {
         if (arguments.size() == 1 && arguments[0]->IsString())

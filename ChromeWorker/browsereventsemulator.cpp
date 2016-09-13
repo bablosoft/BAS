@@ -87,7 +87,7 @@ void BrowserEventsEmulator::MouseMove(CefRefPtr<CefBrowser> Browser, bool & IsMo
 
 }
 
-void BrowserEventsEmulator::MouseClick(CefRefPtr<CefBrowser> Browser, int x, int y, const std::pair<int,int> scroll)
+void BrowserEventsEmulator::MouseClick(CefRefPtr<CefBrowser> Browser, int x, int y, const std::pair<int,int> scroll, int type)
 {
     if(!Browser)
         return;
@@ -96,9 +96,19 @@ void BrowserEventsEmulator::MouseClick(CefRefPtr<CefBrowser> Browser, int x, int
     event.modifiers = EVENTFLAG_LEFT_MOUSE_BUTTON;
     event.x = x - scroll.first;
     event.y = y - scroll.second;
-    worker_log(std::string("BrowserEventsEmulator::MouseClick<<") + std::to_string(x) + std::string("<<") + std::to_string(y));
-    Browser->GetHost()->SendMouseClickEvent(event,MBT_LEFT,false,1);
-    Browser->GetHost()->SendMouseClickEvent(event,MBT_LEFT,true,1);
+    worker_log(std::string("BrowserEventsEmulator::MouseClick<<") + std::to_string(x) + std::string("<<") + std::to_string(y) + std::string("<<") + std::to_string(type));
+
+    if(type != 1)
+    {
+        Browser->GetHost()->SendMouseClickEvent(event,MBT_LEFT,false,1);
+        worker_log(std::string("BrowserEventsEmulator::MouseClickDown<<"));
+    }
+
+    if(type != 2)
+    {
+        Browser->GetHost()->SendMouseClickEvent(event,MBT_LEFT,true,1);
+        worker_log(std::string("BrowserEventsEmulator::MouseClickUp<<"));
+    }
 }
 
 void BrowserEventsEmulator::Key(CefRefPtr<CefBrowser> Browser, std::string & text, KeyState& State)

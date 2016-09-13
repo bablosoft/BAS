@@ -343,6 +343,21 @@ namespace BrowserAutomationStudioFramework
         }
 
     }
+
+    void TimeoutWaiter::Stop()
+    {
+        if(ConnectorSuccess)
+        {
+            ConnectorSuccess->end();
+            ConnectorSuccess = 0;
+        }
+        if(ConnectorFail)
+        {
+            ConnectorFail->end();
+            ConnectorFail = 0;
+        }
+
+    }
     void TimeoutWaiter::RestoreConnectors()
     {
         ConnectorSuccess = 0;

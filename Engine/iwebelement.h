@@ -27,6 +27,8 @@ namespace BrowserAutomationStudioFramework
         virtual void click(const QString& callback) = 0;
         virtual void move(const QString& callback) = 0;
         virtual void system_click(const QString& callback) = 0;
+        virtual void system_click_up(const QString& callback) = 0;
+        virtual void system_click_down(const QString& callback) = 0;
         virtual void clear(const QString& callback) = 0;
         virtual void type(const QString& text, int interval, const QString& callback) = 0;
         virtual void type(const QString& text, const QString& callback) = 0;

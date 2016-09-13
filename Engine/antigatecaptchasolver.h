@@ -38,6 +38,7 @@ namespace BrowserAutomationStudioFramework
         QString SoftId;
         void StartMonitor();
         bool MultipleIds;
+        bool DisableImageConvert;
         QMap<QString, QString> Properties;
     public:
         explicit AntigateCaptchaSolver(QObject *parent = 0);

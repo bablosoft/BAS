@@ -172,6 +172,8 @@ public:
     void DebugVariablesResultCallback(const std::string & data);
 
     void MouseClickCallback(int x, int y);
+    void MouseClickUpCallback(int x, int y);
+    void MouseClickDownCallback(int x, int y);
     void PopupCloseCallback(int index);
     void PopupSelectCallback(int index);
     void MouseMoveCallback(int x, int y);
@@ -197,6 +199,8 @@ public:
     void EmulateClick(int x, int y);
     void EmulateMove(int x, int y);
     void EmulateMoveAndClick(int x, int y);
+    void EmulateDrag(int x, int y);
+    void EmulateDrop(int x, int y);
 
     //Tabs
     void AddTab();

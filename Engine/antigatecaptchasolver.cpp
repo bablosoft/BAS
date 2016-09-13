@@ -6,7 +6,7 @@
 namespace BrowserAutomationStudioFramework
 {
     AntigateCaptchaSolver::AntigateCaptchaSolver(QObject *parent) :
-        ISolver(parent),Iterator(0),StartedMonitor(false),timeout(8000), MultipleIds(true)
+        ISolver(parent),Iterator(0),StartedMonitor(false),timeout(8000), MultipleIds(true), DisableImageConvert(false)
     {
         Server = "http://antigate.com/";
     }
@@ -173,7 +173,7 @@ namespace BrowserAutomationStudioFramework
         client->setParent(post);
         post->SetHttpClient(client);
         connect(post,SIGNAL(PostedToAntigate(QString,QString,bool)),this,SLOT(PostedToAntigate(QString,QString,bool)));
-        post->Post(i,key,base64,Properties,SoftId);
+        post->Post(i,key,base64,Properties,SoftId,DisableImageConvert);
         return i;
     }
 
@@ -188,7 +188,6 @@ namespace BrowserAutomationStudioFramework
                 StartMonitor();
             }else
             {
-                //qDebug()<<"!!!!!!Start"<<antigate_id;
                 SingleIdWorker * Worker = new SingleIdWorker();
                 Worker->setParent(this);
                 Worker->id = id;
@@ -233,6 +232,9 @@ namespace BrowserAutomationStudioFramework
         }else if(name == "timeout")
         {
             timeout = value.toInt();
+        }else if(name == "bas_disable_image_convert")
+        {
+            DisableImageConvert = value.toInt();
         }else if(name == "serverurl")
         {
             this->Server = value;

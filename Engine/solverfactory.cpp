@@ -98,7 +98,7 @@ namespace BrowserAutomationStudioFramework
             }
             return AntigateSolver;
         }
-        if(name == "capmonster")
+        if(name == "capmonster" || name == "capmonsterimage" || name == "capmonsteraudio")
         {
             if(CapMonsterSolver == 0)
             {

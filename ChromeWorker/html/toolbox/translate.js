@@ -1,5 +1,10 @@
 _L = 
 {
+	"Drag x position": {"ru": "X Координата"},
+	"Drop y position": {"ru": "Y Координата"},
+	"Trying to interrupt ...": {"ru": "Пытаюсь прервать ..."},
+	"Interrupt": {"ru": "Прервать"},
+	"Executing Action": {"ru": "Выполняется действие"},
 	"Tab Index": {"ru": "Номер Вкладки"},
 	"Disable mouse emulation.": {"ru": "Отключить эмуляцию мыши."},
 	"Disable mouse and keyboard emulation.": {"ru": "Отключить эмуляцию мыши и клавиатуры."},

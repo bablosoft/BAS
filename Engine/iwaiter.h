@@ -39,6 +39,7 @@ namespace BrowserAutomationStudioFramework
 
         virtual void Sleep(int milliseconds,const QObject *object_success,const char * slot_success) = 0;
         virtual void Abort() = 0;
+        virtual void Stop() = 0;
         virtual bool IsActive() = 0;
         virtual bool IsResourceRefused() = 0;
 

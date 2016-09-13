@@ -33,6 +33,18 @@ function mouse(x, y, callback)
     Browser.MouseClick(x,y,_get_function_body(callback))
 }
 
+function mouse_up(x, y, callback)
+{
+    _ensure_browser_created();
+    Browser.MouseClickUp(x,y,_get_function_body(callback))
+}
+
+function mouse_down(x, y, callback)
+{
+    _ensure_browser_created();
+    Browser.MouseClickDown(x,y,_get_function_body(callback))
+}
+
 function popupclose(index, callback)
 {
     _ensure_browser_created();

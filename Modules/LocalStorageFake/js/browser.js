@@ -42,9 +42,9 @@ function BrowserAutomationStudio_InjectLocalStorageArray(res)
 
 	   	 	 	res["removeItem"] = function(key)
 	   	 	 	{
-					if (res[prop])
+					if (res[key])
 		 			{
-						var r = delete res[prop];
+						var r = delete res[key];
 						BrowserAutomationStudio_SaveLocalStorage(JSON.stringify(window.BrowserAutomationStudio_LocalStorages));
 						return r
 					}

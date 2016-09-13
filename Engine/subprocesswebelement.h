@@ -45,6 +45,8 @@ namespace BrowserAutomationStudioFramework
         void render_file();
         void render_base64();
         void system_click();
+        void system_click_up();
+        void system_click_down();
         void move();
 
     public slots:
@@ -57,6 +59,8 @@ namespace BrowserAutomationStudioFramework
         virtual void click(const QString& callback);
         virtual void move(const QString& callback);
         virtual void system_click(const QString& callback);
+        virtual void system_click_up(const QString& callback);
+        virtual void system_click_down(const QString& callback);
         virtual void clear(const QString& callback);
         virtual void type(const QString& text, int interval, const QString& callback);
         virtual void type(const QString& text, const QString& callback);

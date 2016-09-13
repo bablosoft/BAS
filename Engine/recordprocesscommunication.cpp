@@ -116,6 +116,11 @@ namespace BrowserAutomationStudioFramework
                 xmlReader.readNext();
                 emit LoadScript(xmlReader.text().toString());
             }
+            if(xmlReader.name() == "Interrupt" && token == QXmlStreamReader::StartElement)
+            {
+                xmlReader.readNext();
+                emit Interrupt();
+            }
             if(xmlReader.name() == "Terminate" && token == QXmlStreamReader::StartElement)
             {
                 emit Stop();

@@ -29,6 +29,30 @@ namespace BrowserAutomationStudioFramework
         Worker->GetProcessComunicator()->Send(WriteString);
     }
 
+    void SubprocessBrowser::MouseClickUp(int x, int y, const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("MouseClickUp",QString("%1,%2").arg(QString::number(x)).arg(QString::number(y)));
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("MouseClickUp"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(MouseClickUp()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
+    void SubprocessBrowser::MouseClickDown(int x, int y, const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("MouseClickDown",QString("%1,%2").arg(QString::number(x)).arg(QString::number(y)));
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("MouseClickDown"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(MouseClickDown()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
     void SubprocessBrowser::PopupClose(int index, const QString& callback)
     {
         QString WriteString;
@@ -368,6 +392,12 @@ namespace BrowserAutomationStudioFramework
             }else if(xmlReader.name() == "MouseClick" && token == QXmlStreamReader::StartElement)
             {
                 emit MouseClick();
+            }else if(xmlReader.name() == "MouseClickUp" && token == QXmlStreamReader::StartElement)
+            {
+                emit MouseClickUp();
+            }else if(xmlReader.name() == "MouseClickDown" && token == QXmlStreamReader::StartElement)
+            {
+                emit MouseClickDown();
             }else if(xmlReader.name() == "MouseMove" && token == QXmlStreamReader::StartElement)
             {
                 emit MouseMove();

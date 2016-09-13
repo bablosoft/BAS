@@ -309,7 +309,7 @@ void MainLayout::UpdateState(StateClass State)
     {
         StateClass OldState = this->State;
         this->State = State;
-        EnableWindow(ToolBoxHandle,State == Ready);
+        //EnableWindow(ToolBoxHandle,State == Ready);
 
         ShowWindow(HTextHold,(State == Hold)?SW_SHOW:SW_HIDE);
         ShowWindow(HTextFinished,(State == Finished)?SW_SHOW:SW_HIDE);

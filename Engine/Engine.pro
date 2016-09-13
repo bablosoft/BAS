@@ -274,7 +274,8 @@ SOURCES += engine.cpp \
     modulemanagerwindow.cpp \
     accordion/clickableframe.cpp \
     accordion/contentpane.cpp \
-    accordion/qaccordion.cpp
+    accordion/qaccordion.cpp \
+    projectbackup.cpp
 
 win32:SOURCES += CrashHandler.cpp
 
@@ -541,7 +542,8 @@ HEADERS += engine.h\
     modulemanagerwindow.h \
     accordion/qAccordion/clickableframe.h \
     accordion/qAccordion/contentpane.h \
-    accordion/qAccordion/qaccordion.h
+    accordion/qAccordion/qaccordion.h \
+    projectbackup.h
 
 win32:HEADERS += CrashHandler.h
 

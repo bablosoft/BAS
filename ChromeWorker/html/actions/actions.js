@@ -479,6 +479,30 @@ _A = {
       "description":"Move",
       "template":"{{MoveX}},{{MoveY}}"
    },
+   "drag":{
+      "name":"Drag",
+      "class": "browser",
+      "description":"Drag",
+      "template":"{{X}},{{Y}}"
+   },
+   "drop":{
+      "name":"Drop",
+      "class": "browser",
+      "description":"Drop",
+      "template":"{{X}},{{Y}}"
+   },
+   "dragelement":{
+      "name":"Drag On Element",
+      "class": "browser",
+      "description":"Drag On Element",
+      "template":"{{PATH}}"
+   },
+   "dropelement":{
+      "name":"Drop On Element",
+      "class": "browser",
+      "description":"Drop On Element",
+      "template":"{{PATH}}"
+   },
    "moveandclick":{
       "name":"Move And Click",
       "class": "browser",
@@ -608,6 +632,10 @@ _A = {
 
 _AL = 
 {
+   "Drag" : {"ru": "Начать Перетаскивание"},
+   "Drop" : {"ru": "Закончить Перетаскивание"},
+   "Drag On Element" : {"ru": "Начать Перетаскивание На Элементе"},
+   "Drop On Element" : {"ru": "Закончить Перетаскивание На Элементе"},
    "Add Tab" : {"ru": "Добавить вкладку"},
    "Close Tab" : {"ru": "Закрыть вкладку"},
    "Select Tab" : {"ru": "Переключиться на вкладку"},

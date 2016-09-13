@@ -83,6 +83,21 @@
       </div>
     </div>
 
+
+    <div class="modal text-center" id="WaitingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-body" style="margin-top:10px;margin-bottom:10px"><span class="tr">Executing Action</span>: <span class="tr text-danger" id="WaitingActionName">Unknown</span>
+                
+                <p style="margin-top:30px"><span id="InterruptMessage" class="tr" style="display:none">Trying to interrupt ...</span><a href="#" id="WaitingDisable" class="btn btn-default tr">Interrupt</a></p>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
     
 
   </div>
@@ -646,7 +661,7 @@
 
 <script type="text/template" id="cachemaskallow">
     <div class="container-fluid cachemaskallow">
-      <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Match"), default_selector: "string", disable_int:true}) %>
+      <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Match"), default_selector: "string", disable_int:true, value_string: "*"}) %>
       <div class="tooltipinternal tr">Add page content to cache if url is matching. For example *.json - caches all json</div>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
@@ -1277,6 +1292,23 @@
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
+  <script type="text/template" id="dragelement">
+    <div class="container-fluid dragelement">
+      <div class="tooltipinternal tr">Drag On Element</div>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Drag On Element")}) %>
+    <%= _.template($('#path').html())({selector:selector}) %>
+  </script>
+
+
+  <script type="text/template" id="dropelement">
+    <div class="container-fluid dropelement">
+      <div class="tooltipinternal tr">Drop On Element</div>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Drop On Element")}) %>
+    <%= _.template($('#path').html())({selector:selector}) %>
+  </script>
+
   <script type="text/template" id="moveandclickelement">
     <div class="container-fluid moveandclickelement">
       <div class="tooltipinternal tr">Move mouse pointer and click on element.</div>
@@ -1567,6 +1599,22 @@
       <%= _.template($('#input_constructor').html())({id:"ClickY", description:tr("Click y position"), default_selector: "int", disable_string:true, value_number: model['y']}) %>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true, visible:true, name: tr("Click")}) %>
+  </script>
+
+  <script type="text/template" id="drag">
+    <div class="container-fluid move">
+      <%= _.template($('#input_constructor').html())({id:"X", description:tr("Drag x position"), default_selector: "int", disable_string:true, value_number: model['x']}) %>
+      <%= _.template($('#input_constructor').html())({id:"Y", description:tr("Drop y position"), default_selector: "int", disable_string:true, value_number: model['y']}) %>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Drag")}) %>
+  </script>
+
+  <script type="text/template" id="drop">
+    <div class="container-fluid move">
+      <%= _.template($('#input_constructor').html())({id:"X", description:tr("Drop x position"), default_selector: "int", disable_string:true, value_number: model['x']}) %>
+      <%= _.template($('#input_constructor').html())({id:"Y", description:tr("Drop y position"), default_selector: "int", disable_string:true, value_number: model['y']}) %>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Drop")}) %>
   </script>
 
   <script type="text/template" id="addtab">
@@ -1881,17 +1929,49 @@
         solver_property("2captcha","coordinatescaptcha","")
         twocaptcha(<%= antigate %>)
       }
-      if(<%= method %> == "capmonster")
+      if(<%= method %> == "capmonster" || <%= method %> == "capmonsterimage" || <%= method %> == "capmonsteraudio")
       {
         solver_property("capmonster","serverurl",<%= serverurl %>)
+        solver_property("capmonster","bas_disable_image_convert","0")
+        solver_property("capmonster","CapMonsterModule","")
+        solver_property("capmonster","Task","")
         capmonster(<%= antigate %>)
       }
 
       <%= waiter %>
 
-      <%= path %>.render_base64()!
-      solve_base64(<%= method %>, _result())!
-      <%= variable %> = _result()
+      _if_else(<%= method %> == "capmonster" || <%= method %> == "capmonsterimage" || <%= method %> == "capmonsteraudio", function(){
+        <%= path %>.attr("src")!
+        <%= variable %> = _result()
+        _if(<%= variable %>.length == 0, function(){
+          <%= path %>.css("img").attr("src")!
+          <%= variable %> = _result()
+        })!
+
+        if(<%= variable %>.length == 0)
+        {
+          fail(tr("Image tag not found. Is this element captcha?"))
+        }
+
+        wait_load(<%= variable %>)!
+
+        cache_get_base64(<%= variable %>)!
+
+        if(_result().length == 0)
+        {
+          fail(tr("Url ") + <%= variable %> + tr(" is not present in cache. Please enable cache before page load with Cache Mask Allow action"))
+        }
+        solve_base64("capmonster", _result())!
+        <%= variable %> = _result()
+        
+      },function(){
+        <%= path %>.render_base64()!
+        solve_base64(<%= method %>, _result())!
+        <%= variable %> = _result()
+
+      })!
+
+      
   </script>
 
   <script type="text/template" id="replacestring_code">
@@ -1993,8 +2073,11 @@
         solver_property("2captcha","coordinatescaptcha","")
         twocaptcha(<%= antigate %>)
       }
-      if(<%= method %> == "capmonster")
+      if(<%= method %> == "capmonster" || <%= method %> == "capmonsterimage" || <%= method %> == "capmonsteraudio")
       {
+        solver_property("capmonster","bas_disable_image_convert","0")
+        solver_property("capmonster","CapMonsterModule","")
+        solver_property("capmonster","Task","")
         solver_property("capmonster","serverurl",<%= serverurl %>)
         capmonster(<%= antigate %>)
       }
@@ -2094,6 +2177,20 @@
       <% }else{ %>
         <%= path %>.script("self.click()")!
       <% } %>
+  </script>
+
+  <script type="text/template" id="dragelement_code">
+      /*Browser*/
+      <%= waiter %>
+      <%= path %>.move()!
+      <%= path %>.system_click_down()!
+  </script>
+
+  <script type="text/template" id="dropelement_code">
+      /*Browser*/
+      <%= waiter %>
+      <%= path %>.move()!
+      <%= path %>.system_click_up()!
   </script>
 
   <script type="text/template" id="text_code">
@@ -2220,6 +2317,18 @@
       /*Browser*/
       move(<%= x %>,<%= y %>)!
       mouse(<%= x %>,<%= y %>)!
+  </script>
+
+  <script type="text/template" id="drag_code">
+      /*Browser*/
+      move(<%= x %>,<%= y %>)!
+      mouse_down(<%= x %>,<%= y %>)!
+  </script>
+
+  <script type="text/template" id="drop_code">
+      /*Browser*/
+      move(<%= x %>,<%= y %>)!
+      mouse_up(<%= x %>,<%= y %>)!
   </script>
 
   <script type="text/template" id="load_code">
@@ -2609,6 +2718,7 @@
 
       events: {
         "click #ok": "accept",
+        "click #WaitingDisable": "interrupt",
         //"mouseover .toolbutton": "showtooltip",
         "click #backtomain": "backtomain",
         "show.bs.modal #VariableModal": "varaddstart",
@@ -2639,6 +2749,15 @@
         "click .dropdown-menu-path": "stoppropagation",
         "click .dropdown-menu-css-item": "dropdownmenupathselectitem",
      },
+
+     
+      interrupt: function(event)
+      {
+        event.preventDefault();
+        $("#InterruptMessage").show();
+        $("#WaitingDisable").hide();
+        BrowserAutomationStudio_Interrupt()
+      },
 
       stoppropagation: function(event)
       {
@@ -4983,6 +5102,26 @@
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
+          }
+          else if(State == "dragelement")
+          {
+             try{
+              var path = GetPath(loader)
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+          }
+          else if(State == "dropelement")
+          {
+             try{
+              var path = GetPath(loader)
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
           }else if(State == "moveandclickelement")
           {
             var Check = $("#Check").is(':checked')
@@ -5191,7 +5330,31 @@
             }catch(e)
             {}
 
-          }else if(State == "scroll")
+          }else if(State == "drag")
+          {
+            var MoveX = GetInputConstructorValue("X", loader);
+            var MoveY = GetInputConstructorValue("Y", loader);
+
+            try{
+              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({x:MoveX["updated"],y:MoveY["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+
+          }else if(State == "drop")
+          {
+            var MoveX = GetInputConstructorValue("X", loader);
+            var MoveY = GetInputConstructorValue("Y", loader);
+
+            try{
+              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({x:MoveX["updated"],y:MoveY["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+          }
+          else if(State == "scroll")
           {
             var X = GetInputConstructorValue("X", loader);
             var Y = GetInputConstructorValue("Y", loader);
@@ -5418,7 +5581,11 @@
           "randomstring": _.template($('#randomstring').html()),
           "addtab": _.template($('#addtab').html()),
           "selecttab": _.template($('#selecttab').html()),
-          "closetab": _.template($('#closetab').html())
+          "closetab": _.template($('#closetab').html()),
+          "drag": _.template($('#drag').html()),
+          "drop": _.template($('#drop').html()),
+          "dragelement": _.template($('#dragelement').html()),
+          "dropelement": _.template($('#dropelement').html())
           _MACRO_INSERT_TEMPLATES_
         }
         this.model.bind('change', this.render, this);
@@ -5590,7 +5757,12 @@
             "!/randomstring": "randomstring",
             "!/addtab": "addtab",
             "!/selecttab": "selecttab",
-            "!/closetab": "closetab"
+            "!/closetab": "closetab",
+            "!/randomint": "randomint",
+            "!/drag": "drag",
+            "!/drop": "drop",
+            "!/dragelement": "dragelement",
+            "!/dropelement": "dropelement"
             _MACRO_INSERT_ROUTER_DEF_
         },
 
@@ -5961,9 +6133,20 @@
         selecttab: function(){
           _GobalModel.set({ state: "selecttab" });
         }
-        ,
-        closetab: function(){
+        ,closetab: function(){
           _GobalModel.set({ state: "closetab" });
+        }
+        ,drag: function(){
+          _GobalModel.set({ state: "drag" });
+        }
+        ,drop: function(){
+          _GobalModel.set({ state: "drop" });
+        }
+        ,dragelement: function(){
+          _GobalModel.set({ state: "dragelement" });
+        }
+        ,dropelement: function(){
+          _GobalModel.set({ state: "dropelement" });
         }
         _MACRO_INSERT_ROUTER_FUNC_
     });
@@ -6670,6 +6853,20 @@
       
     }
 
+    function BrowserAutomationStudio_Drag(x, y)
+    {
+      _Router.navigate("#!/drag", true);
+      _GobalModel.set("x",x.toString())
+      _GobalModel.set("y",y.toString())
+    }
+
+    function BrowserAutomationStudio_Drop(x, y)
+    {
+      _Router.navigate("#!/drop", true);
+      _GobalModel.set("x",x.toString())
+      _GobalModel.set("y",y.toString())
+    }
+
     function BrowserAutomationStudio_ElementFunction(selector, name, is_loop)
     {
       _SelectorModel.set("is_editing",false)
@@ -6746,6 +6943,14 @@
     {
       BrowserAutomationStudio_ElementFunction(selector, "moveelement", is_loop)
     }
+    function BrowserAutomationStudio_DragElement(selector, is_loop)
+    {
+      BrowserAutomationStudio_ElementFunction(selector, "dragelement", is_loop)
+    }
+    function BrowserAutomationStudio_DropElement(selector, is_loop)
+    {
+      BrowserAutomationStudio_ElementFunction(selector, "dropelement", is_loop)
+    }
     function BrowserAutomationStudio_MoveAndClickElement(selector, is_loop)
     {
       BrowserAutomationStudio_ElementFunction(selector, "moveandclickelement", is_loop)
@@ -6801,6 +7006,24 @@
     function BrowserAutomationStudio_Length(selector)
     {
       BrowserAutomationStudio_ElementFunction(selector, "length", false)
+    }
+
+    function BrowserAutomationStudio_ShowWaiting(code)
+    {
+      $(".modal").modal('hide')
+      var text = prepare_title(code,"")
+      if(text.length > 0)
+      {
+        $("#WaitingActionName").html(text)
+        $("#InterruptMessage").hide()
+        $("#WaitingDisable").show()
+        $('#WaitingModal').modal({keyboard: false,backdrop: 'static'})
+      }
+          
+    }
+    function BrowserAutomationStudio_HideWaiting()
+    {
+      $('#WaitingModal').modal('hide')
     }
 
     function Normalize(code, tab)

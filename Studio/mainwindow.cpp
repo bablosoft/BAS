@@ -58,6 +58,7 @@
 #include "properties.h"
 #include <QDirIterator>
 #include "modulemanagerwindow.h"
+#include "projectbackup.h"
 #include "every_cpp.h"
 
 
@@ -272,6 +273,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->Recents->Reload(CurrentFileName);
     ui->Recents->setVisible(true);
+    if(Settings->value("ProjectBackup",true).toBool())
+    {
+        ProjectBackup *backup = new ProjectBackup(this);
+        backup->SetPeriod(Settings->value("ProjectBackupPeriod",60000).toInt());
+        backup->SetDestFolder(Settings->value("ProjectBackupDestFolder","../../projectbackups").toString());
+        backup->SetCodeEditor(TextEditor);
+        backup->Start();
+    }
 }
 
 void MainWindow::SetCurrentFileName(const QString& CurrentFileName)
@@ -1225,6 +1234,7 @@ void MainWindow::RunInternal(bool IsRecord)
 
     //Prepare Worker
     ScriptMultiWorker* worker = new ScriptMultiWorker(this);
+    connect(_RecordProcessCommunication,SIGNAL(Interrupt()),worker,SLOT(InterruptAction()));
     worker->SetModuleManager(_ModuleManager);
     worker->SetAdditionEngineScripts(_ModuleManager->GetModuleEngineCode());
     EngineRes->setParent(worker);

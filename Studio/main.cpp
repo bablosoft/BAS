@@ -12,12 +12,14 @@
 #include "browserpluginpath.h"
 #include "safeapplication.h"
 #include <QApplication>
+#include "singleapplication.h"
 
 #include "filelogger.h"
 #include <curl/curl.h>
 #include <QSslSocket>
 #include <openssl/ssl.h>
 #include <QThread>
+#include <QMessageBox>
 #include "every_cpp.h"
 #include "mongodatabaseconnector.h"
 
@@ -115,7 +117,18 @@ int main(int argc, char *argv[])
 
     //SafeApplication a(argc, argv);
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication a(argc, argv);
+    SingleApplication a(argc, argv,"BAS_UNIQUE_KEY");
+    if(a.alreadyExists())
+    {
+        QMessageBox msgBox;
+        msgBox.setText(QObject::tr("BrowserAutomationStudio is already running, do you want to start another instance?"));
+        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        if(QMessageBox::Cancel == msgBox.exec())
+        {
+            return 0;
+        }
+    }
     qDebug()<<QSslSocket::supportsSsl();
 
     //a.SetLogger(&PanicLogger);

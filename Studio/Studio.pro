@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     mainwindow.cpp \
     compilewindow.cpp \
     compiler.cpp \
-    recentswidget.cpp
+    recentswidget.cpp \
+    singleapplication.cpp
 
 
 INCLUDEPATH += debug_memory
@@ -29,7 +30,8 @@ HEADERS += mainwindow.h \
     compilewindow.h \
     compiler.h \
     every_cpp.h \
-    recentswidget.h
+    recentswidget.h \
+    singleapplication.h
 
 FORMS += mainwindow.ui \
     compilewindow.ui \

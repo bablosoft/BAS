@@ -15,10 +15,12 @@ Stop paying to developers! With BrowserAutomationStudio you can create rich and 
 * Visual expression editor.
 * Supports socks and http proxies.
 * Captcha services integration including ReCaptcha 2.0.
+* Capmonster 2 integration.
 * Email module. Search in mailbox.
 * 100% browser emulation with chrome.
 * Native mouse click and move. Native keyboard emulation.
 * Tabs support.
+* Easy drag & drop.
 * Special keys emulation: Tab, Ctrl, etc.
 * Disabled ip tracking through WebRTC.
 * Very fast http client(up to 2000 threads).

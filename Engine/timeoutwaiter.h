@@ -50,6 +50,7 @@ namespace BrowserAutomationStudioFramework
         virtual void WaitForElement(IWebElement* Element, const QString& text,const QObject *object_success,const char * slot_success,const QObject *object_fail,const char * slot_fail);
         virtual void Sleep(int milliseconds,const QObject *object_success,const char * slot_success);
         virtual void Abort();
+        virtual void Stop();
         virtual bool IsActive();
         virtual void WaitInfinity(const QObject *object_wait, const char * slot_signal ,const QObject *object_success,const char * slot_success);
         virtual bool IsResourceRefused();

@@ -89,6 +89,12 @@ namespace BrowserAutomationStudioFramework
             }else if(xmlReader.name() == "system_click" && token == QXmlStreamReader::StartElement)
             {
                 emit system_click();
+            }else if(xmlReader.name() == "system_click_up" && token == QXmlStreamReader::StartElement)
+            {
+                emit system_click_up();
+            }else if(xmlReader.name() == "system_click_down" && token == QXmlStreamReader::StartElement)
+            {
+                emit system_click_down();
             }else if(xmlReader.name() == "move" && token == QXmlStreamReader::StartElement)
             {
                 emit move();
@@ -255,6 +261,22 @@ namespace BrowserAutomationStudioFramework
         Worker->SetFailMessage(tr("Timeout during ") + QString("system_click for") + GetSelectorString());
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(system_click()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("system_click"));
+    }
+
+    void SubprocessWebElement::system_click_up(const QString& callback)
+    {
+        Worker->SetScript(PrepareCallback(callback));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("system_click_up for") + GetSelectorString());
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(system_click_up()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(CreateXmlElement("system_click_up"));
+    }
+
+    void SubprocessWebElement::system_click_down(const QString& callback)
+    {
+        Worker->SetScript(PrepareCallback(callback));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("system_click_down for") + GetSelectorString());
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(system_click_down()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(CreateXmlElement("system_click_down"));
     }
 
     void SubprocessWebElement::move(const QString& callback)

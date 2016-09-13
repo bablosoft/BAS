@@ -405,8 +405,8 @@
     </message>
     <message>
         <location filename="../scriptmultiworker.cpp" line="529"/>
-        <location filename="../scriptmultiworker.cpp" line="699"/>
-        <location filename="../scriptmultiworker.cpp" line="700"/>
+        <location filename="../scriptmultiworker.cpp" line="704"/>
+        <location filename="../scriptmultiworker.cpp" line="705"/>
         <source>Ended with message: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -416,32 +416,32 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="563"/>
+        <location filename="../scriptmultiworker.cpp" line="568"/>
         <source>[%1] Script finished correctly</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="594"/>
+        <location filename="../scriptmultiworker.cpp" line="599"/>
         <source>Success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="619"/>
+        <location filename="../scriptmultiworker.cpp" line="624"/>
         <source>Stage Timeout</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="690"/>
+        <location filename="../scriptmultiworker.cpp" line="695"/>
         <source>Too Much Fails</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="969"/>
+        <location filename="../scriptmultiworker.cpp" line="975"/>
         <source>Failed to get resource inside core</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="970"/>
+        <location filename="../scriptmultiworker.cpp" line="976"/>
         <source>failed to get resource</source>
         <translation type="unfinished"></translation>
     </message>
@@ -449,164 +449,169 @@
 <context>
     <name>BrowserAutomationStudioFramework::ScriptWorker</name>
     <message>
-        <location filename="../scriptworker.cpp" line="552"/>
+        <location filename="../scriptworker.cpp" line="405"/>
+        <source>Aborted By User</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="563"/>
         <source> Line number:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="552"/>
+        <location filename="../scriptworker.cpp" line="563"/>
         <source> During execution of script </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="580"/>
-        <location filename="../scriptworker.cpp" line="667"/>
+        <location filename="../scriptworker.cpp" line="591"/>
+        <location filename="../scriptworker.cpp" line="678"/>
         <source>Fail number exceed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="587"/>
-        <location filename="../scriptworker.cpp" line="735"/>
+        <location filename="../scriptworker.cpp" line="598"/>
+        <location filename="../scriptworker.cpp" line="746"/>
         <source>Success number exceed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="779"/>
+        <location filename="../scriptworker.cpp" line="790"/>
         <source>Failed because process is stopped</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1048"/>
+        <location filename="../scriptworker.cpp" line="1069"/>
         <source>failed to get resource </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1067"/>
+        <location filename="../scriptworker.cpp" line="1088"/>
         <source>Thread suspended</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1072"/>
+        <location filename="../scriptworker.cpp" line="1093"/>
         <source>Thread failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1073"/>
+        <location filename="../scriptworker.cpp" line="1094"/>
         <source>Thread died</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1074"/>
+        <location filename="../scriptworker.cpp" line="1095"/>
         <source>Thread succeeded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1076"/>
+        <location filename="../scriptworker.cpp" line="1097"/>
         <source> with message &quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1088"/>
+        <location filename="../scriptworker.cpp" line="1109"/>
         <source>Thread #</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1100"/>
-        <location filename="../scriptworker.cpp" line="1117"/>
+        <location filename="../scriptworker.cpp" line="1121"/>
+        <location filename="../scriptworker.cpp" line="1138"/>
         <source>CAPTCHA_FAIL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1100"/>
+        <location filename="../scriptworker.cpp" line="1121"/>
         <source>Failed to get solver</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1129"/>
+        <location filename="../scriptworker.cpp" line="1150"/>
         <source>Captcha wait timeout</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1142"/>
+        <location filename="../scriptworker.cpp" line="1163"/>
         <source>Async function is called in sync mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1150"/>
-        <location filename="../scriptworker.cpp" line="1214"/>
+        <location filename="../scriptworker.cpp" line="1171"/>
+        <location filename="../scriptworker.cpp" line="1235"/>
         <source>Failed to run function </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1169"/>
+        <location filename="../scriptworker.cpp" line="1190"/>
         <source>Sync function is called in async mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1179"/>
+        <location filename="../scriptworker.cpp" line="1200"/>
         <source>Failed to execute module function </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1239"/>
+        <location filename="../scriptworker.cpp" line="1260"/>
         <source>Failed to get mail number with Pop3CLient</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1247"/>
+        <location filename="../scriptworker.cpp" line="1268"/>
         <source>Failed to get message with Pop3CLient</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1298"/>
+        <location filename="../scriptworker.cpp" line="1319"/>
         <source>Failed to get mail number with ImapCLient</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1306"/>
+        <location filename="../scriptworker.cpp" line="1327"/>
         <source>Failed to search mail with ImapCLient</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1314"/>
+        <location filename="../scriptworker.cpp" line="1335"/>
         <source>Failed to custom search mail with ImapCLient</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1322"/>
+        <location filename="../scriptworker.cpp" line="1343"/>
         <source>Failed to fetch mail with ImapCLient</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1330"/>
+        <location filename="../scriptworker.cpp" line="1351"/>
         <source>Failed to execute custom query with ImapCLient</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1378"/>
-        <location filename="../scriptworker.cpp" line="1495"/>
-        <location filename="../scriptworker.cpp" line="1503"/>
+        <location filename="../scriptworker.cpp" line="1399"/>
+        <location filename="../scriptworker.cpp" line="1516"/>
+        <location filename="../scriptworker.cpp" line="1524"/>
         <source>Failed to get page </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1378"/>
-        <location filename="../scriptworker.cpp" line="1411"/>
-        <location filename="../scriptworker.cpp" line="1453"/>
-        <location filename="../scriptworker.cpp" line="1495"/>
-        <location filename="../scriptworker.cpp" line="1503"/>
-        <location filename="../scriptworker.cpp" line="1511"/>
+        <location filename="../scriptworker.cpp" line="1399"/>
+        <location filename="../scriptworker.cpp" line="1432"/>
+        <location filename="../scriptworker.cpp" line="1474"/>
+        <location filename="../scriptworker.cpp" line="1516"/>
+        <location filename="../scriptworker.cpp" line="1524"/>
+        <location filename="../scriptworker.cpp" line="1532"/>
         <source> with HttpClient</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1411"/>
-        <location filename="../scriptworker.cpp" line="1453"/>
+        <location filename="../scriptworker.cpp" line="1432"/>
+        <location filename="../scriptworker.cpp" line="1474"/>
         <source>Failed to post page </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1511"/>
+        <location filename="../scriptworker.cpp" line="1532"/>
         <source>Failed to download page </source>
         <translation type="unfinished"></translation>
     </message>
@@ -619,22 +624,26 @@
         <location filename="../subprocessbrowser.cpp" line="51"/>
         <location filename="../subprocessbrowser.cpp" line="63"/>
         <location filename="../subprocessbrowser.cpp" line="75"/>
-        <location filename="../subprocessbrowser.cpp" line="90"/>
-        <location filename="../subprocessbrowser.cpp" line="110"/>
+        <location filename="../subprocessbrowser.cpp" line="87"/>
+        <location filename="../subprocessbrowser.cpp" line="99"/>
+        <location filename="../subprocessbrowser.cpp" line="111"/>
         <location filename="../subprocessbrowser.cpp" line="123"/>
-        <location filename="../subprocessbrowser.cpp" line="135"/>
-        <location filename="../subprocessbrowser.cpp" line="147"/>
-        <location filename="../subprocessbrowser.cpp" line="160"/>
-        <location filename="../subprocessbrowser.cpp" line="172"/>
-        <location filename="../subprocessbrowser.cpp" line="184"/>
-        <location filename="../subprocessbrowser.cpp" line="196"/>
+        <location filename="../subprocessbrowser.cpp" line="138"/>
+        <location filename="../subprocessbrowser.cpp" line="158"/>
+        <location filename="../subprocessbrowser.cpp" line="171"/>
+        <location filename="../subprocessbrowser.cpp" line="183"/>
+        <location filename="../subprocessbrowser.cpp" line="195"/>
         <location filename="../subprocessbrowser.cpp" line="208"/>
         <location filename="../subprocessbrowser.cpp" line="220"/>
         <location filename="../subprocessbrowser.cpp" line="232"/>
         <location filename="../subprocessbrowser.cpp" line="244"/>
         <location filename="../subprocessbrowser.cpp" line="256"/>
         <location filename="../subprocessbrowser.cpp" line="268"/>
-        <location filename="../subprocessbrowser.cpp" line="287"/>
+        <location filename="../subprocessbrowser.cpp" line="280"/>
+        <location filename="../subprocessbrowser.cpp" line="292"/>
+        <location filename="../subprocessbrowser.cpp" line="304"/>
+        <location filename="../subprocessbrowser.cpp" line="316"/>
+        <location filename="../subprocessbrowser.cpp" line="335"/>
         <source>Timeout during </source>
         <translation type="unfinished"></translation>
     </message>
@@ -681,29 +690,31 @@
 <context>
     <name>BrowserAutomationStudioFramework::SubprocessWebElement</name>
     <message>
-        <location filename="../subprocesswebelement.cpp" line="213"/>
-        <location filename="../subprocesswebelement.cpp" line="221"/>
-        <location filename="../subprocesswebelement.cpp" line="228"/>
+        <location filename="../subprocesswebelement.cpp" line="219"/>
+        <location filename="../subprocesswebelement.cpp" line="227"/>
         <location filename="../subprocesswebelement.cpp" line="234"/>
-        <location filename="../subprocesswebelement.cpp" line="247"/>
-        <location filename="../subprocesswebelement.cpp" line="255"/>
-        <location filename="../subprocesswebelement.cpp" line="263"/>
-        <location filename="../subprocesswebelement.cpp" line="271"/>
-        <location filename="../subprocesswebelement.cpp" line="278"/>
-        <location filename="../subprocesswebelement.cpp" line="289"/>
-        <location filename="../subprocesswebelement.cpp" line="296"/>
-        <location filename="../subprocesswebelement.cpp" line="303"/>
-        <location filename="../subprocesswebelement.cpp" line="310"/>
-        <location filename="../subprocesswebelement.cpp" line="317"/>
-        <location filename="../subprocesswebelement.cpp" line="324"/>
-        <location filename="../subprocesswebelement.cpp" line="331"/>
-        <location filename="../subprocesswebelement.cpp" line="338"/>
-        <location filename="../subprocesswebelement.cpp" line="345"/>
-        <location filename="../subprocesswebelement.cpp" line="352"/>
-        <location filename="../subprocesswebelement.cpp" line="359"/>
-        <location filename="../subprocesswebelement.cpp" line="396"/>
-        <location filename="../subprocesswebelement.cpp" line="422"/>
-        <location filename="../subprocesswebelement.cpp" line="429"/>
+        <location filename="../subprocesswebelement.cpp" line="240"/>
+        <location filename="../subprocesswebelement.cpp" line="253"/>
+        <location filename="../subprocesswebelement.cpp" line="261"/>
+        <location filename="../subprocesswebelement.cpp" line="269"/>
+        <location filename="../subprocesswebelement.cpp" line="277"/>
+        <location filename="../subprocesswebelement.cpp" line="285"/>
+        <location filename="../subprocesswebelement.cpp" line="293"/>
+        <location filename="../subprocesswebelement.cpp" line="300"/>
+        <location filename="../subprocesswebelement.cpp" line="311"/>
+        <location filename="../subprocesswebelement.cpp" line="318"/>
+        <location filename="../subprocesswebelement.cpp" line="325"/>
+        <location filename="../subprocesswebelement.cpp" line="332"/>
+        <location filename="../subprocesswebelement.cpp" line="339"/>
+        <location filename="../subprocesswebelement.cpp" line="346"/>
+        <location filename="../subprocesswebelement.cpp" line="353"/>
+        <location filename="../subprocesswebelement.cpp" line="360"/>
+        <location filename="../subprocesswebelement.cpp" line="367"/>
+        <location filename="../subprocesswebelement.cpp" line="374"/>
+        <location filename="../subprocesswebelement.cpp" line="381"/>
+        <location filename="../subprocesswebelement.cpp" line="418"/>
+        <location filename="../subprocesswebelement.cpp" line="444"/>
+        <location filename="../subprocesswebelement.cpp" line="451"/>
         <source>Timeout during </source>
         <translation type="unfinished"></translation>
     </message>

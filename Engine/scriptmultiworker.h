@@ -183,12 +183,13 @@ namespace BrowserAutomationStudioFramework
         virtual void SetModuleManager(IModuleManager *ModuleManager);
         virtual IModuleManager* GetModuleManager();
     signals:
-
+        void InterruptActionSignal();
     public slots:
         void RunStage(int ThreadsNumber, int MaximumSuccess, int MaximumFailure, int MaxRunTime,const QString& WorkerFunction, const QString& callback);
         virtual void Run();
         virtual void RunSubScript();
         virtual void Abort();
+        virtual void InterruptAction();
         void Decrypt(const QString& Data);
         void SuccessInternal();
         void FailInternal(const QString&  message);

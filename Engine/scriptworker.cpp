@@ -8,7 +8,7 @@ namespace BrowserAutomationStudioFramework
 
 
     ScriptWorker::ScriptWorker(QObject *parent) :
-        IWorker(parent), Browser(0), Logger(0), Results1(0),Results2(0), Results3(0),Results4(0),Results5(0),Results6(0),Results7(0),Results8(0),Results9(0), Waiter(0),engine(0),ThreadNumber(0),IsAborted(false),ProcessComunicator(0), HttpClient(0), Pop3Client(0), ImapClient(0), DoTrace(false), MaxFail(100), MaxSuccess(100), IsFailExceedRunning(false), IsSuccessExceedRunning(false), FunctionData(0)
+        IWorker(parent), Browser(0), Logger(0), Results1(0),Results2(0), Results3(0),Results4(0),Results5(0),Results6(0),Results7(0),Results8(0),Results9(0), Waiter(0),engine(0),ThreadNumber(0),IsAborted(false),ProcessComunicator(0), HttpClient(0), Pop3Client(0), ImapClient(0), DoTrace(false), MaxFail(100), MaxSuccess(100), IsFailExceedRunning(false), IsSuccessExceedRunning(false), FunctionData(0), CurrentWebElement(0)
     {
 
     }
@@ -393,6 +393,17 @@ namespace BrowserAutomationStudioFramework
     QList<QString>* ScriptWorker::GetAdditionEngineScripts()
     {
         return AdditionalScripts;
+    }
+
+    void ScriptWorker::InterruptAction()
+    {
+        if(IsRecord)
+        {
+            if(Waiter)
+                Waiter->Stop();
+
+            Fail(tr("Aborted By User"));
+        }
     }
 
 
@@ -929,7 +940,17 @@ namespace BrowserAutomationStudioFramework
 
     static QScriptValue prepare(QScriptEngine *engine, IWebElement* web)
     {
-        QScriptValue res = engine->newQObject(web,QScriptEngine::ScriptOwnership);
+        ScriptWorker* Worker = qobject_cast<ScriptWorker*>(engine->parent());
+        web->setParent(Worker);
+        if(Worker->CurrentWebElement)
+        {
+            Worker->CurrentWebElement->deleteLater();
+            Worker->CurrentWebElement = 0;
+        }
+
+        Worker->CurrentWebElement = web;
+
+        QScriptValue res = engine->newQObject(web);
         res.setProperty("css", engine->newFunction(prototype_css));
         res.setProperty("frame", engine->newFunction(prototype_frame));
         res.setProperty("position", engine->newFunction(prototype_position));
@@ -1509,7 +1530,7 @@ namespace BrowserAutomationStudioFramework
     {
         SetScript(callback);
         SetFailMessage(tr("Failed to download page ") + url + tr(" with HttpClient"));
-        Waiter->WaitInfinity(HttpClient,SIGNAL(Finished()),this,SLOT(FollowRedirectDownload()));
+        Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(FollowRedirectDownload()),this,SLOT(FailBecauseOfTimeout()));
         CurrentFileDownload = file;
         HttpClient->Download(url, file);
     }
@@ -1553,6 +1574,11 @@ namespace BrowserAutomationStudioFramework
         Groups.IsNull = false;
         Groups.GroupIdList.append(GroupId);
         DatabaseConnector->Insert(Groups,Item,TableId);
+    }
+
+    void ScriptWorker::Crush()
+    {
+        *((unsigned int*)0) = 0xDEAD;
     }
 
 }

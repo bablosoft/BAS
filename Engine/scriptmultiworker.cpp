@@ -552,6 +552,11 @@ namespace BrowserAutomationStudioFramework
 
     }
 
+    void ScriptMultiWorker::InterruptAction()
+    {
+        emit InterruptActionSignal();
+    }
+
     void ScriptMultiWorker::ScriptFinished()
     {
         if(IsAborted)
@@ -784,6 +789,7 @@ namespace BrowserAutomationStudioFramework
         worker->SetModuleManager(ModuleManager);
         worker->SetAdditionEngineScripts(&AdditionalScripts);
         worker->SetIsRecord(IsRecord);
+        connect(this,SIGNAL(InterruptActionSignal()),worker,SLOT(InterruptAction()));
         connect(worker,SIGNAL(SuccessedButRescued(QString)),ReportData,SLOT(SuccessAndRescued(QString)));
         connect(worker,SIGNAL(FailedButRescued(QString)),ReportData,SLOT(FailAndRescued(QString)));
         connect(worker,SIGNAL(ProgressMaximum(int)),this,SLOT(ProgressMaximumSlot(int)));

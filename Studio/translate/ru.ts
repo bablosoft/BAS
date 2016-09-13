@@ -291,7 +291,7 @@
         <translation type="vanished">Весь лог</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1475"/>
+        <location filename="../mainwindow.cpp" line="1476"/>
         <source>All log</source>
         <translation>Весь лог</translation>
     </message>
@@ -395,6 +395,14 @@
         <location filename="../mainwindow.cpp" line="1223"/>
         <source>Running ...</source>
         <translation>Скрипт работает ...</translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../main.cpp" line="124"/>
+        <source>BrowserAutomationStudio is already running, do you want to start another instance?</source>
+        <translation type="unfinished">BrowserAutomationStudio уже запущена, вы хотите запустить второй экземпляр?</translation>
     </message>
 </context>
 <context>

@@ -49,7 +49,8 @@ SOURCES += main.cpp \
     centralv8handler.cpp \
     clipboard.cpp \
     startwith.cpp \
-    processlocation.cpp
+    processlocation.cpp \
+    urlnormalize.cpp
 
 INCLUDEPATH += $(BAS_PATH_WORKER)/include
 
@@ -109,7 +110,8 @@ HEADERS += \
     centralv8handler.h \
     clipboard.h \
     startwith.h \
-    processlocation.h
+    processlocation.h \
+    urlnormalize.h
 
 INCLUDEPATH += xml json png
 

@@ -29,6 +29,8 @@ public:
     std::vector<std::function<void(int, int)> > EventResize;
     std::vector<std::function<void(const std::string&)> > EventSetWindow;
     std::vector<std::function<void(int, int)> > EventMouseClick;
+    std::vector<std::function<void(int, int)> > EventMouseClickUp;
+    std::vector<std::function<void(int, int)> > EventMouseClickDown;
     std::vector<std::function<void(int, int)> > EventScroll;
     std::vector<std::function<void(int, int, int, int)> > EventRender;
     std::vector<std::function<void(int, int)> > EventMouseMove;

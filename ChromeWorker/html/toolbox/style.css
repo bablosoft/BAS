@@ -84,7 +84,7 @@ body
   margin: 5px auto !important;
 }
 
-.selecttab, .closetab, .addtab, .httpclientxpath, .ignoreerrors, .waitfullload, .promptresult, .waitelement, .waitasyncload, .httpclientget, .httpclientdownload, .httpclientreset, .isloaded, .getstatus, .cachemaskallow,.cachemaskdeny,.cachemaskclear,.requestmaskallow,.requestmaskdeny,.requestmaskclear,.clearcache,.clearrequests, .html, .getcookiesforurl, .openfile, .reset, .moveelement,.moveandclickelement, .clickelement, .length, .set_attr, .attr, .set_random, .set_integer, .set, .focus, .check, .style, .exist, .clear, .load, .url, .xml, .log, .setvariable, .if, .while, .executefunction, .for, .sleep, .resize, .click, .move, .moveandclick, .break, .continue, .success, .fail, .text, .foreach
+.dragelement, .dropelement, .selecttab, .closetab, .addtab, .httpclientxpath, .ignoreerrors, .waitfullload, .promptresult, .waitelement, .waitasyncload, .httpclientget, .httpclientdownload, .httpclientreset, .isloaded, .getstatus, .cachemaskallow,.cachemaskdeny,.cachemaskclear,.requestmaskallow,.requestmaskdeny,.requestmaskclear,.clearcache,.clearrequests, .html, .getcookiesforurl, .openfile, .reset, .moveelement,.moveandclickelement, .clickelement, .length, .set_attr, .attr, .set_random, .set_integer, .set, .focus, .check, .style, .exist, .clear, .load, .url, .xml, .log, .setvariable, .if, .while, .executefunction, .for, .sleep, .resize, .click, .move, .moveandclick, .break, .continue, .success, .fail, .text, .foreach
 {
   padding-top:35px;
 }
@@ -228,3 +228,22 @@ input[type="number"]::-webkit-outer-spin-button {
   overflow: hidden
 }
 
+.modal {
+}
+.vertical-alignment-helper {
+    display:table;
+    height: 100%;
+    width: 100%;
+}
+.vertical-align-center {
+    /* To center vertically */
+    display: table-cell;
+    vertical-align: middle;
+}
+.modal-content {
+    /* Bootstrap sets the size of the modal in the modal-dialog class, we need to inherit it */
+    width:inherit;
+    height:inherit;
+    /* To center horizontally */
+    margin: 0 auto;
+}

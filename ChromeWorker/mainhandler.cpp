@@ -219,7 +219,8 @@ bool MainHandler::OnFileDialog(CefRefPtr<CefBrowser> browser, FileDialogMode mod
     std::vector<CefString> res;
     {
         LOCK_BROWSER_DATA
-        res.push_back(Data->_OpenFileName);
+        if(Data->_OpenFileName.length() > 0)
+            res.push_back(Data->_OpenFileName);
     }
     callback->Continue(0,res);
     return true;

@@ -25,6 +25,7 @@ private:
 
     bool IsMaximize;
     bool IsMinimize;
+    bool IsInterrupt;
 
 
     std::mutex mut;
@@ -32,6 +33,7 @@ private:
     std::mutex mut_maximize;
     std::mutex mut_minimize;
     std::mutex mut_editcancel;
+    std::mutex mut_interrupt;
     std::mutex url_mut;
     std::string url;
     bool url_changed;
@@ -44,6 +46,8 @@ public:
     bool GetIsEditCancel();
     bool GetIsMaximize();
     bool GetIsMinimize();
+    bool GetIsInterrupt();
+
     std::pair<std::string, bool> GetLoadUrl();
 
 

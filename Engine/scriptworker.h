@@ -18,6 +18,7 @@ namespace BrowserAutomationStudioFramework
     class ENGINESHARED_EXPORT ScriptWorker : public IWorker
     {
     Q_OBJECT
+        IWebElement * CurrentWebElement;
         IPreprocessor* Preprocessor;
         IBrowser *Browser;
         ILogger *Logger;
@@ -205,8 +206,10 @@ namespace BrowserAutomationStudioFramework
         virtual WorkerStatus GetResultStatus();
         virtual void Abort();
         virtual void Run();
+        virtual void InterruptAction();
         virtual void SetFailMessage(const QString& message);
         void Decrypt(const QString& Data);
+        void Crush();
 
 
         virtual void FailBecauseOfTimeout();
@@ -294,6 +297,7 @@ namespace BrowserAutomationStudioFramework
         void FollowRedirectInternal(bool IsGet);
 
 
+        friend static QScriptValue prepare(QScriptEngine *engine, IWebElement* web);
 
 
     };

@@ -149,6 +149,7 @@ namespace BrowserAutomationStudioFramework
 
         virtual void Run() = 0;
         virtual void Abort() = 0;
+        virtual void InterruptAction() = 0;
         virtual void Fail(const QString& message) = 0;
         virtual void Die(const QString& message) = 0;
         virtual void Success(const QString& message) = 0;

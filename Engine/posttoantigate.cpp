@@ -12,7 +12,7 @@ namespace BrowserAutomationStudioFramework
     {
     }
 
-    void PostToAntigate::Post(const QString& id,const QString& key,const QString& base64, const QMap<QString,QString>& Properties, const QString& soft)
+    void PostToAntigate::Post(const QString& id,const QString& key,const QString& base64, const QMap<QString,QString>& Properties, const QString& soft, bool DisableImageConvert)
     {
         this->id = id;
         QHash<QString,ContentData> post;
@@ -32,16 +32,22 @@ namespace BrowserAutomationStudioFramework
         {
             ContentData DataFile;
 
-            QImage image = QImage::fromData(QByteArray::fromBase64(base64.toUtf8()));
+            if(DisableImageConvert)
+            {
+                DataFile.DataRaw = QByteArray::fromBase64(base64.toUtf8());
+            }else
+            {
+                QImage image = QImage::fromData(QByteArray::fromBase64(base64.toUtf8()));
 
-            QByteArray ba;
-            QBuffer buffer(&ba);
-            buffer.open(QIODevice::WriteOnly);
+                QByteArray ba;
+                QBuffer buffer(&ba);
+                buffer.open(QIODevice::WriteOnly);
 
-            image.save(&buffer, "JPEG");
-            buffer.close();
+                image.save(&buffer, "JPEG");
+                buffer.close();
 
-            DataFile.DataRaw = ba;
+                DataFile.DataRaw = ba;
+            }
             DataFile.FileName = "image.jpg";
             DataFile.ContentType = "application/octet-stream";
             post["file"] = DataFile;
@@ -58,9 +64,12 @@ namespace BrowserAutomationStudioFramework
         while (i.hasNext())
         {
             i.next();
-            ContentData DataKey;
-            DataKey.DataString = i.value();
-            post[i.key()] = DataKey;
+            if(i.value().length() > 0 && i.key().length() > 0)
+            {
+                ContentData DataKey;
+                DataKey.DataString = i.value();
+                post[i.key()] = DataKey;
+            }
         }
 
         HttpClient->Connect(this,SLOT(submitRequestFinished()));

@@ -283,7 +283,7 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1475"/>
+        <location filename="../mainwindow.cpp" line="1476"/>
         <source>All log</source>
         <translation></translation>
     </message>
@@ -367,6 +367,14 @@
         <location filename="../mainwindow.cpp" line="1223"/>
         <source>Running ...</source>
         <translation></translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../main.cpp" line="124"/>
+        <source>BrowserAutomationStudio is already running, do you want to start another instance?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

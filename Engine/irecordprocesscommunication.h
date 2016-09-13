@@ -23,6 +23,7 @@ namespace BrowserAutomationStudioFramework
         void ReceiveCode(QString Code);
         void LoadScript(QString FileName);
         void NeedRestart();
+        void Interrupt();
         void Stop();
     public slots:
         virtual void SendIsChanged() = 0;

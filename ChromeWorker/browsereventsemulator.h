@@ -17,7 +17,12 @@ class BrowserEventsEmulator
 public:
     BrowserEventsEmulator();
     static void SetFocus(CefRefPtr<CefBrowser> Browser);
-    static void MouseClick(CefRefPtr<CefBrowser> Browser, int x, int y, const std::pair<int,int> scroll);
+    /*
+     * @type == 0 - up and down
+     * @type == 1 - up
+     * @type == 2 - down
+     * */
+    static void MouseClick(CefRefPtr<CefBrowser> Browser, int x, int y, const std::pair<int,int> scroll, int type = 0);
 
     static void MouseMove(CefRefPtr<CefBrowser> Browser, bool & IsMouseMoveSimulation,int MouseStartX, int MouseStartY, int MouseEndX, int MouseEndY , int& MouseCurrentX, int& MouseCurrentY, float Speed, int ScrollX, int ScrollY, int BrowserWidth, int BrowserHeight);
     static bool IsPointOnScreen(int PointX, int PointY, int ScrollX, int ScrollY, int BrowserWidth, int BrowserHeight);
