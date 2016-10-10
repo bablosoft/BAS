@@ -2,6 +2,7 @@
 #include "log.h"
 #include "trim.h"
 #include "split.h"
+#include "startwith.h"
 #include "readallfile.h"
 #include "match.h"
 #include "processlocation.h"
@@ -10,6 +11,9 @@
 #include <chrono>
 #include <algorithm>
 #include <iterator>
+#include <regex>
+#include "base64.h"
+
 
 using namespace std::chrono;
 
@@ -45,6 +49,8 @@ void ParseHeaders(CurlResourceHandler::CurlThreadDataClass * Data)
     if(Data->ResultHeaders.count(LocationHeader) > 0)
         Data->RedirectUrl = Data->ResultHeaders.find(LocationHeader)->second;
 
+    Data->ResultHeaders.erase("content-security-policy");
+    Data->ResultHeaders.erase("Content-Security-Policy");
 
     std::string ContentLengthHeader = "Content-Length";
     if(Data->ResultHeaders.count("content-length") > 0)
@@ -366,6 +372,33 @@ bool CurlResourceHandler::ProcessRequest(CefRefPtr<CefRequest> request, CefRefPt
                 Data.resize(Count);
                 if(Count != Element->GetBytes(Count,Data.data()))
                     continue;
+
+
+                std::string DataString(Data.data(),Count);
+
+                try
+                {
+                    static std::regex Base64Regexp("BrowserAutomationStudioBase64DataStart(.*?)BrowserAutomationStudioBase64DataEnd");
+                    while(true)
+                    {
+                        std::smatch Match;
+                        if(std::regex_search(DataString,Match,Base64Regexp))
+                        {
+                             std::string Base64 = Match[1];
+                             std::string DataDecoded = base64_decode(Base64);
+                             DataString.replace(Match.position(),Match.length(),DataDecoded);
+                             Data.assign(DataString.begin(),DataString.end());
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                }catch(...)
+                {
+                }
+
             }
 
 

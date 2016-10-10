@@ -32,6 +32,7 @@ namespace BrowserAutomationStudioFramework
         for(int i = 0;i<size;i++)
         {
             SubprocessBrowser * o = new SubprocessBrowser(this);
+            o->SetLanguage(Language);
             connect(o,SIGNAL(ProcessCreated(IProcessComunicator*)), this, SLOT(ProcessCreated(IProcessComunicator*)));
             o->SetNetworkAccessManagerFactory(NetworkAccessManagerFactory);
             o->SetProcessComunicatorFactory(ProcessComunicatorFactory);
@@ -49,7 +50,6 @@ namespace BrowserAutomationStudioFramework
     {
         emit OnBrowserCreated();
         int index = BrowserList.indexOf(qobject_cast<IBrowser*>(sender()));
-        Comunicator->Send(QString("<SetInitialState>") + QString("%1,%2").arg(Language).arg(QString::number(index)) + QString("</SetInitialState>"));
         Widget->Add(Comunicator,index);
     }
 

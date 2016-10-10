@@ -24,7 +24,7 @@ namespace BrowserAutomationStudioFramework
         void SetLocation(const QString& Location);
         void SetCommandLineParams(const QStringList& Params);
 
-        virtual void CreateProcess();
+        virtual void CreateProcess(const QStringList& arguments);
         virtual void ConnectToProcess(const QString& key_in, const QString& key_out);
         virtual void Send(const QString& value);
         virtual void Abort();

@@ -35,17 +35,17 @@ namespace BrowserAutomationStudioFramework
         NetworkCookieJar Cookies;
         QString ProxyString;
         QString ProxyAuthString;
-        QPair<bool, ContentData> ParsePostArgument(const QString& str);
+        QPair<bool, ContentData> ParsePostArgument(const QString& str, const QString& encoding);
         QObject *request_holder;
         CurlExecutor* Curl;
-        void GetInternal(const QString &url,const QString &filename);
+        void GetInternal(const QString &url,const QString &filename, const GetOptions & Options);
         QThread *GetThread();
     public:
         explicit CurlHttpClient(QObject *parent = 0);
         ~CurlHttpClient();
     public slots:
         virtual void Stop();
-        virtual void Get(const QString &url);
+        virtual void Get(const QString &url, const GetOptions & Options = GetOptions());
         virtual void Download(const QString &url, const QString &file);
 
         virtual void Post(const QString &url, const QHash<QString,QString> & params, const PostOptions & Options = PostOptions());

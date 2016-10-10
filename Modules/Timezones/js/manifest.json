@@ -1,0 +1,86 @@
+{
+	
+	"name":"Timezones",
+	"description":"Timezone",
+	"description_small":{"en": "Timezone", "ru": "Часовой пояс"},
+	"major_version": 1,
+	"minor_version": 0,
+	"developer_name": "bablosoft", 
+	"developer_email": "mail.to.twaego@gmail.com", 
+	"developer_site": "https://bablosoft.com",
+	"api_version": 1,
+	"actions":
+	[
+		{
+			"name":"timezones_set_timezone_and_geolocation_by_ip",
+			"description":{"en": "Set timezone and geolocation by ip","ru": "Установить часовой пояс и координаты по ип"},
+			"template": "{{Value}}",
+			"is_element": false,
+			"interface": "timezones_set_timezone_and_geolocation_by_ip_interface.js",
+			"select": "timezones_set_timezone_and_geolocation_by_ip_select.js",
+			"code": [{"file":"timezones_set_timezone_and_geolocation_by_ip_code.js", "name": "timezones_set_timezone_and_geolocation_by_ip_code"}]
+		},
+		{
+			"name":"timezones_set_timezone",
+			"description":{"en": "Set timezone","ru": "Установить часовой пояс"},
+			"template": "{{Value}}",
+			"is_element": false,
+			"interface": "timezones_set_timezone_interface.js",
+			"select": "timezones_set_timezone_select.js",
+			"code": [{"file":"timezones_set_timezone_code.js", "name": "timezones_set_timezone_code"}]
+		},
+		{
+			"name":"timezones_set_geolocation",
+			"description":{"en": "Set geolocation","ru": "Установить координаты"},
+			"template": "{{Latitude}};{{Longitude}}",
+			"is_element": false,
+			"interface": "timezones_set_geolocation_interface.js",
+			"select": "timezones_set_geolocation_select.js",
+			"code": [{"file":"timezones_set_geolocation_code.js", "name": "timezones_set_geolocation_code"}]
+		},
+		{
+			"name":"timezones_ip_info",
+			"description":{"en": "Ip info","ru": "Сведения об ип"},
+			"template": "{{Value}}",
+			"is_element": false,
+			"interface": "timezones_ip_info_interface.js",
+			"select": "timezones_ip_info_select.js",
+			"code": [{"file":"timezones_ip_info_code.js", "name": "timezones_ip_info_code"}]
+		}
+	],
+	"localize": 
+	{
+		"Ip string. Ipv6 string should be enclosed with square brackets." : {"ru": "Ip в виде строки. Ipv6 адреса должны быть заключены в квадратные скобки."},
+		"Timezone UTC offset." : {"ru": "Смещение в минутах."},
+		"Latitude" : {"ru": "Широта"},
+		"Longitude" : {"ru": "Долгота"},
+		"Is Valid" : {"ru": "Ip распознан корректно"},
+		"Country" : {"ru": "Страна"},
+		"City" : {"ru": "Город"},
+		"Timezone" : {"ru": "Часовой пояс"},
+		"Offset" : {"ru": "Смещение"},
+		"Dst Offset" : {"ru": "Смещение летнего времени"}
+	},
+	"engine": [],
+	"browser": ["browser.js"],
+	"depends": [],
+	"dll": [
+			{
+				"name": "timezones", 
+				"filename32": "timezones32.dll", 
+				"filename64": "timezones64.dll", 
+				"startdllfunction": "StartDll", 
+				"enddllfunction": "EndDll", 
+				"startthreadfunction": "StartThread", 
+				"endthreadfunction": "EndThread", 
+				"exportlist":[
+					{
+						"name": "ipinfo",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "IpInfo"
+					}
+				]
+			}
+		  ]	
+}

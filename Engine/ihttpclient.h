@@ -16,9 +16,17 @@ namespace BrowserAutomationStudioFramework
         QString FileName;
     };
 
+    struct ENGINESHARED_EXPORT GetOptions
+    {
+        QString Method;
+        GetOptions();
+    };
+
     struct ENGINESHARED_EXPORT PostOptions
     {
         QString PrepareStrategy;
+        QString Method;
+        QString ContentTypeEncoding;
         PostOptions();
     };
     class IPostPrepareStrategyFactory;
@@ -29,7 +37,7 @@ namespace BrowserAutomationStudioFramework
 
 
             explicit IHttpClient(QObject *parent = 0);
-            virtual void Get(const QString &url) = 0;
+            virtual void Get(const QString &url, const GetOptions & Options = GetOptions()) = 0;
             virtual void Download(const QString &url, const QString &file) = 0;
             virtual void Post(const QString &url, const QHash<QString,QString> & params, const PostOptions & Options = PostOptions()) = 0;
             virtual void Post(const QString &url, const QHash<QString,ContentData> & params, const PostOptions & Options = PostOptions()) = 0;

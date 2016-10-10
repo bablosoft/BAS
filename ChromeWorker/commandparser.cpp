@@ -39,21 +39,13 @@ void CommandParser::Parse(const std::string& Xml)
 
         rapidxml::xml_node<> *CommandNode = 0;
 
-        //SetInitialState
-        CommandNode = MessagesNode->first_node("SetInitialState");
+        CommandNode = MessagesNode->first_node("SetNextAction");
         if(CommandNode)
         {
             std::string value = CommandNode->value();
-            std::size_t pos = value.find(",");
-            if(pos != std::string::npos)
-            {
-                worker_log("SetInitialState");
-                std::string lang = value.substr(0,pos);
-                std::string number_string = value.substr(pos + 1,value.length() - pos - 1);
-                for(auto f:EventSetInitialState)
-                    f(lang,std::stoi(number_string));
-
-            }
+            worker_log("SetNextAction");
+            for(auto f:EventSetNextAction)
+                f(value);
         }
 
         CommandNode = MessagesNode->first_node("Load");
@@ -228,6 +220,14 @@ void CommandParser::Parse(const std::string& Xml)
                 f();
         }
 
+        CommandNode = MessagesNode->first_node("Crush");
+        if(CommandNode)
+        {
+            worker_log("EventCrush");
+            for(auto f:EventCrush)
+                f();
+        }
+
         CommandNode = MessagesNode->first_node("Resize");
         if(CommandNode)
         {
@@ -266,6 +266,31 @@ void CommandParser::Parse(const std::string& Xml)
                 std::string y = value.substr(pos + 1,value.length() - pos - 1);
                 for(auto f:EventMouseClick)
                     f(std::stoi(x),std::stoi(y));
+
+            }
+        }
+
+        CommandNode = MessagesNode->first_node("Timezone");
+        if(CommandNode)
+        {
+            std::string value = CommandNode->value();
+            worker_log("Timezone");
+            for(auto f:EventTimezone)
+                f(std::stoi(value));
+        }
+
+        CommandNode = MessagesNode->first_node("Geolocation");
+        if(CommandNode)
+        {
+            std::string value = CommandNode->value();
+            worker_log("Geolocation");
+            std::size_t pos = value.find(";");
+            if(pos != std::string::npos)
+            {
+                std::string x = value.substr(0,pos);
+                std::string y = value.substr(pos + 1,value.length() - pos - 1);
+                for(auto f:EventGeolocation)
+                    f(std::stof(x),std::stof(y));
 
             }
         }

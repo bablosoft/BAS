@@ -74,24 +74,39 @@ namespace BrowserAutomationStudioFramework
             layout()->addWidget(box);
             connect(box, SIGNAL(currentTextChanged(QString)), this, SIGNAL(ValueChanged(QString)));
         }
+        QWidget * CheckArea = 0;
+        if(Type == "Check" || Type == "Radio")
+        {
+            QScrollArea * Area = new QScrollArea(this);
+            layout()->addWidget(Area);
+            CheckArea = new QWidget(Area);
+            Area->setWidget(CheckArea);
+            QVBoxLayout *L = new QVBoxLayout(CheckArea);
+            L->setSizeConstraint(QLayout::SetMinAndMaxSize);
+            CheckArea->setLayout(L);
+            Area->setWidgetResizable(true);
+            CheckArea->setMinimumHeight(0);
+            Area->setMinimumHeight(0);
+            Area->setFrameShape(QFrame::NoFrame);
+        }
 
         for(int i = 0;i<Lines.size();i++)
         {
             bool checked = Selected.contains(i);
             if(Type == "Radio")
             {
-                QRadioButton *radio = new QRadioButton(this);
+                QRadioButton *radio = new QRadioButton(CheckArea);
                 connect(radio,SIGNAL(toggled(bool)),this,SLOT(RadioToggle(bool)));
                 radio->setText(Lines.at(i));
-                layout()->addWidget(radio);
+                CheckArea->layout()->addWidget(radio);
                 if(checked || i == 0)
                     radio->setChecked(true);
             }else if(Type == "Check")
             {
-                QCheckBox *check = new QCheckBox(this);
+                QCheckBox *check = new QCheckBox(CheckArea);
                 connect(check,SIGNAL(toggled(bool)),this,SLOT(CheckBoxToggle()));
                 check->setText(Lines.at(i));
-                layout()->addWidget(check);
+                CheckArea->layout()->addWidget(check);
                 if(checked)
                     check->setChecked(true);
             }else if(Type == "Combo")

@@ -49,8 +49,5 @@ function debug_variables(list, callback)
     Browser.DebugVariablesResult(JSON.stringify(res),_get_function_body(callback));
 }
 
-function _simulate_crush()
-{
-    ScriptWorker.Crush();
-}
+
 

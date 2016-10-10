@@ -50,6 +50,14 @@ public:
     //LocalStorage
     std::string _LocalStorageData;
 
+    //Timezone
+    std::atomic_bool TimezoneSelected;
+    std::atomic_int Timezone;
+
+    std::atomic_bool GeolocationSelected;
+    std::atomic<float> Latitude;
+    std::atomic<float> Longitude;
+
 };
 
 #endif // BROWSERDATA_H

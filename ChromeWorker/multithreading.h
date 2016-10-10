@@ -12,6 +12,8 @@ struct multithreading
     base::Lock _LockPrompt;
     base::Lock _LockHttpAuth;
     base::Lock _LockLocalStorage;
+    base::Lock _LockTimezone;
+    base::Lock _LockGeolocation;
 };
 extern multithreading mthreading;
 
@@ -21,6 +23,8 @@ extern multithreading mthreading;
 #define LOCK_PROMPT base::AutoLock lock_scope(mthreading._LockPrompt);
 #define LOCK_HTTP_AUTH base::AutoLock lock_scope(mthreading._LockHttpAuth);
 #define LOCK_LOCAL_STORAGE base::AutoLock lock_scope(mthreading._LockLocalStorage);
+#define LOCK_TIMEZONE base::AutoLock lock_scope(mthreading._LockTimezone);
+#define LOCK_GEOLOCATION base::AutoLock lock_scope(mthreading._LockGeolocation);
 
 std::string GetCurrentThreadString();
 

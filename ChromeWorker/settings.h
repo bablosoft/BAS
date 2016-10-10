@@ -12,6 +12,7 @@ class settings
     int scenario_width;
     int zoom;
     bool maximized;
+    bool restart;
     void SaveToFile();
 public:
     settings();

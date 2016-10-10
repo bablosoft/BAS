@@ -3,6 +3,7 @@
 #include "log.h"
 #include "picojson.h"
 #include "replaceall.h"
+#include "split.h"
 
 JavaScriptExtensions::JavaScriptExtensions()
 {
@@ -16,29 +17,40 @@ std::string JavaScriptExtensions::GetUserAgentExtension(const std::string& UserA
     if(!UserAgent.empty())
     {
         rescode += std::string("Object.defineProperty(window.navigator, 'userAgent', {"
-        "    get: function() {"
+        "    configurable: true, get: function() {"
          "        return ") + picojson::value(UserAgent).serialize() + std::string(";"
          "    }"
          "});");
 
         rescode += std::string("Object.defineProperty(window.navigator, 'appVersion', {"
-        "    get: function() {"
+        "    configurable: true, get: function() {"
          "        return ") + picojson::value(ReplaceAll( UserAgent, "Mozilla/", "")).serialize() + std::string(";"
          "    }"
          "});");
 
         rescode += std::string("Object.defineProperty(window.navigator, 'vendor', {"
-        "    get: function() {"
+        "    configurable: true, get: function() {"
          "        return ") + picojson::value("").serialize() + std::string(";"
          "    }"
          "});");
 
         rescode += std::string("Object.defineProperty(window.navigator, 'platform', {"
-        "    get: function() {"
+        "    configurable: true, get: function() {"
          "        return ") + picojson::value("").serialize() + std::string(";"
          "    }"
          "});");
     }
+    return rescode;
+}
+
+
+std::string JavaScriptExtensions::GetUserAgentEmptyExtension()
+{
+    std::string rescode;
+    rescode += "delete window.navigator.userAgent;";
+    rescode += "delete window.navigator.appVersion;";
+    rescode += "delete window.navigator.vendor;";
+    rescode += "delete window.navigator.platform;";
     return rescode;
 }
 
@@ -48,19 +60,53 @@ std::string JavaScriptExtensions::GetLanguage(const std::string& Language)
     if(!Language.empty())
     {
         rescode += std::string("Object.defineProperty(window.navigator, 'language', {"
-        "    get: function() {"
+        "    configurable: true, get: function() {"
          "        return ") + picojson::value(Language).serialize() + std::string(";"
          "    }"
          "});");
 
         rescode += std::string("Object.defineProperty(window.navigator, 'languages', {"
-        "    get: function() {"
+        "    configurable: true, get: function() {"
          "        return [") + picojson::value(Language).serialize() + std::string("];"
          "    }"
          "});");
+
+
+        rescode += std::string("if(typeof(Intl.DateTimeFormatOriginal) == 'undefined')"
+        "{"
+            "Intl.DateTimeFormatOriginal = Intl.DateTimeFormat();"
+            "Intl.ResolvedOptionsOriginal = Intl.DateTimeFormatOriginal.resolvedOptions();"
+            "Intl.ResolvedOptionsOriginal['locale'] = ") + picojson::value(split(split(Language,';')[0],',')[0]).serialize() + std::string(";"
+            "Object.defineProperty(Intl, 'DateTimeFormat', {"
+                "configurable: true, get: function() {"
+                     "return function(){"
+                        "var dtres = Intl.DateTimeFormatOriginal;"
+                        "dtres.resolvedOptions = function()"
+                        "{"
+                            "return Intl.ResolvedOptionsOriginal;"
+                        "};"
+                        "return dtres;"
+                     "};"
+                 "}"
+             "});"
+        "}else"
+        "{"
+            "Intl.ResolvedOptionsOriginal['locale'] = ") + picojson::value(split(split(Language,';')[0],',')[0]).serialize() + std::string(";"
+        "};");
+
+
     }
     return rescode;
 }
+
+std::string JavaScriptExtensions::GetEmptyLanguage()
+{
+    std::string rescode;
+    rescode += "delete window.navigator.language;";
+    rescode += "delete window.navigator.languages;";
+    return rescode;
+}
+
 
 
 std::string JavaScriptExtensions::GetBasicExtension(bool IsRecord)
@@ -291,8 +337,10 @@ std::string JavaScriptExtensions::GetBasicExtension(bool IsRecord)
         "if(res == document)"
             "return document.body;"
         "return res;"
-    "}")
-    ;
+    "}"
+    "function BrowserAutomationStudio_Sleep(milliseconds){"
+      "confirm('BrowserAutomationStudio_Sleep' + milliseconds.toString())"
+    "}");
 }
 
 std::string JavaScriptExtensions::GetJqueryExtension()

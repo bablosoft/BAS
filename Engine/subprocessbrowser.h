@@ -17,7 +17,8 @@ namespace BrowserAutomationStudioFramework
         INetworkAccessManager *NetworkAccessManager;
         IProcessComunicatorFactory *ProcessComunicatorFactory;
         IProcessComunicator *ProcessComunicator;
-
+        QString NextAction;
+        QString Language;
     public:
 
         explicit SubprocessBrowser(QObject *parent = 0);
@@ -25,7 +26,9 @@ namespace BrowserAutomationStudioFramework
     public slots:
         virtual void SetNetworkAccessManagerFactory(INetworkAccessManagerFactory *NetworkAccessManagerFactory);
         void SetProcessComunicatorFactory(IProcessComunicatorFactory *ProcessComunicatorFactory);
+        void SetLanguage(const QString& Language);
         virtual void LoadPage(const QString& url, const QString& callback);
+        virtual void LoadPageInstant(const QString& url, const QString& callback);
         virtual void SetUserAgent(const QString& agent, const QString& callback);
         virtual void GetCookiesForUrl(const QString& url, const QString& callback);
         virtual void SaveCookies(const QString& callback);
@@ -48,6 +51,8 @@ namespace BrowserAutomationStudioFramework
         virtual void MouseClickDown(int x, int y, const QString& callback);
         virtual void PopupClose(int index, const QString& callback);
         virtual void PopupSelect(int index, const QString& callback);
+        virtual void Timezone(int offset, const QString& callback);
+        virtual void Geolocation(float latitude, float longitude, const QString& callback);
         virtual void MouseMove(int x, int y, const QString& callback);
         virtual void Resize(int x, int y, const QString& callback);
         virtual void Reset(const QString& callback);
@@ -63,9 +68,11 @@ namespace BrowserAutomationStudioFramework
         void MarkAfterReset();
 
         virtual void OnSupend();
+        virtual void SimulateCrush(const QString& callback);
     signals:
         void ProcessCreated(IProcessComunicator *Communicator);
         void Loaded();
+        void LoadedInstant();
         void GetUrl();
         void SetUserAgent();
         void GetCookiesForUrl();
@@ -89,6 +96,9 @@ namespace BrowserAutomationStudioFramework
         void OptimizeMemory();
         void WaitCode();
         void DebugVariablesResult();
+        void Timezone();
+        void Geolocation();
+        void Crush();
 
     private slots:
         void Received(const QString& value);

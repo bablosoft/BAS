@@ -275,7 +275,10 @@ SOURCES += engine.cpp \
     accordion/clickableframe.cpp \
     accordion/contentpane.cpp \
     accordion/qaccordion.cpp \
-    projectbackup.cpp
+    projectbackup.cpp \
+    addavexclusion.cpp \
+    postpreparestrategyjsonencode.cpp \
+    postpreparestrategycustomencode.cpp
 
 win32:SOURCES += CrashHandler.cpp
 
@@ -543,7 +546,10 @@ HEADERS += engine.h\
     accordion/qAccordion/clickableframe.h \
     accordion/qAccordion/contentpane.h \
     accordion/qAccordion/qaccordion.h \
-    projectbackup.h
+    projectbackup.h \
+    addavexclusion.h \
+    postpreparestrategyjsonencode.h \
+    postpreparestrategycustomencode.h
 
 win32:HEADERS += CrashHandler.h
 

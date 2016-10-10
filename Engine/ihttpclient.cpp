@@ -9,7 +9,14 @@ namespace BrowserAutomationStudioFramework
 
     PostOptions::PostOptions()
     {
+        ContentTypeEncoding = "UTF-8";
         PrepareStrategy = "multipart";
+        Method = "POST";
+    }
+
+    GetOptions::GetOptions()
+    {
+        Method = "GET";
     }
 
 }

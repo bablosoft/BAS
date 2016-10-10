@@ -54,6 +54,18 @@ function http_client_get(url, callback)
     ScriptWorker.HttpClientGetRedirect(url,"on_http_client_loaded();" + _get_function_body(callback));
 }
 
+function http_client_get2(url, get_options, callback)
+{
+    _ensure_http_client();
+    var p = []
+    for(var k in get_options)
+    {
+        p.push(k);
+        p.push(get_options[k]);
+    }
+    ScriptWorker.HttpClientGetRedirect2(url,p,"on_http_client_loaded();" + _get_function_body(callback));
+}
+
 function http_client_download(url, file, callback)
 {
     _ensure_http_client();
@@ -99,6 +111,18 @@ function http_client_get_no_redirect(url, callback)
 {
     _ensure_http_client();
     ScriptWorker.HttpClientGetNoRedirect(url,"on_http_client_loaded();" + _get_function_body(callback));
+}
+
+function http_client_get_no_redirect2(url, get_options, callback)
+{
+    _ensure_http_client();
+    var p = []
+    for(var k in get_options)
+    {
+        p.push(k);
+        p.push(get_options[k]);
+    }
+    ScriptWorker.HttpClientGetNoRedirect2(url,p,"on_http_client_loaded();" + _get_function_body(callback));
 }
 
 function http_client_post_no_redirect(url, params, post_options, callback)

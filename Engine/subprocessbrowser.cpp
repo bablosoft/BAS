@@ -2,6 +2,7 @@
 #include "iprocesscomunicator.h"
 #include "subprocesswebelement.h"
 #include <QXmlStreamWriter>
+#include <QFile>
 #include "every_cpp.h"
 
 
@@ -50,6 +51,30 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("MouseClickDown"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(MouseClickDown()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
+    void SubprocessBrowser::Timezone(int offset, const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("Timezone",QString("%1").arg(QString::number(offset)));
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("Timezone"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Timezone()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
+    void SubprocessBrowser::Geolocation(float latitude, float longitude, const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("Geolocation",QString("%1;%2").arg(QString::number(latitude)).arg(QString::number(longitude)));
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("Geolocation"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Geolocation()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
 
@@ -157,6 +182,19 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("LoadPage ") + url);
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Loaded()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+
+    }
+
+    void SubprocessBrowser::LoadPageInstant(const QString& url, const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("Load",url);
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("LoadPageInstant ") + url);
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(LoadedInstant()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
 
     }
@@ -398,6 +436,15 @@ namespace BrowserAutomationStudioFramework
             }else if(xmlReader.name() == "MouseClickDown" && token == QXmlStreamReader::StartElement)
             {
                 emit MouseClickDown();
+            }else if(xmlReader.name() == "LoadedInstant" && token == QXmlStreamReader::StartElement)
+            {
+                emit LoadedInstant();
+            }else if(xmlReader.name() == "Timezone" && token == QXmlStreamReader::StartElement)
+            {
+                emit Timezone();
+            }else if(xmlReader.name() == "Geolocation" && token == QXmlStreamReader::StartElement)
+            {
+                emit Geolocation();
             }else if(xmlReader.name() == "MouseMove" && token == QXmlStreamReader::StartElement)
             {
                 emit MouseMove();
@@ -436,7 +483,12 @@ namespace BrowserAutomationStudioFramework
             }else if(xmlReader.name() == "WaitCode" && token == QXmlStreamReader::StartElement)
             {
                 xmlReader.readNext();
-                QString Script = Worker->GetPreprocessor()->Preprocess(QString(" { ") + xmlReader.text().toString() + QString(" } "),0);
+                QString code = xmlReader.text().toString();
+                NextAction.clear();
+                QRegExp Regexp("section\\_start\\(\\s*\\\"[^\\\"]*\\\"\\s*\\,\\s*(\\-?\\d*)\\)\\!");
+                if(Regexp.indexIn(code, 0)>=0)
+                    NextAction = Regexp.cap(1);
+                QString Script = Worker->GetPreprocessor()->Preprocess(QString(" { ") + code + QString(" } "),0);
                 Worker->SetScript(Script);
                 emit WaitCode();
             }
@@ -495,8 +547,28 @@ namespace BrowserAutomationStudioFramework
         }
     }
 
+    void SubprocessBrowser::SetLanguage(const QString& Language)
+    {
+        this->Language = Language;
+    }
+
+
     void SubprocessBrowser::CreateNewBrowser(bool ForseNewBrowserCreation, const QString& callback)
     {
+        {
+            QFile settings("settings_worker.ini");
+            if (settings.open(QFile::ReadOnly | QFile::Text))
+            {
+                QTextStream in(&settings);
+                QString file_string = in.readAll();
+
+                if(file_string.contains("Restart=true"))
+                    ForseNewBrowserCreation = true;
+                qDebug()<<file_string<<ForseNewBrowserCreation;
+            }
+            settings.close();
+        }
+
         bool CreateNewBrowser = ForseNewBrowserCreation || !ProcessComunicator;
         if(LastInjectedWorker == Worker && !CreateNewBrowser)
         {
@@ -545,7 +617,11 @@ namespace BrowserAutomationStudioFramework
             Worker->SetFailMessage(QString("Timeout during creating new process"));
             Worker->GetWaiter()->WaitForSignal(Worker->GetProcessComunicator(),SIGNAL(ProcessStarted()),Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
             Worker->SetScript(callback);
-            Worker->GetProcessComunicator()->CreateProcess();
+            Worker->GetProcessComunicator()->CreateProcess(QStringList()<<Language);
+            if(!NextAction.isEmpty())
+            {
+                Worker->GetProcessComunicator()->Send(QString("<SetNextAction>") + NextAction + QString("</SetNextAction>"));
+            }
             emit ProcessCreated(ProcessComunicator);
         }
         //Use existing process
@@ -593,5 +669,17 @@ namespace BrowserAutomationStudioFramework
     void SubprocessBrowser::SetProcessComunicatorFactory(IProcessComunicatorFactory *ProcessComunicatorFactory)
     {
         this->ProcessComunicatorFactory = ProcessComunicatorFactory;
+    }
+
+    void SubprocessBrowser::SimulateCrush(const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("Crush","");
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("Crush"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Crush()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
     }
 }

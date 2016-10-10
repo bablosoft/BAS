@@ -317,6 +317,11 @@ _A = {
       "description":"Wait until specific css selector will return non empty result",
       "template":"{{Wait}}"
    },
+   "waitfiledownload":{
+      "name":"Wait File Download",
+      "description":"Wait file will download",
+      "template":"{{Wait}}"
+   },
    "sleep":{
       "name":"Sleep",
       "description":"Sleep for a specific time",
@@ -736,6 +741,7 @@ _AL =
 	"Wait Address Bar" : {"ru": "Ждать адреса браузера"},
 	"Wait Text" : {"ru": "Ждать текст"},
 	"Wait Css" : {"ru": "Ждать css"},
+   "Wait File Download" : {"ru": "Ждать Загрузки Файла"},
 	"Sleep" : {"ru": "Спать"},
 	"Configure" : {"ru": "Настроить"},
 	"Messages Length" : {"ru": "Количество писем"},

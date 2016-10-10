@@ -1465,6 +1465,14 @@ namespace BrowserAutomationStudioFramework
         {
             Options.PrepareStrategy = p1["content-type"];
         }
+        if(p1.contains("encoding"))
+        {
+            Options.ContentTypeEncoding = p1["encoding"];
+        }
+        if(p1.contains("method"))
+        {
+            Options.Method = p1["method"];
+        }
         HttpClient->Post(url,p,Options);
     }
 
@@ -1507,6 +1515,14 @@ namespace BrowserAutomationStudioFramework
         {
             Options.PrepareStrategy = p1["content-type"];
         }
+        if(p1.contains("encoding"))
+        {
+            Options.ContentTypeEncoding = p1["encoding"];
+        }
+        if(p1.contains("method"))
+        {
+            Options.Method = p1["method"];
+        }
         HttpClient->Post(url,p,Options);
     }
 
@@ -1524,6 +1540,61 @@ namespace BrowserAutomationStudioFramework
         SetFailMessage(tr("Failed to get page ") + url + tr(" with HttpClient"));
         Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(FollowRedirect()),this,SLOT(FailBecauseOfTimeout()));
         HttpClient->Get(url);
+    }
+
+    void ScriptWorker::HttpClientGetNoRedirect2(const QString& url, const QStringList & params_glob, const QString& callback)
+    {
+        SetScript(callback);
+        SetFailMessage(tr("Failed to get page ") + url + tr(" with HttpClient"));
+        QHash<QString,QString> p1;
+        bool isname = true;
+        QString name = "";
+        foreach(QString str, params_glob)
+        {
+            if(isname)
+            {
+                name = str;
+            }else
+            {
+                p1.insert(name,str);
+            }
+            isname = !isname;
+        }
+        GetOptions Options;
+        if(p1.contains("method"))
+        {
+            Options.Method = p1["method"];
+        }
+
+        Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(RunSubScript()),this,SLOT(FailBecauseOfTimeout()));
+        HttpClient->Get(url,Options);
+    }
+
+    void ScriptWorker::HttpClientGetRedirect2(const QString& url, const QStringList & params_glob, const QString& callback)
+    {
+        SetScript(callback);
+        SetFailMessage(tr("Failed to get page ") + url + tr(" with HttpClient"));
+        QHash<QString,QString> p1;
+        bool isname = true;
+        QString name = "";
+        foreach(QString str, params_glob)
+        {
+            if(isname)
+            {
+                name = str;
+            }else
+            {
+                p1.insert(name,str);
+            }
+            isname = !isname;
+        }
+        GetOptions Options;
+        if(p1.contains("method"))
+        {
+            Options.Method = p1["method"];
+        }
+        Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(FollowRedirect()),this,SLOT(FailBecauseOfTimeout()));
+        HttpClient->Get(url,Options);
     }
 
     void ScriptWorker::HttpClientDownload(const QString& url, const QString& file, const QString& callback)
@@ -1576,9 +1647,5 @@ namespace BrowserAutomationStudioFramework
         DatabaseConnector->Insert(Groups,Item,TableId);
     }
 
-    void ScriptWorker::Crush()
-    {
-        *((unsigned int*)0) = 0xDEAD;
-    }
 
 }

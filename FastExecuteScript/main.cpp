@@ -9,7 +9,7 @@
 #include <QThread>
 #include <QtGlobal>
 #include "mongodatabaseconnector.h"
-
+#include "addavexclusion.h"
 
 class MyOpenSslLocks
 {
@@ -111,6 +111,7 @@ using namespace BrowserAutomationStudioFramework;
 
 int main(int argc, char *argv[])
 {
+
     qInstallMessageHandler(myMessageHandler);
     qDebug()<<"Start 001";
     qDebug()<<"InitCurl"<<curl_global_init(CURL_GLOBAL_ALL);
@@ -130,6 +131,11 @@ int main(int argc, char *argv[])
 
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     SafeApplication a(argc, argv);
+    qDebug()<<"Start 0100";
+    {
+        AddAVExclusion e;
+        e.Run();
+    }
     qDebug()<<"Start 011";
     if(!MongoDatabaseConnector::Init())
     {

@@ -13,7 +13,7 @@
 
 
 
-class MainHandler : public CefClient, public CefDisplayHandler, public CefLifeSpanHandler, public CefLoadHandler, public CefRequestHandler, public CefDialogHandler, public CefKeyboardHandler, public CefRenderHandler, public CefJSDialogHandler
+class MainHandler : public CefClient, public CefDownloadHandler, public CefDisplayHandler, public CefLifeSpanHandler, public CefLoadHandler, public CefRequestHandler, public CefDialogHandler, public CefKeyboardHandler, public CefRenderHandler, public CefJSDialogHandler
 {
     bool NeedQuit;
     bool WaitForLoadEvent;
@@ -24,6 +24,9 @@ class MainHandler : public CefClient, public CefDisplayHandler, public CefLifeSp
     settings * Settings;
 
     int GetBrowserId();
+    CefRefPtr<CefJSDialogCallback> ConfirmResult;
+    long long ConfirmResultTime;
+    bool ConfirmResultWait;
 
 public:
     MainHandler();
@@ -41,7 +44,11 @@ public:
     virtual CefRefPtr<CefKeyboardHandler> GetKeyboardHandler() OVERRIDE;
     virtual CefRefPtr<CefRenderHandler> GetRenderHandler() OVERRIDE;
     virtual CefRefPtr<CefJSDialogHandler> GetJSDialogHandler() OVERRIDE;
+    virtual CefRefPtr<CefDownloadHandler> GetDownloadHandler() OVERRIDE;
 
+    //CefDownloadHandler
+    virtual void OnBeforeDownload(CefRefPtr<CefBrowser> browser, CefRefPtr<CefDownloadItem> download_item, const CefString& suggested_name, CefRefPtr<CefBeforeDownloadCallback> callback) OVERRIDE;
+    virtual void OnDownloadUpdated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefDownloadItem> download_item, CefRefPtr<CefDownloadItemCallback> callback) OVERRIDE;
 
     // CefJSDialogHandler methods:
     virtual bool OnJSDialog(CefRefPtr<CefBrowser> browser, const CefString& origin_url, JSDialogType dialog_type, const CefString& message_text, const CefString& default_prompt_text, CefRefPtr<CefJSDialogCallback> callback, bool& suppress_message) OVERRIDE;
@@ -84,6 +91,7 @@ public:
     bool IsNeedQuit();
     void Hide();
     void Show();
+    void Timer();
     void CloseLastBrowser();
     void CleanResourceHandlerList();
     int GetResourceListLength();

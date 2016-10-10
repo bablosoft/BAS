@@ -71,6 +71,13 @@ _if_else(<%= method %> == "capmonsteraudio", function(){
             _break()
           }
 
+          page().match("google.com/recaptcha/api2/anchor").exist()!
+          if(_result() == 0)
+          {
+            RECAPTCHA2_SOLVED = true
+            _break()
+          }        
+
           sleep(1000)!
       })!
       
@@ -94,13 +101,19 @@ _if_else(<%= method %> == "capmonsteraudio", function(){
           sleep(1000)!
       })!
 
-      sleep(3000)!
+      _do(function(){
+         if(_iterator() > 60)
+            fail("Recaptcha 2 audio button wait timeout")
 
-      frame("google.com/recaptcha/api2/frame").script("document.getElementById('recaptcha-audio-button').getBoundingClientRect().top")!
-      TOP_BUTTON = parseInt(_result())
+          frame("google.com/recaptcha/api2/frame").script("document.getElementById('recaptcha-audio-button').getBoundingClientRect().top")!
+          TOP_BUTTON = parseInt(_result())
 
-      frame("google.com/recaptcha/api2/frame").script("document.getElementById('recaptcha-audio-button').getBoundingClientRect().left")!
-      LEFT_BUTTON = parseInt(_result())
+          frame("google.com/recaptcha/api2/frame").script("document.getElementById('recaptcha-audio-button').getBoundingClientRect().left")!
+          LEFT_BUTTON = parseInt(_result())
+
+          if(TOP_BUTTON > 300)
+            _break()
+      })!
 
       match("src=\"https://www.google.com/recaptcha/api2/frame").script("self.getBoundingClientRect().top + window.scrollY")!
       TOP = parseInt(_result())
@@ -247,6 +260,13 @@ _if_else(<%= method %> == "capmonsteraudio", function(){
           RECAPTCHA2_SOLVED = true
           _break()
         }
+
+        page().match("google.com/recaptcha/api2/anchor").exist()!
+        if(_result() == 0)
+        {
+          RECAPTCHA2_SOLVED = true
+          _break()
+        }        
 
         sleep(1000)!
     })!

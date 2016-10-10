@@ -276,7 +276,7 @@ MainWindow::MainWindow(QWidget *parent) :
     if(Settings->value("ProjectBackup",true).toBool())
     {
         ProjectBackup *backup = new ProjectBackup(this);
-        backup->SetPeriod(Settings->value("ProjectBackupPeriod",60000).toInt());
+        backup->SetPeriod(Settings->value("ProjectBackupPeriod",5 * 60000).toInt());
         backup->SetDestFolder(Settings->value("ProjectBackupDestFolder","../../projectbackups").toString());
         backup->SetCodeEditor(TextEditor);
         backup->Start();

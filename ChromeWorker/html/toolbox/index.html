@@ -381,7 +381,7 @@
     <div class="container-fluid load">
       <%= _.template($('#input_constructor').html())({id:"LoadUrl", description:tr("Url to load"), default_selector: "string", disable_int:true}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true,waiter_enabled: true, visible:true}) %>
   </script>
 
 
@@ -504,6 +504,16 @@
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
 
+  <script type="text/template" id="waitfiledownload">
+     <div class="container-fluid reset">
+       <div class="tooltipinternal tr">Wait for the end of the current download.</div>
+     </div>
+     <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To save file name"), default_variable: "DOWNLOADED_FILE_PATH"}) %>
+     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
+  
+
 
 
   <script type="text/template" id="executefunction">
@@ -574,6 +584,9 @@
       <div class="container-fluid reset">
         <div class="tooltipinternal tr">Clear all browser data.</div>
       </div>
+      <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
+         <input type="checkbox" id="Check"/> <label for="Check" class="tr">Restart process</label>
+       </span>
       <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
 
@@ -988,6 +1001,7 @@
 <script type="text/template" id="httpclientget">
     <div class="container-fluid httpclientget">
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Url"), default_selector: "string", disable_int:true}) %>
+      <%= _.template($('#input_constructor').html())({id:"Method", description:tr("Method"), default_selector: "string", disable_int:true, value_string: "GET", variants:["GET","HEAD","DELETE","TRACE","OPTIONS"], size:3}) %>
       <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
         <input type="checkbox" id="Check" checked="checked"/> <label for="Check" class="tr">Follow redirects</label>
       </span>
@@ -995,35 +1009,75 @@
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
-<script type="text/template" id="httpclientpost">
+  <script type="text/template" id="httpclientpost">
     <div class="container-fluid httpclientpost">
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Url"), default_selector: "string", disable_int:true}) %>
-      <%= _.template($('#input_constructor').html())({id:"PostData", description:tr("Post Data"), default_selector: "expression", disable_int:true, disable_string:true}) %>
+      
       <div class="col-xs-12">
-        <form class="form-horizontal">
+       <form class="form-horizontal">
           <div class="form-group">
-            <%= _.template($('#input_constructor').html())({id:"PostName", description:tr("Name"), default_selector: "string", disable_int:true, dont_use_top: true, size:3, disable_label: true }) %>
-            <%= _.template($('#input_constructor').html())({id:"PostValue", description:tr("Value"), default_selector: "string", disable_int:true, dont_use_top: true, size:3, disable_label: true }) %>
-            <button type="button" class="btn btn-default addtopost" > + <span class="tr">Add</span></button>
+            <hr style="margin-top:5px;margin-bottom:5px"/>
+            <span class="tr" style="margin-left:15px;">Post Data</span>:
+            <hr style="margin-top:5px;margin-bottom:5px"/>
+            <%= _.template($('#input_constructor').html())({id:"PostName", description:tr("Request Parameter Name"), default_selector: "string", disable_int:true, dont_use_top: true }) %>
           </div>
         </form>
       </div>
+
+      <div class="col-xs-12">
+       <form class="form-horizontal">
+          <div class="form-group">
+            <%= _.template($('#input_constructor').html())({id:"PostValue", description:tr("Request Parameter Value"), default_selector: "string", disable_int:true, dont_use_top: true }) %>
+          </div>
+        </form>
+      </div>
+
+
+      <div class="col-xs-12">
+       <form class="form-horizontal">
+          <div class="form-group">
+            <button type="button" class="btn btn-default addtopost" > + <span class="tr">Add</span></button>
+            <button type="button" class="btn btn-default addtopostfile" > + <span class="tr">Add As File</span></button>
+            <button type="button" class="btn btn-default addtopostbase64" > + <span class="tr">Add As Base64 Data</span></button>
+            <span class="tr">Use these buttons to fill POST data</span>
+          </div>
+        </form>
+      </div>
+
+      <%= _.template($('#input_constructor').html())({id:"PostData", description:tr("Post Data"), default_selector: "expression", disable_int:true, disable_string:true}) %>
+
+      
+      <div class="col-xs-12">
+       <form class="form-horizontal">
+          <div class="form-group">
+            <hr style="margin-top:5px;margin-bottom:5px"/>
+            <span class="tr" style="margin-left:15px;">Additional Parameters</span>:
+            <hr style="margin-top:5px;margin-bottom:5px"/>
+          </div>
+        </form>
+      </div>
+      
+
+      <%= _.template($('#input_constructor').html())({id:"Encoding", description:tr("Encoding"), default_selector: "string", disable_int:true, value_string: "UTF-8"}) %>
+
+      
+      <%= _.template($('#input_constructor').html())({id:"Method", description:tr("Method"), default_selector: "string", disable_int:true, value_string: "POST", variants:["POST","PUT","PATCH"], size:3}) %>
+
       <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
         <input type="checkbox" id="Check" checked="checked"/> <label for="Check" class="tr">Follow redirects</label>
       </span>
-      <span data-preserve="true" data-preserve-type="check" data-preserve-id="CheckSecond">
-        <input type="checkbox" id="CheckSecond" style="margin-left:20px"/> <label for="CheckSecond" class="tr">Is Multipart</label>
-      </span>
+      
+      <%= _.template($('#input_constructor').html())({id:"ContentType", description:tr("Content Type"), default_selector: "string", disable_int:true, value_string: "urlencode", variants:["urlencode","multipart","json"], size:3}) %>      
 
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
-<script type="text/template" id="httpclienturl">
+  <script type="text/template" id="httpclienturl">
     <div class="container-fluid httpclienturl">
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "SAVED_URL"}) %>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
-</script>
+  </script>
 
   <script type="text/template" id="httpclientcontent">
     <div class="container-fluid httpclientcontent">
@@ -1817,16 +1871,16 @@
   </script>
   <script type="text/template" id="httpclientget_code">
     <% if(follow){ %>
-      http_client_get(<%= value %>)!
+      http_client_get2(<%= value %>,{method:(<%= method %>)})!
     <% } else {%>
-      http_client_get_no_redirect(<%= value %>)!
+      http_client_get_no_redirect2(<%= value %>,{method:(<%= method %>)})!
     <% }%>
   </script>
   <script type="text/template" id="httpclientpost_code">
     <% if(follow){ %>
-      http_client_post(<%= value %>, <%= params %>, <%= multipart %>)!
+      http_client_post(<%= value %>, <%= params %>, {"content-type":(<%= contenttype %>), "encoding":(<%= encoding %>), "method":(<%= method %>)})!
     <% } else {%>
-      http_client_post_no_redirect(<%= value %>, <%= params %>, <%= multipart %>)!
+      http_client_post_no_redirect(<%= value %>, <%= params %>, {"content-type":(<%= contenttype %>), "encoding":(<%= encoding %>), "method":(<%= method %>)})!
     <% }%>
   </script>
   <script type="text/template" id="parseline_code">
@@ -2008,13 +2062,16 @@
           <%= path %>.style("display")!
           STYLE_DISPLAY = _result()
 
+          <%= path %>.style("visibility")!
+          STYLE2_DISPLAY = _result()
+
           <%= path %>.script("self.getBoundingClientRect().height")!
           STYLE_HEIGHT = _result()
 
           <%= path %>.script("self.getBoundingClientRect().width")!
           STYLE_WIDTH = _result()
           
-          <%= variable %> = STYLE_DISPLAY != "none" && STYLE_HEIGHT != "0"  && STYLE_WIDTH != "0"
+          <%= variable %> = STYLE_DISPLAY != "none" && STYLE2_DISPLAY != "hidden" && STYLE_HEIGHT != "0"  && STYLE_WIDTH != "0"
           
         })!
       <% } %>
@@ -2159,7 +2216,11 @@
 
   <script type="text/template" id="reset_code">
       /*Browser*/
-      reset()!
+      <% if(reset){ %>
+        new_browser()!
+      <% }else{ %>
+        reset()!
+      <% } %>
   </script>
 
   <script type="text/template" id="moveelement_code">
@@ -2280,7 +2341,7 @@
   </script>
 
   <script type="text/template" id="incvariable_code">
-      <%= variable_name %> += <%= variable_value %>
+      <%= variable_name %> += parseInt(<%= variable_value %>)
   </script>
 
   <script type="text/template" id="resource_code">
@@ -2333,7 +2394,11 @@
 
   <script type="text/template" id="load_code">
       /*Browser*/
-      load(<%= url %>)!
+      <% if(notinstant){ %>
+        load(<%= url %>)!
+      <% }else{ %>
+        load_instant(<%= url %>)!
+      <% } %>
   </script>
 
   <script type="text/template" id="resize_code">
@@ -2468,6 +2533,14 @@
       /*Browser*/
       wait_content(<%= waiter %>)!
   </script>
+
+  <script type="text/template" id="waitfiledownload_code">
+      /*Browser*/
+      wait_load("download://*")!
+      cache_get_string("download://*")!
+      <%= variable %> = _result()
+  </script>
+  
 
   <script type="text/template" id="waitcss_code">
       /*Browser*/
@@ -2740,6 +2813,9 @@
         "change .groupselector": "groupselector",
         "click .variant": "selectvariant",
         "click .addtopost": "addpostdata",
+        "click .addtopostfile": "addpostdatafile",
+        "click .addtopostbase64": "addpostdatabase64",
+
         "click #use-waiter": "usewaiterchange",
         "click #searchinputclear": "searchinputclear",
         "input #searchinput": "searchinput",
@@ -2928,15 +3004,36 @@
         
       },
 
+      addpostdatafile: function(event)
+      {
+        $("#PostValue").val("file://" + $("#PostValue").val());
+        this.addpostdata(null)
+      },
+
+      addpostdatabase64: function(event)
+      {
+        $("#PostValue").val("base64://" + $("#PostValue").val());
+        this.addpostdata(null)
+      },
+
       selectvariant: function(event)
       {
           var target = $(event.target)
           var variant = target.attr("data-variant")
           var result = $("#" + target.attr("data-result"))
-          result.closest(".input-group").find(".selector").html("string")
-          result.closest(".input-group").find(".input_selector_number").hide()
-          result.closest(".input-group").find(".input_selector_string").show()
-          result.closest(".input-group").find(".input_selector_string").val(variant)
+          if(result.closest(".input-group").find(".string").length > 0)
+          {
+            result.closest(".input-group").find(".selector").html("string")
+            result.closest(".input-group").find(".input_selector_number").hide()
+            result.closest(".input-group").find(".input_selector_string").show()
+            result.closest(".input-group").find(".input_selector_string").val(variant)
+          }else
+          {
+            result.closest(".input-group").find(".selector").html("int")
+            result.closest(".input-group").find(".input_selector_number").show()
+            result.closest(".input-group").find(".input_selector_string").hide()
+            result.closest(".input-group").find(".input_selector_number").val(variant)
+          }
       },
 
       groupselector: function(event)
@@ -3240,7 +3337,7 @@
             if(val["original"].length > 0)
             {
                try{
-                var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({url:val["updated"]})
+                var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({url:val["updated"],notinstant:BrowserAutomationStudio_UsesWaitCode()})
                 code = Normalize(code,0)
 
                 BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
@@ -3611,6 +3708,7 @@
           }else if(State == "httpclientget")
           {
             var Value = GetInputConstructorValue("Value",loader)
+            var Method = GetInputConstructorValue("Method",loader)
             var follow = $("#Check").is(':checked')
 
             if(Value["original"].length <= 0)
@@ -3618,9 +3716,15 @@
               Invalid("Url is empty");
               return;
             }
+
+            if(Method["original"].length <= 0)
+            {
+              Invalid("Method is empty");
+              return;
+            }
             
              try{
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({follow:follow,value:Value["updated"]})
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({follow:follow,value:Value["updated"],method:Method["updated"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -3631,8 +3735,9 @@
           {
             var Value = GetInputConstructorValue("Value",loader)
             var follow = $("#Check").is(':checked')
-            var multipart = $("#CheckSecond").is(':checked')
-            
+            var Encoding = GetInputConstructorValue("Encoding",loader)
+            var Method = GetInputConstructorValue("Method",loader)
+            var ContentType = GetInputConstructorValue("ContentType",loader)
             var PostData = GetInputConstructorValue("PostData",loader)
             
 
@@ -3642,17 +3747,35 @@
               return;
             }
 
-            if(!multipart)
+            if(Encoding["original"].length <= 0)
             {
-              multipart = "{\"content-type\" : \"urlencode\"}"
-            }else
-              multipart = "{}"
+              Invalid("Encoding is empty");
+              return;
+            }
+
+            if(Method["original"].length <= 0)
+            {
+              Invalid("Method is empty");
+              return;
+            }
+
+            if(ContentType["original"].length <= 0)
+            {
+              Invalid("ContentType is empty");
+              return;
+            }
 
 
-            params = "{" + PostData["updated"] + "}"
-            
+
              try{
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({follow:follow,value:Value["updated"],multipart:multipart,params:params})
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({
+                follow:follow,
+                value:Value["updated"],
+                contenttype:ContentType["updated"],
+                encoding:Encoding["updated"],
+                method:Method["updated"],
+                params:"{" + PostData["updated"] + "}"
+              })
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -4308,7 +4431,8 @@
           }else if(State == "reset")
           {
              try{
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
+
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({reset:$("#Check").is(':checked')})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -5231,6 +5355,22 @@
             }catch(e)
             {}
 
+          }else if(State == "waitfiledownload")
+          {
+            var Save = this.$el.find("#Save").val().toUpperCase();
+
+            if(Save.length == 0)
+            {
+              Invalid("Variable is empty");
+              return;
+            }
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+
           }else if(State == "loopelement")
           {
              try{
@@ -5585,7 +5725,8 @@
           "drag": _.template($('#drag').html()),
           "drop": _.template($('#drop').html()),
           "dragelement": _.template($('#dragelement').html()),
-          "dropelement": _.template($('#dropelement').html())
+          "dropelement": _.template($('#dropelement').html()),
+          "waitfiledownload": _.template($('#waitfiledownload').html())
           _MACRO_INSERT_TEMPLATES_
         }
         this.model.bind('change', this.render, this);
@@ -5762,7 +5903,8 @@
             "!/drag": "drag",
             "!/drop": "drop",
             "!/dragelement": "dragelement",
-            "!/dropelement": "dropelement"
+            "!/dropelement": "dropelement",
+            "!/waitfiledownload": "waitfiledownload"
             _MACRO_INSERT_ROUTER_DEF_
         },
 
@@ -6147,6 +6289,9 @@
         }
         ,dropelement: function(){
           _GobalModel.set({ state: "dropelement" });
+        },
+        waitfiledownload: function(){
+          _GobalModel.set({ state: "waitfiledownload" });
         }
         _MACRO_INSERT_ROUTER_FUNC_
     });
@@ -6219,6 +6364,7 @@
                 { name: tr(_A["waiturl"]["name"]), description: tr(_A["waiturl"]["description"]), ref: "waiturl" },
                 { name: tr(_A["waitcontent"]["name"]), description: tr(_A["waitcontent"]["description"]), ref: "waitcontent" },
                 { name: tr(_A["waitcss"]["name"]), description: tr(_A["waitcss"]["description"]), ref: "waitcss" },
+                { name: tr(_A["waitfiledownload"]["name"]), description: tr(_A["waitfiledownload"]["description"]), ref: "waitfiledownload" },
                 { name: tr(_A["sleep"]["name"]), description: tr(_A["sleep"]["description"]), ref: "sleep" },
                 { description: tr("Email"), type: "group" },
                 { name: tr(_A["emailsettings"]["name"]), description: tr(_A["emailsettings"]["description"]), ref: "emailsettings" },
@@ -6338,6 +6484,14 @@
       return "";
     }
 
+    function BrowserAutomationStudio_UsesWaitCode()
+    {
+      var usewaiter = $("#use-waiter")
+      if(usewaiter.length > 0 && usewaiter.attr("data-enabled") == "true")  
+        return true
+      return false
+    }
+
     function BrowserAutomationStudio_ThreadNumberEdit()
     {
         _Router.navigate("#!/threadnumber", true);
@@ -6361,6 +6515,9 @@
       if(usewaiter.length > 0 && usewaiter.attr("data-enabled") == "true")  
       {
         ControlsText["uw"] = "1"
+      }else
+      {
+        ControlsText["uw"] = "0"
       }
 
       var ControlList = $("*[data-preserve=true]")
@@ -6470,7 +6627,13 @@
       if(data["uw"] == "1")
       {
         $("#use-waiter").attr("data-enabled","true")
+        $("#use-waiter").removeClass().addClass("use-waiter-disabled").addClass("use-waiter-enabled")
         $("#use-waiter").removeClass().addClass("use-waiter-enabled")
+      }else if(data["uw"] == "0")
+      {
+        $("#use-waiter").attr("data-enabled","false")
+        $("#use-waiter").removeClass().addClass("use-waiter-disabled").addClass("use-waiter-enabled")
+        $("#use-waiter").removeClass().addClass("use-waiter-disabled")
       }
 
       for(var i = 0;i<data["d"].length;i++)

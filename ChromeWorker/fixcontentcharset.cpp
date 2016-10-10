@@ -77,6 +77,8 @@ bool FixContentCharset::Fix(const std::string& ContentTypeHeader, std::string& P
     static std::regex MetaRegexp1("\\<\\s*meta\\s+charset\\s*\\=\\s*[\\'\\\"]?([^\\'\\\"\\/]*)[\\'\\\"]?\\s*\\/?\\>");
     static std::regex MetaRegexp2("\\<\\s*meta\\s+http\\-equiv\\s*\\=\\s*[\\'\\\"]?[cC][oO][nN][tT][eE][nN][tT]\\-[tT][yY][pP][eE][\\'\\\"]?\\s*content\\s*\\=\\s*[\\'\\\"]([^\\'\\\"]*)[\\'\\\"]\\s*\\/?\\>");
     static std::regex MetaRegexp3("\\<\\s*meta\\s+content\\s*\\=\\s*[\\'\\\"]([^\\'\\\"]*)[\\'\\\"]\\s*http\\-equiv\\s*\\=\\s*[\\'\\\"]?[cC][oO][nN][tT][eE][nN][tT]\\-[tT][yY][pP][eE][\\'\\\"]?\\s*\\/?\\>");
+    static std::regex FormRegexp1("\\<\\s*[Ff][Oo][Rr][Mm]\\s+(\\w+\\=\\\")");
+    static std::regex FormRegexp2("\\<\\s*[Ff][Oo][Rr][Mm]\\s+(\\w+\\=\\\\\\\")");
 
     //Find charset by content if not present in header
     if(Mime == "text/html")
@@ -187,6 +189,18 @@ bool FixContentCharset::Fix(const std::string& ContentTypeHeader, std::string& P
             }catch(...)
             {
                 worker_log(std::string(std::string("[") + Url + std::string("]") + "Error during meta replace #3"));
+            }
+
+            if(!Charset.empty() && !IsUtf8(Charset))
+            {
+                try{
+                    PageContent = std::regex_replace (PageContent,FormRegexp2,std::string("<form accept-charset=\\\"") + Charset + std::string("\\\" $1"));
+                    PageContent = std::regex_replace (PageContent,FormRegexp1,std::string("<form accept-charset=\"") + Charset + std::string("\" $1"));
+                }
+                catch(...)
+                {
+                    worker_log(std::string(std::string("[") + Url + std::string("]") + "Error form accept charset replace"));
+                }
             }
 
 

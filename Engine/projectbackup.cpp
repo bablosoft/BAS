@@ -7,7 +7,7 @@ namespace BrowserAutomationStudioFramework
 {
     ProjectBackup::ProjectBackup(QObject *parent) : QObject(parent)
     {
-        milliseconds = 60000;
+        milliseconds = 5 * 60000;
         CodeEditor = 0;
         Timer = 0;
         DestFolder = "../../projectbackups";
@@ -44,6 +44,8 @@ namespace BrowserAutomationStudioFramework
         }
 
         QString Code = CodeEditor->GetText();
+        if(LastProject == Code)
+            return;
         QDateTime CurrentDateTime = QDateTime::currentDateTime();
         QDir dir(DestFolder + QDir::separator() + CurrentDateTime.toString("yyyy.MM.dd"));
         if(!dir.exists())
@@ -54,6 +56,7 @@ namespace BrowserAutomationStudioFramework
             return;
         file.write(Code.toUtf8());
         file.close();
+        LastProject = Code;
     }
 
 

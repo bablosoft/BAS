@@ -5,9 +5,14 @@
 #include "include/wrapper/cef_helpers.h"
 #include "match.h"
 #include "multithreading.h"
+#include "replaceall.h"
 #include "startwith.h"
+#include "randomid.h"
+#include "startwith.h"
+#include <chrono>
 
 using namespace std::placeholders;
+using namespace std::chrono;
 
 MainHandler::MainHandler()
 {
@@ -18,6 +23,8 @@ MainHandler::MainHandler()
     Browser = 0;
     IsVisible = false;
     IsPopup = false;
+    ConfirmResultTime = -1;
+    ConfirmResultWait = false;
 }
 
 int MainHandler::GetBrowserId()
@@ -89,6 +96,98 @@ CefRefPtr<CefJSDialogHandler> MainHandler::GetJSDialogHandler()
     return this;
 }
 
+CefRefPtr<CefDownloadHandler> MainHandler::GetDownloadHandler()
+{
+    return this;
+}
+
+
+void MainHandler::OnBeforeDownload(CefRefPtr<CefBrowser> browser, CefRefPtr<CefDownloadItem> download_item, const CefString& suggested_name, CefRefPtr<CefBeforeDownloadCallback> callback)
+{
+    bool Accept = true;
+    std::string url = download_item->GetOriginalUrl();
+    {
+        //Check if can download
+        LOCK_BROWSER_DATA
+        for(std::pair<bool, std::string> p:Data->_RequestMask)
+        {
+            if(match(p.second,url))
+            {
+                Accept = p.first;
+            }
+        }
+        if(Accept)
+        {
+            //errase all info about previous download
+            {
+                auto i = Data->_LoadedUrls.begin();
+                while (i != Data->_LoadedUrls.end())
+                {
+                    if(starts_with(i->first,"download://"))
+                    {
+                        i = Data->_LoadedUrls.erase(i);
+                    }else
+                    {
+                        ++i;
+                    }
+                }
+            }
+            {
+                auto i = Data->_CachedData.begin();
+                while (i != Data->_CachedData.end())
+                {
+                    if(starts_with(i->first,"download://"))
+                    {
+                        i = Data->_CachedData.erase(i);
+                    }else
+                    {
+                        ++i;
+                    }
+                }
+            }
+        }
+    }
+    if(Accept)
+    {
+        std::string file = RandomId() + ".file";
+        worker_log(std::string("OnBeforeDownload<<") + file);
+        callback->Continue(file,false);
+    }else
+    {
+        worker_log(std::string("OnBeforeDownloadFiltered<<") + url);
+    }
+
+
+}
+
+void MainHandler::OnDownloadUpdated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefDownloadItem> download_item, CefRefPtr<CefDownloadItemCallback> callback)
+{
+    if(download_item->IsComplete())
+    {
+        worker_log(std::string("OnBeforeDownloadFinished<<") + download_item->GetFullPath().ToString());
+        //Place info about downloaded file to cache
+        {
+            LOCK_BROWSER_DATA
+            {
+                std::pair<std::string, int> p;
+                p.first = std::string("download://") + download_item->GetOriginalUrl().ToString();
+                p.second = 200;
+                Data->_LoadedUrls.push_back(p);
+            }
+            {
+                std::pair<std::string, std::shared_ptr<std::vector<char> > > p;
+                std::string url = std::string("download://") + download_item->GetOriginalUrl().ToString();
+                p.first = url;
+                p.second = std::make_shared<std::vector<char> >();
+                std::string path = download_item->GetFullPath().ToString();
+                p.second->assign(path.begin(),path.end());
+                Data->_CachedData.push_back(p);
+            }
+        }
+    }
+
+}
+
 bool MainHandler::OnJSDialog(CefRefPtr<CefBrowser> browser, const CefString& origin_url, JSDialogType dialog_type, const CefString& message_text, const CefString& default_prompt_text, CefRefPtr<CefJSDialogCallback> callback, bool& suppress_message)
 {
     switch(dialog_type)
@@ -108,9 +207,34 @@ bool MainHandler::OnJSDialog(CefRefPtr<CefBrowser> browser, const CefString& ori
         }break;
         case JSDIALOGTYPE_CONFIRM:
         {
-            suppress_message = false;
-            callback->Continue(true,"");
-            return true;
+            std::string message = message_text.ToString();
+            bool NeedToWait = false;
+            if(starts_with(message,std::string("BrowserAutomationStudio_Sleep")) && !ConfirmResult.get() && !ConfirmResultWait)
+            {
+                ReplaceAllInPlace(message,std::string("BrowserAutomationStudio_Sleep"),std::string());
+
+                try{
+                    int inc = std::stoi(message);
+                    ConfirmResultTime = duration_cast< milliseconds >( system_clock::now().time_since_epoch() ).count() + inc;
+                    ConfirmResultWait = true;
+                    NeedToWait = true;
+                }catch(...)
+                {
+
+                }
+            }
+
+            if(NeedToWait)
+            {
+                worker_log("SLEEP_START");
+                ConfirmResult = callback;
+                return true;
+            }else
+            {
+                suppress_message = false;
+                callback->Continue(true,"");
+                return true;
+            }
 
         }break;
         case JSDIALOGTYPE_ALERT:
@@ -120,6 +244,19 @@ bool MainHandler::OnJSDialog(CefRefPtr<CefBrowser> browser, const CefString& ori
 
         }break;
     }
+}
+
+void MainHandler::Timer()
+{
+    if(ConfirmResult.get() && ConfirmResultWait && duration_cast< milliseconds >( system_clock::now().time_since_epoch() ).count() >= ConfirmResultTime)
+    {
+        worker_log("SLEEP_END");
+        ConfirmResult->Continue(true,"");
+        ConfirmResult = 0;
+        ConfirmResultWait = false;
+        ConfirmResultTime = -1;
+    }
+
 }
 
 bool MainHandler::OnBeforeUnloadDialog(CefRefPtr<CefBrowser> browser,const CefString& message_text, bool is_reload, CefRefPtr<CefJSDialogCallback> callback)
@@ -146,7 +283,7 @@ bool MainHandler::OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& e
 CefRefPtr<CefResourceHandler> MainHandler::GetResourceHandler(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request)
 {
     std::string url = request->GetURL().ToString();
-    if(url.size()>4 && url[0] == 'b' && url[1] == 'l' && url[2] == 'o' && url[3] == 'b' && url[4] == ':')
+    if(starts_with(url,"blob:"))
     {
         return 0;
     }
@@ -235,7 +372,12 @@ void MainHandler::OnTitleChange(CefRefPtr<CefBrowser> browser, const CefString& 
 
 void MainHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
 {
-    worker_log("OnAfterCreated");
+    if(browser->IsPopup() && !IsPopup)
+    {
+        worker_log("OnAfterCreatedBad<<" + std::to_string((int)browser->GetHost()->GetClient().get()));
+        browser->GetHost()->CloseBrowser(true);
+    }
+    worker_log("OnAfterCreated<<" + std::to_string(browser->IsPopup()));
 
     this->Browser = browser;
 
@@ -394,9 +536,9 @@ void MainHandler::OnResourceLoadComplete(CefRefPtr<CefBrowser> browser, CefRefPt
 
 void MainHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl)
 {
-    /*worker_log("OnLoadError");
+    worker_log(std::string("OnLoadError<<") + errorText.ToString() + std::string("<<") + failedUrl.ToString());
 
-    if (errorCode == ERR_ABORTED)
+    /*if (errorCode == ERR_ABORTED)
       return;
 
     if(frame->IsMain())

@@ -1,6 +1,8 @@
 #include "postpreparestrategyfactory.h"
 #include "postpreparestrategymultipart.h"
 #include "postpreparestrategyurlencode.h"
+#include "postpreparestrategyjsonencode.h"
+#include "postpreparestrategycustomencode.h"
 #include "every_cpp.h"
 
 namespace BrowserAutomationStudioFramework
@@ -16,9 +18,17 @@ namespace BrowserAutomationStudioFramework
         if(type == "multipart")
         {
             res = new PostPrepareStrategyMultipart();
-        }if (type == "urlencode")
+        }else if (type == "urlencode")
         {
             res = new PostPrepareStrategyUrlEncode();
+        }else if (type == "json")
+        {
+            res = new PostPrepareStrategyJsonEncode();
+        }else
+        {
+            PostPrepareStrategyCustomEncode *r = new PostPrepareStrategyCustomEncode();
+            r->SetContentType(type);
+            res = r;
         }
         return res;
 

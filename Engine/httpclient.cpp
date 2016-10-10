@@ -95,7 +95,7 @@ namespace BrowserAutomationStudioFramework
     }
 
 
-    void HttpClient::Get(const QString &url)
+    void HttpClient::Get(const QString &url, const GetOptions & Options)
     {
         if(request_holder)
         {

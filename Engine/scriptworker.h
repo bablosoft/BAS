@@ -209,8 +209,6 @@ namespace BrowserAutomationStudioFramework
         virtual void InterruptAction();
         virtual void SetFailMessage(const QString& message);
         void Decrypt(const QString& Data);
-        void Crush();
-
 
         virtual void FailBecauseOfTimeout();
         virtual void FailProcessFinished();
@@ -264,6 +262,10 @@ namespace BrowserAutomationStudioFramework
 
         void HttpClientGetNoRedirect(const QString& url, const QString& callback);
         void HttpClientGetRedirect(const QString& url, const QString& callback);
+
+        void HttpClientGetNoRedirect2(const QString& url, const QStringList & params_glob, const QString& callback);
+        void HttpClientGetRedirect2(const QString& url, const QStringList & params_glob, const QString& callback);
+
         void HttpClientDownload(const QString& url, const QString& file, const QString& callback);
 
         void HttpClientPostNoRedirect(const QString& url, const QStringList & params, const QStringList & params_glob, const QString& callback);

@@ -7,6 +7,12 @@ function _ensure_browser_created()
         die("NetworkAccessManager is not accessible, try to create new browser with browser()! command")
 }
 
+function _simulate_crush(callback)
+{
+    _ensure_browser_created();
+    Browser.SimulateCrush(_get_function_body(callback));
+}
+
 function new_browser(callback)
 {
     Browser.CreateNewBrowser(true, "ScriptWorker.AttachNetworkAccessManager();" + _get_function_body(callback))
@@ -43,6 +49,18 @@ function mouse_down(x, y, callback)
 {
     _ensure_browser_created();
     Browser.MouseClickDown(x,y,_get_function_body(callback))
+}
+
+function timezone(offset, callback)
+{
+    _ensure_browser_created();
+    Browser.Timezone(offset,_get_function_body(callback))
+}
+
+function geolocation(latitude,longitude,callback)
+{
+    _ensure_browser_created();
+    Browser.Geolocation(latitude,longitude,_get_function_body(callback))
 }
 
 function popupclose(index, callback)
@@ -92,6 +110,12 @@ function load(text, callback)
     _ensure_browser_created();
     LOAD_TEXT = text;
     Browser.LoadPage(text,"if(_result() == false){fail(tr('Failed to load page ') + LOAD_TEXT)};" + _get_function_body(callback));
+}
+
+function load_instant(text, callback)
+{
+    _ensure_browser_created();
+    Browser.LoadPageInstant(text,_get_function_body(callback));
 }
 
 function open_file_dialog(text, callback)

@@ -16,6 +16,7 @@
 #include "multithreading.h"
 #include "modulesdata.h"
 
+
 int pid = -1;
 CefRefPtr<MainApp> app;
 PipesClient *Client;
@@ -59,16 +60,6 @@ void RepositionInterface(int x, int y)
         app->GetData()->HeightBrowser = y;
     }
     Layout->Update(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
-}
-
-void SetLang(std::string Lang, int)
-{
-    Translate::SetLanguage(Lang);
-}
-
-void LoadAllModules(std::string Lang, int)
-{
-    app->GetData()->_ModulesData = LoadModulesData(Lang);
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -818,8 +809,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     {
                         LOCK_BROWSER_DATA
                         BrowserData * d = app->GetData();
-                        if(d->CursorX >= d->ScrollX && d->CursorX <= d->ScrollX + d->WidthBrowser && d->CursorY >= d->ScrollY && d->CursorY <= d->ScrollY + d->HeightBrowser)
-                            DrawIcon(hdc, br.left + (float)(d->CursorX - d->ScrollX) * (float)(br.right - br.left) / (float)(d->WidthBrowser) , br.top + (float)(d->CursorY - d->ScrollY) * (float)(br.bottom - br.top) / (float)(d->HeightBrowser), HCursor);
+                        if(d->CursorX >= 0 && d->CursorX <= d->WidthBrowser && d->CursorY >= 0 && d->CursorY <= d->HeightBrowser)
+                            DrawIcon(hdc, br.left + (float)(d->CursorX) * (float)(br.right - br.left) / (float)(d->WidthBrowser) , br.top + (float)(d->CursorY) * (float)(br.bottom - br.top) / (float)(d->HeightBrowser), HCursor);
                     }
 
                     if(!Layout->IsCentralShown)
@@ -864,10 +855,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     LPSTR lpCmdLine, int nCmdShow)
 {
-
     SetErrorMode(SetErrorMode(0) | SEM_NOGPFAULTERRORBOX);
 
-    worker_log("------------------------Initialize-----------------------");
+
     std::srand(std::time(0));
     SkipFrames = Settings.SkipFrames();
     Layout = new MainLayout(Settings.ToolboxHeight(),Settings.ScenarioWidth());
@@ -879,12 +869,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     app->SetLayout(Layout);
     BrowserData * Data = new BrowserData();
 
+
     {
         LPWSTR *szArgList;
         int argCount;
         szArgList = CommandLineToArgvW(GetCommandLine(), &argCount);
         LocalFree(szArgList);
-        Data->IsRecord = argCount == 5;
+        Data->IsRecord = argCount == 6;
         Layout->IsRecord = Data->IsRecord;
         worker_log_init(Data->IsRecord);
     }
@@ -901,8 +892,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Data->_Inspect.active = false;
     Data->IsReset = false;
     Data->IsAboutBlankLoaded = false;
+    Data->TimezoneSelected = false;
+    Data->GeolocationSelected = false;
 
     app->SetData(Data);
+
+
 
     int exit_code = CefExecuteProcess(main_args, app.get(), NULL);
 
@@ -930,11 +925,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     int NumberArgs;
     LPWSTR *Arglist;
     Arglist = CommandLineToArgvW(GetCommandLineW(), &NumberArgs);
-    std::string Key = ws2s(Arglist[1]);
+
+    std::string Lang = ws2s(Arglist[1]);
+
+    Translate::SetLanguage(Lang);
+    app->GetData()->_ModulesData = LoadModulesData(Lang);
+    app->SetInitialStateCallback(Lang);
+
+    std::string Key = ws2s(Arglist[2]);
     std::string Pid;
-    if(NumberArgs>3)
+    if(NumberArgs>4)
     {
-        Pid = ws2s(Arglist[3]);
+        Pid = ws2s(Arglist[4]);
         worker_log(std::string("Pid : ") + Pid);
         pid = std::stoi(Pid);
         new std::thread(check_pid);
@@ -950,6 +952,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Parser->EventGetUrl.push_back(std::bind(&MainApp::GetUrlCallback,app.get()));
     Parser->EventResize.push_back(RepositionInterface);
     Parser->EventResize.push_back(std::bind(&MainApp::ResizeCallback,app.get(),_1,_2));
+    Parser->EventTimezone.push_back(std::bind(&MainApp::TimezoneCallback,app.get(),_1));
+    Parser->EventGeolocation.push_back(std::bind(&MainApp::GeolocationCallback,app.get(),_1,_2));
     Parser->EventSetWindow.push_back(std::bind(&MainApp::SetWindowCallback,app.get(),_1));
     Parser->EventMouseClick.push_back(std::bind(&MainApp::MouseClickCallback,app.get(),_1,_2));
     Parser->EventMouseClickUp.push_back(std::bind(&MainApp::MouseClickUpCallback,app.get(),_1,_2));
@@ -973,9 +977,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Parser->EventSetResources.push_back(std::bind(&MainApp::SetResourceCallback,app.get(),_1));
     Parser->EventReset.push_back(std::bind(&MainApp::ResetCallback,app.get()));
     Parser->EventIsChanged.push_back(std::bind(&MainApp::IsChangedCallback,app.get()));
-    Parser->EventSetInitialState.push_back(std::bind(SetLang,_1,_2));
-    Parser->EventSetInitialState.push_back(std::bind(LoadAllModules,_1,_2));
-    Parser->EventSetInitialState.push_back(std::bind(&MainApp::SetInitialStateCallback,app.get(),_1,_2));
+    Parser->EventSetNextAction.push_back(std::bind(&MainApp::SetNextActionCallback,app.get(),_1));
+    Parser->EventCrush.push_back(std::bind(&MainApp::CrushCallback,app.get()));
 
 
     Parser->EventAddCacheMaskAllow.push_back(std::bind(&MainApp::AddCacheMaskAllowCallback,app.get(),_1));

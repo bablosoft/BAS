@@ -89,7 +89,7 @@ static void recurseCopyAddDir(const QString& ModuleFolder, QDir d, QDir t)
                 continue;
             if(file.endsWith(".ini") && !file.startsWith("settings_worker.ini"))
                 continue;
-            if(file.endsWith(".txt"))
+            if(file.endsWith(".txt") && !file.startsWith("chrome_command_line.txt"))
                 continue;
 
             if(file.endsWith("FastExecuteScriptShortcut.exe"))

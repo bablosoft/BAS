@@ -33,15 +33,16 @@ namespace BrowserAutomationStudioFramework
     void CurlHttpClient::Download(const QString &url, const QString &file)
     {
         QFileInfo(file).absoluteDir().mkpath(".");
-        GetInternal(url,file);
+        GetOptions Options;
+        GetInternal(url,file,Options);
     }
 
-    void CurlHttpClient::Get(const QString &url)
+    void CurlHttpClient::Get(const QString &url, const GetOptions & Options)
     {
-        GetInternal(url,QString());
+        GetInternal(url,QString(),Options);
     }
 
-    void CurlHttpClient::GetInternal(const QString &url,const QString &filename)
+    void CurlHttpClient::GetInternal(const QString &url,const QString &filename, const GetOptions & Options)
     {
         if(request_holder)
         {
@@ -85,6 +86,12 @@ namespace BrowserAutomationStudioFramework
             if(!ProxyAuthString.isEmpty())
                 options->insert(CURLOPT_PROXYUSERPWD,ProxyAuthString);
         }
+
+        QString Method = Options.Method.toUpper();
+        if(Method == "HEAD")
+            options->insert(CURLOPT_NOBODY, 1);
+        else if(Method != "GET")
+            options->insert(CURLOPT_CUSTOMREQUEST, Method);
 
         options->insert(CURLOPT_URL,url);
         options->insert(CURLOPT_FOLLOWLOCATION,0);
@@ -135,8 +142,13 @@ namespace BrowserAutomationStudioFramework
             i++;
         }
 
+        QString Method = Options.Method.toUpper();
+        if(Method != "POST")
+            options->insert(CURLOPT_CUSTOMREQUEST, Method);
+
         IPostPrepareStrategy *strategy = PostPrepareStrategyFactory->Create(Options.PrepareStrategy);
         QByteArray data = strategy->GenerateData(params);
+
         HeadersList<<QString("Content-Type: ") + strategy->GetContentType();
         delete strategy;
 
@@ -248,7 +260,7 @@ namespace BrowserAutomationStudioFramework
         QHash<QString,QString>::const_iterator i;
         for(i = params.begin(); i != params.end(); ++i)
         {
-            QPair<bool, ContentData> res = ParsePostArgument(i.value());
+            QPair<bool, ContentData> res = ParsePostArgument(i.value(),Options.ContentTypeEncoding);
             ContentData Data = res.second;
             bool success = res.first;
 
@@ -420,7 +432,7 @@ namespace BrowserAutomationStudioFramework
 
     }
 
-    QPair<bool, ContentData> CurlHttpClient::ParsePostArgument(const QString& str)
+    QPair<bool, ContentData> CurlHttpClient::ParsePostArgument(const QString& str, const QString& encoding)
     {
         QPair<bool, ContentData> res;
         ContentData Data;
@@ -543,7 +555,20 @@ namespace BrowserAutomationStudioFramework
             f.close();
         }else
         {
-            Data.DataString = str;
+            if(encoding != "UTF-8")
+            {
+                QTextCodec *codec = QTextCodec::codecForName( encoding.toUtf8() );
+
+                if(codec)
+                {
+                    Data.DataRaw = codec->fromUnicode(str);
+                }
+                else
+                    Data.DataString = str;
+            }else
+            {
+                Data.DataString = str;
+            }
         }
 
 

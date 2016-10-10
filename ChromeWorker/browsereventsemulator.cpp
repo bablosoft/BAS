@@ -75,11 +75,11 @@ void BrowserEventsEmulator::MouseMove(CefRefPtr<CefBrowser> Browser, bool & IsMo
     MouseCurrentY = ((float)MouseStartY + k * (float)MouseEndY) / (1.0 + k);
 
 
-    if(MouseCurrentX >= ScrollX && MouseCurrentX <= ScrollX + BrowserWidth && MouseCurrentY >= ScrollY && MouseCurrentY <= ScrollY + BrowserHeight)
+    if(MouseCurrentX >= 0 && MouseCurrentX <= BrowserWidth && MouseCurrentY >= 0 && MouseCurrentY <= BrowserHeight)
     {
         CefMouseEvent e;
-        e.x = MouseCurrentX - ScrollX;
-        e.y = MouseCurrentY - ScrollY;
+        e.x = MouseCurrentX;
+        e.y = MouseCurrentY;
 
         Browser->GetHost()->SendMouseMoveEvent(e,false);
     }

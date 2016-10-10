@@ -22,7 +22,12 @@ namespace BrowserAutomationStudioFramework
             data.append(QUrl::toPercentEncoding(keys.at(i).toUtf8()));
             data.append("=");
 
-            data.append(QUrl::toPercentEncoding(values.at(i).DataString.toUtf8()));
+            if(!values.at(i).DataString.isEmpty())
+                data.append(QUrl::toPercentEncoding(values.at(i).DataString.toUtf8()));
+            else
+            {
+                data.append(values.at(i).DataRaw.toPercentEncoding());
+            }
         }
         return data;
     }

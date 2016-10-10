@@ -26,7 +26,7 @@ namespace BrowserAutomationStudioFramework
         emit OnSuspend();
     }
 
-    void SharedMemoryProcessComunicator::CreateProcess()
+    void SharedMemoryProcessComunicator::CreateProcess(const QStringList& arguments)
     {
         Abort();
         SendArray.clear();

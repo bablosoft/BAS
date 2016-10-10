@@ -70,6 +70,17 @@
 	    </div>
 	  </div>
 
+
+	  <div class="form-group" style="margin-top:20px">
+	    <div class="col-sm-offset-5 col-sm-7">
+	      <div class="checkbox">
+	        <label>
+	          <input type="checkbox" id="RestartBrowserProcessOnThreadStart"> <span class="tr">Restart browser process on thread start</span>
+	        </label>
+	      </div>
+	    </div>
+	  </div>
+
 	</div>
 </div>
 
@@ -104,6 +115,7 @@
 		$("#EnableFlash").prop("checked",json["use_flash"])
 		$("#SkipFrames").val(json["skip_frames"])
 		$("#ForceUTF8Encoding").prop("checked",json["force_utf8"])
+		$("#RestartBrowserProcessOnThreadStart").prop("checked",json["restart"])
 
 		$("#defaults").click(function(event){
     		event.preventDefault();
@@ -113,6 +125,8 @@
 			$("#EnableFlash").prop("checked",false)
 			$("#SkipFrames").val("74")
 			$("#ForceUTF8Encoding").prop("checked",true)
+			$("#RestartBrowserProcessOnThreadStart").prop("checked",false)
+
     	})
 
     	$("#close, #cancel").click(function(event){
@@ -129,7 +143,8 @@
 	    			"zoom": parseInt($("#Zoom").val()),
 	    			"use_flash": $("#EnableFlash").prop("checked"),
 	    			"skip_frames": parseInt($("#SkipFrames").val()),
-	    			"force_utf8": $("#ForceUTF8Encoding").prop("checked")
+	    			"force_utf8": $("#ForceUTF8Encoding").prop("checked"),
+	    			"restart": $("#RestartBrowserProcessOnThreadStart").prop("checked")
 	    		}
     		));
 

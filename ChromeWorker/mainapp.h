@@ -82,6 +82,8 @@ class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderP
 
     std::string DelayedSend;
 
+    std::string SetNextActionId;
+
     int TypeTextDelay;
     clock_t TypeTextLastTime;
 
@@ -128,6 +130,9 @@ public:
     void ResetCallback();
     void ResetCallbackFinalize();
 
+    void SetNextActionCallback(const std::string& NextActionId);
+    void TimezoneCallback(int offset);
+    void GeolocationCallback(float latitude, float longitude);
     void VisibleCallback(bool visible);
     void SetProxyCallback(const std::string& server, int Port, bool IsHttp, const std::string& username, const std::string& password);
     void AddHeaderCallback(const std::string& key,const std::string& value);
@@ -143,7 +148,7 @@ public:
     void RestoreCookiesCallback(const std::string& value);
     void IsChangedCallback();
 
-
+    void CrushCallback();
     void AddCacheMaskAllowCallback(const std::string& value);
     void AddCacheMaskDenyCallback(const std::string& value);
     void AddRequestMaskAllowCallback(const std::string& value);
@@ -168,7 +173,7 @@ public:
     void ElementCommandCallback(const ElementCommand &Command);
     void SetCodeCallback(const std::string & code);
     void SetResourceCallback(const std::string & resources);
-    void SetInitialStateCallback(const std::string & lang, int IsVisible);
+    void SetInitialStateCallback(const std::string & lang);
     void DebugVariablesResultCallback(const std::string & data);
 
     void MouseClickCallback(int x, int y);

@@ -8,7 +8,9 @@ class JavaScriptExtensions
 public:
     JavaScriptExtensions();
     std::string GetUserAgentExtension(const std::string& UserAgent);
+    std::string GetUserAgentEmptyExtension();
     std::string GetLanguage(const std::string& Language);
+    std::string GetEmptyLanguage();
 
     std::string GetBasicExtension(bool IsRecord);
     std::string GetJqueryExtension();

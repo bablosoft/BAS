@@ -22,6 +22,7 @@
 #include <QMessageBox>
 #include "every_cpp.h"
 #include "mongodatabaseconnector.h"
+#include "addavexclusion.h"
 
 
 class MyOpenSslLocks
@@ -98,6 +99,8 @@ using namespace BrowserAutomationStudioFramework;
 
 int main(int argc, char *argv[])
 {
+
+
     if(!MongoDatabaseConnector::Init())
     {
         qDebug()<<"Failed to init database";
@@ -129,6 +132,12 @@ int main(int argc, char *argv[])
             return 0;
         }
     }
+
+    {
+        AddAVExclusion e;
+        e.Run();
+    }
+
     qDebug()<<QSslSocket::supportsSsl();
 
     //a.SetLogger(&PanicLogger);

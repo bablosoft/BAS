@@ -26,7 +26,7 @@ namespace BrowserAutomationStudioFramework
         this->Params = Params;
     }
 
-    void PipesProcessComunicator::CreateProcess()
+    void PipesProcessComunicator::CreateProcess(const QStringList& arguments)
     {
         Abort();
 
@@ -72,6 +72,7 @@ namespace BrowserAutomationStudioFramework
             }
 
         }
+        ParamsCopy = arguments + ParamsCopy;
         Process->start(Location,ParamsCopy);
     }
 

@@ -12,7 +12,7 @@ namespace BrowserAutomationStudioFramework
 
     public:
         explicit IProcessComunicator(QObject *parent = 0);
-        virtual void CreateProcess() = 0;
+        virtual void CreateProcess(const QStringList& arguments) = 0;
         virtual void ConnectToProcess(const QString& key_in, const QString& key_out) = 0;
         virtual void Send(const QString& value) = 0;
         virtual void Abort() = 0;

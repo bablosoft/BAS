@@ -25,6 +25,7 @@ namespace BrowserAutomationStudioFramework
     signals:
     public slots:
         virtual void LoadPage(const QString& url, const QString& callback) = 0;
+        virtual void LoadPageInstant(const QString& url, const QString& callback) = 0;
         virtual void SetUserAgent(const QString& agent, const QString& callback) = 0;
         virtual void SetNetworkAccessManagerFactory(INetworkAccessManagerFactory *NetworkAccessManagerFactory) = 0;
         virtual void GetCookiesForUrl(const QString& url, const QString& callback) = 0;
@@ -48,6 +49,8 @@ namespace BrowserAutomationStudioFramework
         virtual void MouseClickDown(int x, int y, const QString& callback) = 0;
 
         virtual void MouseMove(int x, int y, const QString& callback) = 0;
+        virtual void Timezone(int offset, const QString& callback) = 0;
+        virtual void Geolocation(float latitude, float longitude, const QString& callback) = 0;
         virtual void PopupClose(int index, const QString& callback) = 0;
         virtual void PopupSelect(int index, const QString& callback) = 0;
         virtual void Scroll(int x, int y, const QString& callback) = 0;
@@ -62,6 +65,7 @@ namespace BrowserAutomationStudioFramework
         virtual void StartSection(const QString& Name, int Id, const QString& callback) = 0;
 
         virtual void OnSupend() = 0;
+        virtual void SimulateCrush(const QString& callback) = 0;
     };
 
 }

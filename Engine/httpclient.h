@@ -28,7 +28,7 @@ namespace BrowserAutomationStudioFramework
         QObject *request_holder;
     public:
         explicit HttpClient(QObject *parent = 0);
-        virtual void Get(const QString &url);
+        virtual void Get(const QString &url, const GetOptions & Options = GetOptions());
         virtual void Download(const QString &url, const QString &file);
 
         virtual void Post(const QString &url, const QHash<QString,QString> & params, const PostOptions & Options = PostOptions());

@@ -114,12 +114,18 @@ void HandlersManager::Timer()
 
     for(HandlerUnit h:HandlerUnits)
     {
+        if(h->Handler.get() && h->IsActive && h->IsContextCreated)
+            h->Handler->Timer();
+
         if(std::find(Ids.begin(), Ids.end(), h->BrowserId) != Ids.end())
         {
             h->IsContextCreated = true;
             Updated = true;
         }
     }
+
+    if(OriginalHandler.get() && OriginalHandler->Handler.get())
+        OriginalHandler->Handler->Timer();
 
     auto i = HandlerUnits.begin();
     while (i != HandlerUnits.end())
@@ -135,6 +141,9 @@ void HandlersManager::Timer()
             i = HandlerUnits.erase(i);
 
             Updated = true;
+
+            if(IsWaitForClosedCurrent)
+                IsClosedCurrent = true;
         }else
         {
             MainHandler *h = (*i)->Handler.get();
@@ -162,7 +171,8 @@ void HandlersManager::Reset()
     {
         h->DontUseAsActive = true;
         h->ForceShow = false;
-        h->Browser->GetHost()->CloseBrowser(true);
+        if(h->Browser)
+            h->Browser->GetMainFrame()->ExecuteJavaScript("window.close();",h->Browser->GetMainFrame()->GetURL(),0);
     }
     if(OriginalHandler)
         OriginalHandler->ForceShow = false;
@@ -281,18 +291,25 @@ std::vector<std::string> HandlersManager::GetAllUrls()
     return res;
 }
 
-void HandlersManager::CloseByIndex(int index)
+bool HandlersManager::CloseByIndex(int index)
 {
     if(index <= 0 || index - 1 >= HandlerUnits.size())
-        return;
+        return false;
+
+    IsWaitForClosedCurrent = true;
+    IsClosedCurrent = false;
 
     HandlerUnit h = HandlerUnits[index - 1];
 
     h->DontUseAsActive = true;
     h->ForceShow = false;
-    h->Browser->GetHost()->CloseBrowser(true);
+    if(h->Browser)
+    {
+        h->Browser->GetMainFrame()->ExecuteJavaScript("window.close();",h->Browser->GetMainFrame()->GetURL(),0);
+    }
 
     UpdateCurrent();
+    return true;
 }
 
 void HandlersManager::SwitchByIndex(int index)
@@ -320,4 +337,13 @@ void HandlersManager::SwitchByIndex(int index)
 
 }
 
-
+bool HandlersManager::CheckIsClosed()
+{
+    if(IsWaitForClosedCurrent && IsClosedCurrent)
+    {
+        IsWaitForClosedCurrent = false;
+        IsClosedCurrent = false;
+        return true;
+    }
+    return false;
+}

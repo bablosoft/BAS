@@ -50,7 +50,9 @@ SOURCES += main.cpp \
     clipboard.cpp \
     startwith.cpp \
     processlocation.cpp \
-    urlnormalize.cpp
+    urlnormalize.cpp \
+    chromecommandlineparser.cpp \
+    randomid.cpp
 
 INCLUDEPATH += $(BAS_PATH_WORKER)/include
 
@@ -111,7 +113,9 @@ HEADERS += \
     clipboard.h \
     startwith.h \
     processlocation.h \
-    urlnormalize.h
+    urlnormalize.h \
+    chromecommandlineparser.h \
+    randomid.h
 
 INCLUDEPATH += xml json png
 

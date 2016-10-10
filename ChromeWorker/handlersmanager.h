@@ -50,6 +50,9 @@ class HandlersManager
 
     void UpdateCurrent();
 
+    bool IsClosedCurrent = false;
+    bool IsWaitForClosedCurrent = false;
+
 public:
     void Reset();
     void Timer();
@@ -69,8 +72,9 @@ public:
     void SetDevToolsBorwserId(int DevToolsBorwserId);
 
     std::vector<std::string> GetAllUrls();
-    void CloseByIndex(int index);
+    bool CloseByIndex(int index);
     void SwitchByIndex(int index);
+    bool CheckIsClosed();
 };
 
 #endif // HANDLERSMANAGER_H

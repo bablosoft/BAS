@@ -22,6 +22,7 @@
 #include "toolboxpreprocessor.h"
 #include "clipboard.h"
 #include "urlnormalize.h"
+#include "chromecommandlineparser.h"
 
 using namespace std::placeholders;
 MainApp * App;
@@ -212,6 +213,9 @@ void MainApp::LoadCallback(const std::string& page)
         CefRefPtr< CefFrame > Frame = _HandlersManager->GetBrowser()->GetMainFrame();
         Frame->LoadURL(page);
     }
+    SendTextResponce("<Messages><LoadedInstant></LoadedInstant></Messages>");
+
+
 }
 
 void MainApp::IsChangedCallback()
@@ -275,6 +279,16 @@ void MainApp::ResetCallbackFinalize()
     {
         LOCK_LOCAL_STORAGE
         Data->_LocalStorageData.clear();
+    }
+
+    {
+        LOCK_GEOLOCATION
+        Data->GeolocationSelected = false;
+    }
+
+    {
+        LOCK_TIMEZONE
+        Data->TimezoneSelected = false;
     }
 
     if(_HandlersManager->GetBrowser())
@@ -523,9 +537,8 @@ void MainApp::MouseClickDownCallback(int x, int y)
 
 void MainApp::PopupCloseCallback(int index)
 {
-    _HandlersManager->CloseByIndex(index);
-    SendTextResponce("<Messages><PopupClose></PopupClose></Messages>");
-
+    if(!_HandlersManager->CloseByIndex(index))
+        SendTextResponce("<Messages><PopupClose></PopupClose></Messages>");
 }
 
 void MainApp::PopupSelectCallback(int index)
@@ -758,6 +771,40 @@ void MainApp::AfterReadyToCreateBrowser(bool Reload)
     }
 }
 
+void MainApp::TimezoneCallback(int offset)
+{
+    {
+        LOCK_TIMEZONE
+        if(offset > 99999)
+        {
+            Data->TimezoneSelected = false;
+        }else
+        {
+            Data->TimezoneSelected = true;
+            Data->Timezone = offset;
+        }
+    }
+    SendTextResponce("<Messages><Timezone></Timezone></Messages>");
+}
+
+void MainApp::GeolocationCallback(float latitude, float longitude)
+{
+    {
+        LOCK_GEOLOCATION
+        if(latitude > 99999)
+        {
+            Data->GeolocationSelected = false;
+        }else
+        {
+            Data->GeolocationSelected = true;
+            Data->Longitude = longitude;
+            Data->Latitude = latitude;
+        }
+    }
+    SendTextResponce("<Messages><Geolocation></Geolocation></Messages>");
+
+}
+
 void MainApp::VisibleCallback(bool visible)
 {
     worker_log(std::string("VisibleCallback ") + std::to_string(visible));
@@ -882,6 +929,26 @@ void MainApp::OnBeforeCommandLineProcessing(const CefString& process_type,CefRef
 {
     command_line->AppendSwitch("--single-process");
     command_line->AppendSwitch("--high-dpi-support");
+    //command_line->AppendSwitch("--disable-gpu");
+    //command_line->AppendSwitch("--disable-gpu-compositing");
+    //command_line->AppendSwitch("--disable-gpu-vsync");
+
+    for(auto p:ParseChromeCommandLine())
+    {
+
+        if(p.second.length()>0)
+        {
+            worker_log("ChromeCommandLine<<" + p.first + "=" + p.second);
+            command_line->AppendSwitchWithValue(p.first,p.second);
+        }else
+        {
+            worker_log("ChromeCommandLine<<" + p.first);
+            command_line->AppendSwitch(p.first);
+        }
+    }
+
+
+
     if(Settings->UseFlash())
         command_line->AppendSwitch("--enable-system-flash");
 }
@@ -1169,9 +1236,26 @@ void MainApp::SetResourceCallback(const std::string & resources)
     ResourcesChanged = true;
 }
 
-void MainApp::SetInitialStateCallback(const std::string & lang, int IsVisible)
+void MainApp::CrushCallback()
+{
+    *((unsigned int*)0) = 0xDEAD;
+}
+
+void MainApp::SetInitialStateCallback(const std::string & lang)
 {
     Lang = lang;
+}
+
+void MainApp::SetNextActionCallback(const std::string& NextActionId)
+{
+    if(scenariov8handler && scenariov8handler->GetIsInitialized())
+    {
+        if(BrowserScenario)
+            BrowserScenario->GetMainFrame()->ExecuteJavaScript(std::string("BrowserAutomationStudio_NotRunningTask(") + NextActionId + std::string(")"),BrowserScenario->GetMainFrame()->GetURL(), 0);
+    }else
+    {
+        SetNextActionId = NextActionId;
+    }
 }
 
 void MainApp::ElementCommandCallback(const ElementCommand &Command)
@@ -1397,6 +1481,11 @@ void MainApp::Timer()
         }
     }
 
+    if(_HandlersManager->CheckIsClosed())
+    {
+        SendTextResponce("<Messages><PopupClose></PopupClose></Messages>");
+    }
+
     UpdateWindowPositionWithParent();
 }
 
@@ -1442,6 +1531,13 @@ void MainApp::HandleScenarioBrowserEvents()
         std::string script = std::string("BrowserAutomationStudio_Parse(") + picojson::value(Code.data()).serialize() + std::string(")");
         BrowserScenario->GetMainFrame()->ExecuteJavaScript(script,BrowserScenario->GetMainFrame()->GetURL(), 0);
         Code.clear();
+    }
+
+    if(scenariov8handler->GetIsInitialized() && !SetNextActionId.empty())
+    {
+        if(BrowserScenario)
+            BrowserScenario->GetMainFrame()->ExecuteJavaScript(std::string("BrowserAutomationStudio_NotRunningTask(") + SetNextActionId + std::string(")"),BrowserScenario->GetMainFrame()->GetURL(), 0);
+        SetNextActionId.clear();
     }
 
     std::pair<std::string, bool> res = scenariov8handler->GetResult();
@@ -1756,9 +1852,9 @@ void MainApp::HandleMainBrowserEvents()
                 x = std::stoi(x_string);
                 y = std::stoi(y_string);
             }
-            MouseEndX = x;
-            MouseEndY = y;
-            if(!BrowserEventsEmulator::IsPointOnScreen(MouseEndX,MouseEndY,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser))
+            MouseEndX = x - Data->ScrollX;
+            MouseEndY = y - Data->ScrollY;
+            if(!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser))
             {
                 IsLastCommandNull = false;
             }else
@@ -1820,7 +1916,7 @@ void MainApp::HandleMainBrowserEvents()
                 RenderY = RenderY - Data->ScrollY;
                 IsElementRender = false;
                 NeedRenderNextFrame = true;
-                SkipBeforeRenderNextFrame = 3;
+                SkipBeforeRenderNextFrame = 10;
                 if(_HandlersManager->GetBrowser())
                     _HandlersManager->GetBrowser()->GetHost()->Invalidate(PET_VIEW);
             }
@@ -1927,7 +2023,7 @@ void MainApp::HandleMainBrowserEvents()
                 RenderHeight = bottom - top;
                 IsElementRender = true;
                 NeedRenderNextFrame = true;
-                SkipBeforeRenderNextFrame = 3;
+                SkipBeforeRenderNextFrame = 10;
                 if(_HandlersManager->GetBrowser())
                     _HandlersManager->GetBrowser()->GetHost()->Invalidate(PET_VIEW);
             }
@@ -1968,8 +2064,8 @@ void MainApp::HandleMainBrowserEvents()
                 LastCommand.CommandParam2 = std::to_string(y);
                 MouseStartX = Data->CursorX;
                 MouseStartY = Data->CursorY;
-                MouseEndX = x;
-                MouseEndY = y;
+                MouseEndX = x - Data->ScrollX;
+                MouseEndY = y - Data->ScrollY;
                 IsMouseMoveSimulation = true;
             }
 
@@ -2211,11 +2307,17 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
             if(Data->_Headers.find("User-Agent")!=Data->_Headers.end())
             {
                 jscode += extensions.GetUserAgentExtension(Data->_Headers["User-Agent"]);
+            }else
+            {
+                jscode += extensions.GetUserAgentEmptyExtension();
             }
 
             if(Data->_Headers.find("Accept-Language")!=Data->_Headers.end())
             {
                 jscode += extensions.GetLanguage(Data->_Headers["Accept-Language"]);
+            }else
+            {
+                jscode += extensions.GetEmptyLanguage();
             }
         }
 
@@ -2241,6 +2343,50 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
             jscode += picojson::value(Data->_LocalStorageData).serialize();
             jscode += ");";
             jscode += "}catch(e){};";
+        }
+
+        {
+            LOCK_TIMEZONE
+            if(Data->TimezoneSelected)
+            {
+                if(!jscode.empty())
+                    jscode += ";";
+                jscode += "try{";
+                jscode += "BrowserAutomationStudio_SetTimezone(";
+                jscode += picojson::value(std::to_string(Data->Timezone)).serialize();
+                jscode += ");";
+                jscode += "}catch(e){};";
+            }else
+            {
+                if(!jscode.empty())
+                    jscode += ";";
+                jscode += "try{";
+                jscode += "BrowserAutomationStudio_TimezoneRestore();";
+                jscode += "}catch(e){};";
+            }
+        }
+
+        {
+            LOCK_GEOLOCATION
+            if(Data->GeolocationSelected)
+            {
+                if(!jscode.empty())
+                    jscode += ";";
+                jscode += "try{";
+                jscode += "BrowserAutomationStudio_SetGeolocation(";
+                jscode += picojson::value(std::to_string(Data->Latitude)).serialize();
+                jscode += ",";
+                jscode += picojson::value(std::to_string(Data->Longitude)).serialize();
+                jscode += ");";
+                jscode += "}catch(e){};";
+            }else
+            {
+                if(!jscode.empty())
+                    jscode += ";";
+                jscode += "try{";
+                jscode += "BrowserAutomationStudio_GeolocationRestore();";
+                jscode += "}catch(e){};";
+            }
         }
 
         if(!jscode.empty())

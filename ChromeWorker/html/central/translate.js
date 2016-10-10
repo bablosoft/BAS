@@ -12,6 +12,7 @@ _L =
 	"Cancel" :{"ru": "Отмена"},
 	"Defaults" :{"ru": "По Умолчанию"},
 	"Disable System Log" :{"ru": "Отключить лог системных сообщений"},
+	"Restart browser process on thread start" :{"ru": "Перезапускать процесс в начале работы потока"},
 }
 
 

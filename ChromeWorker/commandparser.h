@@ -16,7 +16,7 @@ public:
     //Events
     std::vector<std::function<void(const std::string&)> > EventLoad;
     std::vector<std::function<void(bool)> > EventVisible;
-    std::vector<std::function<void(const std::string&, int)> > EventSetInitialState;
+    std::vector<std::function<void(const std::string&)> > EventSetNextAction;
     std::vector<std::function<void(const std::string&, int, bool, const std::string&, const std::string&)> > EventSetProxy;
     std::vector<std::function<void(const std::string&, const std::string&)> > EventAddHeader;
     std::vector<std::function<void(const std::string&)> > EventSetUserAgent;
@@ -36,6 +36,8 @@ public:
     std::vector<std::function<void(int, int)> > EventMouseMove;
     std::vector<std::function<void(int)> > EventPopupClose;
     std::vector<std::function<void(int)> > EventPopupSelect;
+    std::vector<std::function<void(float,float)> > EventGeolocation;
+    std::vector<std::function<void(int)> > EventTimezone;
     std::vector<std::function<void()> > EventCleanHeader;
     std::vector<std::function<void(const std::string&)> > EventGetCookiesForUrl;
     std::vector<std::function<void()> > EventSaveCookies;
@@ -44,6 +46,7 @@ public:
     std::vector<std::function<void(int)> > EventStartSection;
     std::vector<std::function<void()> > EventScriptFinished;
     std::vector<std::function<void()> > EventIsChanged;
+    std::vector<std::function<void()> > EventCrush;
 
     std::vector<std::function<void(const std::string&)> > EventAddCacheMaskAllow;
     std::vector<std::function<void(const std::string&)> > EventAddCacheMaskDeny;

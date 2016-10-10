@@ -16,6 +16,7 @@ settings::settings()
     scenario_width = 500;
     zoom = 100;
     maximized = false;
+    restart = false;
     std::ifstream fin("settings_worker.ini");
     if(fin.is_open())
     {
@@ -59,6 +60,10 @@ settings::settings()
             if(line.find("IsMaximized=true") != std::string::npos)
             {
                 maximized = true;
+            }
+            if(line.find("Restart=true") != std::string::npos)
+            {
+                restart = true;
             }
         }
     }
@@ -120,6 +125,8 @@ void settings::SaveToFile()
             outfile<<"ScenarioWidth="<<scenario_width<<std::endl;
             outfile<<"Zoom="<<zoom<<std::endl;
             outfile<<"IsMaximized="<<((maximized) ? "true" : "false")<<std::endl;
+            outfile<<"Restart="<<((restart) ? "true" : "false")<<std::endl;
+
         }
     }catch(...)
     {
@@ -136,6 +143,7 @@ std::string settings::Serialize()
     res["toolbox_height"] = picojson::value((double)toolbox_height);
     res["scenario_width"] = picojson::value((double)scenario_width);
     res["zoom"] = picojson::value((double)zoom);
+    res["restart"] = picojson::value(restart);
     return picojson::value(res).serialize();
 }
 
@@ -153,6 +161,7 @@ void settings::Deserialize(const std::string & Data)
         toolbox_height = o["toolbox_height"].get<double>();
         scenario_width = o["scenario_width"].get<double>();
         zoom = o["zoom"].get<double>();
+        restart = o["restart"].get<bool>();
 
         if(toolbox_height < 100)
             toolbox_height = 100;

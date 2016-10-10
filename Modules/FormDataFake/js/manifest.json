@@ -1,0 +1,21 @@
+{
+	
+	"name":"FormDataFake",
+	"description":"Fakes FormData class append and set params",
+	"description_small":{"en": "FormDataFake", "ru": "FormDataFake"},
+	"major_version": 1,
+	"minor_version": 0,
+	"developer_name": "bablosoft", 
+	"developer_email": "mail.to.twaego@gmail.com", 
+	"developer_site": "https://bablosoft.com",
+	"api_version": 1,
+	"actions":
+	[
+	],
+	"localize": 
+	{
+	},
+	"engine": [],
+	"browser": ["browser.js"],
+	"depends": []	
+}

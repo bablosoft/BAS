@@ -14,6 +14,7 @@ namespace BrowserAutomationStudioFramework
         int milliseconds;
         QString DestFolder;
         QTimer* Timer;
+        QString LastProject;
     public:
         explicit ProjectBackup(QObject *parent = 0);
 
