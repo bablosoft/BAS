@@ -48,9 +48,262 @@ bool BrowserEventsEmulator::IsPointOnScreen(int PointX, int PointY, int ScrollX,
     return PointX>=ScrollX && PointX<=ScrollX + BrowserWidth && PointY>=ScrollY && PointY<=ScrollY + BrowserHeight;
 }
 
-void BrowserEventsEmulator::MouseMove(CefRefPtr<CefBrowser> Browser, bool & IsMouseMoveSimulation, int MouseStartX, int MouseStartY, int MouseEndX, int MouseEndY , int& MouseCurrentX, int& MouseCurrentY, float Speed, int ScrollX, int ScrollY, int BrowserWidth, int BrowserHeight)
+int random(int max)
+{
+    if(max <= 0)
+        return 0;
+    return rand() % (max);
+}
+
+void BrowserEventsEmulator::MouseMoveLine(CefRefPtr<CefBrowser> Browser, bool & IsMouseMoveSimulation, int MouseStartX, int MouseStartY, int MouseEndX, int MouseEndY , int& MouseCurrentX, int& MouseCurrentY, float Speed, int BrowserWidth, int BrowserHeight)
 {
     if(!IsMouseMoveSimulation)
+        return;
+
+    float DistanceSquareAll = (MouseStartX - MouseEndX) * (MouseStartX - MouseEndX) + (MouseStartY - MouseEndY) * (MouseStartY - MouseEndY);
+    float DistanceSquareCurrent = (MouseStartX - MouseCurrentX) * (MouseStartX - MouseCurrentX) + (MouseStartY - MouseCurrentY) * (MouseStartY - MouseCurrentY);
+
+    float DistanceAll = sqrtf(DistanceSquareAll);
+    float DistanceCurrent = sqrtf(DistanceSquareCurrent);
+
+    DistanceCurrent += Speed;
+
+    if(DistanceCurrent >= DistanceAll)
+    {
+        IsMouseMoveSimulation = false;
+        MouseCurrentX = MouseEndX;
+        MouseCurrentY = MouseEndY;
+        if(MouseCurrentX >= 0 && MouseCurrentX <= BrowserWidth && MouseCurrentY >= 0 && MouseCurrentY <= BrowserHeight)
+        {
+            CefMouseEvent e;
+            e.x = MouseCurrentX;
+            e.y = MouseCurrentY;
+
+            Browser->GetHost()->SendMouseMoveEvent(e,false);
+        }
+        return;
+    }
+
+    float k = DistanceCurrent / (DistanceAll - DistanceCurrent);
+
+    MouseCurrentX = ((float)MouseStartX + k * (float)MouseEndX) / (1.0 + k);
+    MouseCurrentY = ((float)MouseStartY + k * (float)MouseEndY) / (1.0 + k);
+
+
+    if(MouseCurrentX >= 0 && MouseCurrentX <= BrowserWidth && MouseCurrentY >= 0 && MouseCurrentY <= BrowserHeight)
+    {
+        CefMouseEvent e;
+        e.x = MouseCurrentX;
+        e.y = MouseCurrentY;
+
+        Browser->GetHost()->SendMouseMoveEvent(e,false);
+    }
+
+
+}
+
+void BrowserEventsEmulator::MouseMove(CefRefPtr<CefBrowser> Browser,
+                                      bool & IsMouseMoveSimulation,
+                                      int MouseStartX, int MouseStartY,
+                                      int MouseEndX, int MouseEndY,
+                                      int& MouseCurrentX, int& MouseCurrentY,
+                                      float Speed,
+                                      int BrowserWidth, int BrowserHeight,
+                                      float Gravity, float Wind, float TargetArea,
+                                      bool IsInit, bool IsDouble)
+{
+    static float veloX,veloY,windX,windY,veloMag,dist,randomDist,lastDist,D;
+    static int lastX,lastY,MSP,W,TDist;
+    static int T;
+    static float sqrt2,sqrt3,sqrt5,PDist,maxStep,dModA,dModB,nModA,nModB;
+
+    if(IsInit)
+    {
+        veloX = 0;
+        veloY = 0;
+        windX = 0;
+        windY = 0;
+        veloMag = 0;
+        dist = 0;
+        randomDist = 0;
+        lastDist = 0;
+        D = 0;
+        lastX = 0;
+        lastY = 0;
+        MSP = 0;
+        W = 0;
+        TDist = 0;
+        T = 0;
+        PDist = 0;
+        maxStep = 0;
+
+        MSP = 20;
+        sqrt2 = sqrtf(2.0f);
+        sqrt3 = sqrtf(3.0f);
+        sqrt5 = sqrt(5.0f);
+
+        TDist = hypot(MouseStartX-MouseEndX, MouseStartY-MouseEndY);
+        if (TDist < 1)
+            TDist = 1;
+
+        dModA = 0.88;
+        dModB = 0.95;
+
+        if(TDist > 220)
+        {
+            nModA = 0.08;
+            nModB = 0.04;
+        }else
+        {
+            nModA = 0.20;
+            nModB = 0.10;
+        }
+    }else
+    {
+        //worker_log(std::to_string(hypot(MouseCurrentX-MouseEndX, MouseCurrentY-MouseEndY)));
+
+        //worker_log(std::to_string(MouseCurrentX-MouseEndX));
+        //worker_log(std::to_string(MouseCurrentY-MouseEndY));
+
+        if(hypot(MouseCurrentX-MouseEndX, MouseCurrentY-MouseEndY) <= 3)
+        {
+            IsMouseMoveSimulation = false;
+            MouseCurrentX = MouseEndX;
+            MouseCurrentY = MouseEndY;
+
+            if(MouseCurrentX >= 0 && MouseCurrentX <= BrowserWidth && MouseCurrentY >= 0 && MouseCurrentY <= BrowserHeight)
+            {
+                CefMouseEvent e;
+                e.x = MouseCurrentX;
+                e.y = MouseCurrentY;
+
+                Browser->GetHost()->SendMouseMoveEvent(e,false);
+            }
+            return;
+        }
+
+        dist = hypot(MouseCurrentX-MouseEndX, MouseCurrentY-MouseEndY);
+
+        if(Wind > dist)
+            Wind = dist;
+
+        if(dist < 1)
+        {
+            dist = 1;
+        }
+
+        PDist = dist/TDist;
+        if (PDist < 0.01)
+        {
+            PDist = 0.01;
+        }
+
+        if(IsDouble)
+        {
+            if (PDist <= dModA)
+            {
+                D = (round((round(dist)*0.3))/5);
+                if (D < 20)
+                    D = 20;
+
+            } else if (PDist > dModA)
+            {
+                if (PDist < dModB)
+                {
+                    D = 5 + rand() % 4;
+                }else if (PDist >= dModB)
+                {
+                    D = 3 + rand() % 2;
+                }
+            }
+        }
+
+        if (PDist >= nModA)
+        {
+            D = (round((round(dist)*0.3))/5);
+            if (D < 15)
+            {
+                D = 15;
+            }
+        }else if (PDist < nModA)
+        {
+            if (PDist >= nModB)
+            {
+                D = 5 + rand() % 4;
+            }
+            else if (PDist < nModB)
+            {
+                D = 3 + rand() % 2;
+            }
+        }
+
+        if (D <= round(dist))
+            maxStep = D;
+        else
+            maxStep = round(dist);
+
+        //maxStep = 4;
+
+        if(dist >= TargetArea)
+        {
+            windX = windX / sqrt3 + (random((int)round(Wind) * 2 + 1) - Wind) / sqrt5;
+            windY = windY / sqrt3 + (random((int)round(Wind) * 2 + 1) - Wind) / sqrt5;
+        }else
+        {
+            windX = windX / sqrt2;
+            windY = windY / sqrt2;
+        }
+
+        veloX = veloX + windX;
+        veloY = veloY + windY;
+        veloX = veloX + Gravity * (MouseEndX - MouseCurrentX) / dist;
+        veloY = veloY + Gravity * (MouseEndY - MouseCurrentY) / dist;
+
+        if (hypot(veloX, veloY) > maxStep)
+        {
+            randomDist = maxStep / 2.0 + random((int)round(maxStep) / 2);
+            veloMag = sqrtf(veloX * veloX + veloY * veloY);
+            veloX = (veloX / veloMag) * randomDist;
+            veloY = (veloY / veloMag) * randomDist;
+        }
+
+        lastX = round(MouseCurrentX);
+        lastY = round(MouseCurrentY);
+        MouseCurrentX += veloX;
+        MouseCurrentY += veloY;
+
+        if((lastX != round(MouseCurrentX)) || (lastY != round(MouseCurrentY)))
+        {
+            if(MouseCurrentX >= 0 && MouseCurrentX <= BrowserWidth && MouseCurrentY >= 0 && MouseCurrentY <= BrowserHeight)
+            {
+                CefMouseEvent e;
+                e.x = MouseCurrentX;
+                e.y = MouseCurrentY;
+
+                Browser->GetHost()->SendMouseMoveEvent(e,false);
+            }
+        }
+
+        W = (random((int)round(100/MSP)))*6;
+        if (W < 5)
+        {
+            W = 5;
+        }
+
+        if(IsDouble)
+        {
+            if (PDist > dModA)
+                W = round(W*2.5);
+        }else
+        {
+            W = round(W*1.2);
+        }
+
+        lastDist = dist;
+
+    }
+
+    /*if(!IsMouseMoveSimulation)
         return;
 
     float DistanceSquareAll = (MouseStartX - MouseEndX) * (MouseStartX - MouseEndX) + (MouseStartY - MouseEndY) * (MouseStartY - MouseEndY);
@@ -82,7 +335,7 @@ void BrowserEventsEmulator::MouseMove(CefRefPtr<CefBrowser> Browser, bool & IsMo
         e.y = MouseCurrentY;
 
         Browser->GetHost()->SendMouseMoveEvent(e,false);
-    }
+    }*/
 
 
 }
@@ -111,7 +364,7 @@ void BrowserEventsEmulator::MouseClick(CefRefPtr<CefBrowser> Browser, int x, int
     }
 }
 
-void BrowserEventsEmulator::Key(CefRefPtr<CefBrowser> Browser, std::string & text, KeyState& State)
+void BrowserEventsEmulator::Key(CefRefPtr<CefBrowser> Browser, std::string & text, KeyState& State, int mousex, int mousey)
 {
     if(!Browser)
         return;
@@ -154,6 +407,8 @@ void BrowserEventsEmulator::Key(CefRefPtr<CefBrowser> Browser, std::string & tex
     char key = -1;
     char state = -1;
     wchar_t letter_wchar;
+    bool ismouse = false;
+    bool ismouseup = false;
     bool is_special_letter = true;
     int character_length = 1;
 
@@ -180,9 +435,20 @@ void BrowserEventsEmulator::Key(CefRefPtr<CefBrowser> Browser, std::string & tex
         std::wstring SNAPSHOT = L"<SNAPSHOT>";
         std::wstring INSERT = L"<INSERT>";
         std::wstring _DELETE = L"<DELETE>";
+        std::wstring MOUSESCROLLUP = L"<MOUSESCROLLUP>";
+        std::wstring MOUSESCROLLDOWN = L"<MOUSESCROLLDOWN>";
 
-
-        if(text_whcar.rfind(CANCEL, 0) == 0)
+        if(text_whcar.rfind(MOUSESCROLLUP, 0) == 0)
+        {
+            character_length = MOUSESCROLLUP.length();
+            ismouse = true;
+            ismouseup = true;
+        }else if(text_whcar.rfind(MOUSESCROLLDOWN, 0) == 0)
+        {
+            character_length = MOUSESCROLLDOWN.length();
+            ismouse = true;
+            ismouseup = false;
+        }else if(text_whcar.rfind(CANCEL, 0) == 0)
         {
             character_length = CANCEL.length();
             letter_wchar = key = VK_CANCEL;
@@ -307,93 +573,104 @@ void BrowserEventsEmulator::Key(CefRefPtr<CefBrowser> Browser, std::string & tex
     if(AdditionalIsCtrl)
         IsCtrl = true;
 
-    if(IsShift != State.IsShift)
+    if(!ismouse)
     {
-        State.IsShift = IsShift;
-        CefKeyEvent event;
-        event.type = (IsShift) ? KEYEVENT_KEYDOWN : KEYEVENT_KEYUP;
-        event.modifiers = ((State.IsShift) ? EVENTFLAG_SHIFT_DOWN : EVENTFLAG_NONE)  | ((State.IsAlt) ? EVENTFLAG_ALT_DOWN : EVENTFLAG_NONE) | ((State.IsCtrl) ? EVENTFLAG_CONTROL_DOWN : EVENTFLAG_NONE);
-        event.windows_key_code = VK_SHIFT;
-        event.native_key_code = (IsShift) ? 1 : -1073741823;
-        event.is_system_key = false;
-        event.character = VK_SHIFT;
-        event.unmodified_character = VK_SHIFT;
-        event.focus_on_editable_field = true;
-        Browser->GetHost()->SendKeyEvent(event);
-        return;
-    }
+        if(IsShift != State.IsShift)
+        {
+            State.IsShift = IsShift;
+            CefKeyEvent event;
+            event.type = (IsShift) ? KEYEVENT_KEYDOWN : KEYEVENT_KEYUP;
+            event.modifiers = ((State.IsShift) ? EVENTFLAG_SHIFT_DOWN : EVENTFLAG_NONE)  | ((State.IsAlt) ? EVENTFLAG_ALT_DOWN : EVENTFLAG_NONE) | ((State.IsCtrl) ? EVENTFLAG_CONTROL_DOWN : EVENTFLAG_NONE);
+            event.windows_key_code = VK_SHIFT;
+            event.native_key_code = (IsShift) ? 1 : -1073741823;
+            event.is_system_key = false;
+            event.character = VK_SHIFT;
+            event.unmodified_character = VK_SHIFT;
+            event.focus_on_editable_field = true;
+            Browser->GetHost()->SendKeyEvent(event);
+            return;
+        }
 
-    if(IsAlt != State.IsAlt)
-    {
-        State.IsAlt = IsAlt;
-        CefKeyEvent event;
-        event.type = (IsAlt) ? KEYEVENT_KEYDOWN : KEYEVENT_KEYUP;
-        event.modifiers = ((State.IsShift) ? EVENTFLAG_SHIFT_DOWN : EVENTFLAG_NONE)  | ((State.IsAlt) ? EVENTFLAG_ALT_DOWN : EVENTFLAG_NONE) | ((State.IsCtrl) ? EVENTFLAG_CONTROL_DOWN : EVENTFLAG_NONE);
-        event.windows_key_code = VK_MENU;
-        event.native_key_code = (IsAlt) ? 1 : -1073741823;
-        event.is_system_key = false;
-        event.character = VK_MENU;
-        event.unmodified_character = VK_MENU;
-        event.focus_on_editable_field = true;
-        Browser->GetHost()->SendKeyEvent(event);
-        return;
-    }
+        if(IsAlt != State.IsAlt)
+        {
+            State.IsAlt = IsAlt;
+            CefKeyEvent event;
+            event.type = (IsAlt) ? KEYEVENT_KEYDOWN : KEYEVENT_KEYUP;
+            event.modifiers = ((State.IsShift) ? EVENTFLAG_SHIFT_DOWN : EVENTFLAG_NONE)  | ((State.IsAlt) ? EVENTFLAG_ALT_DOWN : EVENTFLAG_NONE) | ((State.IsCtrl) ? EVENTFLAG_CONTROL_DOWN : EVENTFLAG_NONE);
+            event.windows_key_code = VK_MENU;
+            event.native_key_code = (IsAlt) ? 1 : -1073741823;
+            event.is_system_key = false;
+            event.character = VK_MENU;
+            event.unmodified_character = VK_MENU;
+            event.focus_on_editable_field = true;
+            Browser->GetHost()->SendKeyEvent(event);
+            return;
+        }
 
-    if(IsCtrl != State.IsCtrl)
-    {
-        State.IsCtrl = IsCtrl;
-        CefKeyEvent event;
-        event.type = (IsCtrl) ? KEYEVENT_KEYDOWN : KEYEVENT_KEYUP;
-        event.modifiers = ((State.IsShift) ? EVENTFLAG_SHIFT_DOWN : EVENTFLAG_NONE)  | ((State.IsAlt) ? EVENTFLAG_ALT_DOWN : EVENTFLAG_NONE) | ((State.IsCtrl) ? EVENTFLAG_CONTROL_DOWN : EVENTFLAG_NONE);
-        event.windows_key_code = VK_CONTROL;
-        event.native_key_code = (IsCtrl) ? 1 : -1073741823;
-        event.is_system_key = false;
-        event.character = VK_CONTROL;
-        event.unmodified_character = VK_CONTROL;
-        event.focus_on_editable_field = true;
-        Browser->GetHost()->SendKeyEvent(event);
-        return;
-    }
+        if(IsCtrl != State.IsCtrl)
+        {
+            State.IsCtrl = IsCtrl;
+            CefKeyEvent event;
+            event.type = (IsCtrl) ? KEYEVENT_KEYDOWN : KEYEVENT_KEYUP;
+            event.modifiers = ((State.IsShift) ? EVENTFLAG_SHIFT_DOWN : EVENTFLAG_NONE)  | ((State.IsAlt) ? EVENTFLAG_ALT_DOWN : EVENTFLAG_NONE) | ((State.IsCtrl) ? EVENTFLAG_CONTROL_DOWN : EVENTFLAG_NONE);
+            event.windows_key_code = VK_CONTROL;
+            event.native_key_code = (IsCtrl) ? 1 : -1073741823;
+            event.is_system_key = false;
+            event.character = VK_CONTROL;
+            event.unmodified_character = VK_CONTROL;
+            event.focus_on_editable_field = true;
+            Browser->GetHost()->SendKeyEvent(event);
+            return;
+        }
 
-    //Main key down
-    {
-        CefKeyEvent event;
-        event.type = KEYEVENT_KEYDOWN;
-        event.modifiers = ((IsShift) ? EVENTFLAG_SHIFT_DOWN : EVENTFLAG_NONE)  | ((IsAlt) ? EVENTFLAG_ALT_DOWN : EVENTFLAG_NONE) | ((IsCtrl) ? EVENTFLAG_CONTROL_DOWN : EVENTFLAG_NONE);
-        event.windows_key_code = key;
-        event.native_key_code = 1;
-        event.is_system_key = false;
-        event.character = letter_wchar;
-        event.unmodified_character = letter_wchar;
-        event.focus_on_editable_field = true;
-        Browser->GetHost()->SendKeyEvent(event);
+        //Main key down
+        {
+            CefKeyEvent event;
+            event.type = KEYEVENT_KEYDOWN;
+            event.modifiers = ((IsShift) ? EVENTFLAG_SHIFT_DOWN : EVENTFLAG_NONE)  | ((IsAlt) ? EVENTFLAG_ALT_DOWN : EVENTFLAG_NONE) | ((IsCtrl) ? EVENTFLAG_CONTROL_DOWN : EVENTFLAG_NONE);
+            event.windows_key_code = key;
+            event.native_key_code = 1;
+            event.is_system_key = false;
+            event.character = letter_wchar;
+            event.unmodified_character = letter_wchar;
+            event.focus_on_editable_field = true;
+            Browser->GetHost()->SendKeyEvent(event);
+        }
+        //Main key press
+        if(!is_special_letter)
+        {
+            CefKeyEvent event;
+            event.type = KEYEVENT_CHAR;
+            event.modifiers = ((IsShift) ? EVENTFLAG_SHIFT_DOWN : EVENTFLAG_NONE)  | ((IsAlt) ? EVENTFLAG_ALT_DOWN : EVENTFLAG_NONE) | ((IsCtrl) ? EVENTFLAG_CONTROL_DOWN : EVENTFLAG_NONE);
+            event.windows_key_code = letter_wchar;
+            event.native_key_code = 0;
+            event.is_system_key = false;
+            event.character = letter_wchar;
+            event.unmodified_character = letter_wchar;
+            event.focus_on_editable_field = true;
+            Browser->GetHost()->SendKeyEvent(event);
+        }
+        //Main key up
+        {
+            CefKeyEvent event;
+            event.type = KEYEVENT_KEYUP;
+            event.modifiers = ((IsShift) ? EVENTFLAG_SHIFT_DOWN : EVENTFLAG_NONE)  | ((IsAlt) ? EVENTFLAG_ALT_DOWN : EVENTFLAG_NONE) | ((IsCtrl) ? EVENTFLAG_CONTROL_DOWN : EVENTFLAG_NONE);
+            event.windows_key_code = key;
+            event.native_key_code = -1073741823;
+            event.is_system_key = false;
+            event.character = letter_wchar;
+            event.unmodified_character = letter_wchar;
+            event.focus_on_editable_field = true;
+            Browser->GetHost()->SendKeyEvent(event);
+        }
     }
-    //Main key press
-    if(!is_special_letter)
+    else
     {
-        CefKeyEvent event;
-        event.type = KEYEVENT_CHAR;
-        event.modifiers = ((IsShift) ? EVENTFLAG_SHIFT_DOWN : EVENTFLAG_NONE)  | ((IsAlt) ? EVENTFLAG_ALT_DOWN : EVENTFLAG_NONE) | ((IsCtrl) ? EVENTFLAG_CONTROL_DOWN : EVENTFLAG_NONE);
-        event.windows_key_code = letter_wchar;
-        event.native_key_code = 0;
-        event.is_system_key = false;
-        event.character = letter_wchar;
-        event.unmodified_character = letter_wchar;
-        event.focus_on_editable_field = true;
-        Browser->GetHost()->SendKeyEvent(event);
-    }
-    //Main key up
-    {
-        CefKeyEvent event;
-        event.type = KEYEVENT_KEYUP;
-        event.modifiers = ((IsShift) ? EVENTFLAG_SHIFT_DOWN : EVENTFLAG_NONE)  | ((IsAlt) ? EVENTFLAG_ALT_DOWN : EVENTFLAG_NONE) | ((IsCtrl) ? EVENTFLAG_CONTROL_DOWN : EVENTFLAG_NONE);
-        event.windows_key_code = key;
-        event.native_key_code = -1073741823;
-        event.is_system_key = false;
-        event.character = letter_wchar;
-        event.unmodified_character = letter_wchar;
-        event.focus_on_editable_field = true;
-        Browser->GetHost()->SendKeyEvent(event);
+        CefMouseEvent e;
+        e.x = mousex;
+        e.y = mousey;
+        int deltay = (ismouseup) ? 100 : -100;
+        Browser->GetHost()->SendMouseWheelEvent(e,0,deltay);
     }
 
     text_whcar.erase(text_whcar.begin(),text_whcar.begin() + character_length);

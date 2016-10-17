@@ -1,5 +1,6 @@
 _L = 
 {
+	"Emulate mouse movements" :{"ru": "Эмулировать движения мыши"},
 	"Settings" :{"ru": "Настройки"},
 	"Top Panel Height (pixels)" :{"ru": "Высота Верхней Панели (пикселей)"},
 	"Left Panel Width (pixels)" :{"ru": "Ширина Левой Панели (пикселей)"},

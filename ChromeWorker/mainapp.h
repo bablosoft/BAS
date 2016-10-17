@@ -85,6 +85,7 @@ class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderP
     std::string SetNextActionId;
 
     int TypeTextDelay;
+    int TypeTextDelayCurrent;
     clock_t TypeTextLastTime;
 
     void InitBrowser();
@@ -104,6 +105,8 @@ class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderP
 
 
     std::string Lang;
+
+    int RunElementCommandCallbackOnNextTimer;
 
 public:
     MainApp();

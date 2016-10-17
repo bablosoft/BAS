@@ -161,7 +161,9 @@ sms_reg_used()!
 wait_url(url)!
 wait_load(url)!
 wait_content(content)!
+wait_content_visible(content)!
 wait_css(css)!
+wait_css_visible(css)!
 wait_memory(memory_size_kb)!
 wait(func_success,func_fail)!
 new_browser()!
@@ -210,6 +212,7 @@ xml()!
 text()!
 click()!
 system_click()!
+random_point()!
 clear()!
 type(text,interval)!
 fill(text)!

@@ -81,6 +81,16 @@
 	    </div>
 	  </div>
 
+	  <div class="form-group" style="margin-top:20px">
+	    <div class="col-sm-offset-5 col-sm-7">
+	      <div class="checkbox">
+	        <label>
+	          <input type="checkbox" id="UseHumanLikeMouseMoves"> <span class="tr">Emulate mouse movements</span>
+	        </label>
+	      </div>
+	    </div>
+	  </div>
+
 	</div>
 </div>
 
@@ -116,6 +126,8 @@
 		$("#SkipFrames").val(json["skip_frames"])
 		$("#ForceUTF8Encoding").prop("checked",json["force_utf8"])
 		$("#RestartBrowserProcessOnThreadStart").prop("checked",json["restart"])
+		$("#UseHumanLikeMouseMoves").prop("checked",json["emulatemouse"])
+		
 
 		$("#defaults").click(function(event){
     		event.preventDefault();
@@ -123,10 +135,10 @@
 			$("#LeftPanelWidth").val("500")
 			$("#Zoom").val("100")
 			$("#EnableFlash").prop("checked",false)
-			$("#SkipFrames").val("74")
+			$("#SkipFrames").val("1")
 			$("#ForceUTF8Encoding").prop("checked",true)
 			$("#RestartBrowserProcessOnThreadStart").prop("checked",false)
-
+			$("#UseHumanLikeMouseMoves").prop("checked",true)
     	})
 
     	$("#close, #cancel").click(function(event){
@@ -144,7 +156,8 @@
 	    			"use_flash": $("#EnableFlash").prop("checked"),
 	    			"skip_frames": parseInt($("#SkipFrames").val()),
 	    			"force_utf8": $("#ForceUTF8Encoding").prop("checked"),
-	    			"restart": $("#RestartBrowserProcessOnThreadStart").prop("checked")
+	    			"restart": $("#RestartBrowserProcessOnThreadStart").prop("checked"),
+	    			"emulatemouse": $("#UseHumanLikeMouseMoves").prop("checked")
 	    		}
     		));
 

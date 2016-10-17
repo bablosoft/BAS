@@ -11,12 +11,13 @@ settings::settings()
 {
     use_flash = false;
     force_utf8 = true;
-    skip_frames = 74;
+    skip_frames = 1;
     toolbox_height = 250;
     scenario_width = 500;
     zoom = 100;
     maximized = false;
     restart = false;
+    emulate_mouse = true;
     std::ifstream fin("settings_worker.ini");
     if(fin.is_open())
     {
@@ -65,9 +66,18 @@ settings::settings()
             {
                 restart = true;
             }
+            if(line.find("UseHumanLikeMouseMoves=false") != std::string::npos)
+            {
+                emulate_mouse = false;
+            }
         }
     }
     fin.close();
+}
+
+bool settings::EmulateMouse()
+{
+    return emulate_mouse;
 }
 
 bool settings::UseFlash()
@@ -126,6 +136,7 @@ void settings::SaveToFile()
             outfile<<"Zoom="<<zoom<<std::endl;
             outfile<<"IsMaximized="<<((maximized) ? "true" : "false")<<std::endl;
             outfile<<"Restart="<<((restart) ? "true" : "false")<<std::endl;
+            outfile<<"UseHumanLikeMouseMoves="<<((emulate_mouse) ? "true" : "false")<<std::endl;
 
         }
     }catch(...)
@@ -144,6 +155,7 @@ std::string settings::Serialize()
     res["scenario_width"] = picojson::value((double)scenario_width);
     res["zoom"] = picojson::value((double)zoom);
     res["restart"] = picojson::value(restart);
+    res["emulatemouse"] = picojson::value(emulate_mouse);
     return picojson::value(res).serialize();
 }
 
@@ -162,6 +174,7 @@ void settings::Deserialize(const std::string & Data)
         scenario_width = o["scenario_width"].get<double>();
         zoom = o["zoom"].get<double>();
         restart = o["restart"].get<bool>();
+        emulate_mouse = o["emulatemouse"].get<bool>();
 
         if(toolbox_height < 100)
             toolbox_height = 100;

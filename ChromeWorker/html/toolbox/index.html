@@ -373,6 +373,8 @@
         <button type="button" class="btn btn-default specialletter btn-xs">SNAPSHOT</button>
         <button type="button" class="btn btn-default specialletter btn-xs">INSERT</button>
         <button type="button" class="btn btn-default specialletter btn-xs">DELETE</button>
+        <button type="button" class="btn btn-default specialletter btn-xs">MOUSESCROLLUP</button>
+        <button type="button" class="btn btn-default specialletter btn-xs">MOUSESCROLLDOWN</button>
       </div>
   </script>
 
@@ -1044,7 +1046,7 @@
         </form>
       </div>
 
-      <%= _.template($('#input_constructor').html())({id:"PostData", description:tr("Post Data"), default_selector: "expression", disable_int:true, disable_string:true}) %>
+      <%= _.template($('#input_constructor').html())({id:"PostDataArray", description:tr("Post Data"), default_selector: "expression", disable_int:true, disable_string:true}) %>
 
       
       <div class="col-xs-12">
@@ -1473,6 +1475,9 @@
           </div>
 
         <div class="tooltipinternal tr">Wait while matching query element exists on page.</div>
+        <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
+          <input type="checkbox" id="Check"/> <label for="Check" class="tr">Also check if visible on a screen</label>
+        </span>
       </div>
       <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Wait While Element Exists")}) %>
     </span>
@@ -2177,8 +2182,12 @@
       /*Browser*/
       <%= waiter %>
       <% if(!disableemulation){ %>
-        <%= path %>.move()!
-        <%= path %>.type(<%= text %>,<%= interval %>)!
+        <%= path %>.random_point()!
+        X = parseInt(_result().split(",")[0])
+        Y = parseInt(_result().split(",")[1])
+        move(X,Y)!
+        mouse(X,Y)!
+        page().type(<%= text %>,<%= interval %>)!
       <% }else{ %>
         <%= path %>.script("self.value=(" + JSON.stringify(<%= text %>) + ")")!
       <% } %>
@@ -2187,15 +2196,22 @@
   <script type="text/template" id="clear_code">
       /*Browser*/
       <%= waiter %>
-      <%= path %>.move()!
-      <%= path %>.clear()!
+      <%= path %>.random_point()!
+      X = parseInt(_result().split(",")[0])
+      Y = parseInt(_result().split(",")[1])
+      move(X,Y)!
+      mouse(X,Y)!
+      page().type("<CONTROL>a<DELETE>")!
   </script>
 
   <script type="text/template" id="clickelement_code">
       /*Browser*/
       <%= waiter %>
       <% if(!disableemulation){ %>
-        <%= path %>.system_click()!
+        <%= path %>.random_point()!
+        X = parseInt(_result().split(",")[0])
+        Y = parseInt(_result().split(",")[1])
+        mouse(X,Y)!
       <% }else{ %>
         <%= path %>.script("self.click()")!
       <% } %>
@@ -2204,8 +2220,11 @@
   <script type="text/template" id="check_code">
       /*Browser*/
       <%= waiter %>
-      <%= path %>.move()!
-      <%= path %>.check()!
+      <%= path %>.random_point()!
+      X = parseInt(_result().split(",")[0])
+      Y = parseInt(_result().split(",")[1])
+      move(X,Y)!
+      mouse(X,Y)!
   </script>
 
   <script type="text/template" id="focus_code">
@@ -2226,15 +2245,21 @@
   <script type="text/template" id="moveelement_code">
       /*Browser*/
       <%= waiter %>
-      <%= path %>.move()!
+      <%= path %>.random_point()!
+      X = parseInt(_result().split(",")[0])
+      Y = parseInt(_result().split(",")[1])
+      move(X,Y)!
   </script>
 
   <script type="text/template" id="moveandclickelement_code">
       /*Browser*/
       <%= waiter %>
       <% if(!disableemulation){ %>
-        <%= path %>.move()!
-        <%= path %>.system_click()!
+        <%= path %>.random_point()!
+        X = parseInt(_result().split(",")[0])
+        Y = parseInt(_result().split(",")[1])
+        move(X,Y)!
+        mouse(X,Y)!
       <% }else{ %>
         <%= path %>.script("self.click()")!
       <% } %>
@@ -2243,15 +2268,21 @@
   <script type="text/template" id="dragelement_code">
       /*Browser*/
       <%= waiter %>
-      <%= path %>.move()!
-      <%= path %>.system_click_down()!
+      <%= path %>.random_point()!
+      X = parseInt(_result().split(",")[0])
+      Y = parseInt(_result().split(",")[1])
+      move(X,Y)!
+      mouse_down(X,Y)!
   </script>
 
   <script type="text/template" id="dropelement_code">
       /*Browser*/
       <%= waiter %>
-      <%= path %>.move()!
-      <%= path %>.system_click_up()!
+      <%= path %>.random_point()!
+      X = parseInt(_result().split(",")[0])
+      Y = parseInt(_result().split(",")[1])
+      move(X,Y)!
+      mouse_up(X,Y)!
   </script>
 
   <script type="text/template" id="text_code">
@@ -2341,7 +2372,7 @@
   </script>
 
   <script type="text/template" id="incvariable_code">
-      <%= variable_name %> += parseInt(<%= variable_value %>)
+      <%= variable_name %> = parseInt(<%= variable_name %>) + parseInt(<%= variable_value %>)
   </script>
 
   <script type="text/template" id="resource_code">
@@ -2988,15 +3019,15 @@
         var Name = GetInputConstructorValue("PostName",loader)["updated"]
         var Value = GetInputConstructorValue("PostValue",loader)["updated"]
 
-        var Data = $("#PostData").val()
+        var Data = $("#PostDataArray").val()
         if(Name.length > 0 && Value.length > 0)
         {
           if(Data.length === 0)
           {
-            $("#PostData").val(Name  + ":" + Value);
+            $("#PostDataArray").val(Name  + "," + Value);
           }else
           {
-            $("#PostData").val(Data + "," + Name  + ":" + Value)
+            $("#PostDataArray").val(Data + "," + Name  + "," + Value)
           }
           $("#PostName").val("")
           $("#PostValue").val("")
@@ -3398,8 +3429,9 @@
 
           }else if(State == "waitelement")
           {
+             var CheckIsvisible = $("#Check").is(':checked')
              try{
-              var path = GetPath(loader,true)
+              var path = GetPath(loader,true,CheckIsvisible)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({waiter: path["waiter"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
@@ -3738,7 +3770,7 @@
             var Encoding = GetInputConstructorValue("Encoding",loader)
             var Method = GetInputConstructorValue("Method",loader)
             var ContentType = GetInputConstructorValue("ContentType",loader)
-            var PostData = GetInputConstructorValue("PostData",loader)
+            var PostDataArray = GetInputConstructorValue("PostDataArray",loader)
             
 
             if(Value["original"].length <= 0)
@@ -3774,7 +3806,7 @@
                 contenttype:ContentType["updated"],
                 encoding:Encoding["updated"],
                 method:Method["updated"],
-                params:"{" + PostData["updated"] + "}"
+                params:"[" + PostDataArray["updated"] + "]"
               })
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
@@ -4976,7 +5008,7 @@
             }
 
             try{
-              var path = GetPath(loader)
+              var path = GetPath(loader,false,true)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({text:TypeData["updated"],interval:TypeInterval["updated"],path: path["path"],waiter: path["waiter"], disableemulation: Check}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
@@ -4995,7 +5027,7 @@
             }
 
             try{
-              var path = GetPath(loader)
+              var path = GetPath(loader,false,true)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({set:Value["updated"],path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
@@ -5014,7 +5046,7 @@
             }
 
             try{
-              var path = GetPath(loader)
+              var path = GetPath(loader,false,true)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({set:Value["updated"],path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
@@ -5025,7 +5057,7 @@
           {
 
             try{
-              var path = GetPath(loader)
+              var path = GetPath(loader,false,true)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
@@ -5193,7 +5225,7 @@
              var Check = $("#Check").is(':checked')
 
              try{
-              var path = GetPath(loader)
+              var path = GetPath(loader,false,true)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"], disableemulation: Check}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
@@ -5202,7 +5234,7 @@
           }else if(State == "check")
           {
              try{
-              var path = GetPath(loader)
+              var path = GetPath(loader,false,true)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
@@ -5220,7 +5252,7 @@
           }else if(State == "moveelement")
           {
              try{
-              var path = GetPath(loader)
+              var path = GetPath(loader,false,true)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
@@ -5230,7 +5262,7 @@
           else if(State == "dragelement")
           {
              try{
-              var path = GetPath(loader)
+              var path = GetPath(loader,false,true)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
@@ -5240,7 +5272,7 @@
           else if(State == "dropelement")
           {
              try{
-              var path = GetPath(loader)
+              var path = GetPath(loader,false,true)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
@@ -5251,7 +5283,7 @@
             var Check = $("#Check").is(':checked')
 
              try{
-              var path = GetPath(loader)
+              var path = GetPath(loader,false,true)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"], disableemulation: Check}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
@@ -5260,7 +5292,7 @@
           }else if(State == "clear")
           {
              try{
-              var path = GetPath(loader)
+              var path = GetPath(loader,false,true)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
@@ -6739,7 +6771,7 @@
         return {"updated" : ResTextUpdated, "original" : ResText}
     }
 
-    function GetPath(loader, need_all)
+    function GetPath(loader, need_all, need_visible)
     {
       var current = _SelectorModel.get("current")
       if(current == "none")
@@ -6749,11 +6781,11 @@
       var raw_original = $("#selector-input").val()
       var index = ""
 
-      var index_match = raw_not_escaped.match(/\s*\<\s*([^\>]+)\s*\>\s*$/)
+      var index_match = raw_not_escaped.match(/\s*\<\s*([^\>\<]+)\s*\>\s*$/)
       if(index_match)
       {
         index = index_match[1]
-        raw_not_escaped = raw_not_escaped.replace(/\<\s*([^\>]+)\s*\>\s*$/,"")
+        raw_not_escaped = raw_not_escaped.replace(/\<\s*([^\>\<]+)\s*\>\s*$/,"")
       }
 
       loader.SetIsString(true)
@@ -6769,7 +6801,7 @@
       {
         var path = "css"
 
-        if(index.length > 0 || typeof(need_all) != "undefined")
+        if(index.length > 0 || (typeof(need_all) != "undefined" && need_all))
           path = "all"
 
         path += "(" + raw + ")"
@@ -6777,14 +6809,20 @@
         if(index.length > 0)
           path += ".at(" + index + ")"
 
-        return {path:path,waiter:"wait_css(" + raw + ")!",raw:"css " + raw_not_escaped, querycss: je(raw_original), querycss2: je(_SelectorModel.get("css2")), querycss3: je(_SelectorModel.get("css3")), querymatch: je(_SelectorModel.get("match"))}
+        var waiter_func_name = "wait_css";
+        if((typeof(need_visible) != "undefined" && need_visible))
+        {
+          waiter_func_name = "wait_css_visible"
+        }
+
+        return {path:path,waiter: waiter_func_name + "(" + raw + ")!",raw:"css " + raw_not_escaped, querycss: je(raw_original), querycss2: je(_SelectorModel.get("css2")), querycss3: je(_SelectorModel.get("css3")), querymatch: je(_SelectorModel.get("match"))}
       }
 
       if(current == "match")
       {
         var path = "match"
 
-        if(index.length > 0 || typeof(need_all) != "undefined")
+        if(index.length > 0 || (typeof(need_all) != "undefined" && need_all))
           path = "match_all"
 
         path += "(" + raw + ")"
@@ -6792,7 +6830,12 @@
         if(index.length > 0)
           path += ".at(" + index + ")"
 
-        return {path:path,waiter:"wait_content(" + raw + ")!", raw:"match " + raw_not_escaped, querycss: je(_SelectorModel.get("css")), querycss2: je(_SelectorModel.get("css2")), querycss3: je(_SelectorModel.get("css3")), querymatch: je(raw_original)}
+        var waiter_func_name = "wait_content";
+        if((typeof(need_visible) != "undefined" && need_visible))
+        {
+          waiter_func_name = "wait_content_visible"
+        }
+        return {path:path,waiter: waiter_func_name + "(" + raw + ")!", raw:"match " + raw_not_escaped, querycss: je(_SelectorModel.get("css")), querycss2: je(_SelectorModel.get("css2")), querycss3: je(_SelectorModel.get("css3")), querymatch: je(raw_original)}
       }
 
       if(current == "at")

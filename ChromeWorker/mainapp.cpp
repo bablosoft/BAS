@@ -46,6 +46,8 @@ MainApp::MainApp()
     NeedRenderNextFrame = false;
     SkipBeforeRenderNextFrame = 0;
     Speed = 15.0f;
+    RunElementCommandCallbackOnNextTimer = -1;
+    TypeTextDelayCurrent = 0;
 
 }
 
@@ -1261,6 +1263,7 @@ void MainApp::SetNextActionCallback(const std::string& NextActionId)
 void MainApp::ElementCommandCallback(const ElementCommand &Command)
 {
     worker_log(std::string("ElementCommandCallback<<"));
+    RunElementCommandCallbackOnNextTimer = -1;
     LastCommand = Command;
     IsLastCommandNull = false;
     if(_HandlersManager->GetBrowser())
@@ -1268,29 +1271,29 @@ void MainApp::ElementCommandCallback(const ElementCommand &Command)
         std::string script;
         if(Command.CommandName == "xml")
         {
-            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");var res = '';if(el){res = el.outerHTML}browser_automation_studio_result(res);}");
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};var res = '';if(el){res = el.outerHTML}browser_automation_studio_result(res);}");
         }else if(Command.CommandName == "text")
         {
-            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");var res = '';try{if(el){if(el.tagName.toLowerCase()=='input'||el.tagName.toLowerCase()=='textarea')res=el.value;else res=el.textContent}}catch(e){}browser_automation_studio_result(res);}");
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};var res = '';try{if(el){if(el.tagName.toLowerCase()=='input'||el.tagName.toLowerCase()=='textarea')res=el.value;else res=el.textContent}}catch(e){}browser_automation_studio_result(res);}");
         }else if(Command.CommandName == "script")
         {
             std::string script_escaped = picojson::value(LastCommand.CommandParam1).serialize();
-            script = std::string("{var self = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");var obj=null;try{obj = eval(") + script_escaped + std::string(");}catch(e){}var res='';if(typeof(obj)!='undefined'&&obj !== null){res=obj.toString()}browser_automation_studio_result(res);}");
+            script = std::string("{var self = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!self){browser_automation_studio_result('BAS_NOT_EXISTS');return;};var obj=null;try{obj = eval(") + script_escaped + std::string(");}catch(e){}var res='';if(typeof(obj)!='undefined'&&obj !== null){res=obj.toString()}browser_automation_studio_result(res);}");
         }else if(Command.CommandName == "click")
         {
             BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
-            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(el)el.click();browser_automation_studio_result('');}");
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};if(el)el.click();browser_automation_studio_result('');}");
         }else if(Command.CommandName == "system_click" || Command.CommandName == "check" || Command.CommandName == "system_click_down" || Command.CommandName == "system_click_up")
         {
-            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2);}else browser_automation_studio_result('');}");
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2);}else browser_automation_studio_result('');}");
         }else if(Command.CommandName == "move")
         {
-            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2);}else browser_automation_studio_result('');}");
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2);}else browser_automation_studio_result('');}");
         }else if(Command.CommandName == "fill")
         {
             BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
             std::string text_escaped = picojson::value(LastCommand.CommandParam1).serialize();
-            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(el){el.value = ") + text_escaped + std::string("};browser_automation_studio_result('');}");
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};if(el){el.value = ") + text_escaped + std::string("};browser_automation_studio_result('');}");
         }else if(Command.CommandName == "type")
         {
             BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
@@ -1298,7 +1301,7 @@ void MainApp::ElementCommandCallback(const ElementCommand &Command)
             TypeTextDelay = std::stoi(LastCommand.CommandParam2);
             if(LastCommand.Path.size()>0)
             {
-                script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2);}else browser_automation_studio_result('');}");
+                script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2);}else browser_automation_studio_result('');}");
             }
             else
             {
@@ -1314,7 +1317,7 @@ void MainApp::ElementCommandCallback(const ElementCommand &Command)
             TypeTextDelay = 100;
             if(LastCommand.Path.size()>0)
             {
-                script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2);}else browser_automation_studio_result('');}");
+                script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2);}else browser_automation_studio_result('');}");
             }
             else
             {
@@ -1328,11 +1331,11 @@ void MainApp::ElementCommandCallback(const ElementCommand &Command)
             script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");var res;if(el)res='1';else res='0';browser_automation_studio_result(res);}");
         }else if(Command.CommandName == "submit")
         {
-            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(el)el.submit();browser_automation_studio_result('');}");
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};if(el)el.submit();browser_automation_studio_result('');}");
         }else if(Command.CommandName == "style")
         {
             std::string style_escaped = picojson::value(LastCommand.CommandParam1).serialize();
-            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");var res='';if(el)res=window.getComputedStyle(el)[") + style_escaped + std::string("];browser_automation_studio_result(res);}");
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};var res='';if(el)res=window.getComputedStyle(el)[") + style_escaped + std::string("];browser_automation_studio_result(res);}");
         }
         else if(Command.CommandName == "set")
         {
@@ -1348,7 +1351,7 @@ void MainApp::ElementCommandCallback(const ElementCommand &Command)
                     "}"
                     "keys += \"<<RETURN>>\";}"
                      );
-            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");var keys='';if(el){") + proc + std::string("}browser_automation_studio_result(keys);}");
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};var keys='';if(el){") + proc + std::string("}browser_automation_studio_result(keys);}");
 
         }else if(Command.CommandName == "set_integer")
         {
@@ -1361,7 +1364,7 @@ void MainApp::ElementCommandCallback(const ElementCommand &Command)
                     "}"
                     "keys += \"<<RETURN>>\";}"
                      );
-            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");var keys='';if(el){") + proc + std::string("}browser_automation_studio_result(keys);}");
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};var keys='';if(el){") + proc + std::string("}browser_automation_studio_result(keys);}");
 
         }else if(Command.CommandName == "set_random")
         {
@@ -1377,28 +1380,51 @@ void MainApp::ElementCommandCallback(const ElementCommand &Command)
                     "}"
                     "keys += \"<<RETURN>>\";}"
                      );
-            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");var keys='';if(el){") + proc + std::string("}browser_automation_studio_result(keys);}");
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};var keys='';if(el){") + proc + std::string("}browser_automation_studio_result(keys);}");
+        }else if(Command.CommandName == "random_point")
+        {
+            std::string get_point;
+            if(Settings->EmulateMouse())
+            {
+                get_point = std::string("var x=0;for(var i=0;i<10;i++){x+=Math.random()*((rect.right-2-rect.left+1)/10);};x=Math.floor(x)+rect.left+1;if(x>rect.right-1)x=rect.right-1;if(x<rect.left+1)x=rect.left+1;"
+                                        "var y=0;for(var i=0;i<10;i++){y+=Math.random()*((rect.bottom-2-rect.top+1)/10);};y=Math.floor(y)+rect.top+1;if(y>rect.bottom-1)y=rect.bottom-1;if(y<rect.top+1)y=rect.top+1;");
+            }else
+            {
+                get_point = std::string("var x=Math.floor((rect.right + rect.left)/2);"
+                                        "var y=Math.floor((rect.bottom + rect.top)/2);");
+            }
+            script = std::string("{"
+                                 "var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");"
+                                 "if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;}"
+                                 "var items=el.getClientRects();"
+                                 "var rect=items[Math.floor(Math.random()*items.length)];")
+                                 + get_point +
+                                 std::string("x+=document.body.scrollLeft;"
+                                 "y+=document.body.scrollTop;"
+                                 "var res=x+','+y;"
+                                 "browser_automation_studio_result(res);}");
         }else if(Command.CommandName == "attr")
         {
             std::string attr_escaped = picojson::value(LastCommand.CommandParam1).serialize();
-            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");var res='';var attr=") + attr_escaped + std::string(";if(el){if(el.hasAttribute(attr))res=el.getAttribute(attr);}browser_automation_studio_result(res);}");
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};var res='';var attr=") + attr_escaped + std::string(";if(el){if(el.hasAttribute(attr))res=el.getAttribute(attr);}browser_automation_studio_result(res);}");
         }else if(Command.CommandName == "set_attr")
         {
             std::string attr_escaped = picojson::value(LastCommand.CommandParam1).serialize();
             std::string val_escaped = picojson::value(LastCommand.CommandParam2).serialize();
-            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");var attr=") + attr_escaped + std::string(";var val=") + val_escaped + std::string(";if(el){if(val.length === 0)el.removeAttribute(attr);else el.setAttribute(attr,val);}browser_automation_studio_result('');}");
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};var attr=") + attr_escaped + std::string(";var val=") + val_escaped + std::string(";if(el){if(val.length === 0)el.removeAttribute(attr);else el.setAttribute(attr,val);}browser_automation_studio_result('');}");
         }else if(Command.CommandName == "length")
         {
-            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");var res = '';if(el){res = el.length;}browser_automation_studio_result(res);}");
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};var res = '';if(el){res = el.length;}browser_automation_studio_result(res);}");
         }else if(Command.CommandName == "render_base64")
         {
-            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2, el);}else browser_automation_studio_result('');}");
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2, el);}else browser_automation_studio_result('');}");
         }else if(Command.CommandName == "focus")
         {
-            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2, el);}else browser_automation_studio_result('');}");
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2, el);}else browser_automation_studio_result('');}");
         }
         if(!script.empty())
         {
+            script = std::string("(function(){") + script + std::string("})()");
             worker_log(std::string("EXEC<<") + script);
             if(Command.FrameId.empty())
                 _HandlersManager->GetBrowser()->GetMainFrame()->ExecuteJavaScript(script.c_str(),_HandlersManager->GetBrowser()->GetMainFrame()->GetURL(), 0);
@@ -1448,6 +1474,17 @@ void MainApp::CefMessageLoop()
 
 void MainApp::Timer()
 {
+    if(RunElementCommandCallbackOnNextTimer >= 0)
+    {
+        if(RunElementCommandCallbackOnNextTimer == 0)
+        {
+            ElementCommandCallback(LastCommand);
+        }else
+        {
+            RunElementCommandCallbackOnNextTimer --;
+        }
+    }
+
     ExecuteTypeText();
 
     ExecuteMouseMove();
@@ -1797,7 +1834,10 @@ void MainApp::HandleMainBrowserEvents()
 
         worker_log(std::string("Command<<") + LastCommand.CommandName + std::string("<<") + std::to_string(LastCommand.StageId));
 
-        if(LastCommand.CommandName == std::string("_mouseclick") || LastCommand.CommandName == std::string("_mouseclickup") || LastCommand.CommandName == std::string("_mouseclickdown"))
+        if(res.first == "BAS_NOT_EXISTS")
+        {
+            RunElementCommandCallbackOnNextTimer = 10;
+        }else  if(LastCommand.CommandName == std::string("_mouseclick") || LastCommand.CommandName == std::string("_mouseclickup") || LastCommand.CommandName == std::string("_mouseclickdown"))
         {
 
 
@@ -1862,6 +1902,11 @@ void MainApp::HandleMainBrowserEvents()
                 v8handler->SetResultProcessed();
                 BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
                 IsMouseMoveSimulation = true;
+                if(Settings->EmulateMouse())
+                {
+                    int t1,t2;
+                    BrowserEventsEmulator::MouseMove(_HandlersManager->GetBrowser(), IsMouseMoveSimulation, MouseStartX, MouseStartY, MouseEndX, MouseEndY, t1, t2, 0, 0, 0, 0, 0, 0, true, true);
+                }
             }
         }else if(LastCommand.CommandName == std::string("_scroll"))
         {
@@ -2067,6 +2112,11 @@ void MainApp::HandleMainBrowserEvents()
                 MouseEndX = x - Data->ScrollX;
                 MouseEndY = y - Data->ScrollY;
                 IsMouseMoveSimulation = true;
+                if(Settings->EmulateMouse())
+                {
+                    int t1,t2;
+                    BrowserEventsEmulator::MouseMove(_HandlersManager->GetBrowser(), IsMouseMoveSimulation, MouseStartX, MouseStartY, MouseEndX, MouseEndY, t1, t2, 0, 0, 0, 0, 0, 0, true,true);
+                }
             }
 
         }
@@ -2116,7 +2166,7 @@ void MainApp::HandleMainBrowserEvents()
             TypeText = res.first;
             TypeTextDelay = 30;
             LastCommand.StageId = 1;
-            std::string script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2);}else browser_automation_studio_result('');}");
+            std::string script = std::string("(function(){var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};if(el){var rect = el.getBoundingClientRect();BrowserAutomationStudio_ScrollToRelative(rect.left + rect.width/2,rect.top + rect.height/2);}else browser_automation_studio_result('');})()");
             if(!script.empty())
             {
                 worker_log(std::string("EXEC<<") + script);
@@ -2171,7 +2221,11 @@ void MainApp::ExecuteMouseMove()
 
     int CursorX = Data->CursorX;
     int CursorY = Data->CursorY;
-    BrowserEventsEmulator::MouseMove(_HandlersManager->GetBrowser(), IsMouseMoveSimulation, MouseStartX, MouseStartY, MouseEndX, MouseEndY , CursorX, CursorY, Speed, Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser);
+
+    if(Settings->EmulateMouse())
+        BrowserEventsEmulator::MouseMove(_HandlersManager->GetBrowser(), IsMouseMoveSimulation, MouseStartX, MouseStartY, MouseEndX, MouseEndY , CursorX, CursorY, Speed, Data->WidthBrowser, Data->HeightBrowser, 6.0f, 2.5f, 15.0f, false, true);
+    else
+        BrowserEventsEmulator::MouseMoveLine(_HandlersManager->GetBrowser(), IsMouseMoveSimulation, MouseStartX, MouseStartY, MouseEndX, MouseEndY , CursorX, CursorY, Speed, Data->WidthBrowser, Data->HeightBrowser);
     Data->CursorX = CursorX;
     Data->CursorY = CursorY;
 
@@ -2192,7 +2246,7 @@ void MainApp::ExecuteTypeText()
     if(!TypeTextTaskIsActive)
         return;
     clock_t CurrentTime = clock();
-    if(!TypeTextIsFirstLetter && float( CurrentTime - TypeTextLastTime ) /  CLOCKS_PER_SEC < (float)TypeTextDelay / 1000.0f)
+    if(!TypeTextIsFirstLetter && float( CurrentTime - TypeTextLastTime ) /  CLOCKS_PER_SEC < (float)TypeTextDelayCurrent / 1000.0f)
         return;
     TypeTextLastTime = CurrentTime;
 
@@ -2202,11 +2256,44 @@ void MainApp::ExecuteTypeText()
         BrowserEventsEmulator::MouseClick(_HandlersManager->GetBrowser(),TypeTextX,TypeTextY,GetScrollPosition());
         worker_log(std::string("TypeTextIsFirstLetter<<") + std::to_string(TypeTextX) + std::string("<<") + std::to_string(TypeTextY));
         TypeTextIsFirstLetter = false;
+        if(TypeTextDelay == 0)
+        {
+            while(true)
+            {
+                BrowserEventsEmulator::Key(_HandlersManager->GetBrowser(),TypeText,TypeTextState,Data->CursorX,Data->CursorY);
+                if(TypeText.length() == 0 && TypeTextState.IsClear())
+                {
+                    TypeTextTaskIsActive = false;
+                    FinishedLastCommand("");
+                    return;
+                }
+            }
+        }else
+        {
+            TypeTextDelayCurrent = TypeTextDelay + (rand()) % ((int)(TypeTextDelay * 1.6)) - (int)(TypeTextDelay * 0.8);
+        }
         return;
     }
 
-    //Print letter
-    BrowserEventsEmulator::Key(_HandlersManager->GetBrowser(),TypeText,TypeTextState);
+    if(TypeTextDelay == 0)
+    {
+        //Print all letters
+        while(true)
+        {
+            BrowserEventsEmulator::Key(_HandlersManager->GetBrowser(),TypeText,TypeTextState,Data->CursorX,Data->CursorY);
+            if(TypeText.length() == 0 && TypeTextState.IsClear())
+            {
+                TypeTextTaskIsActive = false;
+                FinishedLastCommand("");
+                return;
+            }
+        }
+    }else
+    {
+        //Print one letter
+        BrowserEventsEmulator::Key(_HandlersManager->GetBrowser(),TypeText,TypeTextState,Data->CursorX,Data->CursorY);
+        TypeTextDelayCurrent = TypeTextDelay + (rand()) % ((int)(TypeTextDelay * 1.6)) - (int)(TypeTextDelay * 0.8);
+    }
 
     if(TypeText.length() == 0 && TypeTextState.IsClear())
     {

@@ -153,6 +153,12 @@ namespace BrowserAutomationStudioFramework
                 xmlReader.readNext();
                 Worker->SetAsyncResult(QScriptValue(xmlReader.text().toString().toInt()));
                 emit length();
+            }else if(xmlReader.name() == "random_point" && token == QXmlStreamReader::StartElement)
+            {
+                xmlReader.readNext();
+                QString r = xmlReader.text().toString();
+                Worker->SetAsyncResult(QScriptValue(r));
+                emit random_point();
             }else if(xmlReader.name() == "render_file" && token == QXmlStreamReader::StartElement)
             {
                 emit render_file();
@@ -228,6 +234,15 @@ namespace BrowserAutomationStudioFramework
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(text()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(CreateXmlElement("text"));
     }
+
+    void SubprocessWebElement::random_point(const QString& callback)
+    {
+        Worker->SetScript(PrepareCallback(callback));
+        Worker->SetFailMessage(tr("Timeout during ") + QString("random point") + GetSelectorString());
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(random_point()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(CreateXmlElement("random_point"));
+    }
+
     void SubprocessWebElement::script(const QString& javascript, const QString& callback)
     {
         Worker->SetScript(PrepareCallback(callback));

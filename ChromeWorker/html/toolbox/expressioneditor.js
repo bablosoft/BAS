@@ -455,12 +455,12 @@
                 
                 /* Array */
                 {name: "empty array", description: "Creates empty array", code: "[]", params: []},
-                {name: "create array", description: "Creates array with single element", code: "[<<0>>]", params: [{name: "element"}]},
-                {name: "array push", description: "Add value to the end of array", code: "(<<0>>).concat([<<1>>])", params: [{name: "array"}, {name: "value"}]},
+                {name: "create array", description: "Creates array with single element", code: "[ <<0>> ]", params: [{name: "element"}]},
+                {name: "array push", description: "Add value to the end of array", code: "(<<0>>).concat([ <<1>> ])", params: [{name: "array"}, {name: "value"}]},
                 {name: "array concat", description: "Concat several arrays", code: "(<<0>>).concat(<<1>>)", params: [{name: "array1"}, {name: "array2"}]},
-                {name: "array insert", description: "Add value to specific place of array", code: "(<<0>>).slice(0,<<2>>).concat([<<1>>].concat((<<0>>).slice(<<2>>,(<<0>>).length)))", params: [{name: "array"}, {name: "value"}, {name: "index"}]},
+                {name: "array insert", description: "Add value to specific place of array", code: "(<<0>>).slice(0,<<2>>).concat([ <<1>> ].concat((<<0>>).slice(<<2>>,(<<0>>).length)))", params: [{name: "array"}, {name: "value"}, {name: "index"}]},
                 {name: "array length", description: "Get array length", code: "(<<0>>).length", params: [{name: "array"}]},
-                {name: "array get index", description: "Get element from array by index", code: "(<<0>>)[<<1>>] || null", params: [{name: "array"}, {name: "index"}]},
+                {name: "array get index", description: "Get element from array by index", code: "(<<0>>)[ <<1>> ] || null", params: [{name: "array"}, {name: "index"}]},
     			{name: "array join", description: "Join array of strings with defined separator", code: "(<<0>>).join(<<1>>)", params: [{name: "array"},{name: "separator"}]},
                 {name: "subarray", description: "Takes subarray from a given array. First param - array, second - first index, third - second index", code: "(<<0>>).slice(<<1>>,<<2>>)", params: [{name: "array"},{name: "index1"},{name: "index2"}]},
 

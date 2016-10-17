@@ -13,12 +13,14 @@ class settings
     int zoom;
     bool maximized;
     bool restart;
+    bool emulate_mouse;
     void SaveToFile();
 public:
     settings();
     bool UseFlash();
     bool ForceUtf8();
     bool Maximized();
+    bool EmulateMouse();
     void SetMaximized(bool Maximized);
     int SkipFrames();
     int ToolboxHeight();

@@ -131,6 +131,104 @@ function wait_memory()
 
 }
 
+function wait_content_visible()
+{
+    var text_success = null;
+    var text_fail = null;
+    var func = null;
+    if(arguments.length === 2)
+    {
+        text_success = arguments[0];
+        func = arguments[1];
+    }else if(arguments.length === 3)
+    {
+        text_success = arguments[0];
+        text_fail = arguments[1];
+        func = arguments[2];
+    }else
+    {
+        die("Wrong number of argumetns");
+    }
+
+
+    if(text_fail)
+    {
+        wait(tr("Failed to wait for content ") + text_success,function(){
+            _set_result(false);
+            page().match(_arguments()[0]).exist(function(){
+                _set_result(_result() === 1 || _result() === true);
+            })
+        },
+        function(){
+            _set_result(false);
+            page().match(_arguments()[1]).exist(function(){
+                 _set_result(_result() === 1 || _result() === true);
+            })
+        },[text_success,text_fail],func);
+
+    }else
+    {
+        wait(tr("Failed to wait for content ") + text_success,function(){
+            _set_result(false);
+            page().match(_arguments()).script("document.readyState!='loading' && self.getBoundingClientRect().height > 0 && self.getBoundingClientRect().width > 0&& window.getComputedStyle(self)['display']!='none'&&window.getComputedStyle(self)['visibility'] != 'hidden'",function(){
+                _set_result(_result().indexOf("true")>=0);
+            })
+        },text_success,func);
+    }
+
+
+}
+
+function wait_css_visible()
+{
+    var text_success = null;
+    var text_fail = null;
+    var func = null;
+    if(arguments.length === 2)
+    {
+        text_success = arguments[0];
+        func = arguments[1];
+    }else if(arguments.length === 3)
+    {
+        text_success = arguments[0];
+        text_fail = arguments[1];
+        func = arguments[2];
+    }else
+    {
+        die("Wrong number of arguments");
+    }
+
+
+    if(text_fail)
+    {
+        _set_result(false);
+        wait(tr("Failed to wait for css ") + text_success,function(){
+            _set_result(false);
+            page().css(_arguments()[0]).exist(function(){
+                _set_result(_result() === 1 || _result() === true);
+            })
+        },
+        function(){
+                    _set_result(false);
+                    page().css(_arguments()[1]).exist(function(){
+                         _set_result(_result() === 1 || _result() === true);
+                    })
+        },[text_success,text_fail],func);
+
+    }else
+    {
+        _set_result(false);
+        wait(tr("Failed to wait for css ") + text_success, function(){
+            _set_result(false);
+            page().css(_arguments()).script("document.readyState!='loading' && self.getBoundingClientRect().height > 0 && self.getBoundingClientRect().width > 0&& window.getComputedStyle(self)['display']!='none'&&window.getComputedStyle(self)['visibility'] != 'hidden'",function(){
+               _set_result(_result().indexOf("true")>=0);
+            })
+        },text_success,func);
+    }
+
+}
+
+
 function wait_content()
 {
     var text_success = null;

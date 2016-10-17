@@ -26,6 +26,7 @@ namespace BrowserAutomationStudioFramework
         virtual void RunScriptAsync(const QString& javascript, const QObject *object_success,const char * slot_success) = 0;
         virtual void click(const QString& callback) = 0;
         virtual void move(const QString& callback) = 0;
+        virtual void random_point(const QString& callback) = 0;
         virtual void system_click(const QString& callback) = 0;
         virtual void system_click_up(const QString& callback) = 0;
         virtual void system_click_down(const QString& callback) = 0;
