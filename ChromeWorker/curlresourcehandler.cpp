@@ -354,6 +354,14 @@ bool CurlResourceHandler::ProcessRequest(CefRefPtr<CefRequest> request, CefRefPt
         {
             RequestHeadersNew[Header.first] = Header.second;
         }
+
+        if(_BrowserData->_Headers.find("Referer")!=_BrowserData->_Headers.end())
+        {
+            _BrowserData->_NextReferrer = _BrowserData->_Headers["Referer"];
+        }
+
+        _BrowserData->_Headers.erase("Referer");
+        _BrowserData->_Headers.erase("referer");
     }
 
     CefRefPtr<CefPostData> PostData = request->GetPostData();

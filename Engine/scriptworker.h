@@ -56,7 +56,8 @@ namespace BrowserAutomationStudioFramework
         IModuleManager *ModuleManager;
 
 
-        IHttpClient* HttpClient;
+        IHttpClient* HttpClient1;
+        IHttpClient* HttpClient2;
         QScriptValue AsyncResult;
         bool NeedToSetAsyncResult;
         QString OnFinishScript;
@@ -87,6 +88,11 @@ namespace BrowserAutomationStudioFramework
         QList<QString>* AdditionalScripts;
         FunctionRunData * FunctionData;
         QList<FunctionRunData *> FunctionDataList;
+
+        int HttpClientIndex;
+        IHttpClient* GetActualHttpClient();
+
+
 
     public:
         explicit ScriptWorker(QObject *parent = 0);
@@ -184,8 +190,6 @@ namespace BrowserAutomationStudioFramework
         virtual void SetDoTrace(bool DoTrace);
         virtual bool GetDoTrace();
 
-        virtual void SetIsRecord(bool IsRecord);
-        virtual bool GetIsRecord();
 
         virtual void SetAdditionEngineScripts(QList<QString>* AdditionalScripts);
         virtual QList<QString>* GetAdditionEngineScripts();
@@ -204,7 +208,7 @@ namespace BrowserAutomationStudioFramework
         virtual QString GetResultMessage();
         virtual QString GetResultMessageRaw();
         virtual WorkerStatus GetResultStatus();
-        virtual void Abort();
+        virtual void Abort(bool SignalResourceHandlers);
         virtual void Run();
         virtual void InterruptAction();
         virtual void SetFailMessage(const QString& message);
@@ -239,7 +243,7 @@ namespace BrowserAutomationStudioFramework
         void Sleep(int msec, const QString& callback);
         void Suspend(int msec, const QString& callback);
 
-        void ScriptFinished();
+        void ScriptFinished(bool SignalResourceHandlers);
         void AttachNetworkAccessManager();
 
         void ProgressValueSlot(int);
@@ -287,6 +291,11 @@ namespace BrowserAutomationStudioFramework
         //Timeouts
         void SetGeneralWaitTimeout(int timeout);
         void SetSolverWaitTimeout(int timeout);
+
+        virtual void SetIsRecord(bool IsRecord);
+        virtual bool GetIsRecord();
+
+        void SwitchHttpClient(int index);
 
     private slots:
         void HandlerWaitFinishedSuccess();

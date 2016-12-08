@@ -16,6 +16,7 @@ public:
     BrowserData();
 
     std::map<std::string,std::string> _Headers;
+    std::string _NextReferrer;
     std::string _OpenFileName;
     std::string _StartupScript;
     ProxyData _Proxy;

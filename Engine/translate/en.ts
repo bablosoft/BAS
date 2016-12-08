@@ -116,7 +116,7 @@
 <context>
     <name>BrowserAutomationStudioFramework::CurlHttpClient</name>
     <message>
-        <location filename="../curlhttpclient.cpp" line="260"/>
+        <location filename="../curlhttpclient.cpp" line="276"/>
         <source>Failed to load file %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -186,12 +186,12 @@
 <context>
     <name>BrowserAutomationStudioFramework::EnterLicenseDialog</name>
     <message>
-        <location filename="../enterlicensedialog.cpp" line="23"/>
+        <location filename="../enterlicensedialog.cpp" line="24"/>
         <source>Need A Key?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../enterlicensedialog.cpp" line="30"/>
+        <location filename="../enterlicensedialog.cpp" line="32"/>
         <source>Data</source>
         <translation type="unfinished"></translation>
     </message>
@@ -589,29 +589,33 @@
     </message>
     <message>
         <location filename="../scriptworker.cpp" line="1399"/>
-        <location filename="../scriptworker.cpp" line="1516"/>
-        <location filename="../scriptworker.cpp" line="1524"/>
+        <location filename="../scriptworker.cpp" line="1532"/>
+        <location filename="../scriptworker.cpp" line="1540"/>
+        <location filename="../scriptworker.cpp" line="1548"/>
+        <location filename="../scriptworker.cpp" line="1576"/>
         <source>Failed to get page </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../scriptworker.cpp" line="1399"/>
         <location filename="../scriptworker.cpp" line="1432"/>
-        <location filename="../scriptworker.cpp" line="1474"/>
-        <location filename="../scriptworker.cpp" line="1516"/>
-        <location filename="../scriptworker.cpp" line="1524"/>
+        <location filename="../scriptworker.cpp" line="1482"/>
         <location filename="../scriptworker.cpp" line="1532"/>
+        <location filename="../scriptworker.cpp" line="1540"/>
+        <location filename="../scriptworker.cpp" line="1548"/>
+        <location filename="../scriptworker.cpp" line="1576"/>
+        <location filename="../scriptworker.cpp" line="1603"/>
         <source> with HttpClient</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../scriptworker.cpp" line="1432"/>
-        <location filename="../scriptworker.cpp" line="1474"/>
+        <location filename="../scriptworker.cpp" line="1482"/>
         <source>Failed to post page </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1532"/>
+        <location filename="../scriptworker.cpp" line="1603"/>
         <source>Failed to download page </source>
         <translation type="unfinished"></translation>
     </message>
@@ -619,31 +623,35 @@
 <context>
     <name>BrowserAutomationStudioFramework::SubprocessBrowser</name>
     <message>
-        <location filename="../subprocessbrowser.cpp" line="27"/>
-        <location filename="../subprocessbrowser.cpp" line="39"/>
-        <location filename="../subprocessbrowser.cpp" line="51"/>
-        <location filename="../subprocessbrowser.cpp" line="63"/>
-        <location filename="../subprocessbrowser.cpp" line="75"/>
-        <location filename="../subprocessbrowser.cpp" line="87"/>
-        <location filename="../subprocessbrowser.cpp" line="99"/>
-        <location filename="../subprocessbrowser.cpp" line="111"/>
-        <location filename="../subprocessbrowser.cpp" line="123"/>
-        <location filename="../subprocessbrowser.cpp" line="138"/>
-        <location filename="../subprocessbrowser.cpp" line="158"/>
-        <location filename="../subprocessbrowser.cpp" line="171"/>
+        <location filename="../subprocessbrowser.cpp" line="28"/>
+        <location filename="../subprocessbrowser.cpp" line="40"/>
+        <location filename="../subprocessbrowser.cpp" line="52"/>
+        <location filename="../subprocessbrowser.cpp" line="64"/>
+        <location filename="../subprocessbrowser.cpp" line="76"/>
+        <location filename="../subprocessbrowser.cpp" line="88"/>
+        <location filename="../subprocessbrowser.cpp" line="100"/>
+        <location filename="../subprocessbrowser.cpp" line="112"/>
+        <location filename="../subprocessbrowser.cpp" line="124"/>
+        <location filename="../subprocessbrowser.cpp" line="136"/>
+        <location filename="../subprocessbrowser.cpp" line="148"/>
+        <location filename="../subprocessbrowser.cpp" line="163"/>
         <location filename="../subprocessbrowser.cpp" line="183"/>
-        <location filename="../subprocessbrowser.cpp" line="195"/>
-        <location filename="../subprocessbrowser.cpp" line="208"/>
-        <location filename="../subprocessbrowser.cpp" line="220"/>
-        <location filename="../subprocessbrowser.cpp" line="232"/>
-        <location filename="../subprocessbrowser.cpp" line="244"/>
-        <location filename="../subprocessbrowser.cpp" line="256"/>
-        <location filename="../subprocessbrowser.cpp" line="268"/>
-        <location filename="../subprocessbrowser.cpp" line="280"/>
-        <location filename="../subprocessbrowser.cpp" line="292"/>
-        <location filename="../subprocessbrowser.cpp" line="304"/>
-        <location filename="../subprocessbrowser.cpp" line="316"/>
-        <location filename="../subprocessbrowser.cpp" line="335"/>
+        <location filename="../subprocessbrowser.cpp" line="196"/>
+        <location filename="../subprocessbrowser.cpp" line="209"/>
+        <location filename="../subprocessbrowser.cpp" line="221"/>
+        <location filename="../subprocessbrowser.cpp" line="233"/>
+        <location filename="../subprocessbrowser.cpp" line="246"/>
+        <location filename="../subprocessbrowser.cpp" line="258"/>
+        <location filename="../subprocessbrowser.cpp" line="270"/>
+        <location filename="../subprocessbrowser.cpp" line="282"/>
+        <location filename="../subprocessbrowser.cpp" line="294"/>
+        <location filename="../subprocessbrowser.cpp" line="306"/>
+        <location filename="../subprocessbrowser.cpp" line="318"/>
+        <location filename="../subprocessbrowser.cpp" line="330"/>
+        <location filename="../subprocessbrowser.cpp" line="342"/>
+        <location filename="../subprocessbrowser.cpp" line="354"/>
+        <location filename="../subprocessbrowser.cpp" line="373"/>
+        <location filename="../subprocessbrowser.cpp" line="690"/>
         <source>Timeout during </source>
         <translation type="unfinished"></translation>
     </message>
@@ -690,20 +698,18 @@
 <context>
     <name>BrowserAutomationStudioFramework::SubprocessWebElement</name>
     <message>
-        <location filename="../subprocesswebelement.cpp" line="219"/>
-        <location filename="../subprocesswebelement.cpp" line="227"/>
-        <location filename="../subprocesswebelement.cpp" line="234"/>
-        <location filename="../subprocesswebelement.cpp" line="240"/>
-        <location filename="../subprocesswebelement.cpp" line="253"/>
+        <location filename="../subprocesswebelement.cpp" line="231"/>
+        <location filename="../subprocesswebelement.cpp" line="239"/>
+        <location filename="../subprocesswebelement.cpp" line="247"/>
+        <location filename="../subprocesswebelement.cpp" line="255"/>
         <location filename="../subprocesswebelement.cpp" line="261"/>
-        <location filename="../subprocesswebelement.cpp" line="269"/>
-        <location filename="../subprocesswebelement.cpp" line="277"/>
-        <location filename="../subprocesswebelement.cpp" line="285"/>
-        <location filename="../subprocesswebelement.cpp" line="293"/>
-        <location filename="../subprocesswebelement.cpp" line="300"/>
-        <location filename="../subprocesswebelement.cpp" line="311"/>
-        <location filename="../subprocesswebelement.cpp" line="318"/>
-        <location filename="../subprocesswebelement.cpp" line="325"/>
+        <location filename="../subprocesswebelement.cpp" line="274"/>
+        <location filename="../subprocesswebelement.cpp" line="282"/>
+        <location filename="../subprocesswebelement.cpp" line="290"/>
+        <location filename="../subprocesswebelement.cpp" line="298"/>
+        <location filename="../subprocesswebelement.cpp" line="306"/>
+        <location filename="../subprocesswebelement.cpp" line="314"/>
+        <location filename="../subprocesswebelement.cpp" line="321"/>
         <location filename="../subprocesswebelement.cpp" line="332"/>
         <location filename="../subprocesswebelement.cpp" line="339"/>
         <location filename="../subprocesswebelement.cpp" line="346"/>
@@ -712,9 +718,12 @@
         <location filename="../subprocesswebelement.cpp" line="367"/>
         <location filename="../subprocesswebelement.cpp" line="374"/>
         <location filename="../subprocesswebelement.cpp" line="381"/>
-        <location filename="../subprocesswebelement.cpp" line="418"/>
-        <location filename="../subprocesswebelement.cpp" line="444"/>
-        <location filename="../subprocesswebelement.cpp" line="451"/>
+        <location filename="../subprocesswebelement.cpp" line="388"/>
+        <location filename="../subprocesswebelement.cpp" line="395"/>
+        <location filename="../subprocesswebelement.cpp" line="402"/>
+        <location filename="../subprocesswebelement.cpp" line="439"/>
+        <location filename="../subprocesswebelement.cpp" line="465"/>
+        <location filename="../subprocesswebelement.cpp" line="472"/>
         <source>Timeout during </source>
         <translation type="unfinished"></translation>
     </message>

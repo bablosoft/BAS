@@ -1,9 +1,44 @@
+HttpClientIndex = 1;
+
+function _get_actual_http_client()
+{
+    if(HttpClientIndex == 1)
+    {
+        return HttpClient1;
+    }else if(HttpClientIndex == 2)
+    {
+        return HttpClient2;
+    }
+}
+
+function _switch_http_client_main()
+{
+    _switch_http_client(1)
+}
+
+function _switch_http_client_internal()
+{
+    _switch_http_client(2)
+}
+
+function _switch_http_client(index)
+{
+    HttpClientIndex = index;
+    ScriptWorker.SwitchHttpClient(index);
+}
 
 
 function _ensure_http_client()
 {
-    if(typeof(HttpClient)=='undefined')
-        new_http_client();
+    if(HttpClientIndex == 1)
+    {
+        if(typeof(HttpClient1)=='undefined')
+            new_http_client();
+    }else if(HttpClientIndex == 2)
+    {
+        if(typeof(HttpClient2)=='undefined')
+            new_http_client();
+    }
 }
 
 function on_http_client_loaded()
@@ -13,9 +48,9 @@ function on_http_client_loaded()
     {
         return;
     }
-    if(HttpClient.WasError())
+    if(_get_actual_http_client().WasError())
 	{
-        fail(HttpClient.GetErrorString());
+        fail(_get_actual_http_client().GetErrorString());
     }
 }
 
@@ -36,14 +71,14 @@ function http_client_set_fail_on_error(fail_on_error)
 function http_client_was_error()
 {
     _ensure_http_client()
-    return HttpClient.WasError();
+    return _get_actual_http_client().WasError();
 }
 
 
 function http_client_error_string()
 {
     _ensure_http_client()
-    return HttpClient.GetErrorString();
+    return _get_actual_http_client().GetErrorString();
 }
 
 
@@ -159,45 +194,45 @@ function http_client_post_no_redirect(url, params, post_options, callback)
 function http_client_url()
 {
     _ensure_http_client();
-    return HttpClient.GetLastUrl();
+    return _get_actual_http_client().GetLastUrl();
 }
 
 
 function http_client_content()
 {
 	_ensure_http_client();
-	return HttpClient.GetContent();
+    return _get_actual_http_client().GetContent();
 }
 
 function http_client_content_base64()
 {
     _ensure_http_client();
-    return HttpClient.GetBase64();
+    return _get_actual_http_client().GetBase64();
 }
 
 
 function http_client_header(header)
 {
 	_ensure_http_client();
-	return HttpClient.GetHeader(header);
+    return _get_actual_http_client().GetHeader(header);
 }
 
 function http_client_status()
 {
 	_ensure_http_client();
-	return HttpClient.GetStatus();
+    return _get_actual_http_client().GetStatus();
 }
 
 function http_client_set_header(header_name, header_value)
 {
 	_ensure_http_client();
-	HttpClient.AddHeader(header_name, header_value);
+    _get_actual_http_client().AddHeader(header_name, header_value);
 }
 
 function http_client_clear_header()
 {
 	_ensure_http_client();
-	HttpClient.CleanHeader();
+    _get_actual_http_client().CleanHeader();
 }
 
 
@@ -212,25 +247,25 @@ function http_client_proxy(proxy_string)
 function http_client_set_proxy(server, Port, IsHttp, name, password)
 {
 	_ensure_http_client();
-	HttpClient.SetProxy(server, Port, IsHttp, name, password);
+    _get_actual_http_client().SetProxy(server, Port, IsHttp, name, password);
 }
 
 function http_client_get_cookies(url)
 {
     _ensure_http_client();
-	return HttpClient.GetCookiesForUrl(url);
+    return _get_actual_http_client().GetCookiesForUrl(url);
 }
 
 function http_client_save_cookies()
 {
     _ensure_http_client();
-    return HttpClient.SaveCookies();
+    return _get_actual_http_client().SaveCookies();
 }
 
 function http_client_restore_cookies(cookies)
 {
     _ensure_http_client();
-    HttpClient.RestoreCookies(cookies);
+    _get_actual_http_client().RestoreCookies(cookies);
 }
 
 function http_client_xpath_parse()

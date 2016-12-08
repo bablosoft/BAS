@@ -4,6 +4,9 @@
 
 #include <QObject>
 #include <QHash>
+#include <QMap>
+#include <QVariantMap>
+#include <QDateTime>
 #include "ipostpreparestrategyfactory.h"
 
 namespace BrowserAutomationStudioFramework
@@ -60,6 +63,9 @@ namespace BrowserAutomationStudioFramework
             virtual void SetPostPrepareStrategyFactory(IPostPrepareStrategyFactory* PostPrepareStrategyFactory) = 0;
             virtual QString SaveCookies() = 0;
             virtual void RestoreCookies(const QString& cookies) = 0;
+
+            QVariantMap SerializeTime(const QDateTime& time);
+            QDateTime DeserializeTime(const QJsonObject& object);
 
         signals:
             void Finished();

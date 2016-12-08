@@ -1,5 +1,6 @@
 #include "compilewindow.h"
 #include "ui_compilewindow.h"
+#include <QTimer>
 #include "every_cpp.h"
 
 CompileWindow::CompileWindow(Compiler *compiler,QWidget *parent) :
@@ -21,29 +22,61 @@ CompileWindow::CompileWindow(Compiler *compiler,QWidget *parent) :
         }
     }
 
-    ui->radioButton_2->setVisible(false);
-    ui->radioButton_3->setVisible(false);
     connect(this,SIGNAL(accepted()),this,SLOT(Accepted()));
+    GuiUpdate();
+}
 
+void CompileWindow::GuiUpdate()
+{
+    bool Visible = ui->PrivateScriptEnterPassForUser->isChecked();
+    ui->UserName->setVisible(Visible);
+    ui->Password->setVisible(Visible);
+    ui->label_7->setVisible(Visible);
+    ui->label_8->setVisible(Visible);
+    QTimer::singleShot(0,this,SLOT(Resize()));
+
+}
+
+void CompileWindow::Resize()
+{
+    resize(width(),1);
 }
 
 void CompileWindow::Accepted()
 {
+    compiler->SetUsername(ui->UserName->text());
+    compiler->SetPassword(ui->Password->text());
+    if(ui->NoProtection->isChecked())
+    {
+        compiler->SetType(Compiler::NoProtection);
+    }else if(ui->PrivateScriptEnterPassForUser->isChecked())
+    {
+        compiler->SetType(Compiler::PrivateScriptEnterPassForUser);
+    }else if(ui->PrivateScriptUserEnterPass->isChecked())
+    {
+        compiler->SetType(Compiler::PrivateScriptUserEnterPass);
+    }
     compiler->SetName(ui->lineEdit->text());
     compiler->SetVersion(QString::number(ui->spinBox->value()) + "." + QString::number(ui->spinBox_2->value()) + "."+ QString::number(ui->spinBox_3->value()));
-    if(ui->radioButton->isChecked())
-    {
-        compiler->SetOs("Windows");
-    }else if(ui->radioButton_2->isChecked())
-    {
-        compiler->SetOs("Linux");
-    }else if(ui->radioButton_3->isChecked())
-    {
-        compiler->SetOs("Mac");
-    }
+    compiler->SetOs("Windows");
 }
 
 CompileWindow::~CompileWindow()
 {
     delete ui;
+}
+
+void CompileWindow::on_NoProtection_clicked()
+{
+    GuiUpdate();
+}
+
+void CompileWindow::on_PrivateScriptUserEnterPass_clicked()
+{
+    GuiUpdate();
+}
+
+void CompileWindow::on_PrivateScriptEnterPassForUser_clicked()
+{
+    GuiUpdate();
 }

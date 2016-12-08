@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>404</width>
-    <height>152</height>
+    <width>384</width>
+    <height>245</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,26 +23,25 @@
      <property name="fieldGrowthPolicy">
       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
      </property>
+     <property name="horizontalSpacing">
+      <number>15</number>
+     </property>
      <item row="0" column="0">
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>Name</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Type (&lt;a href=&quot;https://wiki.bablosoft.com/doku.php?id=how_to_protect_your_script&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#eeeeee;&quot;&gt;Manual&lt;/span&gt;&lt;/a&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="openExternalLinks">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Version</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item row="0" column="1">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QRadioButton" name="radioButton">
+        <widget class="QRadioButton" name="NoProtection">
          <property name="text">
-          <string>Windows</string>
+          <string>No protection</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -50,35 +49,43 @@
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="radioButton_2">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
+        <widget class="QRadioButton" name="PrivateScriptUserEnterPass">
          <property name="text">
-          <string>Linux</string>
+          <string>Private script, user must enter password before launch</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="radioButton_3">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
+        <widget class="QRadioButton" name="PrivateScriptEnterPassForUser">
          <property name="text">
-          <string>Mac</string>
+          <string>Private script, enter password for user</string>
          </property>
         </widget>
        </item>
       </layout>
      </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_3">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label">
        <property name="text">
-        <string>Platform</string>
+        <string>Name</string>
        </property>
       </widget>
      </item>
      <item row="1" column="1">
+      <widget class="QLineEdit" name="lineEdit">
+       <property name="text">
+        <string notr="true">Script Name</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Version</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
         <widget class="QSpinBox" name="spinBox">
@@ -95,6 +102,9 @@
          <property name="text">
           <string>.</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
@@ -108,6 +118,9 @@
         <widget class="QLabel" name="label_5">
          <property name="text">
           <string>.</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -129,12 +142,25 @@
        </item>
       </layout>
      </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="lineEdit">
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_7">
        <property name="text">
-        <string notr="true">Script Name</string>
+        <string>Username</string>
        </property>
       </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="UserName"/>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>Password</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="Password"/>
      </item>
     </layout>
    </item>

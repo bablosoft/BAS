@@ -1396,7 +1396,7 @@ void MainApp::ElementCommandCallback(const ElementCommand &Command)
             script = std::string("{"
                                  "var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");"
                                  "if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;}"
-                                 "var items=el.getClientRects();"
+                                 "var items=el.getClientRects();if(items.length == 0){browser_automation_studio_result('BAS_NOT_EXISTS');return;};"
                                  "var rect=items[Math.floor(Math.random()*items.length)];")
                                  + get_point +
                                  std::string("x+=document.body.scrollLeft;"
@@ -2223,7 +2223,7 @@ void MainApp::ExecuteMouseMove()
     int CursorY = Data->CursorY;
 
     if(Settings->EmulateMouse())
-        BrowserEventsEmulator::MouseMove(_HandlersManager->GetBrowser(), IsMouseMoveSimulation, MouseStartX, MouseStartY, MouseEndX, MouseEndY , CursorX, CursorY, Speed, Data->WidthBrowser, Data->HeightBrowser, 6.0f, 2.5f, 15.0f, false, true);
+        BrowserEventsEmulator::MouseMove(_HandlersManager->GetBrowser(), IsMouseMoveSimulation, MouseStartX, MouseStartY, MouseEndX, MouseEndY , CursorX, CursorY, Speed, Data->WidthBrowser, Data->HeightBrowser, 6.0f, 2.5f, 0.0f, false, true);
     else
         BrowserEventsEmulator::MouseMoveLine(_HandlersManager->GetBrowser(), IsMouseMoveSimulation, MouseStartX, MouseStartY, MouseEndX, MouseEndY , CursorX, CursorY, Speed, Data->WidthBrowser, Data->HeightBrowser);
     Data->CursorX = CursorX;
@@ -2406,6 +2406,15 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
             {
                 jscode += extensions.GetEmptyLanguage();
             }
+
+            if(!Data->_NextReferrer.empty())
+            {
+                jscode += extensions.GetReferrerExtension(Data->_NextReferrer);
+            }else
+            {
+                jscode += extensions.GetReferrerEmptyExtension();
+            }
+            Data->_NextReferrer.clear();
         }
 
         {

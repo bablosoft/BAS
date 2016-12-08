@@ -8,9 +8,22 @@ namespace BrowserAutomationStudioFramework
 
 
     ScriptWorker::ScriptWorker(QObject *parent) :
-        IWorker(parent), Browser(0), Logger(0), Results1(0),Results2(0), Results3(0),Results4(0),Results5(0),Results6(0),Results7(0),Results8(0),Results9(0), Waiter(0),engine(0),ThreadNumber(0),IsAborted(false),ProcessComunicator(0), HttpClient(0), Pop3Client(0), ImapClient(0), DoTrace(false), MaxFail(100), MaxSuccess(100), IsFailExceedRunning(false), IsSuccessExceedRunning(false), FunctionData(0), CurrentWebElement(0)
+        IWorker(parent), Browser(0), Logger(0), Results1(0),Results2(0), Results3(0),Results4(0),Results5(0),Results6(0),Results7(0),Results8(0),Results9(0), Waiter(0),engine(0),ThreadNumber(0),IsAborted(false),ProcessComunicator(0), HttpClient1(0), HttpClient2(0), Pop3Client(0), ImapClient(0), DoTrace(false), MaxFail(999999), MaxSuccess(100), IsFailExceedRunning(false), IsSuccessExceedRunning(false), FunctionData(0), CurrentWebElement(0), HttpClientIndex(1)
     {
 
+    }
+
+    IHttpClient* ScriptWorker::GetActualHttpClient()
+    {
+        if(HttpClientIndex == 1)
+            return HttpClient1;
+        else
+            return HttpClient2;
+    }
+
+    void ScriptWorker::SwitchHttpClient(int index)
+    {
+        HttpClientIndex = index;
     }
 
     ScriptWorker::~ScriptWorker()
@@ -525,9 +538,13 @@ namespace BrowserAutomationStudioFramework
 
         ResultStatus = IWorker::SuccessStatus;
 
-        if(HttpClient)
+        if(HttpClient1)
         {
-            HttpClient->Disconnect();
+            HttpClient1->Disconnect();
+        }
+        if(HttpClient2)
+        {
+            HttpClient2->Disconnect();
         }
         if(Pop3Client)
         {
@@ -572,7 +589,7 @@ namespace BrowserAutomationStudioFramework
                 {
                     ResultMessage = Message;
                     ResultStatus = IWorker::FailStatus;
-                    ScriptFinished();
+                    ScriptFinished(true);
                     break;
                 }
             }else
@@ -590,14 +607,14 @@ namespace BrowserAutomationStudioFramework
                     {
                         ResultMessage = tr("Fail number exceed");
                         ResultStatus = IWorker::FailStatus;
-                        Abort();
+                        Abort(true);
                         break;
                     }
                     if(IsSuccessExceedRunning)
                     {
                         ResultMessage = tr("Success number exceed");
                         ResultStatus = IWorker::SuccessStatus;
-                        Abort();
+                        Abort(true);
                         break;
                     }
                     Script = "_next()";
@@ -628,10 +645,10 @@ namespace BrowserAutomationStudioFramework
 
 
 
-    void ScriptWorker::Abort()
+    void ScriptWorker::Abort(bool SignalResourceHandlers)
     {
 
-        ScriptFinished();
+        ScriptFinished(SignalResourceHandlers);
         if(engine)
             engine->abortEvaluation();
         if(Waiter)
@@ -688,7 +705,7 @@ namespace BrowserAutomationStudioFramework
             {
                 ResultMessage = Message;
                 ResultStatus = IWorker::FailStatus;
-                Abort();
+                Abort(true);
             }
         }
 
@@ -711,7 +728,7 @@ namespace BrowserAutomationStudioFramework
         {
             ResultMessage = message;
             ResultStatus = IWorker::DieStatus;
-            Abort();
+            Abort(true);
         }
     }
     void ScriptWorker::Success(const QString& message)
@@ -746,7 +763,7 @@ namespace BrowserAutomationStudioFramework
                 ResultMessage = tr("Success number exceed");
             }
             ResultStatus = IWorker::SuccessStatus;
-            Abort();
+            Abort(true);
 
         }
     }
@@ -757,7 +774,7 @@ namespace BrowserAutomationStudioFramework
 
 
 
-    void ScriptWorker::ScriptFinished()
+    void ScriptWorker::ScriptFinished(bool SignalResourceHandlers)
     {
         if(IsAborted)
         {
@@ -768,11 +785,14 @@ namespace BrowserAutomationStudioFramework
         engine->evaluate(AbortFunction);
         AbortFunction.clear();
         IsAborted = true;
-        switch(ResultStatus)
+        if(SignalResourceHandlers)
         {
-            case IWorker::FailStatus: ResourceHandlers->Fail(); break;
-            case IWorker::DieStatus: ResourceHandlers->Die(); break;
-            case IWorker::SuccessStatus: ResourceHandlers->Success(); break;
+            switch(ResultStatus)
+            {
+                case IWorker::FailStatus: ResourceHandlers->Fail(); break;
+                case IWorker::DieStatus: ResourceHandlers->Die(); break;
+                case IWorker::SuccessStatus: ResourceHandlers->Success(); break;
+            }
         }
         if(ProcessComunicator)
             disconnect(ProcessComunicator,SIGNAL(Received(QString)),0,0);
@@ -792,8 +812,10 @@ namespace BrowserAutomationStudioFramework
 
     void ScriptWorker::FailBecauseOfTimeout()
     {
-        if(HttpClient)
-            HttpClient->Stop();
+        if(HttpClient1)
+            HttpClient1->Stop();
+        if(HttpClient2)
+            HttpClient2->Stop();
 
         Fail(FailMessage);
     }
@@ -1369,42 +1391,45 @@ namespace BrowserAutomationStudioFramework
     /* HttpClient */
     void ScriptWorker::NewHttpClient()
     {
-        if(HttpClient)
-            HttpClient->deleteLater();
-        HttpClient = HttpClientFactory->GetHttpClient();
-        HttpClient->setParent(this);
+        if(GetActualHttpClient())
+            GetActualHttpClient()->deleteLater();
+        if(HttpClientIndex == 1)
+            HttpClient1 = HttpClientFactory->GetHttpClient();
+        else
+            HttpClient2 = HttpClientFactory->GetHttpClient();
+        GetActualHttpClient()->setParent(this);
 
-        QScriptValue HttpClientValue = engine->newQObject(HttpClient);
-        engine->globalObject().setProperty("HttpClient", HttpClientValue);
+        QScriptValue HttpClientValue = engine->newQObject(GetActualHttpClient());
+        engine->globalObject().setProperty("HttpClient" + QString::number(HttpClientIndex), HttpClientValue);
     }
 
     void ScriptWorker::FollowRedirectInternal(bool IsGet)
     {
 
-        QString Location = HttpClient->GetHeader("Location");
+        QString Location = GetActualHttpClient()->GetHeader("Location");
         //Relative location
         while(Location.startsWith("."))
             Location.remove(0,1);
 
         if(Location.startsWith("/"))
         {
-            QUrl url = QUrl(HttpClient->GetLastUrl());
+            QUrl url = QUrl(GetActualHttpClient()->GetLastUrl());
             url.setPath(Location);
 
             Location = url.toString();
         }
-        HttpClient->Disconnect();
+        GetActualHttpClient()->Disconnect();
         if(!Location.isEmpty())
         {
             SetFailMessage(tr("Failed to get page ") + Location + tr(" with HttpClient"));
             if(IsGet)
             {
-                Waiter->WaitInfinity(HttpClient,SIGNAL(Finished()),this,SLOT(FollowRedirect()));
-                HttpClient->Get(Location);
+                Waiter->WaitInfinity(GetActualHttpClient(),SIGNAL(Finished()),this,SLOT(FollowRedirect()));
+                GetActualHttpClient()->Get(Location);
             }else
             {
-                Waiter->WaitInfinity(HttpClient,SIGNAL(Finished()),this,SLOT(FollowRedirectDownload()));
-                HttpClient->Download(Location, CurrentFileDownload);
+                Waiter->WaitInfinity(GetActualHttpClient(),SIGNAL(Finished()),this,SLOT(FollowRedirectDownload()));
+                GetActualHttpClient()->Download(Location, CurrentFileDownload);
             }
         }else
         {
@@ -1430,7 +1455,7 @@ namespace BrowserAutomationStudioFramework
     {
         SetScript(callback);
         SetFailMessage(tr("Failed to post page ") + url + tr(" with HttpClient"));
-        Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(FollowRedirect()),this,SLOT(FailBecauseOfTimeout()));
+        Waiter->WaitForSignal(GetActualHttpClient(),SIGNAL(Finished()),this,SLOT(FollowRedirect()),this,SLOT(FailBecauseOfTimeout()));
         QHash<QString,QString> p;
         bool isname = true;
         QString name = "";
@@ -1473,14 +1498,14 @@ namespace BrowserAutomationStudioFramework
         {
             Options.Method = p1["method"];
         }
-        HttpClient->Post(url,p,Options);
+        GetActualHttpClient()->Post(url,p,Options);
     }
 
     void ScriptWorker::HttpClientPostNoRedirect(const QString& url, const QStringList & params, const QStringList & params_glob, const QString& callback)
     {
         SetScript(callback);
         SetFailMessage(tr("Failed to post page ") + url + tr(" with HttpClient"));
-        Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(RunSubScript()),this,SLOT(FailBecauseOfTimeout()));
+        Waiter->WaitForSignal(GetActualHttpClient(),SIGNAL(Finished()),this,SLOT(RunSubScript()),this,SLOT(FailBecauseOfTimeout()));
         QHash<QString,QString> p;
         bool isname = true;
         QString name = "";
@@ -1523,23 +1548,23 @@ namespace BrowserAutomationStudioFramework
         {
             Options.Method = p1["method"];
         }
-        HttpClient->Post(url,p,Options);
+        GetActualHttpClient()->Post(url,p,Options);
     }
 
     void ScriptWorker::HttpClientGetNoRedirect(const QString& url, const QString& callback)
     {
         SetScript(callback);
         SetFailMessage(tr("Failed to get page ") + url + tr(" with HttpClient"));
-        Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(RunSubScript()),this,SLOT(FailBecauseOfTimeout()));
-        HttpClient->Get(url);
+        Waiter->WaitForSignal(GetActualHttpClient(),SIGNAL(Finished()),this,SLOT(RunSubScript()),this,SLOT(FailBecauseOfTimeout()));
+        GetActualHttpClient()->Get(url);
     }
 
     void ScriptWorker::HttpClientGetRedirect(const QString& url, const QString& callback)
     {
         SetScript(callback);
         SetFailMessage(tr("Failed to get page ") + url + tr(" with HttpClient"));
-        Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(FollowRedirect()),this,SLOT(FailBecauseOfTimeout()));
-        HttpClient->Get(url);
+        Waiter->WaitForSignal(GetActualHttpClient(),SIGNAL(Finished()),this,SLOT(FollowRedirect()),this,SLOT(FailBecauseOfTimeout()));
+        GetActualHttpClient()->Get(url);
     }
 
     void ScriptWorker::HttpClientGetNoRedirect2(const QString& url, const QStringList & params_glob, const QString& callback)
@@ -1566,8 +1591,8 @@ namespace BrowserAutomationStudioFramework
             Options.Method = p1["method"];
         }
 
-        Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(RunSubScript()),this,SLOT(FailBecauseOfTimeout()));
-        HttpClient->Get(url,Options);
+        Waiter->WaitForSignal(GetActualHttpClient(),SIGNAL(Finished()),this,SLOT(RunSubScript()),this,SLOT(FailBecauseOfTimeout()));
+        GetActualHttpClient()->Get(url,Options);
     }
 
     void ScriptWorker::HttpClientGetRedirect2(const QString& url, const QStringList & params_glob, const QString& callback)
@@ -1593,17 +1618,17 @@ namespace BrowserAutomationStudioFramework
         {
             Options.Method = p1["method"];
         }
-        Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(FollowRedirect()),this,SLOT(FailBecauseOfTimeout()));
-        HttpClient->Get(url,Options);
+        Waiter->WaitForSignal(GetActualHttpClient(),SIGNAL(Finished()),this,SLOT(FollowRedirect()),this,SLOT(FailBecauseOfTimeout()));
+        GetActualHttpClient()->Get(url,Options);
     }
 
     void ScriptWorker::HttpClientDownload(const QString& url, const QString& file, const QString& callback)
     {
         SetScript(callback);
         SetFailMessage(tr("Failed to download page ") + url + tr(" with HttpClient"));
-        Waiter->WaitForSignal(HttpClient,SIGNAL(Finished()),this,SLOT(FollowRedirectDownload()),this,SLOT(FailBecauseOfTimeout()));
+        Waiter->WaitForSignal(GetActualHttpClient(),SIGNAL(Finished()),this,SLOT(FollowRedirectDownload()),this,SLOT(FailBecauseOfTimeout()));
         CurrentFileDownload = file;
-        HttpClient->Download(url, file);
+        GetActualHttpClient()->Download(url, file);
     }
 
     void ScriptWorker::DebugTerminate(int how)

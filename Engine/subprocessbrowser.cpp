@@ -552,6 +552,15 @@ namespace BrowserAutomationStudioFramework
         this->Language = Language;
     }
 
+    void SubprocessBrowser::CloseBrowser()
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("CloseBrowser","");
+        Worker->GetProcessComunicator()->Abort();
+        Worker->GetProcessComunicator()->setProperty("empty",true);
+    }
+
 
     void SubprocessBrowser::CreateNewBrowser(bool ForseNewBrowserCreation, const QString& callback)
     {
@@ -569,7 +578,7 @@ namespace BrowserAutomationStudioFramework
             settings.close();
         }
 
-        bool CreateNewBrowser = ForseNewBrowserCreation || !ProcessComunicator;
+        bool CreateNewBrowser = ForseNewBrowserCreation || !ProcessComunicator || ProcessComunicator->property("empty").toBool();
         if(LastInjectedWorker == Worker && !CreateNewBrowser)
         {
             Worker->SetScript(callback);

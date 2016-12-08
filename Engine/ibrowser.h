@@ -34,6 +34,7 @@ namespace BrowserAutomationStudioFramework
         virtual IWebElement* GetRootElement() = 0;
         virtual void GetUrl(const QString& callback) = 0;
         virtual void CreateNewBrowser(bool ForseNewBrowserCreation, const QString& callback) = 0;
+        virtual void CloseBrowser() = 0;
         virtual INetworkAccessManager* GetNetworkAccessManager() = 0;
         virtual void SetScriptResources(IScriptResources* ScriptResources) = 0;
         virtual IScriptResources* GetScriptResources() = 0;

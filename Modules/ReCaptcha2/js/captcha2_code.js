@@ -310,10 +310,17 @@ _if_else(<%= method %> == "capmonsteraudio", function(){
       frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-table-44').length")!
       IS44 = parseInt(_result()) > 0
 
+      frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-table-33').length")!
+      IS33 = parseInt(_result()) > 0
+      
+      frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-table-42').length")!
+      IS42 = parseInt(_result()) > 0
+
+
       frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-tileselected').length")!
       RECAPTCHA2_TOTAL_SELECTED = parseInt(_result())
 
-      if(!(RECAPTCHA2_TOTAL_SELECTED>0 || IS44 && (<%= method %> == "capmonsterimage" || <%= method %> == "capmonster")))
+      if(!(RECAPTCHA2_TOTAL_SELECTED>0 || IS44 && (<%= method %> == "capmonsterimage" || <%= method %> == "capmonster") || (!IS33 && !IS44 && !IS42)))
         _break()
 
       if(_iterator() > 10)
@@ -347,11 +354,11 @@ _if_else(<%= method %> == "capmonsteraudio", function(){
     frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-challenge')[0].getBoundingClientRect().top")!
     TOP_IMAGE = parseInt(_result())
 
-    frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-table-33').length")!
-    IS33 = parseInt(_result()) > 0
-
     frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-table-44').length")!
     IS44 = parseInt(_result()) > 0
+
+    frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-table-33').length")!
+    IS33 = parseInt(_result()) > 0
 
     frame("google.com/recaptcha/api2/frame").script("document.getElementsByClassName('rc-imageselect-table-42').length")!
     IS42 = parseInt(_result()) > 0

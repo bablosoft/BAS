@@ -3,6 +3,7 @@
 #include <QPushButton>
 #include <QFile>
 #include <QUrl>
+#include <QDebug>
 #include <QXmlStreamReader>
 #include <QDesktopServices>
 #include "every_cpp.h"
@@ -16,11 +17,12 @@ namespace BrowserAutomationStudioFramework
     {
         ui->setupUi(this);
 
-        HeightTotal = 221;
+        HeightTotal = 113;
         WidthTotal = 423;
 
         NeedAKeyButton = new QPushButton(ui->buttonBox);
         NeedAKeyButton->setText(tr("Need A Key?"));
+        NeedAKeyButton->setVisible(false);
         NeedAKeyButton->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
         NeedAKeyButton->resize(NeedAKeyButton->width(),24);
         connect(NeedAKeyButton,SIGNAL(clicked()),this,SLOT(NeedAKeyClicked()));
@@ -39,7 +41,7 @@ namespace BrowserAutomationStudioFramework
         QString email = Settings->value("email").toString();
         LastSelectedScript = Settings->value("LastSelectedScript").toString();
 
-        bool SavePassToDisk = Settings->value("SavePassToDisk", false).toBool();
+        bool SavePassToDisk = Settings->value("SavePassToDisk", true).toBool();
         ui->checkBox->setChecked(SavePassToDisk);
         if(SavePassToDisk)
             ui->lineEdit_2->setText(Settings->value("Pass","").toString());
@@ -184,6 +186,7 @@ namespace BrowserAutomationStudioFramework
 
     void EnterLicenseDialog::SetScriptData(const ScriptData& Data)
     {
+        qDebug()<<Data.Description<<Data.IsFree<<Data.Link<<Data.Version;
         ui->ScriptDescriptionLabel->setText(Data.Description);
         int height = HeightTotal;
         if(Data.IsFree)
@@ -196,7 +199,7 @@ namespace BrowserAutomationStudioFramework
         ui->label->setVisible(!Data.IsFree);
         ui->label_2->setVisible(!Data.IsFree);
         ui->checkBox->setVisible(!Data.IsFree);
-        NeedAKeyButton->setVisible(!Data.IsFree);
+        //NeedAKeyButton->setVisible(!Data.IsFree);
 
     }
 

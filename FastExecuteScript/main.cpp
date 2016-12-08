@@ -162,6 +162,17 @@ int main(int argc, char *argv[])
     qDebug()<<"Start 99";
     if(a.arguments().contains("--silent"))
         w->SetIsSilent();
+
+    if(a.arguments().contains("--remote"))
+    {
+        int index = a.arguments().indexOf("--remote");
+        if(index + 1 < a.arguments().length())
+        {
+            QString Remote = a.arguments()[index + 1];
+            qDebug()<<"Remote"<<Remote;
+            w->SetRemote(Remote);
+        }
+    }
     qDebug()<<"Start 100";
     w->Start();
     qDebug()<<"Start 200";

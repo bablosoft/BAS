@@ -19,7 +19,9 @@ var JSONTree = (function() {
 
   this.create = function(data, settings) {
     instances += 1;
-    return _span(_jsVal(data, 0, false), {class: 'jstValue'});
+    id = 0;
+    return _span(_jsVal(data, 0, false), {class: 'jstValue'}) + 
+    "<script>$('*[dataopen]').each(function(t,el){var id = $(el).attr('id');if(id.split('_')[2]!='0')JSONTree.toggle($(el).attr('id'));$(el).removeAttr('dataopen')})</script>"
   };
 
   var _escape = function(text) {
@@ -56,12 +58,12 @@ var JSONTree = (function() {
 
   var _jsObj = function(object, depth, indent) {
     var id = _id();
-    var content = Object.keys(object).map(function(property) {
+    var content = Object.keys(object).sort().map(function(property) {
       return _property(property, object[property], depth + 1, true);
     }).join(_comma());
     var body = [
       _openBracket('{', indent ? depth : 0, id),
-      _span(content, {id: id}),
+      _span(content, {id: id, dataopen: "true"}),
       _closeBracket('}', depth)
     ].join('\n');
     return _span(body, {})
@@ -74,7 +76,7 @@ var JSONTree = (function() {
     }).join(_comma());
     var arr = [
       _openBracket('[', indent ? depth : 0, id),
-      _span(body, {id: id}),
+      _span(body, {id: id, dataopen: "true"}),
       _closeBracket(']', depth)
     ].join('\n');
     return arr;

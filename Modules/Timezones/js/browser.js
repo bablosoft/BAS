@@ -189,6 +189,7 @@ function BrowserAutomationStudio_SetTimezone(TimezoneOffset)
 	   return new Proxy(res, ProxyHandler);
 	}
 
+	Date.prototype = window.BrowserAutomationStudio_OriginalDate.prototype
 
 
 	Date.now = window.BrowserAutomationStudio_OriginalDate.now;

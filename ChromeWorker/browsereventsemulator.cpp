@@ -203,8 +203,8 @@ void BrowserEventsEmulator::MouseMove(CefRefPtr<CefBrowser> Browser,
             if (PDist <= dModA)
             {
                 D = (round((round(dist)*0.3))/5);
-                if (D < 20)
-                    D = 20;
+                if (D < ((TDist > 220) ? 20 : 3))
+                    D = ((TDist > 220) ? 20 : 3);
 
             } else if (PDist > dModA)
             {
@@ -221,9 +221,9 @@ void BrowserEventsEmulator::MouseMove(CefRefPtr<CefBrowser> Browser,
         if (PDist >= nModA)
         {
             D = (round((round(dist)*0.3))/5);
-            if (D < 15)
+            if (D < ((TDist > 220) ? 15 : 3))
             {
-                D = 15;
+                D = ((TDist > 220) ? 15 : 3);
             }
         }else if (PDist < nModA)
         {

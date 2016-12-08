@@ -1,0 +1,1 @@
+_SMS_DEBUG = (<%= enable %> == "enable")

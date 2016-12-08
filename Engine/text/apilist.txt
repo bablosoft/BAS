@@ -253,3 +253,5 @@ solver_timeout(timeout)
 async_load_timeout(timeout)
 _preprocess(script)
 _template(template)!
+_switch_http_client_main()
+_switch_http_client_internal()

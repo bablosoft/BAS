@@ -1,6 +1,7 @@
 #include "compiler.h"
 #include <QDir>
 #include <QRegExp>
+#include <QXmlStreamWriter>
 #include "every_cpp.h"
 
 Compiler::Compiler(QObject *parent) :
@@ -14,6 +15,21 @@ void Compiler::SetName(const QString & Name)
 void Compiler::SetVersion(const QString & Version)
 {
     this->Version = Version;
+}
+
+void Compiler::SetUsername(const QString & Username)
+{
+    this->Username = Username;
+}
+
+void Compiler::SetPassword(const QString & Password)
+{
+    this->Password = Password;
+}
+
+void Compiler::SetType(const CompileType & Type)
+{
+    this->Type = Type;
 }
 
 QString Compiler::GetName()
@@ -71,32 +87,18 @@ void Compiler::CalculateCompiledFolder()
         CompiledFolder = NameEscapedOriginal + "." + QString::number(++iterator);
     }
     CompiledFolder = FolderRelease.absoluteFilePath(CompiledFolder);
-    QDir FolderCompiled(CompiledFolder);
-    EngineFolder = FolderCompiled.absoluteFilePath("engine/engine");
-
+    /*QDir FolderCompiled(CompiledFolder);
+    EngineFolder = FolderCompiled.absoluteFilePath("engine/engine");*/
+    EngineFolder = CompiledFolder;
 }
 
 
-static void recurseCopyAddDir(const QString& ModuleFolder, QDir d, QDir t)
+static void recurseCopyAddDir(QDir d, QDir t)
 {
     QStringList qsl = d.entryList(QStringList()<<"*",QDir::NoDotAndDotDot | QDir::Dirs | QDir::Files);
 
     foreach (QString file, qsl)
     {
-        if(!d.absoluteFilePath(file).startsWith(ModuleFolder))
-        {
-            if(file.endsWith(".xml"))
-                continue;
-            if(file.endsWith(".ini") && !file.startsWith("settings_worker.ini"))
-                continue;
-            if(file.endsWith(".txt") && !file.startsWith("chrome_command_line.txt"))
-                continue;
-
-            if(file.endsWith("FastExecuteScriptShortcut.exe"))
-                continue;
-        }
-
-
         QFileInfo finfo(d.absoluteFilePath(file));
 
         if (finfo.isSymLink())
@@ -106,7 +108,7 @@ static void recurseCopyAddDir(const QString& ModuleFolder, QDir d, QDir t)
         {
             t.mkdir(file);
             QDir sd(finfo.filePath());
-            recurseCopyAddDir(ModuleFolder,sd, QDir(t.absoluteFilePath(file)));
+            recurseCopyAddDir(sd, QDir(t.absoluteFilePath(file)));
         } else
         {
             QFile::copy(finfo.absoluteFilePath(),t.absoluteFilePath(file));
@@ -115,34 +117,62 @@ static void recurseCopyAddDir(const QString& ModuleFolder, QDir d, QDir t)
 }
 
 
-void Compiler::Compile()
+bool Compiler::Compile()
 {
     QDir FolderRelease(ReleaseFolder);
-    FolderRelease.mkdir(".");
+    FolderRelease.mkpath(".");
     CalculateCompiledFolder();
-    FolderRelease.mkdir(CompiledFolder);
+
     QDir FolderCompiled(CompiledFolder);
+    FolderCompiled.mkpath(".");
 
-    QDir FolderBuild(BuildFolder);
-    QFile::copy(FolderBuild.absoluteFilePath("FastExecuteScriptShortcut.exe"),FolderCompiled.absoluteFilePath("Run.exe"));
+    QDir FolderRemoteExecuteScript("RemoteExecuteScript");
 
-    FolderCompiled.mkdir("engine");
-    FolderCompiled.cd("engine");
-    QFile::copy(FolderBuild.absoluteFilePath("FastExecuteScriptShortcut.exe"),FolderCompiled.absoluteFilePath("FastExecuteScript.exe"));
+    recurseCopyAddDir(FolderRemoteExecuteScript,FolderCompiled);
 
-    FolderCompiled.mkdir("engine");
-    FolderCompiled.cd("engine");
-
-    QString ModulesFolder;
+    if(Type == NoProtection)
     {
-        QDir FolderBuild(BuildFolder);
-        FolderBuild.cd("modules");
-        ModulesFolder = FolderBuild.absolutePath();
+        return true;
+    }else if(Type == PrivateScriptEnterPassForUser)
+    {
+        QFile FileProjectXml(CompiledFolder + "/project.xml");
+        if(FileProjectXml.open(QIODevice::WriteOnly))
+        {
+            QXmlStreamWriter xmlWriter(&FileProjectXml);
+            xmlWriter.setAutoFormatting(true);
+            xmlWriter.writeStartDocument();
+
+            xmlWriter.writeStartElement("Remote");
+            xmlWriter.writeAttribute("ScriptName", Name);
+            xmlWriter.writeAttribute("Version", "last");
+            xmlWriter.writeAttribute("Username", Username);
+            xmlWriter.writeAttribute("Password", Password);
+            xmlWriter.writeAttribute("Mode", "1");
+
+            xmlWriter.writeEndElement();
+        }
+
+        FileProjectXml.close();
+        return false;
+    }else if(Type == PrivateScriptUserEnterPass)
+    {
+        QFile FileProjectXml(CompiledFolder + "/project.xml");
+        if(FileProjectXml.open(QIODevice::WriteOnly))
+        {
+            QXmlStreamWriter xmlWriter(&FileProjectXml);
+            xmlWriter.setAutoFormatting(true);
+            xmlWriter.writeStartDocument();
+
+            xmlWriter.writeStartElement("Remote");
+            xmlWriter.writeAttribute("ScriptName", Name);
+            xmlWriter.writeAttribute("Version", "last");
+            xmlWriter.writeAttribute("Mode", "1");
+
+            xmlWriter.writeEndElement();
+        }
+
+        FileProjectXml.close();
+        return false;
     }
-
-    recurseCopyAddDir(ModulesFolder,FolderBuild,FolderCompiled);
-
-
-
-
+    return false;
 }

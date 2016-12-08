@@ -19,6 +19,12 @@ namespace BrowserAutomationStudioFramework
         QString ErrorString;
         QString ScriptName;
         QString ScriptVersion;
+
+        QString EngineVersion;
+        QString ChromeCommandLine;
+        QString SettingsWorker;
+        QString ModulesMetaJson;
+
         MultiLanguageString OutputTitle1;
         MultiLanguageString OutputTitle2;
         MultiLanguageString OutputTitle3;
@@ -48,6 +54,12 @@ namespace BrowserAutomationStudioFramework
         void SetScriptVersion(const QString & Version);
         void SetFileName(const QString & SetFileName);
         void SetFileContent(const QString & FileContent);
+
+        void SetEngineVersion(const QString & EngineVersion);
+        void SetChromeCommandLine(const QString & ChromeCommandLine);
+        void SetSettingsWorker(const QString & SettingsWorker);
+        void SetModulesMetaJson(const QString & ModulesMetaJson);
+
         void SetOutputTitle1(const MultiLanguageString& OutputTitle1);
         void SetOutputTitle2(const MultiLanguageString& OutputTitle2);
         void SetOutputTitle3(const MultiLanguageString& OutputTitle3);
@@ -74,6 +86,12 @@ namespace BrowserAutomationStudioFramework
         QString GetFileContent();
         QString GetErrorString();
         QString GetAvailableLanguages();
+
+        QString GetEngineVersion();
+        QString GetChromeCommandLine();
+        QString GetSettingsWorker();
+        QString GetModulesMetaJson();
+
         MultiLanguageString GetOutputTitle1();
         MultiLanguageString GetOutputTitle2();
         MultiLanguageString GetOutputTitle3();

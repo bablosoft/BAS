@@ -734,6 +734,39 @@
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
 
+  <script type="text/template" id="loadcookiesfrombrowser">
+    <div class="container-fluid" style="margin-top:30px">
+      <div class="tooltipinternal tr">Load cookies from browser.</div>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
+  <script type="text/template" id="loadcookiesfromhttpclient">
+    <div class="container-fluid" style="margin-top:30px">
+      <div class="tooltipinternal tr">Load cookies from http client.</div>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
+  <script type="text/template" id="closebrowser">
+    <div class="container-fluid" style="margin-top:30px">
+      <div class="tooltipinternal tr">Close browser.</div>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
+  <script type="text/template" id="openbrowser">
+    <div class="container-fluid" style="margin-top:30px">
+      <div class="tooltipinternal tr">Open browser.</div>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
+  <script type="text/template" id="getthreadnumber">
+    <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable to save thread index"), default_variable: "THREAD_INDEX"}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
   <script type="text/template" id="getstatus">
     <div class="container-fluid getstatus">
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Match"), default_selector: "string", disable_int:true}) %>
@@ -1866,15 +1899,19 @@
         hash["name"] = login
         hash["password"] = password
       }
+      _switch_http_client_main()
       http_client_set_proxy(hash["server"], hash["Port"], hash["IsHttp"], hash["name"], hash["password"])
   </script>
   <script type="text/template" id="httpclientreset_code">
+    _switch_http_client_main()
     new_http_client()
   </script>
   <script type="text/template" id="httpclientdownload_code">
+    _switch_http_client_main()
     http_client_download(<%= value %>, <%= file %>)!
   </script>
   <script type="text/template" id="httpclientget_code">
+    _switch_http_client_main()
     <% if(follow){ %>
       http_client_get2(<%= value %>,{method:(<%= method %>)})!
     <% } else {%>
@@ -1882,6 +1919,7 @@
     <% }%>
   </script>
   <script type="text/template" id="httpclientpost_code">
+    _switch_http_client_main()
     <% if(follow){ %>
       http_client_post(<%= value %>, <%= params %>, {"content-type":(<%= contenttype %>), "encoding":(<%= encoding %>), "method":(<%= method %>)})!
     <% } else {%>
@@ -1902,57 +1940,75 @@
 
   
   <script type="text/template" id="httpclienturl_code">
+    _switch_http_client_main()
     <%= variable %> = http_client_url()
   </script>
   <script type="text/template" id="httpclientcontent_code">
+    _switch_http_client_main()
     <%= variable %> = http_client_content()
   </script>
   <script type="text/template" id="httpclientstatus_code">
+    _switch_http_client_main()
     <%= variable %> = http_client_status()
   </script>
   <script type="text/template" id="httpclientgetheader_code">
+    _switch_http_client_main()
     <%= variable %> = http_client_header(<%= value %>)
   </script>
   <script type="text/template" id="httpclientsetheader_code">
+    _switch_http_client_main()
     http_client_set_header(<%= name %>, <%= value %>)
   </script>
   <script type="text/template" id="httpclientclearheader_code">
+    _switch_http_client_main()
     http_client_clear_header()
   </script>
   <script type="text/template" id="httpclientgetcookiesforurl_code">
+    _switch_http_client_main()
     <%= variable %> = http_client_get_cookies(<%= value %>)
   </script>
   <script type="text/template" id="httpclientsavecookies_code">
+    _switch_http_client_main()  
     <%= variable %> = http_client_save_cookies()
   </script>
   <script type="text/template" id="httpclientrestorecookies_code">
+    _switch_http_client_main()
     http_client_restore_cookies(<%= value %>)
   </script>
   <script type="text/template" id="httpclientfailonerror_code">
+    _switch_http_client_main()
     http_client_set_fail_on_error(<%= value %> == "fail")
   </script>
   <script type="text/template" id="httpclientiserror_code">
+    _switch_http_client_main()
     <%= variable %> = http_client_was_error()
   </script>
   <script type="text/template" id="httpclientgeterrorstring_code">
+    _switch_http_client_main()
     <%= variable %> = http_client_error_string()
   </script>
   <script type="text/template" id="httpclientxpathxml_code">
+    _switch_http_client_main()
     <%= variable %> = http_client_xpath_xml(<%= value %>,!(<%= fail %>))
   </script>
   <script type="text/template" id="httpclientxpathxmllist_code">
+    _switch_http_client_main()
     <%= variable %> = http_client_xpath_xml_list(<%= value %>,true)
   </script>
   <script type="text/template" id="httpclientxpathtext_code">
+    _switch_http_client_main()
     <%= variable %> = http_client_xpath_text(<%= value %>,!(<%= fail %>))
   </script>
   <script type="text/template" id="httpclientxpathtextlist_code">
+    _switch_http_client_main()
     <%= variable %> = http_client_xpath_text_list(<%= value %>,true)
   </script>
   <script type="text/template" id="httpclientxpathcount_code">
+    _switch_http_client_main()
     <%= variable %> = http_client_xpath_count(<%= value %>)
   </script>
   <script type="text/template" id="httpclientxpathexists_code">
+    _switch_http_client_main()
     <%= variable %> = http_client_xpath_exist(<%= value %>)
   </script>
 
@@ -2108,6 +2164,50 @@
       page().script("BrowserAutomationStudio_SaveLocalStorage(" + JSON.stringify(LOCALSTORAGE) + ")")!
       
       restore_cookies(COOKIES)!
+  </script>
+
+  <script type="text/template" id="loadcookiesfromhttpclient_code">
+      /*Browser*/
+      _switch_http_client_main()
+      VALUE = http_client_save_cookies()
+      COOKIES = ""
+      LOCALSTORAGE = ""
+      if(VALUE.length > 0)
+      {
+        COOKIES = JSON.parse(VALUE)["cookies"]
+        if(typeof(COOKIES) == "undefined")
+          COOKIES = ""
+        else
+          COOKIES = JSON.stringify(COOKIES)
+      }
+
+      page().script("BrowserAutomationStudio_RestoreLocalStorage(" + JSON.stringify(LOCALSTORAGE) + ")")!
+      page().script("BrowserAutomationStudio_SaveLocalStorage(" + JSON.stringify(LOCALSTORAGE) + ")")!
+      
+      restore_cookies(COOKIES)!
+  </script>
+
+  <script type="text/template" id="loadcookiesfrombrowser_code">
+      /*Browser*/
+      save_cookies()!
+      _switch_http_client_main()
+      http_client_restore_cookies(JSON.stringify({cookies:JSON.parse(_result())}))
+  </script>
+
+  <script type="text/template" id="getthreadnumber_code">
+      <%= variable %> = thread_number()
+  </script>
+
+  <script type="text/template" id="closebrowser_code">
+      /*Browser*/
+      /*ManualBrowser*/
+      close_browser()
+  </script>
+
+  <script type="text/template" id="openbrowser_code">
+      /*Browser*/
+      /*ManualBrowser*/
+      open_browser()!
   </script>
 
   <script type="text/template" id="setheader_code">
@@ -4220,6 +4320,52 @@
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
+          }else if(State == "loadcookiesfrombrowser")
+          {
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+          }else if(State == "loadcookiesfromhttpclient")
+          {
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+          }else if(State == "closebrowser")
+          {
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+          }else if(State == "openbrowser")
+          {
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+          }else if(State == "getthreadnumber")
+          {
+             var Save = this.$el.find("#Save").val().toUpperCase();
+             if(Save.length == 0)
+             {
+              Invalid("Variable is empty");
+              return;
+             }
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
           }else if(State == "clearmasks")
           {
              try{
@@ -5758,7 +5904,12 @@
           "drop": _.template($('#drop').html()),
           "dragelement": _.template($('#dragelement').html()),
           "dropelement": _.template($('#dropelement').html()),
-          "waitfiledownload": _.template($('#waitfiledownload').html())
+          "waitfiledownload": _.template($('#waitfiledownload').html()),
+          "loadcookiesfrombrowser": _.template($('#loadcookiesfrombrowser').html()),
+          "loadcookiesfromhttpclient": _.template($('#loadcookiesfromhttpclient').html()),
+          "getthreadnumber": _.template($('#getthreadnumber').html()),
+          "closebrowser": _.template($('#closebrowser').html()),
+          "openbrowser": _.template($('#openbrowser').html())
           _MACRO_INSERT_TEMPLATES_
         }
         this.model.bind('change', this.render, this);
@@ -5936,7 +6087,12 @@
             "!/drop": "drop",
             "!/dragelement": "dragelement",
             "!/dropelement": "dropelement",
-            "!/waitfiledownload": "waitfiledownload"
+            "!/waitfiledownload": "waitfiledownload",
+            "!/loadcookiesfrombrowser": "loadcookiesfrombrowser",
+            "!/loadcookiesfromhttpclient": "loadcookiesfromhttpclient",
+            "!/getthreadnumber": "getthreadnumber",
+            "!/closebrowser": "closebrowser",
+            "!/openbrowser": "openbrowser"
             _MACRO_INSERT_ROUTER_DEF_
         },
 
@@ -6324,6 +6480,20 @@
         },
         waitfiledownload: function(){
           _GobalModel.set({ state: "waitfiledownload" });
+        },
+        loadcookiesfrombrowser: function(){
+          _GobalModel.set({ state: "loadcookiesfrombrowser" });
+        },
+        loadcookiesfromhttpclient: function(){
+          _GobalModel.set({ state: "loadcookiesfromhttpclient" });
+        },
+        getthreadnumber: function(){
+          _GobalModel.set({ state: "getthreadnumber" });
+        },openbrowser: function(){
+          _GobalModel.set({ state: "openbrowser" });
+        }
+        ,closebrowser: function(){
+          _GobalModel.set({ state: "closebrowser" });
         }
         _MACRO_INSERT_ROUTER_FUNC_
     });
@@ -6349,7 +6519,6 @@
                 { name: tr(_A["solvecaptcha"]["name"]), description: tr(_A["solvecaptcha"]["description"]), ref: "solvecaptcha" },
                 { name: tr(_A["solverfailed"]["name"]), description: tr(_A["solverfailed"]["description"]), ref: "solverfailed" },
                 { name: tr(_A["timeout"]["name"]), description: tr(_A["timeout"]["description"]), ref: "timeout" },
-
                 { description: tr("Script logic"), type: "group" },
                 { name: tr(_A["if"]["name"]), description: tr(_A["if"]["description"]), ref: "if" },
                 { name: tr(_A["while"]["name"]), description: tr(_A["while"]["description"]), ref: "while" },
@@ -6363,6 +6532,7 @@
                 { name: tr(_A["ignoreerrors"]["name"]), description: tr(_A["ignoreerrors"]["description"]), ref: "ignoreerrors" },
                 { name: tr(_A["setvariable"]["name"]), description: tr(_A["setvariable"]["description"]), ref: "setvariable" },
                 { name: tr(_A["incvariable"]["name"]), description: tr(_A["incvariable"]["description"]), ref: "incvariable" },
+                { name: tr(_A["getthreadnumber"]["name"]), description: tr(_A["getthreadnumber"]["description"]), ref: "getthreadnumber" },
                 { name: tr(_A["executefunction"]["name"]), description: tr(_A["executefunction"]["description"]), ref: "executefunction" },
                 { description: tr("Tools"), type: "group" },
                 { name: tr(_A["log"]["name"]), description: tr(_A["log"]["description"]), ref: "log" },
@@ -6381,6 +6551,7 @@
                 { name: tr(_A["getcookiesforurl"]["name"]), description: tr(_A["getcookiesforurl"]["description"]), ref: "getcookiesforurl" },
                 { name: tr(_A["savecookies"]["name"]), description: tr(_A["savecookies"]["description"]), ref: "savecookies" },
                 { name: tr(_A["restorecookies"]["name"]), description: tr(_A["restorecookies"]["description"]), ref: "restorecookies" },
+                { name: tr(_A["loadcookiesfromhttpclient"]["name"]), description: tr(_A["loadcookiesfromhttpclient"]["description"]), ref: "loadcookiesfromhttpclient" },
                 { name: tr(_A["cachemaskallow"]["name"]), description: tr(_A["cachemaskallow"]["description"]), ref: "cachemaskallow" },
                 { name: tr(_A["cachemaskdeny"]["name"]), description: tr(_A["cachemaskdeny"]["description"]), ref: "cachemaskdeny" },
                 { name: tr(_A["requestmaskallow"]["name"]), description: tr(_A["requestmaskallow"]["description"]), ref: "requestmaskallow" },
@@ -6420,6 +6591,7 @@
                 { name: tr(_A["httpclientgetcookiesforurl"]["name"]), description: tr(_A["httpclientgetcookiesforurl"]["description"]), ref: "httpclientgetcookiesforurl" },
                 { name: tr(_A["httpclientsavecookies"]["name"]), description: tr(_A["httpclientsavecookies"]["description"]), ref: "httpclientsavecookies" },
                 { name: tr(_A["httpclientrestorecookies"]["name"]), description: tr(_A["httpclientrestorecookies"]["description"]), ref: "httpclientrestorecookies" },
+                { name: tr(_A["loadcookiesfrombrowser"]["name"]), description: tr(_A["loadcookiesfrombrowser"]["description"]), ref: "loadcookiesfrombrowser" },
                 { name: tr(_A["httpclientfailonerror"]["name"]), description: tr(_A["httpclientfailonerror"]["description"]), ref: "httpclientfailonerror" },
                 { name: tr(_A["httpclientiserror"]["name"]), description: tr(_A["httpclientiserror"]["description"]), ref: "httpclientiserror" },
                 { name: tr(_A["httpclientgeterrorstring"]["name"]), description: tr(_A["httpclientgeterrorstring"]["description"]), ref: "httpclientgeterrorstring" },
@@ -6428,7 +6600,10 @@
                 { name: tr(_A["httpclientxpathtext"]["name"]), description: tr(_A["httpclientxpathtext"]["description"]), ref: "httpclientxpathtext" },
                 { name: tr(_A["httpclientxpathtextlist"]["name"]), description: tr(_A["httpclientxpathtextlist"]["description"]), ref: "httpclientxpathtextlist" },
                 { name: tr(_A["httpclientxpathcount"]["name"]), description: tr(_A["httpclientxpathcount"]["description"]), ref: "httpclientxpathcount" },
-                { name: tr(_A["httpclientxpathexists"]["name"]), description: tr(_A["httpclientxpathexists"]["description"]), ref: "httpclientxpathexists" }
+                { name: tr(_A["httpclientxpathexists"]["name"]), description: tr(_A["httpclientxpathexists"]["description"]), ref: "httpclientxpathexists" },
+                { description: tr("Manual browser control"), type: "group" },
+                { name: tr(_A["openbrowser"]["name"]), description: tr(_A["openbrowser"]["description"]), ref: "openbrowser" },
+                { name: tr(_A["closebrowser"]["name"]), description: tr(_A["closebrowser"]["description"]), ref: "closebrowser" }
                 _MACRO_INSERT_ACTION_LIST_
 
             ]);

@@ -1,0 +1,92 @@
+{
+	
+	"name":"SmsReceive",
+	"description":"Receive sms",
+	"description_small":{"en": "Receive sms", "ru": "Получить смс"},
+	"major_version": 1,
+	"minor_version": 0,
+	"developer_name": "bablosoft", 
+	"developer_email": "mail.to.twaego@gmail.com", 
+	"developer_site": "https://bablosoft.com",
+	"api_version": 1,
+	"actions":
+	[
+
+		{
+			"name":"SmsReceive_GetPhoneNumber",
+			"description":{"en": "Get phone number","ru": "Получить номер телефона"},
+			"template": "{{Variable}}",
+			"is_element": false,
+			"interface": "get_phone_number_interface.js",
+			"select": "get_phone_number_select.js",
+			"code": [{"file":"get_phone_number_code.js", "name": "get_phone_number_code"}]
+		},
+		{
+			"name":"SmsReceive_NumberAlreadyInUse",
+			"description":{"en": "Number already in use","ru": "Номер уже используется"},
+			"template": "{{Number}}",
+			"is_element": false,
+			"interface": "number_already_in_use_interface.js",
+			"select": "number_already_in_use_select.js",
+			"code": [{"file":"number_already_in_use_code.js", "name": "number_already_in_use_code"}]
+		},
+		{
+			"name":"SmsReceive_GetActivationCode",
+			"description":{"en": "Get activation code","ru": "Получить код активации"},
+			"template": "{{Number}} -> {{Save}}",
+			"is_element": false,
+			"interface": "get_activation_code_interface.js",
+			"select": "get_activation_code_select.js",
+			"code": [{"file":"get_activation_code_code.js", "name": "get_activation_code_code"}]
+		},
+		{
+			"name":"SmsReceive_ActivationSuccess",
+			"description":{"en": "Activation success","ru": "Активация успешна"},
+			"template": "{{Number}}",
+			"is_element": false,
+			"interface": "activation_successful_interface.js",
+			"select": "activation_successful_select.js",
+			"code": [{"file":"activation_successful_code.js", "name": "activation_successful_code"}]
+		},
+		{
+			"name":"SmsReceive_ActivationFailure",
+			"description":{"en": "Activation fail","ru": "Активация неудачная"},
+			"template": "{{Number}}",
+			"is_element": false,
+			"interface": "activation_fail_interface.js",
+			"select": "activation_fail_select.js",
+			"code": [{"file":"activation_fail_code.js", "name": "activation_fail_code"}]
+		},
+		{
+			"name":"SmsReceive_FinishUsingNumber",
+			"description":{"en": "Finish using number","ru": "Завершить работу с номером"},
+			"template": "{{Number}}",
+			"is_element": false,
+			"interface": "finish_using_number_interface.js",
+			"select": "finish_using_number_select.js",
+			"code": [{"file":"finish_using_number_code.js", "name": "finish_using_number_code"}]
+		},
+		{
+			"name":"SmsReceive_Debug",
+			"description":{"en": "Enable debug","ru": "Включить отладку"},
+			"template": "{{Number}}",
+			"is_element": false,
+			"interface": "sms_enable_debug_interface.js",
+			"select": "sms_enable_debug_select.js",
+			"code": [{"file":"sms_enable_debug_code.js", "name": "sms_enable_debug_code"}]
+		}
+	],
+	"localize": 
+	{
+		"Api key": {"ru":"Ключ апи"},
+		"Number": {"ru":"Номер"},
+		"Site": {"ru":"Сайт"},
+		"Max wait minutes": {"ru":"Максимальное время ожидания в минутах"},
+		"Enable debug": {"ru":"Включить отладку"}
+		
+	},
+	"engine": ["engine.js"],
+	"browser": [],
+	"depends": []	
+}
+

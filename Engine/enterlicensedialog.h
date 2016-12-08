@@ -24,7 +24,7 @@ namespace BrowserAutomationStudioFramework
         QString PromoLink;
         int HeightTotal;
         int WidthTotal;
-        struct ScriptData{QString Description;QString Link;QString Version;bool IsFree;};
+        struct ScriptData{QString Description;QString Link;QString Version;bool IsFree = false;};
         QHash<QString,ScriptData> Scripts;
         QString AddSpacesToScriptName(const QString& ScriptName,const QString& Version);
         void SetScriptData(const ScriptData& Data);

@@ -1,5 +1,12 @@
 _L = 
 {
+	
+
+	"Variable to save thread index": {"ru": "Переменная для сохранения номера потока"},
+	"Load cookies from browser.": {"ru": "Загрузить куки из браузера."},
+	"Load cookies from http client.": {"ru": "Загрузить куки из http клиента."},
+	"Close browser.": {"ru": "Закрыть браузер."},
+	"Open browser.": {"ru": "Открыть браузер."},
 	"Restart process": {"ru": "Перезапуск процесса"},
 	"Variable To save file name": {"ru": "Переменная для сохранения пути к файлу"},
 	"Wait for the end of the current download.": {"ru": "Ждать окончания текущей загрузки"},

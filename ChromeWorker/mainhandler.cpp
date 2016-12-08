@@ -9,6 +9,7 @@
 #include "startwith.h"
 #include "randomid.h"
 #include "startwith.h"
+#include "picojson.h"
 #include <chrono>
 
 using namespace std::placeholders;
@@ -357,7 +358,25 @@ bool MainHandler::OnFileDialog(CefRefPtr<CefBrowser> browser, FileDialogMode mod
     {
         LOCK_BROWSER_DATA
         if(Data->_OpenFileName.length() > 0)
-            res.push_back(Data->_OpenFileName);
+        {
+            if(Data->_OpenFileName[0] == '[')
+            {
+                try
+                {
+                    picojson::value v;
+
+                    std::string err = picojson::parse(v, Data->_OpenFileName);
+                    if(err.empty())
+                    {
+                        for(picojson::value c: v.get<picojson::value::array>())
+                        {
+                            res.push_back(c.get<std::string>());
+                        }
+                    }
+                }catch(...){}
+            }else
+                res.push_back(Data->_OpenFileName);
+        }
     }
     callback->Continue(0,res);
     return true;

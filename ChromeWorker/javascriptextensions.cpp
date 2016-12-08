@@ -10,6 +10,24 @@ JavaScriptExtensions::JavaScriptExtensions()
 
 }
 
+std::string JavaScriptExtensions::GetReferrerExtension(const std::string& Referrer)
+{
+    std::string rescode;
+    if(!Referrer.empty())
+    {
+        rescode += std::string("Object.defineProperty(window.document, 'referrer', {"
+        "    configurable: true, get: function() {"
+         "        return ") + picojson::value(Referrer).serialize() + std::string(";"
+         "    }"
+         "});");
+    }
+    return rescode;
+}
+std::string JavaScriptExtensions::GetReferrerEmptyExtension()
+{
+    return "delete window.document.referrer;";
+}
+
 
 std::string JavaScriptExtensions::GetUserAgentExtension(const std::string& UserAgent)
 {

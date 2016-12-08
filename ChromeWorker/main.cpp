@@ -16,6 +16,10 @@
 #include "multithreading.h"
 #include "modulesdata.h"
 
+#if defined(BAS_DEBUG)
+    #include "CrashHandler.h"
+#endif
+
 
 int pid = -1;
 CefRefPtr<MainApp> app;
@@ -855,8 +859,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     LPSTR lpCmdLine, int nCmdShow)
 {
-    SetErrorMode(SetErrorMode(0) | SEM_NOGPFAULTERRORBOX);
-
+    #if defined(BAS_DEBUG)
+        CCrashHandler ch;
+        ch.SetProcessExceptionHandlers();
+        ch.SetThreadExceptionHandlers();
+    #else
+        SetErrorMode(SetErrorMode(0) | SEM_NOGPFAULTERRORBOX);
+    #endif
 
     std::srand(std::time(0));
     SkipFrames = Settings.SkipFrames();

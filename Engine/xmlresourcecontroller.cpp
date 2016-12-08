@@ -211,10 +211,44 @@ namespace BrowserAutomationStudioFramework
         this->FileContent = FileContent;
     }
 
+    void XmlResourceController::SetEngineVersion(const QString & EngineVersion)
+    {
+        this->EngineVersion = EngineVersion;
+    }
+    void XmlResourceController::SetChromeCommandLine(const QString & ChromeCommandLine)
+    {
+        this->ChromeCommandLine = ChromeCommandLine;
+    }
+    void XmlResourceController::SetSettingsWorker(const QString & SettingsWorker)
+    {
+        this->SettingsWorker = SettingsWorker;
+    }
+    void XmlResourceController::SetModulesMetaJson(const QString & ModulesMetaJson)
+    {
+        this->ModulesMetaJson = ModulesMetaJson;
+    }
+
 
     QString XmlResourceController::GetFileContent()
     {
         return FileContent;
+    }
+
+    QString XmlResourceController::GetEngineVersion()
+    {
+        return EngineVersion;
+    }
+    QString XmlResourceController::GetChromeCommandLine()
+    {
+        return ChromeCommandLine;
+    }
+    QString XmlResourceController::GetSettingsWorker()
+    {
+        return SettingsWorker;
+    }
+    QString XmlResourceController::GetModulesMetaJson()
+    {
+        return ModulesMetaJson;
     }
 
     QString XmlResourceController::GetScript()
@@ -499,6 +533,22 @@ namespace BrowserAutomationStudioFramework
             {
                 xmlReader.readNext();
                 ScriptVersion = xmlReader.text().toString();
+            }else if(xmlReader.name() == "EngineVersion" && token == QXmlStreamReader::StartElement)
+            {
+                xmlReader.readNext();
+                EngineVersion = xmlReader.text().toString();
+            }else if(xmlReader.name() == "ChromeCommandLine" && token == QXmlStreamReader::StartElement)
+            {
+                xmlReader.readNext();
+                ChromeCommandLine = xmlReader.text().toString();
+            }else if(xmlReader.name() == "SettingsWorker" && token == QXmlStreamReader::StartElement)
+            {
+                xmlReader.readNext();
+                SettingsWorker = xmlReader.text().toString();
+            }else if(xmlReader.name() == "ModulesMetaJson" && token == QXmlStreamReader::StartElement)
+            {
+                xmlReader.readNext();
+                ModulesMetaJson = xmlReader.text().toString();
             }else if(xmlReader.name() == "AvailableLanguages" && token == QXmlStreamReader::StartElement)
             {
                 xmlReader.readNext();
@@ -819,6 +869,16 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("ScriptName",ScriptName);
         xmlWriter.writeTextElement("ScriptVersion",ScriptVersion);
         xmlWriter.writeTextElement("AvailableLanguages",AvailableLanguages);
+
+        if(!EngineVersion.isEmpty())
+            xmlWriter.writeTextElement("EngineVersion",EngineVersion);
+        if(!SettingsWorker.isEmpty())
+            xmlWriter.writeTextElement("SettingsWorker",SettingsWorker);
+        if(!ChromeCommandLine.isEmpty())
+            xmlWriter.writeTextElement("ChromeCommandLine",ChromeCommandLine);
+        if(!ModulesMetaJson.isEmpty())
+            xmlWriter.writeTextElement("ModulesMetaJson",ModulesMetaJson);
+
 
         xmlWriter.writeStartElement("OutputTitle1");
             OutputTitle1.WriteXml(&xmlWriter);

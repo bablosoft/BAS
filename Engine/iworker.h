@@ -129,8 +129,6 @@ namespace BrowserAutomationStudioFramework
         virtual void SetDoTrace(bool DoTrace) = 0;
         virtual bool GetDoTrace() = 0;
 
-        virtual void SetIsRecord(bool IsRecord) = 0;
-        virtual bool GetIsRecord() = 0;
 
         virtual void SetAdditionEngineScripts(QList<QString>* AdditionalScripts) = 0;
         virtual QList<QString>* GetAdditionEngineScripts() = 0;
@@ -148,7 +146,7 @@ namespace BrowserAutomationStudioFramework
     public slots:
 
         virtual void Run() = 0;
-        virtual void Abort() = 0;
+        virtual void Abort(bool SignalResourceHandlers) = 0;
         virtual void InterruptAction() = 0;
         virtual void Fail(const QString& message) = 0;
         virtual void Die(const QString& message) = 0;
@@ -158,6 +156,8 @@ namespace BrowserAutomationStudioFramework
         virtual void FailProcessFinished() = 0;
         virtual void RunSubScript() = 0;
 
+        virtual void SetIsRecord(bool IsRecord) = 0;
+        virtual bool GetIsRecord() = 0;
 
         virtual void SetAsyncResult(const QScriptValue & AsyncResult) = 0;
         virtual QScriptValue GetAsyncResult() = 0;

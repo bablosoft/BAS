@@ -87,14 +87,14 @@
         <translation>База</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="183"/>
-        <location filename="../mainwindow.cpp" line="198"/>
-        <location filename="../mainwindow.cpp" line="213"/>
+        <location filename="../mainwindow.cpp" line="189"/>
+        <location filename="../mainwindow.cpp" line="204"/>
+        <location filename="../mainwindow.cpp" line="219"/>
         <source>Database Error</source>
         <translation>Ошибка базы</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="239"/>
+        <location filename="../mainwindow.cpp" line="245"/>
         <source>Show all log</source>
         <translation>Весь лог</translation>
     </message>
@@ -107,12 +107,12 @@
         <translation type="vanished">Лицензия действительна до </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="974"/>
+        <location filename="../mainwindow.cpp" line="1022"/>
         <source>Application is still running</source>
         <translation>Приложение еще работает</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="974"/>
+        <location filename="../mainwindow.cpp" line="1022"/>
         <source>Use exit menu item to shut it down</source>
         <translation>Используйте кнопку выход, чтобы закрыть его</translation>
     </message>

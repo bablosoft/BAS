@@ -144,6 +144,7 @@ private slots:
     void OpenDefault();
     void Save();
     void SaveAs();
+    QPair<bool,QString> SaveToFileSilent(const QString& file);
     void SaveToFile(const QString& file);
     void EditSchema();
     void DeleteSchema();

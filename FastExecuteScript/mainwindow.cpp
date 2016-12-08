@@ -96,9 +96,15 @@ void MainWindow::SetIsSilent()
     IsSilent = true;
 }
 
+void MainWindow::SetRemote(const QString& Remote)
+{
+    this->Remote = Remote;
+}
+
 
 void MainWindow::Start()
 {
+
     _ModuleManager = new ModuleManager(this);
 
     NeedRestart = false;
@@ -254,6 +260,19 @@ void MainWindow::Start()
 
 
     InitRecources();
+
+    if(!Remote.isEmpty())
+    {
+        qDebug()<<"Work on remote "<<Remote;
+        IHttpClient * Client = _HttpClientFactory->GetHttpClient();
+        QEventLoop loop;
+        Client->Connect(&loop, SLOT(quit()));
+        Client->Download(Remote,"project.xml");
+        connect(_DataBaseConnector, SIGNAL(Started()), &loop, SLOT(quit()));
+        loop.exec();
+        qDebug()<<"Done downloading. Was Error - "<<Client->WasError()<<". Error string\""<<Client->GetErrorString()<<"\"";
+    }
+
     qDebug()<<"Start 051";
     InitWidgets();
     qDebug()<<"Start 052";
@@ -282,6 +301,35 @@ void MainWindow::Start()
 
     qDebug()<<"Start 066";
     Res->FromViewToModel(&loader);
+
+    {
+        QFile f("chrome_command_line.txt");
+        if(f.open(QFile::WriteOnly | QFile::Text))
+        {
+            QTextStream out(&f);
+            out<<loader.GetChromeCommandLine();
+        }
+        f.close();
+    }
+    {
+        QFile f("settings_worker.ini");
+        if(f.open(QFile::WriteOnly | QFile::Text))
+        {
+            QTextStream out(&f);
+            out<<loader.GetSettingsWorker();
+        }
+        f.close();
+    }
+    {
+        QFile f("modules/meta.json");
+        if(f.open(QFile::WriteOnly | QFile::Text))
+        {
+            QTextStream out(&f);
+            out<<loader.GetModulesMetaJson();
+        }
+        f.close();
+    }
+
 
     this->setWindowTitle(QString("%1(%2)").arg(loader.GetScriptName()).arg(loader.GetScriptVersion()));
 

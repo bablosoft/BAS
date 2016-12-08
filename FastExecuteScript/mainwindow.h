@@ -97,10 +97,12 @@ class MainWindow : public QMainWindow
     void SetDatabaseConnector(MongoDatabaseConnector * _DatabaseConnector,MongoDatabaseConnector * _DatabaseConnector2,MongoDatabaseConnector * _DatabaseConnector3, DatabaseState* _DataBaseState, CsvHelper* _CsvHelper);
 
     bool IsSilent;
+    QString Remote;
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void SetIsSilent();
+    void SetRemote(const QString& Remote);
 
     void closeEvent(QCloseEvent *event);
 private:

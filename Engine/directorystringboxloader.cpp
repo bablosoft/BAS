@@ -26,7 +26,7 @@ namespace BrowserAutomationStudioFramework
     {
         QDir dir(DirectoryName);
         QStringList list;
-        list = dir.entryList(QStringList()<<DirectoryMask,QDir::Files | QDir::NoDotAndDotDot);
+        list = dir.entryList(DirectoryMask.split(";"),QDir::Files | QDir::NoDotAndDotDot);
         int len = list.length();
         for(int i = 0;i<len;i++)
         {

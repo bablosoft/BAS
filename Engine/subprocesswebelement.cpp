@@ -202,8 +202,14 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeStartElement("Element");
             xmlWriter.writeStartElement(ElementName);
             xmlWriter.writeAttribute("ID",ID);
-            xmlWriter.writeTextElement("A",Text1);
-            xmlWriter.writeTextElement("B",Text2);
+
+            xmlWriter.writeStartElement("A");
+            xmlWriter.writeAttribute("value",Text1);
+            xmlWriter.writeEndElement();
+
+            xmlWriter.writeStartElement("B");
+            xmlWriter.writeAttribute("value",Text2);
+            xmlWriter.writeEndElement();
 
             xmlWriter.writeStartElement("Path");
                 int len = Selector.length();

@@ -9,38 +9,60 @@
         <translation>Скомпилировать скрипт</translation>
     </message>
     <message>
-        <location filename="../compilewindow.ui" line="29"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Type (&lt;a href=&quot;https://wiki.bablosoft.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#eeeeee;&quot;&gt;Manual&lt;/span&gt;&lt;/a&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Тип (&lt;a href=&quot;https://wiki.bablosoft.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#eeeeee;&quot;&gt;Справка&lt;/span&gt;&lt;/a&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Type (&lt;a href=&quot;http://wiki.bablosoft.com/doku.php?id=how_to_protect_your_script&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#eeeeee;&quot;&gt;Manual&lt;/span&gt;&lt;/a&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Тип (&lt;a href=&quot;http://wiki.bablosoft.com/doku.php?id=ru:how_to_protect_your_script&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#eeeeee;&quot;&gt;Справка&lt;/span&gt;&lt;/a&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../compilewindow.ui" line="32"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Type (&lt;a href=&quot;https://wiki.bablosoft.com/doku.php?id=how_to_protect_your_script&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#eeeeee;&quot;&gt;Manual&lt;/span&gt;&lt;/a&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Тип (&lt;a href=&quot;https://wiki.bablosoft.com/doku.php?id=ru:how_to_protect_your_script&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#eeeeee;&quot;&gt;Справка&lt;/span&gt;&lt;/a&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../compilewindow.ui" line="44"/>
+        <source>No protection</source>
+        <translation>Без защиты</translation>
+    </message>
+    <message>
+        <location filename="../compilewindow.ui" line="54"/>
+        <source>Private script, user must enter password before launch</source>
+        <translation>Приватный, пользователь вводит пароль при старте</translation>
+    </message>
+    <message>
+        <location filename="../compilewindow.ui" line="61"/>
+        <source>Private script, enter password for user</source>
+        <translation>Приватный, ввести пароль за пользователя</translation>
+    </message>
+    <message>
+        <location filename="../compilewindow.ui" line="70"/>
         <source>Name</source>
         <translation>Название</translation>
     </message>
     <message>
-        <location filename="../compilewindow.ui" line="36"/>
+        <location filename="../compilewindow.ui" line="84"/>
         <source>Version</source>
         <translation>Версия</translation>
     </message>
     <message>
-        <location filename="../compilewindow.ui" line="45"/>
-        <source>Windows</source>
-        <translation></translation>
+        <location filename="../compilewindow.ui" line="148"/>
+        <source>Username</source>
+        <translation>Логин</translation>
     </message>
     <message>
-        <location filename="../compilewindow.ui" line="58"/>
-        <source>Linux</source>
-        <translation></translation>
+        <location filename="../compilewindow.ui" line="158"/>
+        <source>Password</source>
+        <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../compilewindow.ui" line="68"/>
-        <source>Mac</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../compilewindow.ui" line="77"/>
         <source>Platform</source>
-        <translation>Платформа</translation>
+        <translation type="vanished">Платформа</translation>
     </message>
     <message>
-        <location filename="../compilewindow.ui" line="96"/>
-        <location filename="../compilewindow.ui" line="110"/>
+        <location filename="../compilewindow.ui" line="103"/>
+        <location filename="../compilewindow.ui" line="120"/>
         <source>.</source>
         <translation></translation>
     </message>
@@ -291,73 +313,73 @@
         <translation type="vanished">Весь лог</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1476"/>
+        <location filename="../mainwindow.cpp" line="1565"/>
         <source>All log</source>
         <translation>Весь лог</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="506"/>
-        <location filename="../mainwindow.cpp" line="672"/>
+        <location filename="../mainwindow.cpp" line="548"/>
+        <location filename="../mainwindow.cpp" line="761"/>
         <source>Error saving file</source>
         <translation>Ошибка сохранения файла</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="174"/>
-        <location filename="../mainwindow.cpp" line="187"/>
-        <location filename="../mainwindow.cpp" line="200"/>
+        <location filename="../mainwindow.cpp" line="175"/>
+        <location filename="../mainwindow.cpp" line="188"/>
+        <location filename="../mainwindow.cpp" line="201"/>
         <source>Database Error</source>
         <translation>Ошибка базы</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="313"/>
+        <location filename="../mainwindow.cpp" line="322"/>
         <source>Need to restart after edit</source>
         <translation>Нужно перезапустить приложение после редактирования</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="338"/>
+        <location filename="../mainwindow.cpp" line="347"/>
         <source>Need to restart application</source>
         <translation>Нужно перезапустить приложение</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="506"/>
-        <location filename="../mainwindow.cpp" line="672"/>
+        <location filename="../mainwindow.cpp" line="548"/>
+        <location filename="../mainwindow.cpp" line="761"/>
         <source>Error saving file : %1</source>
         <translation>Ошибка сохранения файла : %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="531"/>
+        <location filename="../mainwindow.cpp" line="576"/>
         <source>Application is still running</source>
         <translation>Приложение еще работает</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="531"/>
+        <location filename="../mainwindow.cpp" line="576"/>
         <source>Use exit menu item to shut it down</source>
         <translation>Используйте кнопку выход, чтобы закрыть его</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="556"/>
+        <location filename="../mainwindow.cpp" line="601"/>
         <source>Open Project</source>
         <translation>Открыть проект</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="556"/>
-        <location filename="../mainwindow.cpp" line="683"/>
-        <location filename="../mainwindow.cpp" line="702"/>
+        <location filename="../mainwindow.cpp" line="601"/>
+        <location filename="../mainwindow.cpp" line="772"/>
+        <location filename="../mainwindow.cpp" line="791"/>
         <source>Project Files (*.xml);;All Files (*.*)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="569"/>
+        <location filename="../mainwindow.cpp" line="614"/>
         <source>Error loading file</source>
         <translation>Ошибка загрузки файла</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="569"/>
+        <location filename="../mainwindow.cpp" line="614"/>
         <source>Error loading file : %1</source>
         <translation>Ошибка загрузки файла : %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="683"/>
+        <location filename="../mainwindow.cpp" line="772"/>
         <source>Save Project</source>
         <translation>Сохранить проект</translation>
     </message>
@@ -366,7 +388,7 @@
         <translation type="vanished">Вы хотите сохранить предыдущий проект?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="702"/>
+        <location filename="../mainwindow.cpp" line="791"/>
         <source>Create Project</source>
         <translation>Создать проект</translation>
     </message>
@@ -387,12 +409,12 @@
         <translation type="vanished">Отмена</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="818"/>
+        <location filename="../mainwindow.cpp" line="907"/>
         <source>Captcha (%1)</source>
         <translation>Капча (%1)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1223"/>
+        <location filename="../mainwindow.cpp" line="1312"/>
         <source>Running ...</source>
         <translation>Скрипт работает ...</translation>
     </message>
@@ -400,9 +422,9 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="124"/>
+        <location filename="../main.cpp" line="127"/>
         <source>BrowserAutomationStudio is already running, do you want to start another instance?</source>
-        <translation type="unfinished">BrowserAutomationStudio уже запущена, вы хотите запустить второй экземпляр?</translation>
+        <translation>BrowserAutomationStudio уже запущена, вы хотите запустить второй экземпляр?</translation>
     </message>
 </context>
 <context>

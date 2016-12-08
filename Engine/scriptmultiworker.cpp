@@ -545,7 +545,7 @@ namespace BrowserAutomationStudioFramework
         ReportData->Final(tr("Aborted By User"));
         ReportData->Stop();
 
-        AbortWorkers();
+        AbortWorkers(true);
 
 
         ScriptFinished();
@@ -570,13 +570,19 @@ namespace BrowserAutomationStudioFramework
     }
 
 
-    void ScriptMultiWorker::AbortWorkers()
+    void ScriptMultiWorker::AbortWorkers(bool NotSignalResourceHandlers)
     {
         foreach(IWorker *w,Workers)
         {
             if(w)
             {
-                w->Abort();
+                if(NotSignalResourceHandlers)
+                {
+                    w->Abort(IsRecord);
+                }else
+                {
+                    w->Abort(true);
+                }
             }
 
         }
@@ -625,7 +631,7 @@ namespace BrowserAutomationStudioFramework
         StageTimeoutTimer->deleteLater();
         StageTimeoutTimer = 0;
         NoNeedToCreateWorkersMore = true;
-        AbortWorkers();
+        AbortWorkers(false);
     }
 
     void ScriptMultiWorker::WorkerSuspended(IWorker * Worker)
@@ -750,7 +756,7 @@ namespace BrowserAutomationStudioFramework
         }
         if(NoNeedToCreateWorkersMore)
         {
-            AbortWorkers();
+            AbortWorkers(false);
         }else
         {
             WorkerRunning ++;

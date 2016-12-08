@@ -603,14 +603,14 @@ void CommandParser::Parse(const std::string& Xml)
             rapidxml::xml_node<> *A = CommandNode->first_node("A");
             if(A)
             {
-                send.CommandParam1 = A->value();
+                send.CommandParam1 = A->first_attribute("value")->value();
                 worker_log(std::string("param1 : ") + send.CommandParam1);
             }
 
             rapidxml::xml_node<> *B = CommandNode->first_node("B");
             if(B)
             {
-                send.CommandParam2 = B->value();
+                send.CommandParam2 = B->first_attribute("value")->value();
                 worker_log(std::string("param2 : ") + send.CommandParam2);
             }
 

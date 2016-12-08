@@ -278,7 +278,7 @@ MainWindow::MainWindow(QWidget *parent) :
         ProjectBackup *backup = new ProjectBackup(this);
         backup->SetPeriod(Settings->value("ProjectBackupPeriod",5 * 60000).toInt());
         backup->SetDestFolder(Settings->value("ProjectBackupDestFolder","../../projectbackups").toString());
-        backup->SetCodeEditor(TextEditor);
+        connect(backup,SIGNAL(Backup(QString)),this,SLOT(SaveToFileSilent(QString)));
         backup->Start();
     }
 }
@@ -480,41 +480,77 @@ void MainWindow::Compile()
     CompileWindow *compile = new CompileWindow(compiler);
     if(compile->exec())
     {
-        compiler->Compile();
-        XmlResourceController saver;
-        QDir d(compiler->GetEngineFolder());
-        if(QFileInfo("schema.xml").exists())
-            QFile("schema.xml").copy(d.absoluteFilePath("schema.xml"));
-        saver.SetFileName(d.absoluteFilePath("project.xml"));
-        saver.SetScript(TextEditor->GetText());
-        saver.SetScriptName(compiler->GetName());
-        saver.SetAvailableLanguages(LangModel->GetScriptAvailableLanguagesString());
-        saver.SetScriptVersion(compiler->GetVersion());
-        saver.SetOutputTitle1(Output->GetOutputTitle1());
-        saver.SetOutputTitle2(Output->GetOutputTitle2());
-        saver.SetOutputTitle3(Output->GetOutputTitle3());
-        saver.SetOutputTitle4(Output->GetOutputTitle4());
-        saver.SetOutputTitle5(Output->GetOutputTitle5());
-        saver.SetOutputTitle6(Output->GetOutputTitle6());
-        saver.SetOutputTitle7(Output->GetOutputTitle7());
-        saver.SetOutputTitle8(Output->GetOutputTitle8());
-        saver.SetOutputTitle9(Output->GetOutputTitle9());
-        saver.SetOutputVisible1(Output->GetOutputVisible1());
-        saver.SetOutputVisible2(Output->GetOutputVisible2());
-        saver.SetOutputVisible3(Output->GetOutputVisible3());
-        saver.SetOutputVisible4(Output->GetOutputVisible4());
-        saver.SetOutputVisible5(Output->GetOutputVisible5());
-        saver.SetOutputVisible6(Output->GetOutputVisible6());
-        saver.SetOutputVisible7(Output->GetOutputVisible7());
-        saver.SetOutputVisible8(Output->GetOutputVisible8());
-        saver.SetOutputVisible9(Output->GetOutputVisible9());
-        Res->FromViewToModel(WidgetController);
-        Res->FromModelToView(&saver);
-        if(!saver.GetResult())
+        if(compiler->Compile())
         {
-            QMessageBox::warning(0, tr("Error saving file"), QString(tr("Error saving file : %1")).arg(saver.GetErrorString()));
-            return;
+            XmlResourceController saver;
+            QDir d(compiler->GetEngineFolder());
+            /*if(QFileInfo("schema.xml").exists())
+                QFile("schema.xml").copy(d.absoluteFilePath("schema.xml"));*/
+            saver.SetFileName(d.absoluteFilePath("project.xml"));
+            saver.SetScript(TextEditor->GetText());
+            saver.SetScriptName(compiler->GetName());
+            saver.SetAvailableLanguages(LangModel->GetScriptAvailableLanguagesString());
+            saver.SetScriptVersion(compiler->GetVersion());
+            saver.SetOutputTitle1(Output->GetOutputTitle1());
+            saver.SetOutputTitle2(Output->GetOutputTitle2());
+            saver.SetOutputTitle3(Output->GetOutputTitle3());
+            saver.SetOutputTitle4(Output->GetOutputTitle4());
+            saver.SetOutputTitle5(Output->GetOutputTitle5());
+            saver.SetOutputTitle6(Output->GetOutputTitle6());
+            saver.SetOutputTitle7(Output->GetOutputTitle7());
+            saver.SetOutputTitle8(Output->GetOutputTitle8());
+            saver.SetOutputTitle9(Output->GetOutputTitle9());
+            saver.SetOutputVisible1(Output->GetOutputVisible1());
+            saver.SetOutputVisible2(Output->GetOutputVisible2());
+            saver.SetOutputVisible3(Output->GetOutputVisible3());
+            saver.SetOutputVisible4(Output->GetOutputVisible4());
+            saver.SetOutputVisible5(Output->GetOutputVisible5());
+            saver.SetOutputVisible6(Output->GetOutputVisible6());
+            saver.SetOutputVisible7(Output->GetOutputVisible7());
+            saver.SetOutputVisible8(Output->GetOutputVisible8());
+            saver.SetOutputVisible9(Output->GetOutputVisible9());
+
+            {
+                VersionInfo info;
+                saver.SetEngineVersion(info.VersionString());
+            }
+            {
+                QFile f("chrome_command_line.txt");
+                if(f.exists() && f.open(QFile::ReadOnly | QFile::Text))
+                {
+                    QTextStream in(&f);
+                    saver.SetChromeCommandLine(in.readAll());
+                }
+                f.close();
+            }
+            {
+                QFile f("settings_worker.ini");
+                if(f.exists() && f.open(QFile::ReadOnly | QFile::Text))
+                {
+                    QTextStream in(&f);
+                    saver.SetSettingsWorker(in.readAll());
+                }
+                f.close();
+            }
+            {
+                QFile f("modules/meta.json");
+                if(f.exists() && f.open(QFile::ReadOnly | QFile::Text))
+                {
+                    QTextStream in(&f);
+                    saver.SetModulesMetaJson(in.readAll());
+                }
+                f.close();
+            }
+            Res->FromViewToModel(WidgetController);
+            Res->FromModelToView(&saver);
+            if(!saver.GetResult())
+            {
+                QMessageBox::warning(0, tr("Error saving file"), QString(tr("Error saving file : %1")).arg(saver.GetErrorString()));
+                return;
+            }
         }
+
+
         QDesktopServices::openUrl(QUrl("file:///" + compiler->GetCompiledFolder()));
     }
 }
@@ -643,10 +679,13 @@ void MainWindow::Save()
     }
 }
 
-void MainWindow::SaveToFile(const QString& file)
+QPair<bool,QString> MainWindow::SaveToFileSilent(const QString& file)
 {
+    QPair<bool,QString> res;
+    res.first = false;
+
     if(!Output)
-        return;
+        return res;
     XmlResourceController saver;
     saver.SetAvailableLanguages(LangModel->GetScriptAvailableLanguagesString());
     saver.SetFileName(file);
@@ -673,12 +712,53 @@ void MainWindow::SaveToFile(const QString& file)
     saver.SetOutputVisible8(Output->GetOutputVisible8());
     saver.SetOutputVisible9(Output->GetOutputVisible9());
 
+    {
+        VersionInfo info;
+        saver.SetEngineVersion(info.VersionString());
+    }
+    {
+        QFile f("chrome_command_line.txt");
+        if(f.exists() && f.open(QFile::ReadOnly | QFile::Text))
+        {
+            QTextStream in(&f);
+            saver.SetChromeCommandLine(in.readAll());
+        }
+        f.close();
+    }
+    {
+        QFile f("settings_worker.ini");
+        if(f.exists() && f.open(QFile::ReadOnly | QFile::Text))
+        {
+            QTextStream in(&f);
+            saver.SetSettingsWorker(in.readAll());
+        }
+        f.close();
+    }
+    {
+        QFile f("modules/meta.json");
+        if(f.exists() && f.open(QFile::ReadOnly | QFile::Text))
+        {
+            QTextStream in(&f);
+            saver.SetModulesMetaJson(in.readAll());
+        }
+        f.close();
+    }
+
 
     Res->FromViewToModel(WidgetController);
     Res->FromModelToView(&saver);
-    if(!saver.GetResult())
+    res.first = saver.GetResult();
+    res.second = saver.GetErrorString();
+
+    return res;
+}
+
+void MainWindow::SaveToFile(const QString& file)
+{
+    QPair<bool,QString> res = SaveToFileSilent(file);
+    if(!res.first)
     {
-        QMessageBox::warning(0, tr("Error saving file"), QString(tr("Error saving file : %1")).arg(saver.GetErrorString()));
+        QMessageBox::warning(0, tr("Error saving file"), QString(tr("Error saving file : %1")).arg(res.second));
     }else
     {
         SetCurrentFileName(file);

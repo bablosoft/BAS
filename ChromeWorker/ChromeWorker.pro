@@ -4,6 +4,10 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 DEFINES+=CURL_STATICLIB
+
+DEFINES+=NOT_BAS_DEBUG
+
+
 SOURCES += main.cpp \
     mainapp.cpp \
     mainhandler.cpp \
@@ -52,7 +56,8 @@ SOURCES += main.cpp \
     processlocation.cpp \
     urlnormalize.cpp \
     chromecommandlineparser.cpp \
-    randomid.cpp
+    randomid.cpp \
+    CrashHandler.cpp
 
 INCLUDEPATH += $(BAS_PATH_WORKER)/include
 
@@ -115,7 +120,8 @@ HEADERS += \
     processlocation.h \
     urlnormalize.h \
     chromecommandlineparser.h \
-    randomid.h
+    randomid.h \
+    CrashHandler.h
 
 INCLUDEPATH += xml json png
 

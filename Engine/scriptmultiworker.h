@@ -193,7 +193,7 @@ namespace BrowserAutomationStudioFramework
         void Decrypt(const QString& Data);
         void SuccessInternal();
         void FailInternal(const QString&  message);
-        virtual void AbortWorkers();
+        virtual void AbortWorkers(bool NotSignalResourceHandlers);
         void AbortSubscript();
         virtual void SetAsyncResult(const QScriptValue & AsyncResult);
         virtual QScriptValue GetAsyncResult();

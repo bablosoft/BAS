@@ -3,8 +3,8 @@ VAR_LAST_ERROR = "";
 
 function _ensure_browser_created()
 {
-    if(typeof(NetworkAccessManager)=='undefined')
-        die("NetworkAccessManager is not accessible, try to create new browser with browser()! command")
+    if(typeof(NetworkAccessManager)=='undefined' || NetworkAccessManager == null)
+        die("NetworkAccessManager is not accessible, try to create new browser with open browser command")
 }
 
 function _simulate_crush(callback)
@@ -31,6 +31,17 @@ function _mar()
 function browser(callback)
 {
     Browser.CreateNewBrowser(false, "_mbr();ScriptWorker.AttachNetworkAccessManager();reset(function(){_mar();" + _get_function_body(callback) + "})")
+}
+
+open_browser = browser;
+
+function close_browser()
+{
+    if(!ScriptWorker.GetIsRecord())
+    {
+        Browser.CloseBrowser();
+        NetworkAccessManager = null;
+    }
 }
 
 function mouse(x, y, callback)
@@ -121,7 +132,10 @@ function load_instant(text, callback)
 function open_file_dialog(text, callback)
 {
     _ensure_browser_created();
-    Browser.SetOpenFileName(text,_get_function_body(callback));
+    var sendtext = text
+    if(text instanceof Array)
+        sendtext = JSON.stringify(text)
+    Browser.SetOpenFileName(sendtext,_get_function_body(callback));
 }
 
 function prompt_result(text, callback)

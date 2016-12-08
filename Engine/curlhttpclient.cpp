@@ -1,6 +1,10 @@
 #include "curlhttpclient.h"
 #include <QTextCodec>
 #include <QDir>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QDateTime>
 #include "every_cpp.h"
 
 namespace BrowserAutomationStudioFramework
@@ -395,19 +399,43 @@ namespace BrowserAutomationStudioFramework
     {
         this->PostPrepareStrategyFactory = PostPrepareStrategyFactory;
     }
+
     QString CurlHttpClient::SaveCookies()
     {
         QString res;
         bool first = true;
+        QVariantList CookiesJson;
         foreach(QNetworkCookie cookie,Cookies.AllCookies())
         {
             if(!first)
                 res.append(";");
             first = false;
 
-            res.append(cookie.toRawForm(QNetworkCookie::Full).toBase64());
+            QVariantMap res;
+
+            res.insert("value",QString::fromUtf8(cookie.value()));
+            res.insert("name",QString::fromUtf8(cookie.name()));
+            res.insert("domain",cookie.domain());
+            res.insert("path",cookie.path());
+            res.insert("creation",SerializeTime(QDateTime(QDate(2010,1,1))));
+            res.insert("expires",SerializeTime(cookie.expirationDate()));
+            res.insert("has_expires",(!cookie.isSessionCookie()) ? "1" : "0");
+            res.insert("httponly",(cookie.isHttpOnly()) ? "1" : "0");
+            res.insert("last_access",SerializeTime(QDateTime(QDate(2010,1,1))));
+            res.insert("secure",(cookie.isSecure()) ? "1" : "0");
+
+            CookiesJson.append(res);
+
+
         }
-        return res;
+        QVariantMap Res;
+        Res.insert("cookies",CookiesJson);
+        QJsonObject object = QJsonObject::fromVariantMap(Res);
+
+        QJsonDocument document;
+        document.setObject(object);
+
+        return QString::fromUtf8(document.toJson());
     }
     void CurlHttpClient::RestoreCookies(const QString& cookies)
     {
@@ -416,20 +444,27 @@ namespace BrowserAutomationStudioFramework
             Cookies.deleteCookie(cookie);
         }
 
-
-        QStringList list = cookies.split(";");
-
-        foreach(QString cookie,list)
         {
-            QString cookieText = cookie;
-            QByteArray cookieData = QByteArray::fromBase64(cookieText.toLatin1());
-            QList<QNetworkCookie> cs = QNetworkCookie::parseCookies(cookieData);
-            if(!cs.isEmpty())
+            QJsonDocument InputObject;
+            QJsonParseError err;
+            InputObject = QJsonDocument::fromJson(cookies.toUtf8(),&err);
+            if(err.error)
+                return;
+
+            for(QJsonValue val: InputObject.object()["cookies"].toArray())
             {
-                Cookies.insertCookie(cs.first());
+                QNetworkCookie c;
+                c.setValue(val.toObject()["value"].toString().toUtf8());
+                c.setName(val.toObject()["name"].toString().toUtf8());
+                c.setDomain(val.toObject()["domain"].toString());
+                c.setPath(val.toObject()["path"].toString());
+                c.setExpirationDate(DeserializeTime(val.toObject()["expires"].toObject()));
+                c.setHttpOnly(val.toObject()["httponly"].toString() == "1");
+                c.setSecure(val.toObject()["secure"].toString() == "1");
+                Cookies.insertCookie(c);
+
             }
         }
-
     }
 
     QPair<bool, ContentData> CurlHttpClient::ParsePostArgument(const QString& str, const QString& encoding)

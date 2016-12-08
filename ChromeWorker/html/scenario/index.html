@@ -1320,7 +1320,6 @@
         })
     });
 
-
     var BrowserAutomationStudio_DoubleClickId = -1
     var BrowserAutomationStudio_DoubleClickTime = 0
 
@@ -2765,6 +2764,14 @@
             if(data[i].code.indexOf("\/\*Browser\*\/") >= 0)
             {
               task.code = "browser()!"
+              break
+            }
+          }
+          for(var i = 0;i<data.length;i++)
+          {
+            if(data[i].code.indexOf("\/\*ManualBrowser\*\/") >= 0)
+            {
+              task.code = ""
               break
             }
           }

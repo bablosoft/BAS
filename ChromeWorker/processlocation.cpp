@@ -1,12 +1,37 @@
 #include "processlocation.h"
 #include "split.h"
+#include "log.h"
+#include "startwith.h"
 #include <network/uri.hpp>
 #include <network/uri/uri_builder.hpp>
 
-std::string ProcessLocation(const std::string& RedirectUrl,const std::string& OriginalUrl)
+std::string ProcessLocation(const std::string& RedirectUrlNotEscaped,const std::string& OriginalUrl)
 {
-    if(RedirectUrl.empty())
+    if(RedirectUrlNotEscaped.empty())
         return OriginalUrl;
+
+    worker_log(std::string("Location before escape: ") + RedirectUrlNotEscaped);
+    std::string RedirectUrl;
+    {
+        int len = RedirectUrlNotEscaped.size();
+        for(int i = 0;i<len;i++)
+        {
+            unsigned char c = RedirectUrlNotEscaped.at(i);
+            if(c >= 128)
+            {
+                RedirectUrl.push_back('%');
+                const char lookup[] = "0123456789ABCDEF";
+                RedirectUrl.push_back(lookup[ c >> 4 ]);
+                RedirectUrl.push_back(lookup[ c & 0x0f ]);
+            }else
+            {
+                RedirectUrl.push_back(c);
+            }
+        }
+
+    }
+    worker_log(std::string("Location escaped: ") + RedirectUrl);
+
     std::string Result = RedirectUrl;
     try
     {
@@ -18,7 +43,7 @@ std::string ProcessLocation(const std::string& RedirectUrl,const std::string& Or
         {
 
         }
-        if(!IsGood)
+        if(!IsGood && !starts_with(RedirectUrl,"http"))
         {
             /*
                 Starts with //

@@ -1,4 +1,29 @@
 _A = {
+   "loadcookiesfrombrowser":{
+      "name":"Load cookies from browser",
+      "description":"Load cookies from browser",
+      "template" : ""
+   },
+   "loadcookiesfromhttpclient":{
+      "name":"Load cookies from http client",
+      "description":"Load cookies from http client",
+      "template" : ""
+   },
+   "getthreadnumber":{
+      "name":"Thread index",
+      "description":"Thread index",
+      "template" : "{{Save}}"
+   },
+   "closebrowser":{
+      "name":"Close browser",
+      "description":"Close browser",
+      "template" : ""
+   },
+   "openbrowser":{
+      "name":"Open browser",
+      "description":"Open browser",
+      "template" : ""
+   },
    "addtab":{
       "name":"Add Tab",
       "description":"Add Tab",
@@ -637,6 +662,13 @@ _A = {
 
 _AL = 
 {
+   "Load cookies from browser": {"ru": "Загрузить cookies из браузера"},
+   "Load cookies from http client": {"ru": "Загрузить cookies из http клиента"},
+   "Thread index": {"ru": "Номер потока"},
+   "Close browser": {"ru": "Закрыть браузер"},
+   "Open browser": {"ru": "Открыть браузер"},
+   "Manual browser control": {"ru": "Ручное управление браузером"},
+   
    "Drag" : {"ru": "Начать Перетаскивание"},
    "Drop" : {"ru": "Закончить Перетаскивание"},
    "Drag On Element" : {"ru": "Начать Перетаскивание На Элементе"},
