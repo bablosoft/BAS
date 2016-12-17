@@ -172,11 +172,13 @@ namespace BrowserAutomationStudioFramework
         }
 
         int from = 0;
+        QString async_str = "/*!async*/";
+        int async_str_length = async_str.length();
         while(true)
         {
             int length = Res.length();
-            int index_start = Res.indexOf(")!", from);
-            from = index_start + 2;
+            int index_start = Res.indexOf(");" + async_str, from);
+            from = index_start + async_str_length + 2;
             bool is_one_argument = false;
             int index_search = index_start - 1;
             while(true)
@@ -202,20 +204,20 @@ namespace BrowserAutomationStudioFramework
                     break;
             }
 
-            if(Res.indexOf(")!")<0)
+            if(Res.indexOf(");" + async_str)<0)
             {
                 break;
             }
-            int index_end = index_start + 2;
+            int index_end = index_start + async_str_length + 2;
             int open_bracket = 0;
             while(true)
             {
                 if(index_end >= length - 1)
                 {
-                    QString all = Res.mid(index_start + 2);
-                    if(all.indexOf(")!")>=0)
+                    QString all = Res.mid(index_start + async_str_length + 2);
+                    if(all.indexOf(");" + async_str)>=0)
                         break;
-                    Res = Res.replace(index_start + 2,all.length(),Encrypt(all,ParanoicLevel));
+                    Res = Res.replace(index_start + async_str_length + 2,all.length(),Encrypt(all,ParanoicLevel));
 
                     Res = Res.replace(index_start,2,", function(){");
                     Res = Res.append("})");
@@ -233,13 +235,13 @@ namespace BrowserAutomationStudioFramework
                         open_bracket --;
                         if(open_bracket<0)
                         {
-                            QString all = Res.mid(index_start + 2, index_end - index_start - 2);
-                            if(all.indexOf(")!")>=0)
+                            QString all = Res.mid(index_start + async_str_length + 2, index_end - index_start - async_str_length - 2);
+                            if(all.indexOf(");" + async_str)>=0)
                                 break;
 
 
                             Res = Res.replace(index_end,1,"})}");
-                            Res = Res.replace(index_start + 2,all.length(),Encrypt(all,ParanoicLevel));
+                            Res = Res.replace(index_start + async_str_length + 2,all.length(),Encrypt(all,ParanoicLevel));
 
                             QString replace_string = "function(){";
                             if(!is_one_argument)
@@ -254,10 +256,10 @@ namespace BrowserAutomationStudioFramework
 
                     if(index_end == length - 1)
                     {
-                        QString all = Res.mid(index_start + 2);
-                        if(all.indexOf(")!")>=0)
+                        QString all = Res.mid(index_start + async_str_length + 2);
+                        if(all.indexOf(");" + async_str)>=0)
                             break;
-                        Res = Res.replace(index_start + 2,all.length(),Encrypt(all,ParanoicLevel));
+                        Res = Res.replace(index_start + async_str_length + 2,all.length(),Encrypt(all,ParanoicLevel));
 
 
                         Res.append("})");
