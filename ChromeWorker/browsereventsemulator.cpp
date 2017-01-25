@@ -2,8 +2,13 @@
 #include <windows.h>
 #include <bitset>
 #include "converter.h"
+#include "include/cef_app.h"
 #include "log.h"
 #include <math.h>
+
+
+
+CefBrowserHost::DragOperationsMask allowedops;
 
 
 KeyState::KeyState()
@@ -23,6 +28,19 @@ bool KeyState::IsClear()
     return !IsShift && !IsAlt && !IsCtrl;
 }
 
+void BrowserEventsEmulator::StartDrag(CefRefPtr<CefBrowser> Browser, CefRefPtr<CefDragData> drag_data,CefBrowserHost::DragOperationsMask allowed_ops, int x, int y)
+{
+    CefMouseEvent e;
+    e.modifiers = EVENTFLAG_LEFT_MOUSE_BUTTON;
+
+    e.x = x;
+    e.y = y;
+    allowedops = allowed_ops;
+    Browser->GetHost()->DragTargetDragEnter(drag_data,e,allowed_ops);
+    Browser->GetHost()->DragTargetDragOver(e,allowedops);
+
+}
+
 
 BrowserEventsEmulator::BrowserEventsEmulator()
 {
@@ -37,7 +55,7 @@ void BrowserEventsEmulator::SetFocus(CefRefPtr<CefBrowser> Browser)
 
 bool BrowserEventsEmulator::IsPointOnScreen(int PointX, int PointY, int ScrollX, int ScrollY, int BrowserWidth, int BrowserHeight)
 {
-    worker_log(
+    WORKER_LOG(
                 std::string("IsPointOnScreen<<PointX") + std::to_string(PointX)
                 + std::string("<<PointY") + std::to_string(PointY)
                 + std::string("<<ScrollX") + std::to_string(ScrollX)
@@ -55,7 +73,7 @@ int random(int max)
     return rand() % (max);
 }
 
-void BrowserEventsEmulator::MouseMoveLine(CefRefPtr<CefBrowser> Browser, bool & IsMouseMoveSimulation, int MouseStartX, int MouseStartY, int MouseEndX, int MouseEndY , int& MouseCurrentX, int& MouseCurrentY, float Speed, int BrowserWidth, int BrowserHeight)
+void BrowserEventsEmulator::MouseMoveLine(CefRefPtr<CefBrowser> Browser, bool & IsMouseMoveSimulation, int MouseStartX, int MouseStartY, int MouseEndX, int MouseEndY , int& MouseCurrentX, int& MouseCurrentY, float Speed, int BrowserWidth, int BrowserHeight, bool IsMousePress, bool IsDrag)
 {
     if(!IsMouseMoveSimulation)
         return;
@@ -76,10 +94,18 @@ void BrowserEventsEmulator::MouseMoveLine(CefRefPtr<CefBrowser> Browser, bool & 
         if(MouseCurrentX >= 0 && MouseCurrentX <= BrowserWidth && MouseCurrentY >= 0 && MouseCurrentY <= BrowserHeight)
         {
             CefMouseEvent e;
+            if(IsMousePress)
+                e.modifiers = EVENTFLAG_LEFT_MOUSE_BUTTON;
+
             e.x = MouseCurrentX;
             e.y = MouseCurrentY;
 
             Browser->GetHost()->SendMouseMoveEvent(e,false);
+            if(IsDrag)
+            {
+                Browser->GetHost()->DragTargetDragOver(e,allowedops);
+            }
+
         }
         return;
     }
@@ -93,10 +119,18 @@ void BrowserEventsEmulator::MouseMoveLine(CefRefPtr<CefBrowser> Browser, bool & 
     if(MouseCurrentX >= 0 && MouseCurrentX <= BrowserWidth && MouseCurrentY >= 0 && MouseCurrentY <= BrowserHeight)
     {
         CefMouseEvent e;
+        if(IsMousePress)
+            e.modifiers = EVENTFLAG_LEFT_MOUSE_BUTTON;
+
         e.x = MouseCurrentX;
         e.y = MouseCurrentY;
 
         Browser->GetHost()->SendMouseMoveEvent(e,false);
+        if(IsDrag)
+        {
+            Browser->GetHost()->DragTargetDragOver(e,allowedops);
+        }
+
     }
 
 
@@ -110,7 +144,7 @@ void BrowserEventsEmulator::MouseMove(CefRefPtr<CefBrowser> Browser,
                                       float Speed,
                                       int BrowserWidth, int BrowserHeight,
                                       float Gravity, float Wind, float TargetArea,
-                                      bool IsInit, bool IsDouble)
+                                      bool IsInit, bool IsDouble, bool IsMousePress, bool IsDrag)
 {
     static float veloX,veloY,windX,windY,veloMag,dist,randomDist,lastDist,D;
     static int lastX,lastY,MSP,W,TDist;
@@ -160,10 +194,10 @@ void BrowserEventsEmulator::MouseMove(CefRefPtr<CefBrowser> Browser,
         }
     }else
     {
-        //worker_log(std::to_string(hypot(MouseCurrentX-MouseEndX, MouseCurrentY-MouseEndY)));
+        //WORKER_LOG(std::to_string(hypot(MouseCurrentX-MouseEndX, MouseCurrentY-MouseEndY)));
 
-        //worker_log(std::to_string(MouseCurrentX-MouseEndX));
-        //worker_log(std::to_string(MouseCurrentY-MouseEndY));
+        //WORKER_LOG(std::to_string(MouseCurrentX-MouseEndX));
+        //WORKER_LOG(std::to_string(MouseCurrentY-MouseEndY));
 
         if(hypot(MouseCurrentX-MouseEndX, MouseCurrentY-MouseEndY) <= 3)
         {
@@ -174,10 +208,18 @@ void BrowserEventsEmulator::MouseMove(CefRefPtr<CefBrowser> Browser,
             if(MouseCurrentX >= 0 && MouseCurrentX <= BrowserWidth && MouseCurrentY >= 0 && MouseCurrentY <= BrowserHeight)
             {
                 CefMouseEvent e;
+                if(IsMousePress)
+                    e.modifiers = EVENTFLAG_LEFT_MOUSE_BUTTON;
+
                 e.x = MouseCurrentX;
                 e.y = MouseCurrentY;
 
                 Browser->GetHost()->SendMouseMoveEvent(e,false);
+                if(IsDrag)
+                {
+                    Browser->GetHost()->DragTargetDragOver(e,allowedops);
+                }
+
             }
             return;
         }
@@ -277,10 +319,18 @@ void BrowserEventsEmulator::MouseMove(CefRefPtr<CefBrowser> Browser,
             if(MouseCurrentX >= 0 && MouseCurrentX <= BrowserWidth && MouseCurrentY >= 0 && MouseCurrentY <= BrowserHeight)
             {
                 CefMouseEvent e;
+                if(IsMousePress)
+                    e.modifiers = EVENTFLAG_LEFT_MOUSE_BUTTON;
+
                 e.x = MouseCurrentX;
                 e.y = MouseCurrentY;
 
                 Browser->GetHost()->SendMouseMoveEvent(e,false);
+                if(IsDrag)
+                {
+                    Browser->GetHost()->DragTargetDragOver(e,allowedops);
+                }
+
             }
         }
 
@@ -340,7 +390,7 @@ void BrowserEventsEmulator::MouseMove(CefRefPtr<CefBrowser> Browser,
 
 }
 
-void BrowserEventsEmulator::MouseClick(CefRefPtr<CefBrowser> Browser, int x, int y, const std::pair<int,int> scroll, int type)
+void BrowserEventsEmulator::MouseClick(CefRefPtr<CefBrowser> Browser, int x, int y, const std::pair<int,int> scroll, int type, bool& IsMousePress, bool& IsDrag)
 {
     if(!Browser)
         return;
@@ -349,18 +399,40 @@ void BrowserEventsEmulator::MouseClick(CefRefPtr<CefBrowser> Browser, int x, int
     event.modifiers = EVENTFLAG_LEFT_MOUSE_BUTTON;
     event.x = x - scroll.first;
     event.y = y - scroll.second;
-    worker_log(std::string("BrowserEventsEmulator::MouseClick<<") + std::to_string(x) + std::string("<<") + std::to_string(y) + std::string("<<") + std::to_string(type));
+    WORKER_LOG(std::string("BrowserEventsEmulator::MouseClick<<") + std::to_string(x) + std::string("<<") + std::to_string(y) + std::string("<<") + std::to_string(type));
+
+    if(type == 2)
+    {
+        IsMousePress = true;
+    }
+
+    if(type == 1)
+    {
+        IsMousePress = false;
+    }
+
+    if(type == 1 && IsDrag)
+    {
+        Browser->GetHost()->DragTargetDragOver(event,allowedops);
+        Browser->GetHost()->DragSourceEndedAt(event.x,event.y,allowedops);
+
+
+        Browser->GetHost()->DragTargetDrop(event);
+        Browser->GetHost()->DragSourceSystemDragEnded();
+        IsDrag = false;
+    }
+
 
     if(type != 1)
     {
         Browser->GetHost()->SendMouseClickEvent(event,MBT_LEFT,false,1);
-        worker_log(std::string("BrowserEventsEmulator::MouseClickDown<<"));
+        WORKER_LOG(std::string("BrowserEventsEmulator::MouseClickDown<<"));
     }
 
     if(type != 2)
     {
         Browser->GetHost()->SendMouseClickEvent(event,MBT_LEFT,true,1);
-        worker_log(std::string("BrowserEventsEmulator::MouseClickUp<<"));
+        WORKER_LOG(std::string("BrowserEventsEmulator::MouseClickUp<<"));
     }
 }
 

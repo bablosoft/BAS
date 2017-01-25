@@ -1,5 +1,6 @@
 VAR_WAS_ERROR = false;
 VAR_LAST_ERROR = "";
+_BAS_SOLVER_PROPERTIES = {}
 
 function _ensure_browser_created()
 {
@@ -204,6 +205,12 @@ function restore_cookies(cookies, callback)
     Browser.RestoreCookies(cookies, _get_function_body(callback));
 }
 
+function restore_localstorage(localstorage, callback)
+{
+    _ensure_browser_created();
+    Browser.RestoreLocalStorage(localstorage, _get_function_body(callback));
+}
+
 function page()
 {
     _ensure_browser_created();
@@ -313,6 +320,30 @@ function frame(name)
     return page().frame(name);
 }
 
+function frame_css(name)
+{
+    _ensure_browser_created();
+    return page().frame_css(name);
+}
+
+function xpath(name)
+{
+    _ensure_browser_created();
+    return page().xpath(name);
+}
+
+function xpath_all(name)
+{
+    _ensure_browser_created();
+    return page().xpath_all(name);
+}
+
+function frame_match(name)
+{
+    _ensure_browser_created();
+    return page().frame_match(name);
+}
+
 
 function position(x, y)
 {
@@ -340,7 +371,22 @@ function all(text)
 
 function thread_number()
 {
-    return ThreadNumber;
+    return ScriptWorker.GetThreadNumber();
+}
+
+function success_number()
+{
+    return ScriptWorker.GetSuccessNumber();
+}
+
+function project_path()
+{
+    return ScriptWorker.GetProjectPath();
+}
+
+function fail_number()
+{
+    return ScriptWorker.GetFailNumber();
 }
 
 function sleep(milliseconds, callback)
@@ -357,7 +403,7 @@ function script(text, callback)
 function onloadjavascript(text, callback)
 {
     _ensure_browser_created();
-    Browser.SetStartupScript(text,_get_function_body(callback));
+    Browser.SetStartupScript(text,_get_target(),_get_function_body(callback));
 }
 
 function agent(text, callback)
@@ -369,32 +415,56 @@ function agent(text, callback)
 
 function antigate(key)
 {
-    ScriptWorker.GetSolver("antigate").SetProperty("key",key);
+    solver_property("antigate","key",key)
 }
 
 function rucaptcha(key)
 {
-    ScriptWorker.GetSolver("rucaptcha").SetProperty("key",key);
+    solver_property("rucaptcha","key",key)
 }
 
 function twocaptcha(key)
 {
-    ScriptWorker.GetSolver("2captcha").SetProperty("key",key);
+    solver_property("2captcha","key",key)
 }
 
 function capmonster(key)
 {
-    ScriptWorker.GetSolver("capmonster").SetProperty("key",key);
+    solver_property("capmonster","key",key)
+}
+
+function solver_properties_clear(solver)
+{
+    _BAS_SOLVER_PROPERTIES[solver] = {}
 }
 
 function solver_property(solver,key,value)
 {
-    ScriptWorker.GetSolver(solver).SetProperty(key,value);
+    var h;
+    if(!(solver in _BAS_SOLVER_PROPERTIES && _BAS_SOLVER_PROPERTIES[solver]))
+    {
+        _BAS_SOLVER_PROPERTIES[solver] = {}
+    }
+    h = _BAS_SOLVER_PROPERTIES[solver]
+
+    h[key] = value
+
+    _BAS_SOLVER_PROPERTIES[solver] = h
 }
 
 function dbc(key)
 {
-    ScriptWorker.GetSolver("dbc").SetProperty("key",key);
+    solver_property("dbc","key",key)
+}
+
+function _solver_properties_list(solver)
+{
+    var h;
+    if(!(solver in _BAS_SOLVER_PROPERTIES && _BAS_SOLVER_PROPERTIES[solver]))
+        _BAS_SOLVER_PROPERTIES[solver] = {}
+
+    h = _BAS_SOLVER_PROPERTIES[solver]
+    return Object.keys(h).reduce(function(a,k){a.push(k);a.push(h[k]);return a},[])
 }
 
 function solve(match, url, callback)
@@ -408,7 +478,7 @@ function solve(match, url, callback)
             fail("CAPTCHA_FAIL : No image in cache");
         }
         cache_get_base64(_ENGINE_CALLBACK[1],function(){
-            ScriptWorker.Solve(_ENGINE_CALLBACK[0], _result(),_get_function_body(_ENGINE_CALLBACK[2]));
+            ScriptWorker.Solve(_ENGINE_CALLBACK[0], _result(),_solver_properties_list(_ENGINE_CALLBACK[0]),_get_function_body(_ENGINE_CALLBACK[2]));
         })
     })
 }
@@ -417,7 +487,13 @@ function solve(match, url, callback)
 function solve_base64(match, data_base64, callback)
 {
     LAST_CAPTCHA_METHOD = match
-    ScriptWorker.Solve(match, data_base64,_get_function_body(callback));
+    ScriptWorker.Solve(match, data_base64,_solver_properties_list(match),_get_function_body(callback));
+}
+
+function solve_base64_no_fail(match, data_base64, callback)
+{
+    LAST_CAPTCHA_METHOD = match
+    ScriptWorker.SolveNoFail(match, data_base64,_solver_properties_list(match),_get_function_body(callback));
 }
 
 function solver_failed()
@@ -604,6 +680,11 @@ function native_async(dll,func,data,callback)
     ScriptWorker.ExecuteNativeModuleCodeAsync(dll,func,data,_get_function_body(callback));
 }
 
+function general_timeout_next(timeout)
+{
+    ScriptWorker.SetGeneralWaitTimeoutNext(timeout);
+}
+
 function general_timeout(timeout)
 {
     ScriptWorker.SetGeneralWaitTimeout(timeout);
@@ -613,6 +694,11 @@ function general_timeout(timeout)
 function async_load_timeout(timeout)
 {
     BROWSERAUTOMATIONSTUDIO_FULL_LOAD_TIMEOUT = Math.floor(timeout/1000);
+}
+
+function solver_timeout_next(timeout)
+{
+    ScriptWorker.SetSolverWaitTimeoutNext(timeout);
 }
 
 function solver_timeout(timeout)

@@ -313,7 +313,7 @@
         <translation type="vanished">Весь лог</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1565"/>
+        <location filename="../mainwindow.cpp" line="1561"/>
         <source>All log</source>
         <translation>Весь лог</translation>
     </message>

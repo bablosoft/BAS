@@ -223,11 +223,14 @@ namespace BrowserAutomationStudioFramework
         Worker->GetProcessComunicator()->Send(WriteString);
     }
 
-    void SubprocessBrowser::SetStartupScript(const QString& script, const QString& callback)
+    void SubprocessBrowser::SetStartupScript(const QString& script,const QString& target, const QString& callback)
     {
         QString WriteString;
         QXmlStreamWriter xmlWriter(&WriteString);
-        xmlWriter.writeTextElement("SetStartupScript",script);
+        xmlWriter.writeStartElement("SetStartupScript");
+            xmlWriter.writeAttribute("target", target);
+            xmlWriter.writeCharacters(script);
+        xmlWriter.writeEndElement();
 
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("SetStartupScript"));
@@ -356,6 +359,18 @@ namespace BrowserAutomationStudioFramework
         Worker->GetProcessComunicator()->Send(WriteString);
     }
 
+    void SubprocessBrowser::RestoreLocalStorage(const QString& localstorage, const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("RestoreLocalStorage", localstorage);
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("RestoreLocalStorage"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(RestoreLocalStorage()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
 
     IWebElement* SubprocessBrowser::GetRootElement()
     {
@@ -427,6 +442,9 @@ namespace BrowserAutomationStudioFramework
             }else if(xmlReader.name() == "RestoreCookies" && token == QXmlStreamReader::StartElement)
             {
                 emit RestoreCookies();
+            }else if(xmlReader.name() == "RestoreLocalStorage" && token == QXmlStreamReader::StartElement)
+            {
+                emit RestoreLocalStorage();
             }else if(xmlReader.name() == "MouseClick" && token == QXmlStreamReader::StartElement)
             {
                 emit MouseClick();

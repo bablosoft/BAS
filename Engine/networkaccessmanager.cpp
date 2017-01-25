@@ -24,7 +24,7 @@ namespace BrowserAutomationStudioFramework
         connect(CaptureManager,SIGNAL(UrlLoad(QString, int)),this,SLOT(UrlLoad(QString, int)));
     }
 
-    void NetworkAccessManager::AddHeader(const QString& name,const QString& value, const QString& callback)
+    void NetworkAccessManager::AddHeader(const QString& name,const QString& value,const QString& target, const QString& callback)
     {
         CaptureManager->AddHeader(name,value);
         Worker->SetScript(callback);
@@ -40,7 +40,7 @@ namespace BrowserAutomationStudioFramework
 
 
 
-    void NetworkAccessManager::SetProxy(const QString& server, int Port, bool IsHttp, const QString& name, const QString& password, const QString& callback)
+    void NetworkAccessManager::SetProxy(const QString& server, int Port, bool IsHttp, const QString& name, const QString& password,const QString& target, const QString& callback)
     {
         if(server.isEmpty() || Port<=0)
         {

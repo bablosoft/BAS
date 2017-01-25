@@ -1314,6 +1314,7 @@ void MainWindow::RunInternal(bool IsRecord)
 
     //Prepare Worker
     ScriptMultiWorker* worker = new ScriptMultiWorker(this);
+    worker->SetProjectPath(CurrentFileName);
     connect(_RecordProcessCommunication,SIGNAL(Interrupt()),worker,SLOT(InterruptAction()));
     worker->SetModuleManager(_ModuleManager);
     worker->SetAdditionEngineScripts(_ModuleManager->GetModuleEngineCode());
@@ -1518,11 +1519,6 @@ void MainWindow::RunInternal(bool IsRecord)
     worker->AddModule(new MemoryInfo(worker),"MemoryInfo",true,true);
     /*worker->AddModule(new Helper(worker),"Helper",true,true);
     worker->AddModule(new HtmlParser(worker),"HtmlParser",true,true);*/
-
-    /*PeriodicalHttpRequest * SmsRegPeriodicalHttpRequest = new PeriodicalHttpRequest(this);
-    SmsRegPeriodicalHttpRequest->SetHttpClientFactory(_HttpClientFactory);
-    worker->AddModule(SmsRegPeriodicalHttpRequest,"SmsRegPeriodicalHttpRequest",false,true);*/
-
 
     ui->actionResourcesReport->setEnabled(true);
     ui->actionResourcesReport->setIcon(QIcon(":/studio/images/resources_ok.png"));

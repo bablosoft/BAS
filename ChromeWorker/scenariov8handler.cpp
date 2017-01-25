@@ -15,6 +15,7 @@ ScenarioV8Handler::ScenarioV8Handler()
     IsFailNumberEditStart = false;
     IsClipboardGetRequest = false;
     IsClipboardSetRequest = false;
+    IsRunFunctionStart = false;
 }
 
 
@@ -117,7 +118,7 @@ bool ScenarioV8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> obj
         if (arguments.size() == 1)
         {
             std::lock_guard<std::mutex> lock(mut_restart);
-            worker_log(std::string("BrowserAutomationStudio_Restart<<") + std::to_string(arguments[0]->GetBoolValue()));
+            WORKER_LOG(std::string("BrowserAutomationStudio_Restart<<") + std::to_string(arguments[0]->GetBoolValue()));
             if(arguments[0]->GetBoolValue())
             {
                 NeedRestart = Stop;
@@ -154,6 +155,10 @@ bool ScenarioV8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> obj
     {
         std::lock_guard<std::mutex> lock(mut_failnumbereditstart);
         IsFailNumberEditStart = true;
+    }else if(name == std::string("BrowserAutomationStudio_RunFunction"))
+    {
+        std::lock_guard<std::mutex> lock(mut_runfunction);
+        IsRunFunctionStart = true;
     }else if(name == std::string("BrowserAutomationStudio_SetClipboard"))
     {
         if (arguments.size() == 1)
@@ -202,6 +207,14 @@ bool ScenarioV8Handler::GetIsThreadNumberEditStart()
     std::lock_guard<std::mutex> lock(mut_threadnumbereditstart);
     bool res = IsThreadNumberEditStart;
     IsThreadNumberEditStart = false;
+    return res;
+}
+
+bool ScenarioV8Handler::GetIsRunFunctionStart()
+{
+    std::lock_guard<std::mutex> lock(mut_runfunction);
+    bool res = IsRunFunctionStart;
+    IsRunFunctionStart = false;
     return res;
 }
 

@@ -45,6 +45,12 @@ namespace BrowserAutomationStudioFramework
 
         virtual void SetGeneralWaitTimeout(int timeout) = 0;
         virtual void SetSolverWaitTimeout(int timeout) = 0;
+        virtual void SetGeneralWaitTimeoutNext(int timeout) = 0;
+        virtual void SetSolverWaitTimeoutNext(int timeout) = 0;
+        virtual int GetGeneralWaitTimeoutNext() = 0;
+        virtual int GetSolverWaitTimeoutNext() = 0;
+
+        virtual void SetSkipWaitHandlerMode() = 0;
 
     };
 

@@ -18,6 +18,7 @@ namespace BrowserAutomationStudioFramework
         bool isError;
         QString errorString;
         QStringList Params;
+        QStringList Arguments;
 
     public:
         explicit PipesProcessComunicator(QObject *parent = 0);

@@ -6,4 +6,6 @@ SUBDIRS += \
     FastExecuteScript \
     FastExecuteScriptProtected \
     Updater \
+    RemoteExecuteScript \
+    ShopViewer \
     Tests

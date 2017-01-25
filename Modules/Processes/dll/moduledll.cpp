@@ -20,6 +20,13 @@ extern "C" {
     void* StartDll()
     {
 
+        QDir dir(".");
+        dir.setNameFilters(QStringList() << "temp_*.bat");
+        dir.setFilter(QDir::Files);
+        foreach(QString dirFile, dir.entryList())
+        {
+            dir.remove(dirFile);
+        }
         return 0;
     }
 

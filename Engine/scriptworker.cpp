@@ -8,9 +8,52 @@ namespace BrowserAutomationStudioFramework
 
 
     ScriptWorker::ScriptWorker(QObject *parent) :
-        IWorker(parent), Browser(0), Logger(0), Results1(0),Results2(0), Results3(0),Results4(0),Results5(0),Results6(0),Results7(0),Results8(0),Results9(0), Waiter(0),engine(0),ThreadNumber(0),IsAborted(false),ProcessComunicator(0), HttpClient1(0), HttpClient2(0), Pop3Client(0), ImapClient(0), DoTrace(false), MaxFail(999999), MaxSuccess(100), IsFailExceedRunning(false), IsSuccessExceedRunning(false), FunctionData(0), CurrentWebElement(0), HttpClientIndex(1)
+        IWorker(parent), Browser(0), Logger(0), Results1(0),Results2(0), Results3(0),Results4(0),Results5(0),Results6(0),Results7(0),Results8(0),Results9(0), Waiter(0),engine(0),ThreadNumber(0),IsAborted(false),ProcessComunicator(0), HttpClient1(0), HttpClient2(0), Pop3Client(0), ImapClient(0), DoTrace(false), MaxFail(999999), MaxSuccess(100), IsFailExceedRunning(false), IsSuccessExceedRunning(false), FunctionData(0), CurrentWebElement(0), HttpClientIndex(1),DieInstant(false), DontCreateMore(false), SuccessNumber(0), FailNumber(0), HttpClientNextTimeout(-1), SolverNotFailNextTime(false)
     {
 
+    }
+
+
+    void ScriptWorker::SetSuccessNumber(int* SuccessNumber)
+    {
+        this->SuccessNumber = SuccessNumber;
+    }
+    int ScriptWorker::GetSuccessNumber()
+    {
+        if(!SuccessNumber)
+            return -1;
+        return *SuccessNumber;
+    }
+
+    void ScriptWorker::SetFailNumber(int* FailNumber)
+    {
+        this->FailNumber = FailNumber;
+    }
+    int ScriptWorker::GetFailNumber()
+    {
+        if(!FailNumber)
+            return -1;
+        return *FailNumber;
+    }
+
+    void ScriptWorker::SetProjectPath(const QString& Path)
+    {
+        this->ProjectPath = Path;
+    }
+    QString ScriptWorker::GetProjectPath()
+    {
+        return ProjectPath;
+    }
+
+
+    bool ScriptWorker::IsDieInstant()
+    {
+        return DieInstant;
+    }
+
+    bool ScriptWorker::IsDontCreateMore()
+    {
+        return DontCreateMore;
     }
 
     IHttpClient* ScriptWorker::GetActualHttpClient()
@@ -415,7 +458,7 @@ namespace BrowserAutomationStudioFramework
             if(Waiter)
                 Waiter->Stop();
 
-            Fail(tr("Aborted By User"));
+            Fail(tr("Aborted By User"),false);
         }
     }
 
@@ -501,8 +544,6 @@ namespace BrowserAutomationStudioFramework
             engine->globalObject().setProperty(i.key(), Value);
             i++;
         }
-
-        engine->globalObject().setProperty("ThreadNumber", ThreadNumber);
 
         Browser->SetScriptResources(ScriptResources);
 
@@ -662,7 +703,7 @@ namespace BrowserAutomationStudioFramework
         return GetPreprocessor()->Preprocess(script, 0);
     }
 
-    void ScriptWorker::Fail(const QString& message)
+    void ScriptWorker::Fail(const QString& message, bool dont_create_more)
     {
 
         if(!FailFunction.isEmpty() && MaxFail <= 0 && !FailExceedFunction.isEmpty())
@@ -703,6 +744,7 @@ namespace BrowserAutomationStudioFramework
                 RunSubScript();
             }else
             {
+                DontCreateMore = dont_create_more;
                 ResultMessage = Message;
                 ResultStatus = IWorker::FailStatus;
                 Abort(true);
@@ -716,7 +758,7 @@ namespace BrowserAutomationStudioFramework
         this->MaxFail = MaxFail;
     }
 
-    void ScriptWorker::Die(const QString& message)
+    void ScriptWorker::Die(const QString& message, bool instant)
     {
         if(IsRecord)
         {
@@ -726,6 +768,7 @@ namespace BrowserAutomationStudioFramework
             RunSubScript();
         }else
         {
+            DieInstant = instant;
             ResultMessage = message;
             ResultStatus = IWorker::DieStatus;
             Abort(true);
@@ -807,7 +850,7 @@ namespace BrowserAutomationStudioFramework
 
     void ScriptWorker::FailProcessFinished()
     {
-        Fail(tr("Failed because process is stopped"));
+        Fail(tr("Failed because process is stopped"), false);
     }
 
     void ScriptWorker::FailBecauseOfTimeout()
@@ -817,7 +860,7 @@ namespace BrowserAutomationStudioFramework
         if(HttpClient2)
             HttpClient2->Stop();
 
-        Fail(FailMessage);
+        Fail(FailMessage, false);
     }
 
     void ScriptWorker::Sleep(int msec, const QString& callback)
@@ -874,6 +917,20 @@ namespace BrowserAutomationStudioFramework
         return prepare(engine,web->css(ctx->argument(0).toString()));
     }
 
+    static QScriptValue prototype_xpath(QScriptContext *ctx, QScriptEngine *engine)
+    {
+        IWebElement *web = qobject_cast<IWebElement*>(ctx->thisObject().toQObject());
+        if(!web)
+        {
+            return engine->undefinedValue();
+        }
+        if(ctx->argumentCount()!=1)
+        {
+            return engine->undefinedValue();
+        }
+        return prepare(engine,web->xpath(ctx->argument(0).toString()));
+    }
+
     static QScriptValue prototype_frame(QScriptContext *ctx, QScriptEngine *engine)
     {
         IWebElement *web = qobject_cast<IWebElement*>(ctx->thisObject().toQObject());
@@ -886,6 +943,48 @@ namespace BrowserAutomationStudioFramework
             return engine->undefinedValue();
         }
         return prepare(engine,web->frame(ctx->argument(0).toString()));
+    }
+
+    static QScriptValue prototype_frame_css(QScriptContext *ctx, QScriptEngine *engine)
+    {
+        IWebElement *web = qobject_cast<IWebElement*>(ctx->thisObject().toQObject());
+        if(!web)
+        {
+            return engine->undefinedValue();
+        }
+        if(ctx->argumentCount()!=1)
+        {
+            return engine->undefinedValue();
+        }
+        return prepare(engine,web->frame_css(ctx->argument(0).toString()));
+    }
+
+    static QScriptValue prototype_frame_element(QScriptContext *ctx, QScriptEngine *engine)
+    {
+        IWebElement *web = qobject_cast<IWebElement*>(ctx->thisObject().toQObject());
+        if(!web)
+        {
+            return engine->undefinedValue();
+        }
+        if(ctx->argumentCount()!=0)
+        {
+            return engine->undefinedValue();
+        }
+        return prepare(engine,web->frame_element());
+    }
+
+    static QScriptValue prototype_frame_match(QScriptContext *ctx, QScriptEngine *engine)
+    {
+        IWebElement *web = qobject_cast<IWebElement*>(ctx->thisObject().toQObject());
+        if(!web)
+        {
+            return engine->undefinedValue();
+        }
+        if(ctx->argumentCount()!=1)
+        {
+            return engine->undefinedValue();
+        }
+        return prepare(engine,web->frame_match(ctx->argument(0).toString()));
     }
 
     static QScriptValue prototype_position(QScriptContext *ctx, QScriptEngine *engine)
@@ -945,6 +1044,21 @@ namespace BrowserAutomationStudioFramework
         return prepare(engine,web->all(ctx->argument(0).toString()));
     }
 
+    static QScriptValue prototype_xpath_all(QScriptContext *ctx, QScriptEngine *engine)
+    {
+        IWebElement *web = qobject_cast<IWebElement*>(ctx->thisObject().toQObject());
+        if(!web)
+        {
+            return engine->undefinedValue();
+        }
+        if(ctx->argumentCount()!=1)
+        {
+            return engine->undefinedValue();
+        }
+
+        return prepare(engine,web->xpath_all(ctx->argument(0).toString()));
+    }
+
     static QScriptValue prototype_match_all(QScriptContext *ctx, QScriptEngine *engine)
     {
         IWebElement *web = qobject_cast<IWebElement*>(ctx->thisObject().toQObject());
@@ -974,9 +1088,14 @@ namespace BrowserAutomationStudioFramework
 
         QScriptValue res = engine->newQObject(web);
         res.setProperty("css", engine->newFunction(prototype_css));
+        res.setProperty("xpath", engine->newFunction(prototype_xpath));
         res.setProperty("frame", engine->newFunction(prototype_frame));
+        res.setProperty("frame_css", engine->newFunction(prototype_frame_css));
+        res.setProperty("frame_element", engine->newFunction(prototype_frame_element));
+        res.setProperty("frame_match", engine->newFunction(prototype_frame_match));
         res.setProperty("position", engine->newFunction(prototype_position));
         res.setProperty("all", engine->newFunction(prototype_all));
+        res.setProperty("xpath_all", engine->newFunction(prototype_xpath_all));
         res.setProperty("match", engine->newFunction(prototype_match));
         res.setProperty("match_all", engine->newFunction(prototype_match_all));
         res.setProperty("at", engine->newFunction(prototype_at));
@@ -1088,7 +1207,7 @@ namespace BrowserAutomationStudioFramework
         if(DieOnFailHandler)
         {
 
-            Die(tr("failed to get resource ") + LastHandlerName);
+            Die(tr("All data have been processed for ") + LastHandlerName, false);
         }else
         {
             engine->evaluate("_set_result(null)");
@@ -1112,8 +1231,8 @@ namespace BrowserAutomationStudioFramework
 
         switch(ResultStatus)
         {
-            case IWorker::FailStatus: status = tr("Thread failed"); break;
-            case IWorker::DieStatus: status = tr("Thread died"); break;
+            case IWorker::FailStatus: status = tr("Thread ended"); break;
+            case IWorker::DieStatus: status = tr("Thread ended"); break;
             case IWorker::SuccessStatus: status = tr("Thread succeeded"); break;
         }
         return PrepareMessage(status + tr(" with message \"") + ResultMessage + "\"");
@@ -1134,19 +1253,30 @@ namespace BrowserAutomationStudioFramework
 
 
 
-    void ScriptWorker::Solve(const QString& method, const QString& base64,const QString& callback)
+    void ScriptWorker::SolveInternal(const QString& method, const QString& base64, const QStringList & params,const QString& callback)
     {
         engine->globalObject().setProperty("LAST_CAPTCHA_ID", "");
         ISolver* solver = GetSolverFactory()->GetSolver(method);
         if(!solver)
         {
-            Fail(tr("CAPTCHA_FAIL") + " : " + tr("Failed to get solver"));
+            Fail(tr("CAPTCHA_FAIL") + " : " + tr("Failed to get solver"), false);
             return;
         }
         Script = callback;
 
-        QString id = solver->Solve(base64);
+        QString id = solver->Solve(base64,params);
         GetWaiter()->WaitForSolver(solver,id,this,SLOT(SolverSuccess()),this,SLOT(SolverFailed()));
+    }
+
+    void ScriptWorker::Solve(const QString& method, const QString& base64, const QStringList & params,const QString& callback)
+    {
+        SolverNotFailNextTime = false;
+        SolveInternal(method, base64,params, callback);
+    }
+    void ScriptWorker::SolveNoFail(const QString& method, const QString& base64, const QStringList & params,const QString& callback)
+    {
+        SolverNotFailNextTime = true;
+        SolveInternal(method, base64,params, callback);
     }
 
     void ScriptWorker::SolverSuccess()
@@ -1155,10 +1285,13 @@ namespace BrowserAutomationStudioFramework
         QString id = GetWaiter()->GetLastSolverId();
         engine->globalObject().setProperty("LAST_CAPTCHA_ID", id);
 
-        if(res.startsWith("CAPTCHA_FAIL"))
+        if(!SolverNotFailNextTime)
         {
-            Fail(res.replace("CAPTCHA_FAIL",tr("CAPTCHA_FAIL")));
-            return;
+            if(res.startsWith("CAPTCHA_FAIL"))
+            {
+                Fail(res.replace("CAPTCHA_FAIL",tr("CAPTCHA_FAIL")), false);
+                return;
+            }
         }
         SetAsyncResult(QScriptValue(res));
 
@@ -1169,7 +1302,7 @@ namespace BrowserAutomationStudioFramework
     void ScriptWorker::SolverFailed()
     {
         engine->globalObject().setProperty("LAST_CAPTCHA_ID", "");
-        Fail(tr("Captcha wait timeout"));
+        Fail(tr("Captcha wait timeout"), false);
     }
 
     QString ScriptWorker::ExecuteNativeModuleCodeSync(const QString& DllName, const QString& FunctionName, const QString& InputParam)
@@ -1177,12 +1310,12 @@ namespace BrowserAutomationStudioFramework
         std::shared_ptr<FunctionRunData> FunctionDataInternal(ModuleManager->PrepareExecuteFunction(DllName,FunctionName,InputParam,GetThreadNumber()));
         if(FunctionDataInternal->IsError)
         {
-            Fail(QString::fromStdString(FunctionDataInternal->ErrorString));
+            Fail(QString::fromStdString(FunctionDataInternal->ErrorString), false);
             return QString();
         }
         if(FunctionDataInternal->IsAync)
         {
-            Fail(tr("Async function is called in sync mode"));
+            Fail(tr("Async function is called in sync mode"), false);
             return QString();
         }
 
@@ -1190,7 +1323,7 @@ namespace BrowserAutomationStudioFramework
 
         if(FunctionDataInternal->ExecuteError)
         {
-            Fail(tr("Failed to run function ") + DllName + QString(".") + FunctionName);
+            Fail(tr("Failed to run function ") + DllName + QString(".") + FunctionName, false);
             return QString();
         }
 
@@ -1203,13 +1336,13 @@ namespace BrowserAutomationStudioFramework
         FunctionData = ModuleManager->PrepareExecuteFunction(DllName,FunctionName,InputParam,GetThreadNumber());
         if(FunctionData->IsError)
         {
-            Fail(QString::fromStdString(FunctionData->ErrorString));
+            Fail(QString::fromStdString(FunctionData->ErrorString), false);
             delete FunctionData;
             return;
         }
         if(!FunctionData->IsAync)
         {
-            Fail(tr("Sync function is called in async mode"));
+            Fail(tr("Sync function is called in async mode"), false);
             delete FunctionData;
             return;
         }
@@ -1254,7 +1387,7 @@ namespace BrowserAutomationStudioFramework
             return;
         if(FunctionData->ExecuteError)
         {
-            Fail(tr("Failed to run function ") + FunctionData->DllName + QString(".") + FunctionData->FunctionName);
+            Fail(tr("Failed to run function ") + FunctionData->DllName + QString(".") + FunctionData->FunctionName, false);
         }else
         {
             QString Result = QString::fromUtf8(FunctionData->OutputJson.data(),FunctionData->OutputJson.size());
@@ -1316,10 +1449,22 @@ namespace BrowserAutomationStudioFramework
             Waiter->SetGeneralWaitTimeout(timeout);
     }
 
+    void ScriptWorker::SetGeneralWaitTimeoutNext(int timeout)
+    {
+        if(Waiter)
+            Waiter->SetGeneralWaitTimeoutNext(timeout);
+    }
+
     void ScriptWorker::SetSolverWaitTimeout(int timeout)
     {
         if(Waiter)
             Waiter->SetSolverWaitTimeout(timeout);
+    }
+
+    void ScriptWorker::SetSolverWaitTimeoutNext(int timeout)
+    {
+        if(Waiter)
+            Waiter->SetSolverWaitTimeoutNext(timeout);
     }
 
     /* ImapClient */
@@ -1424,11 +1569,15 @@ namespace BrowserAutomationStudioFramework
             SetFailMessage(tr("Failed to get page ") + Location + tr(" with HttpClient"));
             if(IsGet)
             {
-                Waiter->WaitInfinity(GetActualHttpClient(),SIGNAL(Finished()),this,SLOT(FollowRedirect()));
+                if(HttpClientNextTimeout >= 0)
+                    Waiter->SetGeneralWaitTimeoutNext(HttpClientNextTimeout);
+                Waiter->WaitForSignal(GetActualHttpClient(),SIGNAL(Finished()),this,SLOT(FollowRedirect()),this,SLOT(FailBecauseOfTimeout()));
                 GetActualHttpClient()->Get(Location);
             }else
             {
-                Waiter->WaitInfinity(GetActualHttpClient(),SIGNAL(Finished()),this,SLOT(FollowRedirectDownload()));
+                if(HttpClientNextTimeout >= 0)
+                    Waiter->SetGeneralWaitTimeoutNext(HttpClientNextTimeout);
+                Waiter->WaitForSignal(GetActualHttpClient(),SIGNAL(Finished()),this,SLOT(FollowRedirectDownload()),this,SLOT(FailBecauseOfTimeout()));
                 GetActualHttpClient()->Download(Location, CurrentFileDownload);
             }
         }else
@@ -1455,6 +1604,7 @@ namespace BrowserAutomationStudioFramework
     {
         SetScript(callback);
         SetFailMessage(tr("Failed to post page ") + url + tr(" with HttpClient"));
+        HttpClientNextTimeout = Waiter->GetGeneralWaitTimeoutNext();
         Waiter->WaitForSignal(GetActualHttpClient(),SIGNAL(Finished()),this,SLOT(FollowRedirect()),this,SLOT(FailBecauseOfTimeout()));
         QHash<QString,QString> p;
         bool isname = true;
@@ -1563,6 +1713,7 @@ namespace BrowserAutomationStudioFramework
     {
         SetScript(callback);
         SetFailMessage(tr("Failed to get page ") + url + tr(" with HttpClient"));
+        HttpClientNextTimeout = Waiter->GetGeneralWaitTimeoutNext();
         Waiter->WaitForSignal(GetActualHttpClient(),SIGNAL(Finished()),this,SLOT(FollowRedirect()),this,SLOT(FailBecauseOfTimeout()));
         GetActualHttpClient()->Get(url);
     }
@@ -1618,6 +1769,7 @@ namespace BrowserAutomationStudioFramework
         {
             Options.Method = p1["method"];
         }
+        HttpClientNextTimeout = Waiter->GetGeneralWaitTimeoutNext();
         Waiter->WaitForSignal(GetActualHttpClient(),SIGNAL(Finished()),this,SLOT(FollowRedirect()),this,SLOT(FailBecauseOfTimeout()));
         GetActualHttpClient()->Get(url,Options);
     }
@@ -1626,6 +1778,7 @@ namespace BrowserAutomationStudioFramework
     {
         SetScript(callback);
         SetFailMessage(tr("Failed to download page ") + url + tr(" with HttpClient"));
+        HttpClientNextTimeout = Waiter->GetGeneralWaitTimeoutNext();
         Waiter->WaitForSignal(GetActualHttpClient(),SIGNAL(Finished()),this,SLOT(FollowRedirectDownload()),this,SLOT(FailBecauseOfTimeout()));
         CurrentFileDownload = file;
         GetActualHttpClient()->Download(url, file);

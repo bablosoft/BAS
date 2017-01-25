@@ -1,0 +1,1 @@
+<%= variable %> = fail_number()

@@ -3,7 +3,7 @@ function _stop_subscript_execution()
     ScriptWorker.AbortSubscript();
 }
 
-function fail(text)
+function fail(text, dont_create_more)
 {
     /*var c = CYCLES.Current()
     if(c)
@@ -11,12 +11,12 @@ function fail(text)
     else
         ScriptWorker.SetFailFunction("");*/
 
-    ScriptWorker.Fail(text);
+    ScriptWorker.Fail(text,dont_create_more);
 }
 
-function die(text)
+function die(text, instant)
 {
-    ScriptWorker.Die(text);
+    ScriptWorker.Die(text,instant);
 }
 
 function success(text)

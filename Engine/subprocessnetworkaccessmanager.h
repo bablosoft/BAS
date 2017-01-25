@@ -36,9 +36,9 @@ namespace BrowserAutomationStudioFramework
     public slots:
         virtual void SetWorker(IWorker *Worker);
         virtual IWorker * GetWorker();
-        void AddHeader(const QString& name,const QString& value, const QString& callback);
+        void AddHeader(const QString& name,const QString& value,const QString& target, const QString& callback);
         void CleanHeader(const QString& callback);
-        virtual void SetProxy(const QString& server, int Port, bool IsHttp, const QString& name, const QString& password, const QString& callback);
+        virtual void SetProxy(const QString& server, int Port, bool IsHttp, const QString& name, const QString& password,const QString& target, const QString& callback);
         virtual void AddCacheMaskAllow(const QString& Mask, const QString& callback);
         virtual void AddCacheMaskDeny(const QString& Mask, const QString& callback);
         virtual void AddRequestMaskAllow(const QString& Mask, const QString& callback);

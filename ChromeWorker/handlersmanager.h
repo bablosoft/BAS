@@ -2,9 +2,14 @@
 #define HANDLERSMANAGER_H
 
 #include <vector>
+#include <map>
 #include <memory>
 #include "include/cef_app.h"
 #include "mainhandler.h"
+#include "inspectresult.h"
+#include "localstoragedata.h"
+
+class MainHandler;
 
 class HandlersManager
 {
@@ -22,6 +27,8 @@ class HandlersManager
 
     std::vector<HandlerUnit> HandlerUnits;
     HandlerUnit OriginalHandler;
+
+    std::map<int,int> MapBrowserIdToTabNumber;
 
     /* Callbacks */
     void PopupCreated(CefRefPtr<MainHandler> new_handler,CefRefPtr<CefBrowser> new_browser);
@@ -53,11 +60,14 @@ class HandlersManager
     bool IsClosedCurrent = false;
     bool IsWaitForClosedCurrent = false;
 
+    void UpdateMapBrowserIdToTabNumber();
+
 public:
     void Reset();
     void Timer();
     MainHandler* GetHandler();
     CefBrowser* GetBrowser();
+    int64 FindFrameId(const FrameInspectResult& Inspect);
     void NewContextCreated(int ContextId);
     void Init1(CefRefPtr<MainHandler> Handler,
                std::function<void(const std::string&)> SendTextResponceCallback,
@@ -75,6 +85,10 @@ public:
     bool CloseByIndex(int index);
     void SwitchByIndex(int index);
     bool CheckIsClosed();
+    int FindTabIdByBrowserId(int BrowserId);
+    void UpdateLocalStorageItem(const LocalStorageDataItem& item);
+    void UpdateLocalStorageString(const std::string& data);
+
 };
 
 #endif // HANDLERSMANAGER_H

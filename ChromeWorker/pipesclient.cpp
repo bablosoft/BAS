@@ -10,7 +10,7 @@ PipesClient::PipesClient()
 
 void PipesClient::Log(const std::string& text)
 {
-    worker_log(text);
+    WORKER_LOG(text);
 }
 
 void PipesClient::Sleep()

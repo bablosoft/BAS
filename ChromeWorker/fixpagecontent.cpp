@@ -1,4 +1,4 @@
-#include "fixcontentcharset.h"
+#include "fixpagecontent.h"
 #include <algorithm>
 #include <regex>
 #include "split.h"
@@ -7,12 +7,12 @@
 #include "startwith.h"
 #include "log.h"
 
-FixContentCharset::FixContentCharset()
+FixPageContent::FixPageContent()
 {
 
 }
 
-std::string FixContentCharset::ExtractMime(const std::string& ContentTypeHeader)
+std::string FixPageContent::ExtractMime(const std::string& ContentTypeHeader)
 {
     std::string res;
     std::vector<std::string> MimeTypeSplit = split(ContentTypeHeader,';');
@@ -25,7 +25,7 @@ std::string FixContentCharset::ExtractMime(const std::string& ContentTypeHeader)
     return trim(res);
 }
 
-std::string FixContentCharset::ExtractCharset(const std::string& ContentTypeHeader)
+std::string FixPageContent::ExtractCharset(const std::string& ContentTypeHeader)
 {
     try
     {
@@ -44,7 +44,7 @@ std::string FixContentCharset::ExtractCharset(const std::string& ContentTypeHead
     return std::string();
 }
 
-bool FixContentCharset::IsUtf8(const std::string& Charset)
+bool FixPageContent::IsUtf8(const std::string& Charset)
 {
     if(Charset.empty())
         return false;
@@ -54,7 +54,7 @@ bool FixContentCharset::IsUtf8(const std::string& Charset)
     return CharsetCopy == "utf-8";
 }
 
-bool FixContentCharset::NeedToFix(const std::string& ContentTypeHeader, const std::string& Url)
+bool FixPageContent::NeedToFix(const std::string& ContentTypeHeader, const std::string& Url)
 {
     std::string Charset = ExtractCharset(ContentTypeHeader);
     std::string Mime = ExtractMime(ContentTypeHeader);
@@ -64,12 +64,37 @@ bool FixContentCharset::NeedToFix(const std::string& ContentTypeHeader, const st
     return !IsOk;
 }
 
-bool FixContentCharset::Fix(const std::string& ContentTypeHeader, std::string& PageContent, const std::string& Url)
+
+bool FixPageContent::FixManifest(const std::string& ContentTypeHeader, std::string& PageContent, const std::string& Url)
 {
+    if(ExtractMime(ContentTypeHeader) == "text/html")
+    {
+        static std::regex ManifestReplace("\\<html[^\\<]*manifest\\s*=\\s*[\\'\\\"]?([^\\'\\\"]*)[\\'\\\"]?");
+
+        try
+        {
+            std::smatch Match;
+            if(std::regex_search(PageContent,Match,ManifestReplace))
+            {
+                PageContent = std::regex_replace (PageContent,ManifestReplace,"");
+                return true;
+            }
+        }catch(...)
+        {
+            WORKER_LOG(std::string("[") + Url + std::string("]") + "Error during fix manifest");
+        }
+    }
+    return false;
+}
+
+
+bool FixPageContent::FixCharset(const std::string& ContentTypeHeader, std::string& PageContent, const std::string& Url)
+{
+
     if(!NeedToFix(ContentTypeHeader,Url))
         return false;
 
-    worker_log(std::string("[") + Url + std::string("]") + std::string("Url needs correction"));
+    WORKER_LOG(std::string("[") + Url + std::string("]") + std::string("Url needs correction"));
     std::string Charset = ExtractCharset(ContentTypeHeader);
     std::string Mime = ExtractMime(ContentTypeHeader);
 
@@ -91,11 +116,11 @@ bool FixContentCharset::Fix(const std::string& ContentTypeHeader, std::string& P
                 if(std::regex_search(PageContent,Match,MetaRegexp1))
                 {
                      Charset = Match[1];
-                     worker_log(std::string("[") + Url + std::string("]") + std::string("Found charset by meta #1 ") + Charset);
+                     WORKER_LOG(std::string("[") + Url + std::string("]") + std::string("Found charset by meta #1 ") + Charset);
                 }
             }catch(...)
             {
-                worker_log(std::string("[") + Url + std::string("]") + "Error during searching for meta #1");
+                WORKER_LOG(std::string("[") + Url + std::string("]") + "Error during searching for meta #1");
             }
         }
 
@@ -107,11 +132,11 @@ bool FixContentCharset::Fix(const std::string& ContentTypeHeader, std::string& P
                 if(std::regex_search(PageContent,Match,MetaRegexp2))
                 {
                      Charset = ExtractCharset(Match[1]);
-                     worker_log(std::string("[") + Url + std::string("]") + std::string("Found charset by meta #2 ") + Charset);
+                     WORKER_LOG(std::string("[") + Url + std::string("]") + std::string("Found charset by meta #2 ") + Charset);
                 }
             }catch(...)
             {
-                worker_log(std::string("[") + Url + std::string("]") + "Error during searching for meta #2");
+                WORKER_LOG(std::string("[") + Url + std::string("]") + "Error during searching for meta #2");
             }
         }
 
@@ -123,32 +148,32 @@ bool FixContentCharset::Fix(const std::string& ContentTypeHeader, std::string& P
                 if(std::regex_search(PageContent,Match,MetaRegexp3))
                 {
                      Charset = ExtractCharset(Match[1]);
-                     worker_log(std::string("[") + Url + std::string("]") + std::string("Found charset by meta #3 ") + Charset);
+                     WORKER_LOG(std::string("[") + Url + std::string("]") + std::string("Found charset by meta #3 ") + Charset);
                 }
             }catch(...)
             {
-                worker_log(std::string("[") + Url + std::string("]") + "Error during searching for meta #3");
+                WORKER_LOG(std::string("[") + Url + std::string("]") + "Error during searching for meta #3");
             }
         }
     }
 
     if(Charset.empty())
     {
-        worker_log(std::string(std::string("[") + Url + std::string("]") + "Can't find charset, asume it is utf-8"));
+        WORKER_LOG(std::string(std::string("[") + Url + std::string("]") + "Can't find charset, asume it is utf-8"));
         Charset = "utf-8";
     }
 
     if(IsUtf8(Charset))
     {
-        worker_log(std::string(std::string("[") + Url + std::string("]") + "Charset is utf-8"));
+        WORKER_LOG(std::string(std::string("[") + Url + std::string("]") + "Charset is utf-8"));
         Charset = "utf-8";
     }
 
 
-    worker_log(std::string("[") + Url + std::string("]") + std::string("Fixing content with encoding ") + Charset);
+    WORKER_LOG(std::string("[") + Url + std::string("]") + std::string("Fixing content with encoding ") + Charset);
     ConverterResult Result = convert_to_utf8(PageContent,Charset);
 
-    worker_log(std::string("[") + Url + std::string("]") + std::string("Fix result ") + std::to_string(Result->WasSuccess));
+    WORKER_LOG(std::string("[") + Url + std::string("]") + std::string("Fix result ") + std::to_string(Result->WasSuccess));
     if(Result->WasSuccess)
     {
 
@@ -160,7 +185,7 @@ bool FixContentCharset::Fix(const std::string& ContentTypeHeader, std::string& P
             bom.push_back(0xbf);
             Result->Result = bom + Result->Result;
 
-            worker_log(std::string(std::string("[") + Url + std::string("]") + "Append BOM"));
+            WORKER_LOG(std::string(std::string("[") + Url + std::string("]") + "Append BOM"));
         }
 
 
@@ -169,26 +194,26 @@ bool FixContentCharset::Fix(const std::string& ContentTypeHeader, std::string& P
         //ReplaceMime if needed
         if(Mime == "text/html")
         {
-            worker_log(std::string("[") + Url + std::string("]") + std::string("Mime is text/html so replacing meta"));
+            WORKER_LOG(std::string("[") + Url + std::string("]") + std::string("Mime is text/html so replacing meta"));
             try{
                 PageContent = std::regex_replace (PageContent,MetaRegexp1,"<meta charset='utf-8'/>");
             }catch(...)
             {
-                worker_log(std::string(std::string("[") + Url + std::string("]") + "Error during meta replace #1"));
+                WORKER_LOG(std::string(std::string("[") + Url + std::string("]") + "Error during meta replace #1"));
             }
 
             try{
                 PageContent = std::regex_replace (PageContent,MetaRegexp2,"<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />");
             }catch(...)
             {
-                worker_log(std::string(std::string("[") + Url + std::string("]") + "Error during meta replace #2"));
+                WORKER_LOG(std::string(std::string("[") + Url + std::string("]") + "Error during meta replace #2"));
             }
 
             try{
                 PageContent = std::regex_replace (PageContent,MetaRegexp3,"<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />");
             }catch(...)
             {
-                worker_log(std::string(std::string("[") + Url + std::string("]") + "Error during meta replace #3"));
+                WORKER_LOG(std::string(std::string("[") + Url + std::string("]") + "Error during meta replace #3"));
             }
 
             if(!Charset.empty() && !IsUtf8(Charset))
@@ -199,7 +224,7 @@ bool FixContentCharset::Fix(const std::string& ContentTypeHeader, std::string& P
                 }
                 catch(...)
                 {
-                    worker_log(std::string(std::string("[") + Url + std::string("]") + "Error form accept charset replace"));
+                    WORKER_LOG(std::string(std::string("[") + Url + std::string("]") + "Error form accept charset replace"));
                 }
             }
 

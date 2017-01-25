@@ -22,9 +22,8 @@ namespace BrowserAutomationStudioFramework
 
         explicit ManualCaptchaSolver(QObject *parent = 0);
         ~ManualCaptchaSolver();
-        virtual QString Solve(const QString& base64);
+        virtual QString Solve(const QString& base64,const QStringList& props);
         virtual void ReportBad(const QString& id);
-        virtual void SetProperty(const QString& name,const QString& value);
         virtual bool TimeLimited();
 
         QWidget* GetWidget();

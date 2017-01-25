@@ -17,11 +17,11 @@ public:
     std::vector<std::function<void(const std::string&)> > EventLoad;
     std::vector<std::function<void(bool)> > EventVisible;
     std::vector<std::function<void(const std::string&)> > EventSetNextAction;
-    std::vector<std::function<void(const std::string&, int, bool, const std::string&, const std::string&)> > EventSetProxy;
-    std::vector<std::function<void(const std::string&, const std::string&)> > EventAddHeader;
+    std::vector<std::function<void(const std::string&, int, bool, const std::string&, const std::string&, const std::string&)> > EventSetProxy;
+    std::vector<std::function<void(const std::string&, const std::string&, const std::string&)> > EventAddHeader;
     std::vector<std::function<void(const std::string&)> > EventSetUserAgent;
     std::vector<std::function<void(const std::string&)> > EventSetOpenFileName;
-    std::vector<std::function<void(const std::string&)> > EventSetStartupScript;
+    std::vector<std::function<void(const std::string&,const std::string&)> > EventSetStartupScript;
     std::vector<std::function<void(const std::string&)> > EventSetPromptResult;
     std::vector<std::function<void(const std::string&,const std::string&)> > EventSetHttpAuthResult;
 
@@ -42,6 +42,7 @@ public:
     std::vector<std::function<void(const std::string&)> > EventGetCookiesForUrl;
     std::vector<std::function<void()> > EventSaveCookies;
     std::vector<std::function<void(const std::string&)> > EventRestoreCookies;
+    std::vector<std::function<void(const std::string&)> > EventRestoreLocalStorage;
     std::vector<std::function<void()> > EventWaitCode;
     std::vector<std::function<void(int)> > EventStartSection;
     std::vector<std::function<void()> > EventScriptFinished;

@@ -33,6 +33,8 @@ namespace BrowserAutomationStudioFramework
         virtual void GetCookiesForUrl(const QString& url, const QString& callback);
         virtual void SaveCookies(const QString& callback);
         virtual void RestoreCookies(const QString& cookies, const QString& callback);
+        virtual void RestoreLocalStorage(const QString& localstorage, const QString& callback);
+
         virtual IWebElement* GetRootElement();
         virtual void GetUrl(const QString& callback);
         virtual void CreateNewBrowser(bool ForseNewBrowserCreation, const QString& callback);
@@ -43,7 +45,7 @@ namespace BrowserAutomationStudioFramework
         virtual void SetWorker(IWorker* Worker);
         virtual IWorker* GetWorker();
         virtual void SetOpenFileName(const QString & OpenFileName, const QString& callback);
-        virtual void SetStartupScript(const QString& script, const QString& callback);
+        virtual void SetStartupScript(const QString& script,const QString& target, const QString& callback);
         virtual void SetPromptResult(const QString & Text, const QString& callback);
         virtual void SetHttpAuthResult(const QString & Login, const QString & Password, const QString& callback);
         virtual void MouseClickInstant(int x, int y);
@@ -78,6 +80,7 @@ namespace BrowserAutomationStudioFramework
         void SetUserAgent();
         void GetCookiesForUrl();
         void SaveCookies();
+        void RestoreLocalStorage();
         void RestoreCookies();
         void SetOpenFileName();
         void SetStartupScript();

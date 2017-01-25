@@ -34,7 +34,7 @@ std::string extract_resources(const std::string& code)
         }
 
         res_string = picojson::value(json_array).serialize();
-        worker_log(std::string("extract_resources<<") + res_string);
+        WORKER_LOG(std::string("extract_resources<<") + res_string);
     }catch(...)
     {
 

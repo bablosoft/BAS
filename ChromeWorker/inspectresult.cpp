@@ -4,7 +4,7 @@
 
 void InspectResult::Paint(HDC hdc, int BrowserRealWidth, int BrowserRealHeight, int BrowserDrawWidth, int BrowserDrawHeight, int BrowserScrollX, int BrowserScrollY, int BrowserLeft, int BrowserTop)
 {
-    //worker_log(std::string("Paint<<") + std::to_string(x) + std::string("<<") + std::to_string(y));
+    //WORKER_LOG(std::string("Paint<<") + std::to_string(x) + std::string("<<") + std::to_string(y));
     if(!active)
         return;
 
@@ -18,10 +18,16 @@ void InspectResult::Paint(HDC hdc, int BrowserRealWidth, int BrowserRealHeight, 
             ,height1 = (float)height* (float)BrowserDrawHeight / (float)BrowserRealHeight;
 
     if(x1<=0)
+    {
+       width1 += x1;
        x1 = 1;
+    }
 
     if(y1<=0)
+    {
+       height1 += y1;
        y1 = 1;
+    }
 
     if(x1 + width1 >= BrowserDrawWidth)
        width1 = BrowserDrawWidth - x1 - 1;
@@ -59,6 +65,7 @@ std::string InspectResult::Serialize()
     if(css3 != css && css3 != css2)
         res["css3"] = picojson::value(css3);
     res["match"] = picojson::value(match);
+    res["xpath"] = picojson::value(xpath);
     res["mousex"] = picojson::value(std::to_string(mousex));
     res["mousey"] = picojson::value(std::to_string(mousey));
 

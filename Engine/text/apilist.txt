@@ -1,3 +1,5 @@
+_set_target(target)
+_get_target()
 _next()
 _break()
 _break(label_name)
@@ -44,7 +46,7 @@ html_parser_xpath_text_list(query)
 rss_item_parse(text)
 translit(text)
 success(message)
-fail(message)
+fail(message, dont_create_more)
 result(text)
 result(text, number)
 result_html(html, text, number)
@@ -87,7 +89,7 @@ cache_clear()!
 cache_data_clear()!
 cache_masks_clear()!
 is_load(match)!
-die(message)
+die(message, instant)
 new_http_client()
 http_client_set_fail_on_error(fail_on_error)
 http_client_was_error()
@@ -150,14 +152,6 @@ RIsRefused()
 RSuccessAll()
 RFailAll()
 RDieAll()
-sms_reg(apikey)
-sms_reg_set_transaction(tz)
-sms_reg_get_number(country, service)!
-sms_reg_solve()!
-sms_reg_revise()!
-sms_reg_success()!
-sms_reg_failed()!
-sms_reg_used()!
 wait_url(url)!
 wait_load(url)!
 wait_content(content)!
@@ -181,14 +175,20 @@ url()!
 get_cookies(url)!
 save_cookies()!
 restore_cookies(cookies)!
+restore_localstorage(localstorage)!
 page()
 css(text)
-frame(index)
+xpath(text)
+xpath_all(text)
+frame_element()
 position(x,y)
 match(text)
 match_all(text)
 all(text)
 thread_number()
+fail_number()
+success_number()
+project_path()
 script(text)!
 onloadjavascript(text)!
 agent(text)!
@@ -197,6 +197,7 @@ rucaptcha(key)
 twocaptcha(key)
 solver_failed()
 solver_property(solver,key,value)
+solver_properties_clear(solver)
 dbc(login, password)
 solve(method, url)!
 solve_base64(method, data_base64)!
@@ -250,6 +251,9 @@ native(dll,func,data)
 native_async(dll,func,data,callback)
 general_timeout(timeout)
 solver_timeout(timeout)
+general_timeout_next(timeout)
+solver_timeout_next(timeout)
+waiter_timeout_next(timeout)
 async_load_timeout(timeout)
 _preprocess(script)
 _template(template)!

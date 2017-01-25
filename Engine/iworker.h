@@ -108,6 +108,15 @@ namespace BrowserAutomationStudioFramework
         virtual void SetThreadNumber(int ThreadNumber) = 0;
         virtual int GetThreadNumber() = 0;
 
+        virtual void SetSuccessNumber(int* SuccessNumber) = 0;
+        virtual int GetSuccessNumber() = 0;
+
+        virtual void SetFailNumber(int* FailNumber) = 0;
+        virtual int GetFailNumber() = 0;
+
+        virtual void SetProjectPath(const QString& Path) = 0;
+        virtual QString GetProjectPath() = 0;
+
         virtual void SetHttpClientFactory(IHttpClientFactory* HttpClientFactory) = 0;
         virtual IHttpClientFactory* GetHttpClientFactory() = 0;
 
@@ -148,8 +157,8 @@ namespace BrowserAutomationStudioFramework
         virtual void Run() = 0;
         virtual void Abort(bool SignalResourceHandlers) = 0;
         virtual void InterruptAction() = 0;
-        virtual void Fail(const QString& message) = 0;
-        virtual void Die(const QString& message) = 0;
+        virtual void Fail(const QString& message, bool dont_create_more) = 0;
+        virtual void Die(const QString& message, bool instant) = 0;
         virtual void Success(const QString& message) = 0;
         virtual void SetFailMessage(const QString& message) = 0;
         virtual void FailBecauseOfTimeout() = 0;
@@ -166,7 +175,8 @@ namespace BrowserAutomationStudioFramework
         virtual QString GetResultMessageRaw() = 0;
         virtual WorkerStatus GetResultStatus() = 0;
 
-
+        virtual bool IsDieInstant() = 0;
+        virtual bool IsDontCreateMore() = 0;
 
     };
 }

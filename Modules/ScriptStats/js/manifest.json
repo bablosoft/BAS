@@ -1,0 +1,61 @@
+{
+	
+	"name":"ScriptStats",
+	"description":"Get script statistic",
+	"description_small":{"en": "Script statistic", "ru": "Статистика скрипта"},
+	"major_version": 1,
+	"minor_version": 0,
+	"developer_name": "bablosoft", 
+	"developer_email": "mail.to.twaego@gmail.com", 
+	"developer_site": "https://bablosoft.com",
+	"api_version": 1,
+	"actions":
+	[
+
+		{
+			"name":"getthreadnumber",
+			"description":{"en": "Thread number","ru": "Номер потока"},
+			"template": "{{Save}}",
+			"is_element": false,
+			"interface": "script_stats_thread_number_interface.js",
+			"select": "script_stats_thread_number_select.js",
+			"code": [{"file":"script_stats_thread_number_code.js", "name": "script_stats_thread_number_code"}]
+		},
+		{
+			"name":"script_stats_success_number",
+			"description":{"en": "Success number","ru": "Успешных выполнений"},
+			"template": "{{Save}}",
+			"is_element": false,
+			"interface": "script_stats_success_number_interface.js",
+			"select": "script_stats_success_number_select.js",
+			"code": [{"file":"script_stats_success_number_code.js", "name": "script_stats_success_number_code"}]
+		},
+		{
+			"name":"script_stats_fail_number",
+			"description":{"en": "Fail number","ru": "Неудачных выполнений"},
+			"template": "{{Save}}",
+			"is_element": false,
+			"interface": "script_stats_fail_number_interface.js",
+			"select": "script_stats_fail_number_select.js",
+			"code": [{"file":"script_stats_fail_number_code.js", "name": "script_stats_fail_number_code"}]
+		},
+		{
+			"name":"script_stats_project_path",
+			"description":{"en": "Project path","ru": "Путь к проекту"},
+			"template": "{{Save}}",
+			"is_element": false,
+			"interface": "script_stats_project_path_interface.js",
+			"select": "script_stats_project_path_select.js",
+			"code": [{"file":"script_stats_project_path_code.js", "name": "script_stats_project_path_code"}]
+		}
+
+	],
+	"localize": 
+	{
+		"Variable to save thread index": {"ru": "Переменная для сохранения номера потока"}
+	},
+	"engine": [],
+	"browser": [],
+	"depends": []	
+}
+

@@ -32,8 +32,14 @@ namespace BrowserAutomationStudioFramework
         bool ResourceRefused;
         int GeneralWait;
         int SolverWait;
+        int GeneralWaitNext;
+        int SolverWaitNext;
         ITimerProxy *GetTimer();
+        bool SkipWaitHandlerMode;
         //QTimer *GetTimer();
+
+        int GetGeneralWait();
+        int GetSolverWait();
     public:
         explicit TimeoutWaiter(QObject *parent = 0);
         virtual void SetTimer(ITimerProxy *Timer);
@@ -56,6 +62,11 @@ namespace BrowserAutomationStudioFramework
         virtual bool IsResourceRefused();
         virtual void SetGeneralWaitTimeout(int timeout);
         virtual void SetSolverWaitTimeout(int timeout);
+        virtual void SetGeneralWaitTimeoutNext(int timeout);
+        virtual void SetSolverWaitTimeoutNext(int timeout);
+        virtual int GetGeneralWaitTimeoutNext();
+        virtual int GetSolverWaitTimeoutNext();
+        virtual void SetSkipWaitHandlerMode();
     private slots:
         void WaitForElementIteration();
         void WaitForElementRespond(const QString& res);

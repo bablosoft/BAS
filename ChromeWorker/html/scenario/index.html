@@ -124,6 +124,7 @@
             <i class="fa fa-minus text-danger function-action-button" id="removefunction"></i>
             <i class="fa fa-pencil text-warning function-action-button" id="editfunction"></i>
           <% } %>
+          <i class="fa fa-bolt text-primary function-action-button" id="runfunction"></i>
         </div>
       </div>
     </div>
@@ -311,9 +312,11 @@
         "click .funcok": "funcok",
         "click .onapplicationstart": "onapplicationstart",
         "click #thread-number-edit": "threadnumberedit",
+        "click #runfunction": "runfunction",
+
         "click #success-number-edit": "successnumberedit",
         "click #fail-number-edit": "failnumberedit",
-        "click #closevariableinspector": "closevariableinspector"
+        "click #closevariableinspector": "closevariableinspector",
       },
 
       moveexecutionpointfast: function(event)
@@ -335,7 +338,11 @@
         event.preventDefault();
       },
 
-
+      runfunction: function(event)
+      {
+        BrowserAutomationStudio_RunFunction();
+        event.preventDefault();
+      },
       threadnumberedit: function(event)
       {
         BrowserAutomationStudio_ThreadNumberEdit();

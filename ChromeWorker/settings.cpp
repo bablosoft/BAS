@@ -141,7 +141,7 @@ void settings::SaveToFile()
         }
     }catch(...)
     {
-        worker_log("Failed to save settings_worker");
+        WORKER_LOG("Failed to save settings_worker");
     }
 }
 

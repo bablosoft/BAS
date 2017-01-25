@@ -429,7 +429,7 @@
                 {name: "<", description: "Returns true if value1 is less than value2, otherwise false", code: "(<<0>>) < (<<1>>)", params: [{name: "value1"},{name: "value2"}]},
                 {name: "<=", description: "Returns true if value1 is not greater than value2, otherwise false", code: "(<<0>>) <= (<<1>>)", params: [{name: "value1"},{name: "value2"}]},
                 {name: ">", description: "Returns true if value1 is greater than value2, otherwise false", code: "(<<0>>) > (<<1>>)", params: [{name: "value1"},{name: "value2"}]},
-                {name: ">=", description: "Returns true if value1 is not less than value2, otherwise false", code: "(<<0>>) <= (<<1>>)", params: [{name: "value1"},{name: "value2"}]},
+                {name: ">=", description: "Returns true if value1 is not less than value2, otherwise false", code: "(<<0>>) >= (<<1>>)", params: [{name: "value1"},{name: "value2"}]},
                 {name: "and", description: "Returns true if value1 is true and value2 is true, otherwise false", code: "(<<0>>) && (<<1>>)", params: [{name: "value1"},{name: "value2"}]},
                 {name: "or", description: "Returns true if value1 is true or value2 is true, otherwise false", code: "(<<0>>) || (<<1>>)", params: [{name: "value1"},{name: "value2"}]},
                 {name: "not", description: "Returns true if value is false and false if value is true", code: "!(<<0>>)", params: [{name: "value"}]},

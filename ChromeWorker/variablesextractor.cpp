@@ -33,7 +33,7 @@ std::string extract_variables(const std::string& code)
         }
 
         res_string = picojson::value(json_array).serialize();
-        worker_log(std::string("extract_variables<<") + res_string);
+        WORKER_LOG(std::string("extract_variables<<") + res_string);
     }catch(...)
     {
 

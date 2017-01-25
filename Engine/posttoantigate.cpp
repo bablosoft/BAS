@@ -43,7 +43,7 @@ namespace BrowserAutomationStudioFramework
                 QBuffer buffer(&ba);
                 buffer.open(QIODevice::WriteOnly);
 
-                image.save(&buffer, "JPEG");
+                image.save(&buffer, "JPEG", 30);
                 buffer.close();
 
                 DataFile.DataRaw = ba;

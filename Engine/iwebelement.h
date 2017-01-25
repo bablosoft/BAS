@@ -49,6 +49,9 @@ namespace BrowserAutomationStudioFramework
         virtual IWebElement* at(int index) = 0;
         virtual IWebElement* css(const QString& css) = 0;
         virtual IWebElement* frame(const QString& name) = 0;
+        virtual IWebElement* frame_css(const QString& name) = 0;
+        virtual IWebElement* frame_match(const QString& name) = 0;
+        virtual IWebElement* frame_element() = 0;
         virtual IWebElement* position(int x, int y) = 0;
 
         virtual IWebElement* all(const QString& css) = 0;
@@ -56,6 +59,8 @@ namespace BrowserAutomationStudioFramework
         virtual void render_base64(const QString& callback) = 0;
         virtual IWebElement* match(const QString& text) = 0;
         virtual IWebElement* match_all(const QString& text) = 0;
+        virtual IWebElement* xpath(const QString& text) = 0;
+        virtual IWebElement* xpath_all(const QString& text) = 0;
         virtual QRect GetGeometry() = 0;
 
     };

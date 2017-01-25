@@ -214,6 +214,11 @@ body
  z-index:99999999; 
 }
 
+#TimeoutModal
+{
+ z-index:99999999; 
+}
+
 #WaitingModal
 {
  z-index:99999999; 

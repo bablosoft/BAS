@@ -1,8 +1,14 @@
 _L = 
 {
-	
-
-	"Variable to save thread index": {"ru": "Переменная для сохранения номера потока"},
+	"Use 'Timeout' action to set default timeout.": {"ru": "Используйте действие 'Таймаут' чтобы установить максимальное время ожидания по умолчанию."},
+	"default": {"ru": "дефолт"},
+	"Default": {"ru": "По умолчанию"},
+	"seconds": {"ru": "секунд"},
+	"Maximum time to perform an action.": {"ru": "Максимальное время выполнения задания"},
+	"Target url": {"ru": "Применять к урл"},
+	"Target tab number": {"ru": "Применять к вкладке с номером"},
+	"Dont restart thread.": {"ru": "Не перезапускать поток.","en": "Don't restart thread."},
+	"Finish script instantly.": {"ru": "Завершить скрипт мгновенно."},
 	"Load cookies from browser.": {"ru": "Загрузить куки из браузера."},
 	"Load cookies from http client.": {"ru": "Загрузить куки из http клиента."},
 	"Close browser.": {"ru": "Закрыть браузер."},
@@ -46,6 +52,8 @@ _L =
 	"This means [[VARIABLE]] = [[VARIABLE]] + num": {"ru": "Это означает [[VARIABLE]] = [[VARIABLE]] + num"},
 	"Variable Name": {"ru": "Имя Переменной"},
 	"Wait full page load after this action": {"ru": "Ждать полной загрузки страницы после этого действия"},
+	"Toggle target. Apply this action only to specific url or to specific tab.": {"ru": "Применить это действие только к определенным урл или определенным вкладкам."},
+
 	"Wait for full page load": {"ru": "Ждать полной загрузки"},
 	"Wait until full page load.": {"ru": "Ждать пока страница не будет полностью загружена."},
 

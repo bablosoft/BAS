@@ -62,7 +62,7 @@
       </div>
     </div>
 
-    <div class="modal " id="FunctionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal" id="FunctionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -77,6 +77,39 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary funcok standartbutton tr" data-dismiss="modal">Ok</button>
+            <button type="button" class="btn btn-default standartbutton tr" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal " id="TimeoutModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title tr" id="myModalLabel">Maximum time to perform an action.</h4>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="input-group">
+                  <input type="number" id="TimeoutValue" class="form-control"/>
+                  <span class="input-group-btn">
+                    <button class="btn btn-default tr" type="submit">seconds</button>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-12">
+               <span class="tr" style="font-size:small;color:gray">Use 'Timeout' action to set default timeout.</span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary timeoutok standartbutton tr" data-dismiss="modal">Ok</button>
+            <button type="button" class="btn btn-default timeoutdefault standartbutton tr" data-dismiss="modal">Default</button>
             <button type="button" class="btn btn-default standartbutton tr" data-dismiss="modal">Cancel</button>
           </div>
         </div>
@@ -105,6 +138,13 @@
   <!-- ========= -->
   <!-- TEMPLATES -->
   <!-- ========= -->
+
+  <script type="text/template" id="targetfields">
+    <span id="target-data" style="display:none">
+      <%= _.template($('#input_constructor').html())({id:"TargetUrl", description:tr("Target url"), default_selector: "string", disable_int:true, value_string: "*"}) %>
+      <%= _.template($('#input_constructor').html())({id:"TargetTabNumber", description:tr("Target tab number"), default_selector: "string", value_string: "*", value_number: 0}) %>
+    </span>
+  </script>
 
   <script type="text/template" id="expressioneditor">
     
@@ -201,6 +241,16 @@
           <a href="#" id="use-waiter" class="<%= (typeof(waiter_enabled) != "undefined" && waiter_enabled) ? "" : "use-waiter-disabled" %> trtitle" data-enabled="<%= (typeof(waiter_enabled) != "undefined" && waiter_enabled) ? "true" : "false" %>" data-toggle="tooltip" data-placement="top" title="Wait full page load after this action"><i class="fa fa-clock-o" aria-hidden="true"></i></a>
 
         <% } %>
+
+        <% if(typeof(use_target) != "undefined"){ %>
+          <a href="#" id="use-target" class="<%= (typeof(target_enabled) != "undefined" && target_enabled) ? "" : "use-target-disabled" %> trtitle" data-enabled="<%= (typeof(target_enabled) != "undefined" && target_enabled) ? "true" : "false" %>" data-toggle="tooltip" data-placement="top" title="Toggle target. Apply this action only to specific url or to specific tab."><i class="fa fa-dot-circle-o" aria-hidden="true"></i></a>
+
+        <% } %>
+
+        <% if(typeof(use_timeout) != "undefined"){ %>
+          <a href="#" id="use-timeout" data-value="<%= (typeof(timeout_value) != "undefined" && timeout_value > 0) ? timeout_value : "0" %>" class="<%= (typeof(timeout_value) != "undefined" && timeout_value > 0) ? "" : "use-timeout-disabled" %> trtitle"  data-enabled="<%= (typeof(timeout_value) != "undefined" && timeout_value > 0) ? "true" : "false" %>" data-toggle="tooltip" data-placement="top" title="Maximum time to perform an action.">
+            <i class="fa fa-hourglass-end" aria-hidden="true" ><small id="timeout-is-default" class="tr">default</i><small id="timeout-val"></i><%= (typeof(timeout_value) != "undefined" && timeout_value > 0) ? ("" + timeout_value) : "" %></small></a>
+        <% } %>
         <a class="btn btn-success standartbutton tr" id="ok">Ok</a> <a class="btn btn-danger standartbutton tr" href="#!/" id="backtomain">Cancel</a>
         <span id="validation" class="text-muted"><%= _GobalModel.GetPageInfo() || name %></span>
         <% if(visible){ %>
@@ -275,6 +325,7 @@
           <ul class="dropdown-menu dropdown-menu-right">
             <li><a id="css" class="tr">css</a></li>
             <li><a id="match" class="tr">match</a></li>
+            <li><a id="xpath" class="tr">xpath</a></li>
             <li><a id="at" class="tr">at</a></li>
             <li><a id="none" class="tr">none</a></li>
           </ul>
@@ -383,7 +434,7 @@
     <div class="container-fluid load">
       <%= _.template($('#input_constructor').html())({id:"LoadUrl", description:tr("Url to load"), default_selector: "string", disable_int:true}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true,waiter_enabled: true, visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true,waiter_enabled: true,use_timeout: true, visible:true}) %>
   </script>
 
 
@@ -414,6 +465,9 @@
      <%= _.template($('#input_constructor').html())({id:"FailMessage", description:tr("Fail Message"), default_selector: "string", disable_int:true}) %>
     </div>
      <div class="tooltipinternal tr">Finish thread with fail result.</div>
+     <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
+         <input type="checkbox" id="Check"/> <label for="Check" class="tr">Dont restart thread.</label>
+      </span>
      <%= _.template($('#back').html())({action:"executeandadd", visible:false}) %>
 
   </script>
@@ -423,6 +477,9 @@
      <%= _.template($('#input_constructor').html())({id:"FailMessage", description:tr("Fail Message"), default_selector: "string", disable_int:true}) %>
     </div>
      <div class="tooltipinternal tr">Finish whole script.</div>
+     <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
+         <input type="checkbox" id="Check"/> <label for="Check" class="tr">Finish script instantly.</label>
+      </span>
      <%= _.template($('#back').html())({action:"executeandadd", visible:false}) %>
 
   </script>
@@ -482,28 +539,28 @@
     <div class="container-fluid load">
       <%= _.template($('#input_constructor').html())({id:"Wait", description:tr("Wait until browser will load url"), default_selector: "string", disable_int:true}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd",use_timeout: true, visible:true}) %>
   </script>
 
   <script type="text/template" id="waiturl">
     <div class="container-fluid load">
       <%= _.template($('#input_constructor').html())({id:"Wait", description:tr("Wait address bar will contain url"), default_selector: "string", disable_int:true}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd",use_timeout: true, visible:true}) %>
   </script>
 
   <script type="text/template" id="waitcontent">
     <div class="container-fluid load">
       <%= _.template($('#input_constructor').html())({id:"Wait", description:tr("Wait until specific text will be present on page"), default_selector: "string", disable_int:true}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd",use_timeout: true, visible:true}) %>
   </script>
 
   <script type="text/template" id="waitcss">
     <div class="container-fluid load">
       <%= _.template($('#input_constructor').html())({id:"Wait", description:tr("Wait until specific css selector will return non empty result"), default_selector: "string", disable_int:true}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd",use_timeout: true, visible:true}) %>
   </script>
 
   <script type="text/template" id="waitfiledownload">
@@ -511,7 +568,7 @@
        <div class="tooltipinternal tr">Wait for the end of the current download.</div>
      </div>
      <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To save file name"), default_variable: "DOWNLOADED_FILE_PATH"}) %>
-     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+     <%= _.template($('#back').html())({action:"executeandadd",use_timeout: true, visible:true}) %>
   </script>
 
   
@@ -540,10 +597,11 @@
 
   <script type="text/template" id="setheader">
     <div class="container-fluid setheader">
-      <%= _.template($('#input_constructor').html())({id:"Name", description:tr("Header Name"), default_selector: "string", disable_int:true, value_string: "User-Agent", variants: ["User-Agent","Accept-Language"], size: 3}) %>
+      <%= _.template($('#input_constructor').html())({id:"Name", description:tr("Header Name"), default_selector: "string", disable_int:true, value_string: "User-Agent", variants: ["User-Agent","Accept-Language","Referer"], size: 3}) %>
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Header Value"), default_selector: "string", disable_int:true, value_string: "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0"}) %>
+      <%= _.template($('#targetfields').html())({}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", use_target:true, visible:true}) %>
   </script>
 
   <script type="text/template" id="solvecaptcha">
@@ -554,7 +612,7 @@
       <%= _.template($('#input_constructor').html())({id:"Server", description:tr("Server url. Can be blank"), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save Result"), default_variable: "CAPTCHA_RESULT"}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd",use_timeout: true, visible:true}) %>
   </script>
   
   <script type="text/template" id="javascript">
@@ -568,8 +626,9 @@
   <script type="text/template" id="onloadjavascript">
       <div class="container-fluid javascript">
         <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Script Text"), default_selector: "string", disable_int:true, disable_editor:true, use_textarea:true, size: 8, disable_type_chooser:true}) %>
+        <%= _.template($('#targetfields').html())({}) %>
       </div>
-      <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+      <%= _.template($('#back').html())({action:"executeandadd", use_target:true, visible:true}) %>
   </script>
 
   <script type="text/template" id="parseline">
@@ -641,7 +700,7 @@
       <%= _.template($('#input_constructor').html())({id:"X", description:tr("Scroll x position"), default_selector: "int", disable_string:true}) %>
       <%= _.template($('#input_constructor').html())({id:"Y", description:tr("Scroll y position"), default_selector: "int", disable_string:true}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true, visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true, use_timeout: true, visible:true}) %>
   </script>
 
   <script type="text/template" id="html">
@@ -762,11 +821,6 @@
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
 
-  <script type="text/template" id="getthreadnumber">
-    <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable to save thread index"), default_variable: "THREAD_INDEX"}) %>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
-  </script>
-
   <script type="text/template" id="getstatus">
     <div class="container-fluid getstatus">
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Match"), default_selector: "string", disable_int:true}) %>
@@ -794,7 +848,7 @@
       <div class="tooltipinternal tr">After execution variale will hold cached page content which matching url.</div>
 
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", use_timeout: true, visible:true}) %>
   </script>
   
   <script type="text/template" id="result">
@@ -928,36 +982,18 @@
   <script type="text/template" id="emailproxy">
     <div class="container-fluid" >
       <%= _.template($('#input_constructor').html())({id:"ProxyText", description:tr("Proxy String"), default_selector: "string", disable_int:true}) %>
-
-      <div class="col-xs-12">
-        <form class="form-horizontal">
-          <div class="form-group">
-            <div class="col-xs-2">
-              <div class="input-group">
-              <span data-preserve="true" data-preserve-type="select" data-preserve-id="ProxyType">
-                <select class="form-control input-sm" id="ProxyType" placeholder="Function Name">
-                    <option value="auto" class="tr">auto</option>
-                    <option value="http" class="tr" selected>http</option>
-                    <option value="socks5" class="tr">socks5</option>
-                </select>
-              </span>
-              </div>
-            </div>
-            <label class="control-label text-right tr" style="padding-top:5px !important;">Proxy Type</label>
-          </div>
-        </form>
-      </div>
+      <%= _.template($('#input_constructor').html())({id:"ProxyType", description:tr("Proxy Type"), default_selector: "string", disable_int:true, value_string: "http", variants: ["http","socks5","auto"]}) %>
       <%= _.template($('#input_constructor').html())({id:"ProxyLogin", description:tr("Proxy Login. Can be blank."), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#input_constructor').html())({id:"ProxyPassword", description:tr("Proxy password. Can be blank."), default_selector: "string", disable_int:true}) %>
     </div>
-    <%= _.template($('#back').html())({action:"add", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
 
   <script type="text/template" id="emaillength">
     <div class="container-fluid emaillength">
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "SAVED_MAILBOX_LENGTH"}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd",use_timeout: true, visible:true}) %>
   </script>
 
   <script type="text/template" id="emailsearchfirst">
@@ -969,7 +1005,7 @@
       <%= _.template($('#variable_constructor').html())({id:"VariablesList", description:tr("Variables To Save Links"), default_variable: "LINK1,LINK2,LINK3", append_mode:true}) %>
       <div class="tooltipinternal tr">Parse email and get link list. Put variables in following format to Variables To Save Links: LINK1,LINK2,LINK3</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd",use_timeout: true, visible:true}) %>
   </script>
 <script type="text/template" id="emailsearchall">
     <div class="container-fluid emailsearchall">
@@ -978,7 +1014,7 @@
       <%= _.template($('#input_constructor').html())({id:"Body", description:tr("Body Query"), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "MAIBOX_SEARCH_RESULT"}) %>
    </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd",use_timeout: true, visible:true}) %>
   </script>
 
   <script type="text/template" id="emailpull">
@@ -990,35 +1026,17 @@
       <%= _.template($('#variable_constructor').html())({id:"VariablesList", description:tr("Variables To Save Links"), default_variable: "LINK1,LINK2,LINK3", append_mode:true}) %>
       <div class="tooltipinternal tr">Parse email and get link list. Put variables in following format to Variables To Save Links: LINK1,LINK2,LINK3</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd",use_timeout: true, visible:true}) %>
   </script>
 
 <script type="text/template" id="httpclientproxy">
     <div class="container-fluid" >
       <%= _.template($('#input_constructor').html())({id:"ProxyText", description:tr("Proxy String"), default_selector: "string", disable_int:true}) %>
-
-      <div class="col-xs-12">
-        <form class="form-horizontal">
-          <div class="form-group">
-            <div class="col-xs-2">
-              <div class="input-group">
-                <span data-preserve="true" data-preserve-type="select" data-preserve-id="ProxyType">
-                  <select class="form-control input-sm" id="ProxyType" placeholder="Function Name">
-                      <option value="auto" class="tr">auto</option>
-                      <option value="http" selected class="tr">http</option>
-                      <option value="socks5" class="tr">socks5</option>
-                  </select>
-                </span>
-              </div>
-            </div>
-            <label class="control-label text-right tr" style="padding-top:5px !important;">Proxy Type</label>
-          </div>
-        </form>
-      </div>
+      <%= _.template($('#input_constructor').html())({id:"ProxyType", description:tr("Proxy Type"), default_selector: "string", disable_int:true, value_string: "http", variants: ["http","socks5","auto"]}) %>
       <%= _.template($('#input_constructor').html())({id:"ProxyLogin", description:tr("Proxy Login. Can be blank."), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#input_constructor').html())({id:"ProxyPassword", description:tr("Proxy password. Can be blank."), default_selector: "string", disable_int:true}) %>
     </div>
-    <%= _.template($('#back').html())({action:"add", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
 <script type="text/template" id="httpclientreset">
     <div class="container-fluid httpclientreset">
@@ -1031,7 +1049,7 @@
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Url"), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#input_constructor').html())({id:"File", description:tr("File Path"), default_selector: "string", disable_int:true}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd",use_timeout: true, visible:true}) %>
   </script>
 <script type="text/template" id="httpclientget">
     <div class="container-fluid httpclientget">
@@ -1042,7 +1060,7 @@
       </span>
 
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd",use_timeout: true, visible:true}) %>
   </script>
   <script type="text/template" id="httpclientpost">
     <div class="container-fluid httpclientpost">
@@ -1105,7 +1123,7 @@
       <%= _.template($('#input_constructor').html())({id:"ContentType", description:tr("Content Type"), default_selector: "string", disable_int:true, value_string: "urlencode", variants:["urlencode","multipart","json"], size:3}) %>      
 
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd",use_timeout: true, visible:true}) %>
   </script>
   <script type="text/template" id="httpclienturl">
     <div class="container-fluid httpclienturl">
@@ -1306,7 +1324,7 @@
         <input type="checkbox" class="groupselector" data-checked-group-id="sleeprandomspan" data-unchecked-group-id="sleepspan" id="sleeprandom" style="margin-left:20px"/> <label for="sleeprandom" class="tr">Sleep random time</label>
       </span>
     </div>
-    <%= _.template($('#back').html())({action:"add", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
 
   <script type="text/template" id="setvariable">
@@ -1339,7 +1357,7 @@
     <div class="container-fluid xml">
       <%= _.template($('#variable_constructor').html())({id:"SaveXml", description:tr("Variable To Save"), default_variable: "SAVED_XML"}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Get Element Content")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Get Element Content")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1350,7 +1368,7 @@
       <div class="tooltipinternal tr">Use self variable, which is point to selected element.</div>
 
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Execute Javascript On Element")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Execute Javascript On Element")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1358,7 +1376,7 @@
     <div class="container-fluid text">
       <%= _.template($('#variable_constructor').html())({id:"SaveText", description:tr("Variable To Save"), default_variable: "SAVED_TEXT"}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Get Element Text")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Get Element Text")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1369,7 +1387,7 @@
         <input type="checkbox" id="Check"/> <label for="Check" class="tr">Disable mouse emulation.</label>
       </span>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true, visible:true, name: tr("Click On Element")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true,use_timeout: true, visible:true, name: tr("Click On Element")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1377,7 +1395,7 @@
     <div class="container-fluid moveelement">
       <div class="tooltipinternal tr">Move mouse pointer on element.</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Move On Element")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Move On Element")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1385,7 +1403,7 @@
     <div class="container-fluid dragelement">
       <div class="tooltipinternal tr">Drag On Element</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Drag On Element")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Drag On Element")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1394,7 +1412,7 @@
     <div class="container-fluid dropelement">
       <div class="tooltipinternal tr">Drop On Element</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Drop On Element")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Drop On Element")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1405,7 +1423,7 @@
         <input type="checkbox" id="Check"/> <label for="Check" class="tr">Disable mouse emulation.</label>
       </span>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true, visible:true, name: tr("Move And Click On Element")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true,use_timeout: true, visible:true, name: tr("Move And Click On Element")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1413,7 +1431,7 @@
     <div class="container-fluid clear">
       <div class="tooltipinternal tr">Clear edit. Works only on edit.</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Clear Edit")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Clear Edit")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1427,7 +1445,7 @@
          <input type="checkbox" id="Check"/> <label for="Check" class="tr">Disable mouse and keyboard emulation.</label>
       </span>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, use_waiter:true, name: tr("Type Text")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, use_waiter:true, name: tr("Type Text")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1450,7 +1468,7 @@
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Style To Check"), default_selector: "string", disable_int:true}) %>
      <div class="tooltipinternal tr">Get element style. Use "display" to check if element is visible</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Get Element Style")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true, use_timeout:true, name: tr("Get Element Style")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1458,7 +1476,7 @@
     <div class="container-fluid check">
       <div class="tooltipinternal tr">Check cehckbox. Works only on checkboxes.</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Set Checkbox")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Set Checkbox")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1466,7 +1484,7 @@
     <div class="container-fluid waitfullload">
       <div class="tooltipinternal tr">Wait until full page load.</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", use_timeout: true, visible:true}) %>
   </script>
 
   <script type="text/template" id="waitelement">
@@ -1497,6 +1515,8 @@
                     <ul class="dropdown-menu dropdown-menu-right">
                       <li><a id="css" class="tr">css</a></li>
                       <li><a id="match" class="tr">match</a></li>
+                      <li><a id="xpath" class="tr">xpath</a></li>
+
                     </ul>
                   </div>
                   <button type="button" class="btn btn-default res" data-toggle="modal" data-target="#RecourseModal" data-result-target="#selector-input" ><i class="fa fa-database"></i></button>
@@ -1512,7 +1532,7 @@
           <input type="checkbox" id="Check"/> <label for="Check" class="tr">Also check if visible on a screen</label>
         </span>
       </div>
-      <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Wait While Element Exists")}) %>
+      <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Wait While Element Exists")}) %>
     </span>
   </script>
 
@@ -1520,7 +1540,7 @@
     <div class="container-fluid focus">
       <div class="tooltipinternal tr">Scroll to element.</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Scroll To Element")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Scroll To Element")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1529,7 +1549,7 @@
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Set String"), default_selector: "string", disable_int:true}) %>
       <div class="tooltipinternal tr">Set combobox value to desired string. Works only on comboboxes.</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Set Combobox Value")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Set Combobox Value")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1538,7 +1558,7 @@
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Set Index"), default_selector: "int", disable_string:true}) %>
       <div class="tooltipinternal tr">Set combobox index to desired int. Works only on comboboxes.</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Set Combobox Index")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Set Combobox Index")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1546,7 +1566,7 @@
     <div class="container-fluid set_random">
       <div class="tooltipinternal tr">Set combobox index to random int. Works only on comboboxes.</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Set Combobox To Random")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Set Combobox To Random")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1556,7 +1576,7 @@
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Attribute Name"), default_selector: "string", disable_int:true}) %>
       <div class="tooltipinternal tr">Get element attribute.</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Get Element Attribute")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true, use_timeout:true, name: tr("Get Element Attribute")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1567,7 +1587,7 @@
 
       <div class="tooltipinternal tr">Set element attribute.</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Set Element Attribute")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true, use_timeout:true, name: tr("Set Element Attribute")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1578,7 +1598,7 @@
       <%= _.template($('#input_constructor').html())({id:"Antigate", description:tr("Antigate/Rucaptcha/2captcha/DBC Key. Can be blank"), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#input_constructor').html())({id:"Server", description:tr("Server url. Can be blank"), default_selector: "string", disable_int:true}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Solve Captcha")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Solve Captcha")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1614,6 +1634,8 @@
                   <ul class="dropdown-menu dropdown-menu-right">
                     <li><a id="css" class="tr">css</a></li>
                     <li><a id="match" class="tr">match</a></li>
+                    <li><a id="xpath" class="tr">xpath</a></li>
+
                   </ul>
                 </div>
                 <button type="button" class="btn btn-default res" data-toggle="modal" data-target="#RecourseModal" data-result-target="#selector-input" ><i class="fa fa-database"></i></button>
@@ -1661,6 +1683,8 @@
                   <ul class="dropdown-menu dropdown-menu-right">
                     <li><a id="css">css</a></li>
                     <li><a id="match">match</a></li>
+                    <li><a id="xpath" class="tr">xpath</a></li>
+
                   </ul>
                 </div>
                 <button type="button" class="btn btn-default res" data-toggle="modal" data-target="#RecourseModal" data-result-target="#selector-input" ><i class="fa fa-database"></i></button>
@@ -1674,7 +1698,7 @@
       <div class="tooltipinternal tr">Foreach element, which matching query.</div>
     </div>
     </span>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:false, name: tr("Start Loop")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:false,use_timeout: true, name: tr("Start Loop")}) %>
   </script>
 
   <script type="text/template" id="move">
@@ -1690,7 +1714,7 @@
       <%= _.template($('#input_constructor').html())({id:"ClickX", description:tr("Click x position"), default_selector: "int", disable_string:true, value_number: model['x']}) %>
       <%= _.template($('#input_constructor').html())({id:"ClickY", description:tr("Click y position"), default_selector: "int", disable_string:true, value_number: model['y']}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true, visible:true, name: tr("Click")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true,use_timeout:true, visible:true, name: tr("Click")}) %>
   </script>
 
   <script type="text/template" id="drag">
@@ -1713,7 +1737,7 @@
     <div class="container-fluid addtab">
       <%= _.template($('#input_constructor').html())({id:"Url", description:tr("Url"), default_selector: "string", disable_int:true}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true, waiter_enabled: true, visible:true, name: tr("Add Tab")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true, waiter_enabled: true, use_timeout:true, visible:true, name: tr("Add Tab")}) %>
   </script>
 
   <script type="text/template" id="selecttab">
@@ -1756,7 +1780,7 @@
       <%= _.template($('#input_constructor').html())({id:"X", description:tr("Move and click x position"), default_selector: "int", disable_string:true, value_number: model['x']}) %>
       <%= _.template($('#input_constructor').html())({id:"Y", description:tr("Move and click y position"), default_selector: "int", disable_string:true, value_number: model['y']}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true, visible:true, name: tr("Move And Click")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true,use_timeout: true, visible:true, name: tr("Move And Click")}) %>
   </script>
 
   <script type="text/template" id="type">
@@ -1765,7 +1789,7 @@
       <%= _.template($('#input_constructor').html())({id:"TypeInterval", description:tr("Interval in milliseconds"), default_selector: "int", disable_string:true, value_number: 100, step_number: 100, min_number: 0, max_number:10000}) %>
       <%= _.template($('#special_buttons').html())({}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, use_waiter:true, name: tr("Type Text")}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true, use_waiter:true, use_timeout: true, name: tr("Type Text")}) %>
   </script>
 
   <script type="text/template" id="resize">
@@ -1779,29 +1803,12 @@
   <script type="text/template" id="proxy">
     <div class="container-fluid" >
       <%= _.template($('#input_constructor').html())({id:"ProxyText", description:tr("Proxy String"), default_selector: "string", disable_int:true}) %>
-
-      <div class="col-xs-12">
-        <form class="form-horizontal">
-          <div class="form-group">
-            <div class="col-xs-2">
-              <div class="input-group">
-                <span data-preserve="true" data-preserve-type="select" data-preserve-id="ProxyType">
-                  <select class="form-control input-sm" id="ProxyType" placeholder="Function Name">
-                      <option value="auto" class="tr">auto</option>
-                      <option value="http" selected  class="tr">http</option>
-                      <option value="socks5" class="tr">socks5</option>
-                  </select>
-                </span>
-              </div>
-            </div>
-            <label class="control-label text-right tr" style="padding-top:5px !important;">Proxy Type</label>
-          </div>
-        </form>
-      </div>
+      <%= _.template($('#input_constructor').html())({id:"ProxyType", description:tr("Proxy Type"), default_selector: "string", disable_int:true, value_string: "http", variants: ["http","socks5","auto"]}) %>
       <%= _.template($('#input_constructor').html())({id:"ProxyLogin", description:tr("Proxy Login. Can be blank."), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#input_constructor').html())({id:"ProxyPassword", description:tr("Proxy password. Can be blank."), default_selector: "string", disable_int:true}) %>
+      <%= _.template($('#targetfields').html())({}) %>
     </div>
-    <%= _.template($('#back').html())({action:"add", visible:true}) %>
+    <%= _.template($('#back').html())({action:"executeandadd",use_target:true, visible:true}) %>
   </script>
 
   _MACRO_INSERT_INTERFACE_
@@ -1835,9 +1842,9 @@
   </script>
   <script type="text/template" id="emailproxy_code">
       var hash = proxy_parse(<%= ProxyText %>)
-      <% if( ProxyType != "auto" ){ %>
-        hash["IsHttp"] = <%= ( ProxyType == "http" ) ? "true": "false" %>
-      <% } %>
+      if(<%= ProxyType %> != "auto" ){
+        hash["IsHttp"] = <%= ProxyType %> == "http"
+      }
       var login = <%= ProxyLogin %>
       var password = <%= ProxyPassword %>
       if(login.length > 0 && password.length > 0 )
@@ -1848,16 +1855,19 @@
       imap_client_set_proxy(hash["server"], hash["Port"], hash["IsHttp"], hash["name"], hash["password"])
   </script>
   <script type="text/template" id="emaillength_code">
+      <%= timeout_general() %>
       imap_client_pull_messages_length()!
       <%= variable %> = imap_client_messages_length()
   </script>
   <script type="text/template" id="emailsearchfirst_code">
+      <%= timeout_general() %>
       imap_client_search(<%= sender %>,<%= subject %>,<%= body %>)!
       <%= variable %> = imap_client_search_result()
       if(<%= variable %>.length > 0)
         <%= variable %> = <%= variable %>[<%= variable %>.length - 1]
       else
         <%= variable %> = ""
+      <%= timeout_general() %>
       imap_client_pull_message(<%= variable %>)!
       <%= variable %> = imap_client_message()
 
@@ -1871,10 +1881,12 @@
       <% } %>
   </script>
   <script type="text/template" id="emailsearchall_code">
+      <%= timeout_general() %>
       imap_client_search(<%= sender %>,<%= subject %>,<%= body %>)!
       <%= variable %> = imap_client_search_result().join(",")
   </script>
   <script type="text/template" id="emailpull_code">
+      <%= timeout_general() %>
       imap_client_pull_message(<%= value %>)!
       <%= variable %> = imap_client_message()
       var csv_parse_result = <%= variable %>.match(LINK_REGEXP) || []
@@ -1889,9 +1901,9 @@
              
   <script type="text/template" id="httpclientproxy_code">
       var hash = proxy_parse(<%= ProxyText %>)
-      <% if( ProxyType != "auto" ){ %>
-        hash["IsHttp"] = <%= ( ProxyType == "http" ) ? "true": "false" %>
-      <% } %>
+      if(<%= ProxyType %> != "auto" ){
+        hash["IsHttp"] = <%= ProxyType %> == "http"
+      }
       var login = <%= ProxyLogin %>
       var password = <%= ProxyPassword %>
       if(login.length > 0 && password.length > 0 )
@@ -1908,21 +1920,26 @@
   </script>
   <script type="text/template" id="httpclientdownload_code">
     _switch_http_client_main()
+    <%= timeout_general() %>
     http_client_download(<%= value %>, <%= file %>)!
   </script>
   <script type="text/template" id="httpclientget_code">
     _switch_http_client_main()
     <% if(follow){ %>
+      <%= timeout_general() %>
       http_client_get2(<%= value %>,{method:(<%= method %>)})!
     <% } else {%>
+      <%= timeout_general() %>
       http_client_get_no_redirect2(<%= value %>,{method:(<%= method %>)})!
     <% }%>
   </script>
   <script type="text/template" id="httpclientpost_code">
     _switch_http_client_main()
     <% if(follow){ %>
+      <%= timeout_general() %>
       http_client_post(<%= value %>, <%= params %>, {"content-type":(<%= contenttype %>), "encoding":(<%= encoding %>), "method":(<%= method %>)})!
     <% } else {%>
+      <%= timeout_general() %>
       http_client_post_no_redirect(<%= value %>, <%= params %>, {"content-type":(<%= contenttype %>), "encoding":(<%= encoding %>), "method":(<%= method %>)})!
     <% }%>
   </script>
@@ -2026,14 +2043,14 @@
 
   <script type="text/template" id="captcha_code">
       /*Browser*/
+      solver_properties_clear(<%= method %>)
       if(<%= method %> == "rucaptcha")
       {
-        solver_property("rucaptcha","coordinatescaptcha","")
         rucaptcha(<%= antigate %>)
       }
       if(<%= method %> == "antigate")
       {
-        antigate(<%= antigate %>)
+       antigate(<%= antigate %>)
       }
       if(<%= method %> == "dbc")
       {
@@ -2041,15 +2058,11 @@
       }
       if(<%= method %> == "2captcha")
       {
-        solver_property("2captcha","coordinatescaptcha","")
         twocaptcha(<%= antigate %>)
       }
       if(<%= method %> == "capmonster" || <%= method %> == "capmonsterimage" || <%= method %> == "capmonsteraudio")
       {
         solver_property("capmonster","serverurl",<%= serverurl %>)
-        solver_property("capmonster","bas_disable_image_convert","0")
-        solver_property("capmonster","CapMonsterModule","")
-        solver_property("capmonster","Task","")
         capmonster(<%= antigate %>)
       }
 
@@ -2076,11 +2089,13 @@
         {
           fail(tr("Url ") + <%= variable %> + tr(" is not present in cache. Please enable cache before page load with Cache Mask Allow action"))
         }
+        <%= timeout_solver() %>
         solve_base64("capmonster", _result())!
         <%= variable %> = _result()
         
       },function(){
         <%= path %>.render_base64()!
+        <%= timeout_solver() %>
         solve_base64(<%= method %>, _result())!
         <%= variable %> = _result()
 
@@ -2144,7 +2159,6 @@
 
       VALUE = <%= value %>
       COOKIES = ""
-      LOCALSTORAGE = ""
       if(VALUE.length > 0)
       {
         COOKIES = JSON.parse(VALUE)["cookies"]
@@ -2152,17 +2166,9 @@
           COOKIES = ""
         else
           COOKIES = JSON.stringify(COOKIES)
-
-        LOCALSTORAGE = JSON.parse(<%= value %>)["localstorage"]
-        if(typeof(LOCALSTORAGE) == "undefined")
-          LOCALSTORAGE = ""
-        else
-          LOCALSTORAGE = JSON.stringify(LOCALSTORAGE)
       }
 
-      page().script("BrowserAutomationStudio_RestoreLocalStorage(" + JSON.stringify(LOCALSTORAGE) + ")")!
-      page().script("BrowserAutomationStudio_SaveLocalStorage(" + JSON.stringify(LOCALSTORAGE) + ")")!
-      
+
       restore_cookies(COOKIES)!
   </script>
 
@@ -2171,7 +2177,6 @@
       _switch_http_client_main()
       VALUE = http_client_save_cookies()
       COOKIES = ""
-      LOCALSTORAGE = ""
       if(VALUE.length > 0)
       {
         COOKIES = JSON.parse(VALUE)["cookies"]
@@ -2181,8 +2186,6 @@
           COOKIES = JSON.stringify(COOKIES)
       }
 
-      page().script("BrowserAutomationStudio_RestoreLocalStorage(" + JSON.stringify(LOCALSTORAGE) + ")")!
-      page().script("BrowserAutomationStudio_SaveLocalStorage(" + JSON.stringify(LOCALSTORAGE) + ")")!
       
       restore_cookies(COOKIES)!
   </script>
@@ -2192,10 +2195,6 @@
       save_cookies()!
       _switch_http_client_main()
       http_client_restore_cookies(JSON.stringify({cookies:JSON.parse(_result())}))
-  </script>
-
-  <script type="text/template" id="getthreadnumber_code">
-      <%= variable %> = thread_number()
   </script>
 
   <script type="text/template" id="closebrowser_code">
@@ -2217,9 +2216,9 @@
 
   <script type="text/template" id="solvecaptcha_code">
       /*Browser*/
+      solver_properties_clear(<%= method %>)
       if(<%= method %> == "rucaptcha")
       {
-        solver_property("rucaptcha","coordinatescaptcha","")
         rucaptcha(<%= antigate %>)
       }
       if(<%= method %> == "antigate")
@@ -2232,19 +2231,15 @@
       }
       if(<%= method %> == "2captcha")
       {
-        solver_property("2captcha","coordinatescaptcha","")
         twocaptcha(<%= antigate %>)
       }
       if(<%= method %> == "capmonster" || <%= method %> == "capmonsterimage" || <%= method %> == "capmonsteraudio")
       {
-        solver_property("capmonster","bas_disable_image_convert","0")
-        solver_property("capmonster","CapMonsterModule","")
-        solver_property("capmonster","Task","")
         solver_property("capmonster","serverurl",<%= serverurl %>)
         capmonster(<%= antigate %>)
       }
 
-
+      <%= timeout_solver() %>
       solve_base64(<%= method %>,<%= value %>)!
       <%= variable %> = _result()
   
@@ -2264,11 +2259,7 @@
       /*Browser*/
       save_cookies()!
       COOKIES = JSON.parse(_result())
-      page().script("JSON.stringify(window.BrowserAutomationStudio_LocalStorages)")!
-      LOCALSTORAGE = ""
-      if(_result().length > 0)
-        LOCALSTORAGE = JSON.parse(_result())
-      <%= variable %> = JSON.stringify({cookies:COOKIES,localstorage:LOCALSTORAGE})
+      <%= variable %> = JSON.stringify({cookies:COOKIES})
   </script>
 
   <script type="text/template" id="style_code">
@@ -2287,6 +2278,7 @@
         Y = parseInt(_result().split(",")[1])
         move(X,Y)!
         mouse(X,Y)!
+        <%= timeout_general() %>
         page().type(<%= text %>,<%= interval %>)!
       <% }else{ %>
         <%= path %>.script("self.value=(" + JSON.stringify(<%= text %>) + ")")!
@@ -2421,6 +2413,7 @@
       /*Browser*/
       <%= waiter %>
       <%= path %>.move()!
+      <%= timeout_general() %>
       <%= path %>.set(<%= set %>)!
   </script>
 
@@ -2431,6 +2424,7 @@
 
   <script type="text/template" id="waitfullload_code">
       /*Browser*/
+      <%= timeout_waiter() %>
       wait_async_load()!
   </script>
 
@@ -2438,6 +2432,7 @@
       /*Browser*/
       <%= waiter %>
       <%= path %>.move()!
+      <%= timeout_general() %>
       <%= path %>.set_integer(<%= set %>)!
   </script>
 
@@ -2445,6 +2440,7 @@
       /*Browser*/
       <%= waiter %>
       <%= path %>.move()!
+      <%= timeout_general() %>
       <%= path %>.set_random()!
   </script>
 
@@ -2526,6 +2522,7 @@
   <script type="text/template" id="load_code">
       /*Browser*/
       <% if(notinstant){ %>
+        <%= timeout_general()  %>
         load(<%= url %>)!
       <% }else{ %>
         load_instant(<%= url %>)!
@@ -2614,6 +2611,7 @@
 
   <script type="text/template" id="getfromcache_code">
     /*Browser*/
+    <%= timeout_waiter() %>
     wait_load(<%= value %>)!
     <% if(base64){ %>
       cache_get_base64(<%= value %>)!
@@ -2637,11 +2635,13 @@
 
   <script type="text/template" id="waitload_code">
       /*Browser*/
+      <%= timeout_waiter() %>
       wait_load(<%= waiter %>)!
   </script>
 
   <script type="text/template" id="waiturl_code">
       /*Browser*/
+      <%= timeout_waiter() %>
       wait_url(<%= waiter %>)!
   </script>
 
@@ -2662,11 +2662,13 @@
 
   <script type="text/template" id="waitcontent_code">
       /*Browser*/
+      <%= timeout_waiter() %>
       wait_content(<%= waiter %>)!
   </script>
 
   <script type="text/template" id="waitfiledownload_code">
       /*Browser*/
+      <%= timeout_waiter() %>
       wait_load("download://*")!
       cache_get_string("download://*")!
       <%= variable %> = _result()
@@ -2675,17 +2677,19 @@
 
   <script type="text/template" id="waitcss_code">
       /*Browser*/
+      <%= timeout_waiter() %>
       wait_css(<%= waiter %>)!
   </script>
 
   <script type="text/template" id="type_code">
       /*Browser*/
+      <%= timeout_general() %>
       page().type(<%= text %>,<%= interval %>)!
   </script>
 
   <script type="text/template" id="html_code">
       /*Browser*/
-      page().xml()!
+      page().script("document.documentElement.outerHTML")!
       <%= variable %> = _result()
   </script>
 
@@ -2698,9 +2702,9 @@
   <script type="text/template" id="proxy_code">
       /*Browser*/
       var hash = proxy_parse(<%= ProxyText %>)
-      <% if( ProxyType != "auto" ){ %>
-        hash["IsHttp"] = <%= ( ProxyType == "http" ) ? "true": "false" %>
-      <% } %>
+      if(<%= ProxyType %> != "auto" ){
+        hash["IsHttp"] = <%= ProxyType %> == "http"
+      }
       var login = <%= ProxyLogin %>
       var password = <%= ProxyPassword %>
       if(login.length > 0 && password.length > 0 )
@@ -2749,8 +2753,12 @@
       <%= waiter %>
       <%= path %>.length()!
       ELEMENT_LENGTH = _result()
-      VAR_FOR_EACH_CSS = "<%= querycss %>"
-      VAR_FOR_EACH_MATCH = "<%= querymatch %>"
+      VAR_FOR_EACH_CSS = <%= querycss %>
+      VAR_FOR_EACH_MATCH = <%= querymatch %>
+      <% if(queryxpath){ %>
+        VAR_FOR_EACH_XPATH = <%= queryxpath %>
+      <% } %>
+
 
       _do(function(){
         VAR_CYCLE_INDEX = _iterator() - 1
@@ -2789,11 +2797,12 @@
   </script>
 
   <script type="text/template" id="fail_code">
-      fail(<%= message %>)
+
+      fail(<%= message %>,<%= dontrestart %>)
   </script>
 
   <script type="text/template" id="die_code">
-      die(<%= message %>)
+      die(<%= message %>,<%= instant %>)
   </script>
 
   <script type="text/template" id="custom_code">
@@ -2886,10 +2895,12 @@
             css2: "",
             css3: "",
             match: "",
+            xpath: "",
             mousex: 0,
             mousey: 0,
             current: "css",
-            is_editing: false
+            is_editing: false,
+            version: "1.0"
         }
     });
 
@@ -2929,6 +2940,9 @@
         "click .varok": "varadd",
         "show.bs.modal #FunctionModal": "funcaddstart",
         "click .funcok": "funcadd",
+        "click .timeoutok": "timeoutadd",
+        "click .timeoutdefault": "timeoutdefault",
+
         "show.bs.modal #RecourseModal": "resaddstart",
         "click .resok": "resadd",
         "click .edit": "editstart",
@@ -2936,6 +2950,7 @@
         "click #executetype button":"clickexecutetype",
         "click #css":"css",
         "click #match":"match",
+        "click #xpath":"xpath",
         "click #at":"at",
         "click #none":"none",
         "click .string": "string",
@@ -2948,6 +2963,9 @@
         "click .addtopostbase64": "addpostdatabase64",
 
         "click #use-waiter": "usewaiterchange",
+        "click #use-timeout": "usetimeoutchange",
+        "click #use-target": "usetargetchange",
+
         "click #searchinputclear": "searchinputclear",
         "input #searchinput": "searchinput",
         "keyup #searchinput": "searchinputkeyup",
@@ -3062,6 +3080,30 @@
         var new_state = el.attr("data-enabled") != "true"
         el.attr("data-enabled",((new_state) ? "true" : "false") );
         el.removeClass().addClass(((new_state) ? "use-waiter-enabled" : "use-waiter-disabled") );
+      },
+
+      usetimeoutchange: function(event)
+      {
+        event.preventDefault();
+        var el = $(event.target).closest("a");
+        $('#TimeoutModal').modal() 
+        $("#TimeoutValue").val(el.attr("data-value"))
+      },
+
+      usetargetchange: function(event)
+      {
+        event.preventDefault();
+        var el = $(event.target).closest("a")
+        var new_state = el.attr("data-enabled") != "true"
+        el.attr("data-enabled",((new_state) ? "true" : "false") );
+        el.removeClass().addClass(((new_state) ? "use-target-enabled" : "use-target-disabled") );
+        if(new_state)
+        {
+          $("#target-data").show()
+        }else
+        {
+          $("#target-data").hide()
+        }
       },
 
       editstart: function(event)
@@ -3211,6 +3253,8 @@
           this.css()
         else if(current == "match")
           this.match()
+        else if(current == "xpath")
+          this.xpath()
         else if(current == "at")
           this.at()
         else if(current == "none")
@@ -3229,6 +3273,13 @@
         $("#selector").html("match")
         $("#selector-input").removeAttr("disabled").val(_SelectorModel.get("match"))
         _SelectorModel.set("current","match")
+      },
+
+      xpath:function(event)
+      {
+        $("#selector").html("xpath")
+        $("#selector-input").removeAttr("disabled").val(_SelectorModel.get("xpath"))
+        _SelectorModel.set("current","xpath")
       },
 
       at:function(event)
@@ -3431,6 +3482,34 @@
         {
           el.val($("#FunctionNameInput").val())
         }
+      },
+
+      timeoutadd: function(event)
+      {
+        var timeout_value = $("#TimeoutValue").val()
+
+        $("#use-timeout").attr("data-value", (typeof(timeout_value) != "undefined" && timeout_value > 0) ? timeout_value : "0")
+                        .attr("class", ((typeof(timeout_value) != "undefined" && timeout_value > 0) ? "" : "use-timeout-disabled") + " trtitle")
+                        .attr("data-enabled", (typeof(timeout_value) != "undefined" && timeout_value > 0) ? "true" : "false")
+
+        $("#timeout-val").html((typeof(timeout_value) != "undefined" && timeout_value > 0) ? ("" + timeout_value) : "")
+        if(typeof(timeout_value) != "undefined" && timeout_value > 0)
+        {
+         $("#timeout-is-default").hide()
+        }else
+        {
+          $("#timeout-is-default").show()
+        }
+
+
+      },
+
+      timeoutdefault: function(event)
+      {
+        $("#TimeoutValue").val(0)
+
+        this.timeoutadd(null);
+
       },
 
       accept: function()
@@ -3955,7 +4034,7 @@
           }else if(State == "httpclientproxy")
           {
               var ProxyText = GetInputConstructorValue("ProxyText",loader)
-              var ProxyType = $("#ProxyType").val()
+              var ProxyType = GetInputConstructorValue("ProxyType", loader)
               var ProxyLogin = GetInputConstructorValue("ProxyLogin",loader)
               if(ProxyLogin["updated"] == "")
                 ProxyLogin["updated"] = '""'
@@ -3970,7 +4049,7 @@
               }
 
               try{
-                var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({ProxyText:ProxyText["updated"], ProxyType:ProxyType,ProxyLogin:ProxyLogin["updated"],ProxyPassword:ProxyPassword["updated"]})
+                var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({ProxyText:ProxyText["updated"], ProxyType:ProxyType["updated"],ProxyLogin:ProxyLogin["updated"],ProxyPassword:ProxyPassword["updated"]})
                 code = Normalize(code,0)
                 BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e){}
@@ -4352,20 +4431,6 @@
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
-          }else if(State == "getthreadnumber")
-          {
-             var Save = this.$el.find("#Save").val().toUpperCase();
-             if(Save.length == 0)
-             {
-              Invalid("Variable is empty");
-              return;
-             }
-             try{
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save})
-              code = Normalize(code,0)
-              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
-            }catch(e)
-            {}
           }else if(State == "clearmasks")
           {
              try{
@@ -4575,6 +4640,7 @@
             
           }else if(State == "javascript")
           {
+            loader.SetIsJsonStringify(true);
             var Save = this.$el.find("#Save").val().toUpperCase();
             var Value = GetInputConstructorValue("Value", loader);
 
@@ -4600,7 +4666,8 @@
             var Value = GetInputConstructorValue("Value", loader);
 
              try{
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({value: Value["updated"]})
+              var TargetCode = BrowserAutomationStudio_GetTargetCode(loader)
+              var code = loader.GetAdditionalData() + TargetCode + _.template($('#' + State + "_code").html())({value: Value["updated"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -4784,7 +4851,8 @@
 
             
              try{
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({name:Name["updated"],value:Value["updated"]})
+              var TargetCode = BrowserAutomationStudio_GetTargetCode(loader)
+              var code = loader.GetAdditionalData() + TargetCode + _.template($('#' + State + "_code").html())({name:Name["updated"],value:Value["updated"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("" , BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -4847,10 +4915,11 @@
           }else if(State == "fail")
           {
             var val = GetInputConstructorValue("FailMessage",loader)
+            var Check = $("#Check").is(':checked')
 
 
              try{
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({message:val["updated"]})
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({message:val["updated"],dontrestart: Check})
 
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
@@ -4861,10 +4930,11 @@
           }else if(State == "die")
           {
             var val = GetInputConstructorValue("FailMessage",loader)
+            var Check = $("#Check").is(':checked')
 
 
              try{
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({message:val["updated"]})
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({message:val["updated"],instant: Check})
 
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
@@ -4916,7 +4986,7 @@
           }else if(State == "proxy")
           {
               var ProxyText = GetInputConstructorValue("ProxyText",loader)
-              var ProxyType = $("#ProxyType").val()
+              var ProxyType = GetInputConstructorValue("ProxyType", loader)
               var ProxyLogin = GetInputConstructorValue("ProxyLogin",loader)
               if(ProxyLogin["updated"] == "")
                 ProxyLogin["updated"] = '""'
@@ -4936,7 +5006,8 @@
               }*/
 
               try{
-                var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({ProxyText:ProxyText["updated"], ProxyType:ProxyType,ProxyLogin:ProxyLogin["updated"],ProxyPassword:ProxyPassword["updated"]})
+                var TargetCode = BrowserAutomationStudio_GetTargetCode(loader)
+                var code = loader.GetAdditionalData() + TargetCode + _.template($('#' + State + "_code").html())({ProxyText:ProxyText["updated"], ProxyType:ProxyType["updated"],ProxyLogin:ProxyLogin["updated"],ProxyPassword:ProxyPassword["updated"]})
                 code = Normalize(code,0)
                 BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e){}
@@ -4945,7 +5016,7 @@
           }else if(State == "emailproxy")
           {
               var ProxyText = GetInputConstructorValue("ProxyText",loader)
-              var ProxyType = $("#ProxyType").val()
+              var ProxyType = GetInputConstructorValue("ProxyType", loader)
               var ProxyLogin = GetInputConstructorValue("ProxyLogin",loader)
               if(ProxyLogin["updated"] == "")
                 ProxyLogin["updated"] = '""'
@@ -4965,7 +5036,7 @@
               }*/
 
               try{
-                var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({ProxyText:ProxyText["updated"], ProxyType:ProxyType,ProxyLogin:ProxyLogin["updated"],ProxyPassword:ProxyPassword["updated"]})
+                var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({ProxyText:ProxyText["updated"], ProxyType:ProxyType["updated"],ProxyLogin:ProxyLogin["updated"],ProxyPassword:ProxyPassword["updated"]})
                 code = Normalize(code,0)
                 BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e){}
@@ -5554,7 +5625,7 @@
              try{
               var path = GetPath(loader, true)
 
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"], querycss: path["querycss"], querymatch: path["querymatch"]})
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"], querycss: path["querycss"], querymatch: path["querymatch"], queryxpath: path["queryxpath"]})
 
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
@@ -5907,7 +5978,6 @@
           "waitfiledownload": _.template($('#waitfiledownload').html()),
           "loadcookiesfrombrowser": _.template($('#loadcookiesfrombrowser').html()),
           "loadcookiesfromhttpclient": _.template($('#loadcookiesfromhttpclient').html()),
-          "getthreadnumber": _.template($('#getthreadnumber').html()),
           "closebrowser": _.template($('#closebrowser').html()),
           "openbrowser": _.template($('#openbrowser').html())
           _MACRO_INSERT_TEMPLATES_
@@ -5931,8 +6001,8 @@
             if(!IsGoodchar)
                 e.preventDefault();
         })
-        this.updatepath()
         tr()
+        this.updatepath()
         
         $(".actions").css("height", window.innerHeight * (100.0 / _Z) - 40 + "px")
         $(".actions").css("overflow-y","auto")
@@ -5942,6 +6012,7 @@
         _PreserveMainPosition.AfterUrlChanged(this.model.get("state"))
 
         $("body").show()
+
       },
 
       /*showtooltip: function(e)
@@ -6090,7 +6161,6 @@
             "!/waitfiledownload": "waitfiledownload",
             "!/loadcookiesfrombrowser": "loadcookiesfrombrowser",
             "!/loadcookiesfromhttpclient": "loadcookiesfromhttpclient",
-            "!/getthreadnumber": "getthreadnumber",
             "!/closebrowser": "closebrowser",
             "!/openbrowser": "openbrowser"
             _MACRO_INSERT_ROUTER_DEF_
@@ -6486,9 +6556,6 @@
         },
         loadcookiesfromhttpclient: function(){
           _GobalModel.set({ state: "loadcookiesfromhttpclient" });
-        },
-        getthreadnumber: function(){
-          _GobalModel.set({ state: "getthreadnumber" });
         },openbrowser: function(){
           _GobalModel.set({ state: "openbrowser" });
         }
@@ -6532,7 +6599,6 @@
                 { name: tr(_A["ignoreerrors"]["name"]), description: tr(_A["ignoreerrors"]["description"]), ref: "ignoreerrors" },
                 { name: tr(_A["setvariable"]["name"]), description: tr(_A["setvariable"]["description"]), ref: "setvariable" },
                 { name: tr(_A["incvariable"]["name"]), description: tr(_A["incvariable"]["description"]), ref: "incvariable" },
-                { name: tr(_A["getthreadnumber"]["name"]), description: tr(_A["getthreadnumber"]["description"]), ref: "getthreadnumber" },
                 { name: tr(_A["executefunction"]["name"]), description: tr(_A["executefunction"]["description"]), ref: "executefunction" },
                 { description: tr("Tools"), type: "group" },
                 { name: tr(_A["log"]["name"]), description: tr(_A["log"]["description"]), ref: "log" },
@@ -6685,7 +6751,78 @@
 
       if(usewaiter.length > 0 && usewaiter.attr("data-enabled") == "true")  
       {
-        return "\nwait_async_load()!"
+        return "\n" + timeout_waiter() + "\nwait_async_load()!"
+      }
+
+      return "";
+    }
+
+    function timeout_general()
+    {
+      var usewaiter = $("#use-timeout")
+      if(usewaiter.length == 0)
+        return ""
+      var timeout_value = usewaiter.attr("data-value")
+        if(timeout_value.length == 0)
+          timeout_value = "0"
+
+      timeout_value = parseInt(timeout_value) * 1000
+
+      if(usewaiter.length > 0 && usewaiter.attr("data-enabled") == "true" && timeout_value != "0")  
+      {
+        return "general_timeout_next(" + timeout_value + ")"
+      }
+
+      return "" 
+    }
+
+    function timeout_solver()
+    {
+      var usewaiter = $("#use-timeout")
+      if(usewaiter.length == 0)
+        return ""
+      var timeout_value = usewaiter.attr("data-value")
+        if(timeout_value.length == 0)
+          timeout_value = "0"
+
+      timeout_value = parseInt(timeout_value) * 1000
+
+      if(usewaiter.length > 0 && usewaiter.attr("data-enabled") == "true" && timeout_value != "0")  
+      {
+        return "solver_timeout_next(" + timeout_value + ")"
+      }
+
+      return "" 
+    }
+
+    function timeout_waiter()
+    {
+      var usewaiter = $("#use-timeout")
+      if(usewaiter.length == 0)
+        return ""
+      var timeout_value = usewaiter.attr("data-value")
+        if(timeout_value.length == 0)
+          timeout_value = "0"
+
+      timeout_value = parseInt(timeout_value) * 1000
+
+      if(usewaiter.length > 0 && usewaiter.attr("data-enabled") == "true" && timeout_value != "0")  
+      {
+        return "waiter_timeout_next(" + timeout_value + ")"
+      }
+
+      return "" 
+    }
+
+    function BrowserAutomationStudio_GetTargetCode(loader)
+    {
+      var usetarget = $("#use-target")
+
+      if(usetarget.length > 0 && usetarget.attr("data-enabled") == "true")  
+      {
+        var TargetUrl = GetInputConstructorValue("TargetUrl",loader);
+        var TargetTabNumber = GetInputConstructorValue("TargetTabNumber",loader);
+        return "\n_set_target({url:" + TargetUrl["updated"] + ",tab:" + TargetTabNumber["updated"] + "})\n"
       }
 
       return "";
@@ -6704,6 +6841,11 @@
         _Router.navigate("#!/threadnumber", true);
     }
 
+    function BrowserAutomationStudio_RunFunction()
+    {
+        _Router.navigate("#!/executefunction", true);
+    }
+
     function BrowserAutomationStudio_SuccessNumberEdit()
     {
         _Router.navigate("#!/successnumber", true);
@@ -6716,6 +6858,8 @@
 
     function BrowserAutomationStudio_SaveControls()
     {
+      var loader = new ResourceLoader();
+
       var ControlsText = {s:_GobalModel.get("state"),e:$("#executetype .btn-info").attr("data-action"),v: 1}
       
       var usewaiter = $("#use-waiter")
@@ -6727,9 +6871,27 @@
         ControlsText["uw"] = "0"
       }
 
+      var usetarget = $("#use-target")
+      if(usetarget.length > 0 && usetarget.attr("data-enabled") == "true")  
+      {
+        ControlsText["ut"] = "1"
+      }else
+      {
+        ControlsText["ut"] = "0"
+      }
+
+      var usetimeout = $("#use-timeout")
+      if(usetimeout.length > 0 && usetimeout.attr("data-enabled") == "true")  
+      {
+        ControlsText["uto"] = "1"
+        ControlsText["uti"] = $("#timeout-val").html()
+      }else
+      {
+        ControlsText["uto"] = "0"
+      }
+
       var ControlList = $("*[data-preserve=true]")
       var Elements = []
-      var loader = new ResourceLoader();
 
       for(var i = 0;i<ControlList.length;i++)
       {
@@ -6774,11 +6936,13 @@
 
         
         all["css"] = json["css"]
+        all["version"] = json["version"]
         all["css1"] = ("css1" in json) ? json["css1"] : ""
         all["css2"] = ("css2" in json) ? json["css2"] : ""
         all["css3"] = ("css3" in json) ? json["css3"] : ""
         all["current"] = current
         all["match"] = json["match"]
+        all["xpath"] = json["xpath"]
         all["at"] = json["mousex"] + ", " + json["mousey"]
 
         if(current!="none")
@@ -6817,10 +6981,12 @@
           _SelectorModel.set("css3","")
 
         _SelectorModel.set("match",selector["match"])
+        _SelectorModel.set("xpath",selector["xpath"] || "")
         var split = selector["at"].split(",")
         _SelectorModel.set("mousex",split[0].replace(/\s/g, ''))
         _SelectorModel.set("mousey",split[split.length - 1].replace(/\s/g, ''))
         _SelectorModel.set("current",selector["current"])
+        _SelectorModel.set("version",selector["version"])
       }
 
       _GobalModel.set({ state: data["s"] });
@@ -6834,15 +7000,45 @@
       if(data["uw"] == "1")
       {
         $("#use-waiter").attr("data-enabled","true")
-        $("#use-waiter").removeClass().addClass("use-waiter-disabled").addClass("use-waiter-enabled")
         $("#use-waiter").removeClass().addClass("use-waiter-enabled")
       }else if(data["uw"] == "0")
       {
         $("#use-waiter").attr("data-enabled","false")
-        $("#use-waiter").removeClass().addClass("use-waiter-disabled").addClass("use-waiter-enabled")
         $("#use-waiter").removeClass().addClass("use-waiter-disabled")
       }
 
+      if(data["ut"]  == "1")
+      {
+        $("#use-target").attr("data-enabled","true")
+        $("#use-target").removeClass().addClass("use-target-enabled")
+        $("#target-data").show()
+      }else if(data["ut"] == "0")
+      {
+        $("#use-target").attr("data-enabled","false")
+        $("#use-target").removeClass().addClass("use-target-disabled")
+        $("#target-data").hide()
+      }
+
+      var timeout_value = 0
+      if(data["uto"]  == "1")
+        timeout_value = parseInt(data["uti"])
+      
+
+      $("#use-timeout").attr("data-value", (typeof(timeout_value) != "undefined" && timeout_value > 0) ? timeout_value : "0")
+                        .attr("class", ((typeof(timeout_value) != "undefined" && timeout_value > 0) ? "" : "use-timeout-disabled") + " trtitle")
+                        .attr("data-enabled", (typeof(timeout_value) != "undefined" && timeout_value > 0) ? "true" : "false")
+
+      $("#timeout-val").html((typeof(timeout_value) != "undefined" && timeout_value > 0) ? ("" + timeout_value) : "")
+      if(typeof(timeout_value) != "undefined" && timeout_value > 0)
+      {
+        $("#timeout-is-default").hide()
+      }else
+      {
+        $("#timeout-is-default").show()
+      }
+
+
+      
       for(var i = 0;i<data["d"].length;i++)
       {
         var el = data["d"][i]
@@ -6948,75 +7144,191 @@
 
     function GetPath(loader, need_all, need_visible)
     {
-      var current = _SelectorModel.get("current")
-      if(current == "none")
-        return {path:"page()",waiter:"",raw:"", querycss: je(_SelectorModel.get("css")), querycss2: je(_SelectorModel.get("css2")), querycss3: je(_SelectorModel.get("css3")), querymatch: je(_SelectorModel.get("match"))}
-
-      var raw_not_escaped = $("#selector-input").val()
-      var raw_original = $("#selector-input").val()
-      var index = ""
-
-      var index_match = raw_not_escaped.match(/\s*\<\s*([^\>\<]+)\s*\>\s*$/)
-      if(index_match)
+      if(_SelectorModel.get("version") == "1.0" || $("#selector-input").val().indexOf(">CSS>") >= 0 || $("#selector-input").val().indexOf(">MATCH>") >= 0|| $("#selector-input").val().indexOf(">FRAME>") >= 0|| $("#selector-input").val().indexOf(">XPATH>") >= 0 || $("#selector-input").val().indexOf(">AT>") >= 0 || _SelectorModel.get("current") == "xpath")
       {
-        index = index_match[1]
-        raw_not_escaped = raw_not_escaped.replace(/\<\s*([^\>\<]+)\s*\>\s*$/,"")
-      }
+        //New selectors
+       
+        var raw = $("#selector-input").val()
 
-      loader.SetIsString(true)
-      var raw = loader.Resolve(raw_not_escaped+"")
+        var current = _SelectorModel.get("current")
+        if(current == "none")
+          return {path:"page()",waiter:"",raw:"", querycss: je(_SelectorModel.get("css")), querycss2: je(_SelectorModel.get("css2")), querycss3: je(_SelectorModel.get("css3")), querymatch: je(_SelectorModel.get("match")), queryxpath: je(_SelectorModel.get("xpath"))}
 
-      if(index.length > 0)
-      {
-        loader.SetIsString(false)
-        index = loader.Resolve(index+"")
-      }
+        if(current == "at")
+          return {path:"position(" + raw + ")",waiter:"", raw:"position " + raw, querycss: je(_SelectorModel.get("css")), querycss2: je(_SelectorModel.get("css2")), querycss3: je(_SelectorModel.get("css3")), querymatch: je(_SelectorModel.get("match")), queryxpath: je(_SelectorModel.get("xpath"))}
 
-      if(current == "css")
-      {
-        var path = "css"
+        loader.SetIsString(true)
+        var raw_not_escaped = raw
+        raw = loader.Resolve(raw+"")
 
-        if(index.length > 0 || (typeof(need_all) != "undefined" && need_all))
-          path = "all"
 
-        path += "(" + raw + ")"
-
-        if(index.length > 0)
-          path += ".at(" + index + ")"
-
-        var waiter_func_name = "wait_css";
+        var waiter_func_name = "wait_element";
         if((typeof(need_visible) != "undefined" && need_visible))
         {
-          waiter_func_name = "wait_css_visible"
+          waiter_func_name = "wait_element_visible"
         }
 
-        return {path:path,waiter: waiter_func_name + "(" + raw + ")!",raw:"css " + raw_not_escaped, querycss: je(raw_original), querycss2: je(_SelectorModel.get("css2")), querycss3: je(_SelectorModel.get("css3")), querymatch: je(_SelectorModel.get("match"))}
+        var querycss = _SelectorModel.get("css")
+        var querycss2 = _SelectorModel.get("css2")
+        var querycss3 = _SelectorModel.get("css3")
+        var querymatch = _SelectorModel.get("match")
+        var queryxpath = _SelectorModel.get("xpath")
+
+        if(current == "css")
+        {
+          querycss = raw
+          querymatch = loader.Resolve(querymatch+"")
+          queryxpath = loader.Resolve(queryxpath+"")
+        }
+        if(current == "match")
+        {
+          querymatch = raw
+          querycss = loader.Resolve(querycss+"")
+          queryxpath = loader.Resolve(queryxpath+"")
+        }
+        if(current == "xpath")
+        {
+          queryxpath = raw
+          querycss = loader.Resolve(querycss+"")
+          querymatch = loader.Resolve(querymatch+"")
+        }
+
+        return {path:"get_element_selector(" + raw + ", " + (typeof(need_all) != "undefined" && need_all).toString() + ")",waiter: timeout_waiter() + "\n" + waiter_func_name + "(" + raw + ")!",raw:"css " + raw_not_escaped, querycss: querycss, querycss2: querycss2, querycss3: querycss3, querymatch: querymatch, queryxpath: queryxpath}
+        
+       
       }
-
-      if(current == "match")
+      else
       {
-        var path = "match"
+        //Old selectors
+        var current = _SelectorModel.get("current")
+        if(current == "none")
+          return {path:"page()",waiter:"",raw:"", querycss: '"' + je(_SelectorModel.get("css")) + '"', querycss2: '"' + je(_SelectorModel.get("css2")) + '"', querycss3: '"' + je(_SelectorModel.get("css3")) + '"', querymatch: '"' + je(_SelectorModel.get("match")) + '"'}
 
-        if(index.length > 0 || (typeof(need_all) != "undefined" && need_all))
-          path = "match_all"
+        var raw_not_escaped = $("#selector-input").val()
+        var raw_original = $("#selector-input").val()
+        var index = ""
 
-        path += "(" + raw + ")"
+        var index_match = raw_not_escaped.match(/\s*\<\s*([^\>\<]+)\s*\>\s*$/)
+        if(index_match)
+        {
+          index = index_match[1]
+          raw_not_escaped = raw_not_escaped.replace(/\<\s*([^\>\<]+)\s*\>\s*$/,"")
+        }
+
+        var raw = raw_not_escaped
+
+        var frames_array = []
+        var frames_path = ""
+        while(true)
+        {
+          var indexcss = raw.indexOf(">css>")
+          var indexmatch = raw.indexOf(">match>")
+
+          if(indexcss < 0 && indexmatch < 0)
+            break;
+
+          if(indexcss >= 0 && (indexmatch < 0 || indexcss < indexmatch))
+          {
+            var frame_item = raw.substring(0,indexcss)
+            
+
+            loader.SetIsString(true)
+            frame_item = loader.Resolve(frame_item+"")
+            frames_array.push("{type: \"css\", data: " + frame_item + "}");
+            
+            frames_path += "frame_css(" + frame_item + ")."
+            indexcss += ">css>".length
+            raw = raw.substring(indexcss,raw.length)
+            continue;
+          }
+
+          if(indexmatch >= 0 && (indexcss < 0 || indexmatch < indexcss))
+          {
+            var frame_item = raw.substring(0,indexmatch)
+
+            loader.SetIsString(true)
+            frame_item = loader.Resolve(frame_item+"")     
+            frames_array.push("{type: \"match\", data: " + frame_item + "}");
+            
+            frames_path += "frame_match(" + frame_item + ")."
+            indexmatch += ">match>".length
+            raw = raw.substring(indexmatch,raw.length)
+            continue;
+          }
+
+        }
+
+        loader.SetIsString(true)
+        raw = loader.Resolve(raw+"")
 
         if(index.length > 0)
-          path += ".at(" + index + ")"
-
-        var waiter_func_name = "wait_content";
-        if((typeof(need_visible) != "undefined" && need_visible))
         {
-          waiter_func_name = "wait_content_visible"
+          loader.SetIsString(false)
+          index = loader.Resolve(index+"")
         }
-        return {path:path,waiter: waiter_func_name + "(" + raw + ")!", raw:"match " + raw_not_escaped, querycss: je(_SelectorModel.get("css")), querycss2: je(_SelectorModel.get("css2")), querycss3: je(_SelectorModel.get("css3")), querymatch: je(raw_original)}
+        
+
+        if(current == "css")
+        {
+          var path = "css"
+
+          if(index.length > 0 || (typeof(need_all) != "undefined" && need_all))
+            path = "all"
+
+          path += "(" + raw + ")"
+
+          if(index.length > 0)
+            path += ".at(" + index + ")"
+
+          var waiter_func_name = "wait_css";
+          if((typeof(need_visible) != "undefined" && need_visible))
+          {
+            waiter_func_name = "wait_css_visible"
+          }
+
+          var raw_object = ["raw:" + raw, "frames:" + "[" + frames_array.join(",") + "]"]
+          
+          if(index.length > 0)
+            raw_object.push("index:" + index)
+
+          raw = "{" + raw_object.join(",") + "}"
+
+          return {path:frames_path + path,waiter: timeout_waiter() + "\n" + waiter_func_name + "(" + raw + ")!",raw:"css " + raw_not_escaped, querycss: '"' + je(raw_original) + '"', querycss2: '"' + je(_SelectorModel.get("css2")) + '"', querycss3: '"' + je(_SelectorModel.get("css3")) + '"', querymatch: '"' + je(_SelectorModel.get("match")) + '"'}
+        }
+
+        if(current == "match")
+        {
+          var path = "match"
+
+          if(index.length > 0 || (typeof(need_all) != "undefined" && need_all))
+            path = "match_all"
+
+          path += "(" + raw + ")"
+
+          if(index.length > 0)
+            path += ".at(" + index + ")"
+
+          var waiter_func_name = "wait_content";
+          if((typeof(need_visible) != "undefined" && need_visible))
+          {
+            waiter_func_name = "wait_content_visible"
+          }
+
+          var raw_object = ["raw:" + raw, "frames:" + "[" + frames_array.join(",") + "]"]
+          
+          if(index.length > 0)
+            raw_object.push("index:" + index)
+
+          raw = "{" + raw_object.join(",") + "}"
+
+          return {path:frames_path + path,waiter: timeout_waiter() + "\n" + waiter_func_name + "(" + raw + ")!", raw:"match " + raw_not_escaped, querycss: '"' + je(_SelectorModel.get("css")) + '"', querycss2: '"' + je(_SelectorModel.get("css2")) + '"', querycss3: '"' + je(_SelectorModel.get("css3")) + '"', querymatch: '"' + je(raw_original) + '"'}
+        }
+
+        if(current == "at")
+          return {path:"position(" + raw + ")",waiter:"", raw:"position " + raw_not_escaped, querycss: '"' + je(_SelectorModel.get("css")) + '"', querycss2: '"' + je(_SelectorModel.get("css2")) + '"', querycss3: '"' + je(_SelectorModel.get("css3")) + '"', querymatch: '"' + je(_SelectorModel.get("match")) + '"'}
+
+        return {path:"page()",waiter:"",raw:"", query: "", querycss: '"' + je(_SelectorModel.get("css")) + '"', querycss2: '"' + je(_SelectorModel.get("css2")) + '"', querycss3: '"' + je(_SelectorModel.get("css3")) + '"', querymatch: '"' + je(_SelectorModel.get("match")) + '"'}
       }
-
-      if(current == "at")
-        return {path:"position(" + raw + ")",waiter:"", raw:"position " + raw_not_escaped, querycss: je(_SelectorModel.get("css")), querycss2: je(_SelectorModel.get("css2")), querycss3: je(_SelectorModel.get("css3")), querymatch: je(_SelectorModel.get("match"))}
-
-      return {path:"page()",waiter:"",raw:"", query: "", querycss: je(_SelectorModel.get("css")), querycss2: je(_SelectorModel.get("css2")), querycss3: je(_SelectorModel.get("css3")), querymatch: je(_SelectorModel.get("match"))}
     }
 
     function InsertAtCaret(areaId,text)
@@ -7059,6 +7371,7 @@
       var AdditionalData = "";
       var IsString = true;
       var IsPrerender = false;
+      var IsJsonStringify = false;
 
       this.Resolve = function(str)
       {
@@ -7075,6 +7388,11 @@
       this.SetIsPrerender = function(value)
       {
         IsPrerender = value;
+      }
+
+      this.SetIsJsonStringify = function(value)
+      {
+        IsJsonStringify = value;
       }
 
       this.ResolveVariables = function(str)
@@ -7108,7 +7426,7 @@
           if(IsPrerender)
             resnew += match[0]
           else
-            resnew += "VAR_" + match[1]
+            resnew += (IsJsonStringify) ? "JSON.stringify(VAR_" + match[1] + ")" : "VAR_" + match[1]
 
 
           i = match.index + match[0].length
@@ -7166,7 +7484,7 @@
           if(IsPrerender)
             resnew += match[0]
           else
-            resnew += v
+            resnew += (IsJsonStringify) ? "JSON.stringify(" + v + ")" : v
 
           i = match.index + match[0].length
           var j = rest.length - i
@@ -7251,6 +7569,8 @@
     function BrowserAutomationStudio_ElementFunction(selector, name, is_loop)
     {
       _SelectorModel.set("is_editing",false)
+      _SelectorModel.set("version","1.0")
+
       _Router.navigate("#", true);
       if(is_loop !== 1)
       {
@@ -7267,6 +7587,8 @@
           _SelectorModel.set("css3","")
 
         _SelectorModel.set("match",selector["match"])
+        _SelectorModel.set("xpath",selector["xpath"] || "")
+
       }
       else
       {
@@ -7276,11 +7598,13 @@
           return
         }
 
-        _SelectorModel.set("css","[[FOR_EACH_CSS]]<[[CYCLE_INDEX]]>")
-        _SelectorModel.set("css1","[[FOR_EACH_CSS]]<[[CYCLE_INDEX]]>")
+        _SelectorModel.set("css","[[FOR_EACH_CSS]] >AT> [[CYCLE_INDEX]]")
+        _SelectorModel.set("css1","[[FOR_EACH_CSS]] >AT> [[CYCLE_INDEX]]")
         _SelectorModel.set("css2","")
         _SelectorModel.set("css3","")
-        _SelectorModel.set("match","[[FOR_EACH_MATCH]]<[[CYCLE_INDEX]]>")
+        _SelectorModel.set("match","[[FOR_EACH_MATCH]] >AT> [[CYCLE_INDEX]]")
+        _SelectorModel.set("xpath","[[FOR_EACH_XPATH]] >AT> [[CYCLE_INDEX]]")
+
       }
       _SelectorModel.set("mousex",parseInt(selector["mousex"]))
       _SelectorModel.set("mousey",parseInt(selector["mousey"]))

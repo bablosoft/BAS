@@ -7,6 +7,7 @@ DEFINES+=CURL_STATICLIB
 
 DEFINES+=NOT_BAS_DEBUG
 
+QMAKE_LFLAGS += /LARGEADDRESSAWARE
 
 SOURCES += main.cpp \
     mainapp.cpp \
@@ -46,7 +47,6 @@ SOURCES += main.cpp \
     toolboxpreprocessor.cpp \
     replaceall.cpp \
     convertencoding.cpp \
-    fixcontentcharset.cpp \
     extract_resources.cpp \
 	handlersmanager.cpp \
     centralhandler.cpp \
@@ -57,7 +57,9 @@ SOURCES += main.cpp \
     urlnormalize.cpp \
     chromecommandlineparser.cpp \
     randomid.cpp \
-    CrashHandler.cpp
+    CrashHandler.cpp \
+    localstoragedata.cpp \
+    fixpagecontent.cpp
 
 INCLUDEPATH += $(BAS_PATH_WORKER)/include
 
@@ -110,7 +112,6 @@ HEADERS += \
     toolboxpreprocessor.h \
     replaceall.h \
     convertencoding.h \
-    fixcontentcharset.h \
     extract_resources.h \
 	centralhandler.h \
     handlersmanager.h \
@@ -121,7 +122,10 @@ HEADERS += \
     urlnormalize.h \
     chromecommandlineparser.h \
     randomid.h \
-    CrashHandler.h
+    CrashHandler.h \
+    configurableitem.h \
+    localstoragedata.h \
+    fixpagecontent.h
 
 INCLUDEPATH += xml json png
 

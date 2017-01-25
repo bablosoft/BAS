@@ -18,9 +18,8 @@ namespace BrowserAutomationStudioFramework
         void Failed();
     public slots:
         virtual bool TimeLimited() = 0;
-        virtual QString Solve(const QString& base64) = 0;
+        virtual QString Solve(const QString& base64,const QStringList& props) = 0;
         virtual void ReportBad(const QString& id) = 0;
-        virtual void SetProperty(const QString& name,const QString& value) = 0;
     };
 }
 

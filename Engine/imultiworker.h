@@ -130,6 +130,9 @@ namespace BrowserAutomationStudioFramework
 
         virtual void SetModuleManager(IModuleManager *ModuleManager) = 0;
         virtual IModuleManager* GetModuleManager() = 0;
+
+        virtual void SetProjectPath(const QString& ProjectPath) = 0;
+        virtual QString GetProjectPath() = 0;
     signals:
         void Finished();
         void StageFinished();

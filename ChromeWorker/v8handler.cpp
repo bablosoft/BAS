@@ -1,11 +1,14 @@
 #include "v8handler.h"
 #include "log.h"
 #include <thread>
-V8Handler::V8Handler()
+V8Handler::V8Handler(BrowserData* Data)
 {
     Changed = false;
     ChangedInspect = false;
     ChangedLocalStorage = false;
+    ChangedFrameFind = false;
+    NewLocalStorage.clear();
+    this->Data = Data;
 }
 
 std::pair<std::string,bool> V8Handler::GetResult()
@@ -19,14 +22,15 @@ std::pair<std::string,bool> V8Handler::GetResult()
     return r;
 }
 
-std::pair<std::string,bool> V8Handler::GetLocalStorage()
+std::pair<std::vector<LocalStorageDataItem>,bool> V8Handler::GetLocalStorage()
 {
     std::lock_guard<std::mutex> lock(mut_local_storage);
 
-    std::pair<std::string,bool> r;
+    std::pair<std::vector<LocalStorageDataItem>,bool> r;
     r.first = NewLocalStorage;
     r.second = ChangedLocalStorage;
     ChangedLocalStorage = false;
+    NewLocalStorage.clear();
     return r;
 }
 
@@ -50,6 +54,19 @@ std::pair<InspectResult,bool> V8Handler::GetInspectResult()
     return r;
 }
 
+std::pair<InspectResult,bool> V8Handler::GetFrameFindResult()
+{
+    std::lock_guard<std::mutex> lock(mut_frame_find);
+
+    std::pair<InspectResult,bool> r;
+    r.first = _FrameFindResult;
+    r.second = ChangedFrameFind;
+    _FrameFindResult.css.clear();
+    _FrameFindResult.match.clear();
+    _FrameFindResult.label.clear();
+    ChangedFrameFind = false;
+    return r;
+}
 
 
 bool V8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> object, const CefV8ValueList& arguments, CefRefPtr<CefV8Value>& retval, CefString& exception)
@@ -72,6 +89,26 @@ bool V8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> object, con
             Result = std::to_string(arguments[0]->GetIntValue());
             Changed = true;
         }
+    }else if(name == std::string("browser_automation_studio_frame_find_result"))
+    {
+        std::lock_guard<std::mutex> lock(mut_frame_find);
+
+        _FrameFindResult.x = arguments[0]->GetIntValue();
+        _FrameFindResult.y = arguments[1]->GetIntValue();
+
+        _FrameFindResult.FrameData.frame_name = arguments[2]->GetStringValue().ToString();
+        _FrameFindResult.FrameData.frame_url = arguments[3]->GetStringValue().ToString();
+        _FrameFindResult.FrameData.frame_tag_html = arguments[4]->GetStringValue().ToString();
+        _FrameFindResult.FrameData.frame_index = arguments[5]->GetIntValue();
+
+        _FrameFindResult.FrameData.x_with_padding = arguments[6]->GetIntValue();
+        _FrameFindResult.FrameData.y_with_padding = arguments[7]->GetIntValue();
+
+        _FrameFindResult.FrameData.is_frame = true;
+
+        _FrameFindResult.active = arguments[8]->GetBoolValue();
+
+        ChangedFrameFind = true;
     }else if(name == std::string("browser_automation_studio_inspect_result"))
     {
         std::lock_guard<std::mutex> lock(mut_inspect);
@@ -86,18 +123,58 @@ bool V8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> object, con
         _InspectResult.css2 = arguments[6]->GetStringValue().ToString();
         _InspectResult.css3 = arguments[7]->GetStringValue().ToString();
         _InspectResult.match = arguments[8]->GetStringValue().ToString();
-        _InspectResult.mousex = arguments[9]->GetIntValue();
-        _InspectResult.mousey = arguments[10]->GetIntValue();
-        _InspectResult.active = arguments[11]->GetBoolValue();
+        _InspectResult.xpath = arguments[9]->GetStringValue().ToString();
+        _InspectResult.mousex = arguments[10]->GetIntValue();
+        _InspectResult.mousey = arguments[11]->GetIntValue();
+        _InspectResult.active = arguments[12]->GetBoolValue();
+
+        _InspectResult.FrameData.is_frame = arguments[13]->GetBoolValue();
+        _InspectResult.FrameData.frame_name = arguments[14]->GetStringValue().ToString();
+        _InspectResult.FrameData.frame_url = arguments[15]->GetStringValue().ToString();
+        _InspectResult.FrameData.frame_tag_html = arguments[16]->GetStringValue().ToString();
+        _InspectResult.FrameData.frame_index = arguments[17]->GetIntValue();
+
+        _InspectResult.FrameData.x_with_padding = arguments[18]->GetIntValue();
+        _InspectResult.FrameData.y_with_padding = arguments[19]->GetIntValue();
 
         ChangedInspect = true;
-    }else if(name == std::string("BrowserAutomationStudio_SaveLocalStorage"))
+    }/*else if(name == std::string("BrowserAutomationStudio_SaveLocalStorage"))
+    {
+        if (arguments.size() == 6 && arguments[0]->IsString()&& arguments[1]->IsString()&& arguments[2]->IsString()&& arguments[3]->IsString()&& arguments[4]->IsInt()&& arguments[5]->IsString())
+        {
+            std::lock_guard<std::mutex> lock(mut_local_storage);
+            LocalStorageDataItem Item;
+            Item.TypeString = arguments[0]->GetStringValue().ToString();
+            Item.Key = arguments[1]->GetStringValue().ToString();
+            Item.Value = arguments[2]->GetStringValue().ToString();
+            Item.Domain = arguments[3]->GetStringValue().ToString();
+            Item.FrameHash = arguments[4]->GetIntValue();
+            Item.Time = arguments[5]->GetStringValue();
+
+            NewLocalStorage.push_back(Item);
+
+
+            ChangedLocalStorage = true;
+        }
+    }*/
+    else if(name == std::string("BrowserAutomationStudio_DomainDataNeedClear"))
     {
         if (arguments.size() == 1 && arguments[0]->IsString())
         {
-            std::lock_guard<std::mutex> lock(mut_local_storage);
-            NewLocalStorage = arguments[0]->GetStringValue().ToString();
-            ChangedLocalStorage = true;
+            bool Res = false;
+            {
+                LOCK_DOMAIN_CLEAR
+                std::string Domain = arguments[0]->GetStringValue().ToString();
+                if(Data->NeedClear)
+                {
+                    Res = std::find(Data->DomainClearData.begin(), Data->DomainClearData.end(), Domain) == Data->DomainClearData.end();
+                }
+                if(Res)
+                {
+                    Data->DomainClearData.push_back(Domain);
+                }
+            }
+            retval = CefV8Value::CreateBool(Res);
         }
     }
     return true;

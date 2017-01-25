@@ -63,9 +63,12 @@ namespace BrowserAutomationStudioFramework
 
         bool IsAborted;
         int WorkerRunning;
+        int CurrentThreadNumber;
         bool NoNeedToCreateWorkersMore;
         int SuccessLeft;
+        int SuccessNumber;
         int FailLeft;
+        int FailNumber;
         bool DieOnFailHandler;
         void CreateWorker(int index);
         IScriptMultiWorkerReportData *ReportData;
@@ -77,10 +80,16 @@ namespace BrowserAutomationStudioFramework
 
         QList<QString> AdditionalScripts;
 
+        bool DieInstant;
+        QString ProjectPath;
+
     public:
         QString WorkerScript;
 
         explicit ScriptMultiWorker(QObject *parent);
+
+        virtual void SetProjectPath(const QString& ProjectPath);
+        virtual QString GetProjectPath();
 
         virtual void AddModule(QObject *Module, const QString& Name, bool AddToMultiWorker, bool AddToWorker);
 

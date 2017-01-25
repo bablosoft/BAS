@@ -6,7 +6,7 @@
 namespace BrowserAutomationStudioFramework
 {
     AntigateCaptchaSolver::AntigateCaptchaSolver(QObject *parent) :
-        ISolver(parent),Iterator(0),StartedMonitor(false),timeout(8000), MultipleIds(true), DisableImageConvert(false)
+        ISolver(parent),Iterator(0),StartedMonitor(false),timeout(8000), MultipleIds(true)
     {
         Server = "http://antigate.com/";
     }
@@ -163,8 +163,40 @@ namespace BrowserAutomationStudioFramework
     }
 
 
-    QString AntigateCaptchaSolver::Solve(const QString& base64)
+    QString AntigateCaptchaSolver::Solve(const QString& base64,const QStringList& props)
     {
+        QMap<QString,QString> Properties;
+        bool isname = true;
+        QString name = "";
+        bool DisableImageConvert = false;
+        foreach(QString str, props)
+        {
+            if(isname)
+            {
+                name = str;
+            }else
+            {
+                if(name == "key")
+                {
+                    key = str;
+                }else if(name == "bas_disable_image_convert")
+                {
+                    DisableImageConvert = str.toInt();
+                }else if(name == "serverurl")
+                {
+                    Server = str;
+                }else if(name == "timeout")
+                {
+                }
+                else if(!str.isEmpty())
+                {
+                    Properties.insert(name,str);
+                }
+
+            }
+            isname = !isname;
+        }
+
         emit Used();
         QString i = QString::number(Iterator++);
         PostToAntigate * post = new PostToAntigate(this);
@@ -221,32 +253,6 @@ namespace BrowserAutomationStudioFramework
     {
         //IHttpClient *Client = qobject_cast<IHttpClient *>(sender());
         sender()->deleteLater();
-    }
-
-
-    void AntigateCaptchaSolver::SetProperty(const QString& name,const QString& value)
-    {
-        if(name == "key")
-        {
-            key = value;
-        }else if(name == "timeout")
-        {
-            timeout = value.toInt();
-        }else if(name == "bas_disable_image_convert")
-        {
-            DisableImageConvert = value.toInt();
-        }else if(name == "serverurl")
-        {
-            this->Server = value;
-            if(!this->Server.endsWith("/"))
-                this->Server += "/";
-        }else
-        {
-            if(value.isEmpty())
-                Properties.remove(name);
-            else
-                Properties[name] = value;
-        }
     }
 
     void AntigateCaptchaSolver::SetHttpClientFactory(IHttpClientFactory * HttpClientFactory)

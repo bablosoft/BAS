@@ -1,3 +1,26 @@
+_BROWSERAUTOMATIONSTUDIO_TARGET = ""
+
+function _set_target(target)
+{
+    _BROWSERAUTOMATIONSTUDIO_TARGET = target
+}
+
+function _get_target()
+{
+    var res = "";
+
+    if(typeof(_BROWSERAUTOMATIONSTUDIO_TARGET) != "string")
+    {
+        try{
+            _BROWSERAUTOMATIONSTUDIO_TARGET["tab"] = _BROWSERAUTOMATIONSTUDIO_TARGET["tab"].toString()
+        }catch(e){}
+        res = JSON.stringify(_BROWSERAUTOMATIONSTUDIO_TARGET)
+    }
+
+    _BROWSERAUTOMATIONSTUDIO_TARGET = ""
+    return res
+}
+
 function _get_network_access_manager()
 {
     if(typeof(NetworkAccessManager)=='undefined')
@@ -7,7 +30,7 @@ function _get_network_access_manager()
 
 function header(name, value, callback)
 {
-    _get_network_access_manager().AddHeader(name, value, _get_function_body(callback));
+    _get_network_access_manager().AddHeader(name, value, _get_target(), _get_function_body(callback));
 }
 
 function clear_header(callback)
@@ -23,7 +46,7 @@ function proxy(proxy_string, callback)
 
 function set_proxy(server, Port, IsHttp, name, password, callback)
 {
-    _get_network_access_manager().SetProxy(server, Port, IsHttp, name, password,_get_function_body(callback))
+    _get_network_access_manager().SetProxy(server, Port, IsHttp, name, password,_get_target(),_get_function_body(callback))
 }
 
 function cache_allow(match, callback)

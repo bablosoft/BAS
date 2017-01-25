@@ -57,7 +57,6 @@ namespace BrowserAutomationStudioFramework
         res.append(GetFromRes(":/engine/scripts/engine/worker/waiters.js"));
         res.append(GetFromRes(":/engine/scripts/engine/worker/resources.js"));
         res.append(GetFromRes(":/engine/scripts/engine/worker/properties.js"));
-        res.append(GetFromRes(":/engine/scripts/engine/worker/smsreg.js"));
         res.append(GetFromRes(":/engine/scripts/engine/worker/worker.js"));
         res.append(GetFromRes(":/engine/scripts/engine/worker/cache.js"));
         res.append(GetFromRes(":/engine/scripts/engine/worker/record.js"));

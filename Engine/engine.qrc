@@ -38,7 +38,6 @@
         <file>images/flags/en.png</file>
         <file>translate/en.qm</file>
         <file>translate/ru.qm</file>
-        <file>scripts/engine/worker/smsreg.js</file>
         <file>scripts/engine/worker/pop3client.js</file>
         <file>scripts/engine/common/html_parser.js</file>
         <file>scripts/engine/common/rss_parser.js</file>

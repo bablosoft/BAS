@@ -97,13 +97,14 @@ namespace BrowserAutomationStudioFramework
         }
     }
 
-    void SubprocessNetworkAccessManager::AddHeader(const QString& name,const QString& value, const QString& callback)
+    void SubprocessNetworkAccessManager::AddHeader(const QString& name,const QString& value,const QString& target, const QString& callback)
     {
         QString WriteString;
         QXmlStreamWriter xmlWriter(&WriteString);
         xmlWriter.writeStartElement("AddHeader");
             xmlWriter.writeAttribute("name", name);
             xmlWriter.writeAttribute("value", value);
+            xmlWriter.writeAttribute("target", target);
         xmlWriter.writeEndElement();
 
 
@@ -134,7 +135,7 @@ namespace BrowserAutomationStudioFramework
         return Worker;
     }
 
-    void SubprocessNetworkAccessManager::SetProxy(const QString& server, int Port, bool IsHttp, const QString& name, const QString& password, const QString& callback)
+    void SubprocessNetworkAccessManager::SetProxy(const QString& server, int Port, bool IsHttp, const QString& name, const QString& password,const QString& target, const QString& callback)
     {
         QString WriteString;
         QXmlStreamWriter xmlWriter(&WriteString);
@@ -144,6 +145,7 @@ namespace BrowserAutomationStudioFramework
             xmlWriter.writeAttribute("IsHttp",QString::number(IsHttp));
             xmlWriter.writeAttribute("name",name);
             xmlWriter.writeAttribute("password",password);
+            xmlWriter.writeAttribute("target", target);
         xmlWriter.writeEndElement();
 
         Worker->SetScript(callback);

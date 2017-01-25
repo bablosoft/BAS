@@ -28,6 +28,7 @@ namespace BrowserAutomationStudioFramework
 
     void PipesProcessComunicator::CreateProcess(const QStringList& arguments)
     {
+        Arguments = arguments;
         Abort();
 
         const char alphanum[] = "abcdefghijklmnopqrstuvwxyz";
@@ -133,7 +134,14 @@ namespace BrowserAutomationStudioFramework
     }
     void PipesProcessComunicator::Send(const QString& value)
     {
-        emit SendSignal(key, value);
+        if(!Process)
+        {
+            CreateProcess(Arguments);
+        }else
+        {
+            //qDebug()<<"Send"<<value<<Process;
+            emit SendSignal(key, value);
+        }
     }
 
     void PipesProcessComunicator::ConnectToProcess(const QString& key_in, const QString& key_out)

@@ -1,0 +1,21 @@
+{
+	
+	"name":"DomainDataClear",
+	"description":"Clears data after thread reset",
+	"description_small":{"en": "DomainDataClear", "ru": "DomainDataClear"},
+	"major_version": 1,
+	"minor_version": 0,
+	"developer_name": "bablosoft", 
+	"developer_email": "mail.to.twaego@gmail.com", 
+	"developer_site": "https://bablosoft.com",
+	"api_version": 1,
+	"actions":
+	[
+	],
+	"localize": 
+	{
+	},
+	"engine": [],
+	"browser": ["browser.js"],
+	"depends": []	
+}

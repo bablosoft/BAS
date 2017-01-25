@@ -84,7 +84,7 @@ _if(_SMS_CONFIRM_DATA["method"] == "sms-activate.ru", function(){
 
         if(arr[0] == "STATUS_OK")
         {
-            <%= variable %> = arr[1]
+            <%= variable %> = arr.slice(1).join(":")
             _SMS_CONFIRM_DATA["not_first"] = true
             _BAS_SMSCONFIRMDATA[ _SMS_CONFIRM_DATA["number"] ] = _SMS_CONFIRM_DATA
             _break();

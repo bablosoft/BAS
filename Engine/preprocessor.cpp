@@ -97,6 +97,7 @@ namespace BrowserAutomationStudioFramework
     {
         EncryptIterator = 0;
         QString Res = Script;
+        Res = Res.replace(")/*async!*/",")!");
         {
             QRegExp Regexp("\\/\\*.*\\*\\/");
             Regexp.setMinimal(true);

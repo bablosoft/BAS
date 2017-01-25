@@ -322,7 +322,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         break;
         case WM_CLOSE:
         {
-            worker_log("Minimized");
+            WORKER_LOG("Minimized");
             app->Hide();
             Client->Write("<Messages><Minimized>1</Minimized></Messages>");
         }
@@ -340,7 +340,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         }
         break;
         case WM_COMMAND:
-            worker_log(std::string("WM_COMMAND<<") + std::to_string((int)LOWORD(wParam)));
+            WORKER_LOG(std::string("WM_COMMAND<<") + std::to_string((int)LOWORD(wParam)));
             {
                 WORD Command = LOWORD(wParam);
                 int IdIterator = IDCustom;
@@ -750,7 +750,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     PostQuitMessage(0);
                 std::string Xml = Client->Read();
                 if(!Xml.empty())
+                {
+                    app->ClearElementCommand();
                     Parser->Parse(Xml);
+                }
 
                 app->Timer();
 
@@ -889,7 +892,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         worker_log_init(Data->IsRecord);
     }
 
-    worker_log(std::string("IsRecord<<") + std::to_string(Data->IsRecord));
+    WORKER_LOG(std::string("IsRecord<<") + std::to_string(Data->IsRecord));
 
     Data->OldestRequestTime = 0;
     Data->_MainWindowHandle = 0;
@@ -903,6 +906,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Data->IsAboutBlankLoaded = false;
     Data->TimezoneSelected = false;
     Data->GeolocationSelected = false;
+    Data->NeedClear = false;
+    Data->IsDrag = false;
+    Data->IsMousePress = false;
 
     app->SetData(Data);
 
@@ -946,16 +952,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     if(NumberArgs>4)
     {
         Pid = ws2s(Arglist[4]);
-        worker_log(std::string("Pid : ") + Pid);
+        WORKER_LOG(std::string("Pid : ") + Pid);
         pid = std::stoi(Pid);
         new std::thread(check_pid);
     }
-    worker_log(Key);
+    WORKER_LOG(Key);
     Client->Start(Key,Pid);
     Parser->EventLoad.push_back(std::bind(&MainApp::LoadCallback,app.get(),_1));
     Parser->EventVisible.push_back(std::bind(&MainApp::VisibleCallback,app.get(),_1));
-    Parser->EventSetProxy.push_back(std::bind(&MainApp::SetProxyCallback,app.get(),_1,_2,_3,_4,_5));
-    Parser->EventAddHeader.push_back(std::bind(&MainApp::AddHeaderCallback,app.get(),_1,_2));
+    Parser->EventSetProxy.push_back(std::bind(&MainApp::SetProxyCallback,app.get(),_1,_2,_3,_4,_5,_6));
+    Parser->EventAddHeader.push_back(std::bind(&MainApp::AddHeaderCallback,app.get(),_1,_2,_3));
     Parser->EventCleanHeader.push_back(std::bind(&MainApp::CleanHeaderCallback,app.get()));
     Parser->EventSetUserAgent.push_back(std::bind(&MainApp::SetUserAgentCallback,app.get(),_1));
     Parser->EventGetUrl.push_back(std::bind(&MainApp::GetUrlCallback,app.get()));
@@ -973,12 +979,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Parser->EventScroll.push_back(std::bind(&MainApp::ScrollCallback,app.get(),_1,_2));
     Parser->EventRender.push_back(std::bind(&MainApp::RenderCallback,app.get(),_1,_2,_3,_4));
     Parser->EventSetOpenFileName.push_back(std::bind(&MainApp::SetOpenFileNameCallback,app.get(),_1));
-    Parser->EventSetStartupScript.push_back(std::bind(&MainApp::SetStartupScriptCallback,app.get(),_1));
+    Parser->EventSetStartupScript.push_back(std::bind(&MainApp::SetStartupScriptCallback,app.get(),_1,_2));
     Parser->EventSetPromptResult.push_back(std::bind(&MainApp::SetPromptResultCallback,app.get(),_1));
     Parser->EventSetHttpAuthResult.push_back(std::bind(&MainApp::SetHttpAuthResultCallback,app.get(),_1,_2));
     Parser->EventGetCookiesForUrl.push_back(std::bind(&MainApp::GetCookiesForUrlCallback,app.get(),_1));
     Parser->EventSaveCookies.push_back(std::bind(&MainApp::SaveCookiesCallback,app.get()));
     Parser->EventRestoreCookies.push_back(std::bind(&MainApp::RestoreCookiesCallback,app.get(),_1));
+    Parser->EventRestoreLocalStorage.push_back(std::bind(&MainApp::RestoreLocalStorageCallback,app.get(),_1));
     Parser->EventWaitCode.push_back(std::bind(&MainApp::WaitCodeCallback,app.get()));
     Parser->EventStartSection.push_back(std::bind(&MainApp::StartSectionCallback,app.get(),_1));
     Parser->EventScriptFinished.push_back(std::bind(&MainApp::ScriptFinishedCallback,app.get()));
@@ -1013,7 +1020,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     app->EventSendTextResponce.push_back(std::bind(&PipesClient::Write,Client,_1));
 
 
-    worker_log("Start Main Loop");
+    WORKER_LOG("Start Main Loop");
 
     WNDCLASSEX wc;
     MSG Msg;
@@ -1071,11 +1078,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     }
     thread_cleanup();
 
-    worker_log("End Main Loop");
+    WORKER_LOG("End Main Loop");
 
     CefShutdown();
 
-    worker_log("Exit");
+    WORKER_LOG("Exit");
 
     return Msg.wParam;
 }

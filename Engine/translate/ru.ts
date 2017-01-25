@@ -448,238 +448,250 @@
 <context>
     <name>BrowserAutomationStudioFramework::ScriptMultiWorker</name>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="479"/>
+        <location filename="../scriptmultiworker.cpp" line="489"/>
         <source>Script finished with error :</source>
         <translation>Скрипт выполнен с ошибкой :</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="483"/>
+        <location filename="../scriptmultiworker.cpp" line="493"/>
         <source> Line number:</source>
         <translation> Номер строки:</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="483"/>
+        <location filename="../scriptmultiworker.cpp" line="493"/>
         <source> During execution of script </source>
-        <translation type="unfinished"> Во время выполнения скрипта </translation>
+        <translation> Во время выполнения скрипта </translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="485"/>
+        <location filename="../scriptmultiworker.cpp" line="495"/>
         <source>[%1] Script finished with error : </source>
         <translation>[%1] Скрипт выполнен с ошибкой : </translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="529"/>
-        <location filename="../scriptmultiworker.cpp" line="704"/>
-        <location filename="../scriptmultiworker.cpp" line="705"/>
+        <location filename="../scriptmultiworker.cpp" line="539"/>
+        <location filename="../scriptmultiworker.cpp" line="738"/>
+        <location filename="../scriptmultiworker.cpp" line="739"/>
         <source>Ended with message: </source>
         <translation>Закончен с сообщением: </translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="545"/>
+        <location filename="../scriptmultiworker.cpp" line="555"/>
         <source>Aborted By User</source>
         <translation>Прервано Пользователем</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="568"/>
+        <location filename="../scriptmultiworker.cpp" line="578"/>
         <source>[%1] Script finished correctly</source>
         <translation>[%1] Скрипт завершен корректно</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="599"/>
+        <location filename="../scriptmultiworker.cpp" line="615"/>
         <source>Success</source>
         <translation>Удачно</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="624"/>
+        <location filename="../scriptmultiworker.cpp" line="640"/>
         <source>Stage Timeout</source>
         <translation>Время На Выполнение Этапа Истекло</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="695"/>
+        <location filename="../scriptmultiworker.cpp" line="729"/>
         <source>Too Much Fails</source>
         <translation>Слишком Много Ошибок</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="975"/>
-        <source>Failed to get resource inside core</source>
-        <translation>Не удалось получить ресурс</translation>
+        <location filename="../scriptmultiworker.cpp" line="1029"/>
+        <location filename="../scriptmultiworker.cpp" line="1030"/>
+        <source>All data have been processed</source>
+        <translation>Все данные были обработаны</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="976"/>
+        <source>Failed to get resource inside core</source>
+        <translation type="vanished">Не удалось получить ресурс</translation>
+    </message>
+    <message>
         <source>failed to get resource</source>
-        <translation>не удалось получить ресурс</translation>
+        <translation type="vanished">не удалось получить ресурс</translation>
     </message>
 </context>
 <context>
     <name>BrowserAutomationStudioFramework::ScriptWorker</name>
     <message>
-        <location filename="../scriptworker.cpp" line="405"/>
+        <location filename="../scriptworker.cpp" line="461"/>
         <source>Aborted By User</source>
         <translation>Прервано Пользователем</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="563"/>
+        <location filename="../scriptworker.cpp" line="621"/>
         <source> Line number:</source>
         <translation> Номер строки:</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="563"/>
+        <location filename="../scriptworker.cpp" line="621"/>
         <source> During execution of script </source>
         <translation> Во время выполнения скрипта </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="591"/>
-        <location filename="../scriptworker.cpp" line="678"/>
+        <location filename="../scriptworker.cpp" line="649"/>
+        <location filename="../scriptworker.cpp" line="736"/>
         <source>Fail number exceed</source>
         <translation>Превышено количество ошибок</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="598"/>
-        <location filename="../scriptworker.cpp" line="746"/>
+        <location filename="../scriptworker.cpp" line="656"/>
+        <location filename="../scriptworker.cpp" line="806"/>
         <source>Success number exceed</source>
         <translation>Превышено количество успехов</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="790"/>
+        <location filename="../scriptworker.cpp" line="853"/>
         <source>Failed because process is stopped</source>
         <translation>Процесс остановлен</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1069"/>
         <source>failed to get resource </source>
-        <translation>не удалось получить ресурс </translation>
+        <translation type="vanished">не удалось получить ресурс </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1088"/>
+        <location filename="../scriptworker.cpp" line="1183"/>
         <source>Thread suspended</source>
         <translation>Поток приостановлен</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1093"/>
         <source>Thread failed</source>
-        <translation>Поток аварийно завершился</translation>
+        <translation type="vanished">Поток аварийно завершился</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1094"/>
         <source>Thread died</source>
-        <translation>Поток аварийно завершился</translation>
+        <translation type="vanished">Поток аварийно завершился</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1095"/>
+        <location filename="../scriptworker.cpp" line="1164"/>
+        <source>All data have been processed for </source>
+        <translation>Все данные были обработаны для </translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1188"/>
+        <location filename="../scriptworker.cpp" line="1189"/>
+        <source>Thread ended</source>
+        <translation>Поток завершился</translation>
+    </message>
+    <message>
+        <location filename="../scriptworker.cpp" line="1190"/>
         <source>Thread succeeded</source>
-        <translation type="unfinished">Поток выполнен успешно</translation>
+        <translation>Поток выполнен успешно</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1097"/>
+        <location filename="../scriptworker.cpp" line="1192"/>
         <source> with message &quot;</source>
         <translation> с сообщением &quot;</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1109"/>
+        <location filename="../scriptworker.cpp" line="1204"/>
         <source>Thread #</source>
         <translation>Поток №</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1121"/>
-        <location filename="../scriptworker.cpp" line="1138"/>
+        <location filename="../scriptworker.cpp" line="1216"/>
+        <location filename="../scriptworker.cpp" line="1233"/>
         <source>CAPTCHA_FAIL</source>
         <translation>Ошибка решения капчи</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1121"/>
+        <location filename="../scriptworker.cpp" line="1216"/>
         <source>Failed to get solver</source>
         <translation>Неизвестный метод решения капчи</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1150"/>
+        <location filename="../scriptworker.cpp" line="1245"/>
         <source>Captcha wait timeout</source>
         <translation>Время ожидания решения капчи истекло</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1163"/>
+        <location filename="../scriptworker.cpp" line="1258"/>
         <source>Async function is called in sync mode</source>
         <translation>Асинхронная функция вызвана синхронно</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1171"/>
-        <location filename="../scriptworker.cpp" line="1235"/>
+        <location filename="../scriptworker.cpp" line="1266"/>
+        <location filename="../scriptworker.cpp" line="1330"/>
         <source>Failed to run function </source>
         <translation>Ошибка при запуске функции </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1190"/>
+        <location filename="../scriptworker.cpp" line="1285"/>
         <source>Sync function is called in async mode</source>
         <translation>Синхронная функция вызвана асинхронно</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1200"/>
+        <location filename="../scriptworker.cpp" line="1295"/>
         <source>Failed to execute module function </source>
         <translation>Не удалось выполнить функцию </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1260"/>
+        <location filename="../scriptworker.cpp" line="1355"/>
         <source>Failed to get mail number with Pop3CLient</source>
         <translation>Не удалось получить количество писем с помощью Pop3 клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1268"/>
+        <location filename="../scriptworker.cpp" line="1363"/>
         <source>Failed to get message with Pop3CLient</source>
         <translation>Не удалось получить письмо с помощью Pop3 клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1319"/>
+        <location filename="../scriptworker.cpp" line="1414"/>
         <source>Failed to get mail number with ImapCLient</source>
         <translation>Не удалось получить количество писем с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1327"/>
+        <location filename="../scriptworker.cpp" line="1422"/>
         <source>Failed to search mail with ImapCLient</source>
         <translation>Не удалось выполнить поиск с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1335"/>
+        <location filename="../scriptworker.cpp" line="1430"/>
         <source>Failed to custom search mail with ImapCLient</source>
         <translation>Не удалось выполнить специальный поиск с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1343"/>
+        <location filename="../scriptworker.cpp" line="1438"/>
         <source>Failed to fetch mail with ImapCLient</source>
         <translation>Не удалось получить письмо с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1351"/>
+        <location filename="../scriptworker.cpp" line="1446"/>
         <source>Failed to execute custom query with ImapCLient</source>
         <translation>Не удалось выполнить специальный запрос с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1399"/>
-        <location filename="../scriptworker.cpp" line="1532"/>
-        <location filename="../scriptworker.cpp" line="1540"/>
-        <location filename="../scriptworker.cpp" line="1548"/>
-        <location filename="../scriptworker.cpp" line="1576"/>
+        <location filename="../scriptworker.cpp" line="1497"/>
+        <location filename="../scriptworker.cpp" line="1630"/>
+        <location filename="../scriptworker.cpp" line="1638"/>
+        <location filename="../scriptworker.cpp" line="1646"/>
+        <location filename="../scriptworker.cpp" line="1674"/>
         <source>Failed to get page </source>
         <translation>Не удалось получить страницу </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1399"/>
-        <location filename="../scriptworker.cpp" line="1432"/>
-        <location filename="../scriptworker.cpp" line="1482"/>
-        <location filename="../scriptworker.cpp" line="1532"/>
-        <location filename="../scriptworker.cpp" line="1540"/>
-        <location filename="../scriptworker.cpp" line="1548"/>
-        <location filename="../scriptworker.cpp" line="1576"/>
-        <location filename="../scriptworker.cpp" line="1603"/>
+        <location filename="../scriptworker.cpp" line="1497"/>
+        <location filename="../scriptworker.cpp" line="1530"/>
+        <location filename="../scriptworker.cpp" line="1580"/>
+        <location filename="../scriptworker.cpp" line="1630"/>
+        <location filename="../scriptworker.cpp" line="1638"/>
+        <location filename="../scriptworker.cpp" line="1646"/>
+        <location filename="../scriptworker.cpp" line="1674"/>
+        <location filename="../scriptworker.cpp" line="1701"/>
         <source> with HttpClient</source>
         <translation> с помошью ХТТП клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1432"/>
-        <location filename="../scriptworker.cpp" line="1482"/>
+        <location filename="../scriptworker.cpp" line="1530"/>
+        <location filename="../scriptworker.cpp" line="1580"/>
         <source>Failed to post page </source>
         <translation>Не удалось выполнить пост запрос </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1603"/>
+        <location filename="../scriptworker.cpp" line="1701"/>
         <source>Failed to download page </source>
         <translation>Не удалось скачать страницу </translation>
     </message>
@@ -792,32 +804,32 @@
 <context>
     <name>BrowserAutomationStudioFramework::SubprocessWebElement</name>
     <message>
-        <location filename="../subprocesswebelement.cpp" line="231"/>
-        <location filename="../subprocesswebelement.cpp" line="239"/>
-        <location filename="../subprocesswebelement.cpp" line="247"/>
-        <location filename="../subprocesswebelement.cpp" line="255"/>
-        <location filename="../subprocesswebelement.cpp" line="261"/>
-        <location filename="../subprocesswebelement.cpp" line="274"/>
-        <location filename="../subprocesswebelement.cpp" line="282"/>
-        <location filename="../subprocesswebelement.cpp" line="290"/>
-        <location filename="../subprocesswebelement.cpp" line="298"/>
-        <location filename="../subprocesswebelement.cpp" line="306"/>
-        <location filename="../subprocesswebelement.cpp" line="314"/>
-        <location filename="../subprocesswebelement.cpp" line="321"/>
-        <location filename="../subprocesswebelement.cpp" line="332"/>
-        <location filename="../subprocesswebelement.cpp" line="339"/>
-        <location filename="../subprocesswebelement.cpp" line="346"/>
-        <location filename="../subprocesswebelement.cpp" line="353"/>
-        <location filename="../subprocesswebelement.cpp" line="360"/>
-        <location filename="../subprocesswebelement.cpp" line="367"/>
-        <location filename="../subprocesswebelement.cpp" line="374"/>
-        <location filename="../subprocesswebelement.cpp" line="381"/>
-        <location filename="../subprocesswebelement.cpp" line="388"/>
-        <location filename="../subprocesswebelement.cpp" line="395"/>
-        <location filename="../subprocesswebelement.cpp" line="402"/>
-        <location filename="../subprocesswebelement.cpp" line="439"/>
-        <location filename="../subprocesswebelement.cpp" line="465"/>
-        <location filename="../subprocesswebelement.cpp" line="472"/>
+        <location filename="../subprocesswebelement.cpp" line="230"/>
+        <location filename="../subprocesswebelement.cpp" line="238"/>
+        <location filename="../subprocesswebelement.cpp" line="246"/>
+        <location filename="../subprocesswebelement.cpp" line="254"/>
+        <location filename="../subprocesswebelement.cpp" line="260"/>
+        <location filename="../subprocesswebelement.cpp" line="273"/>
+        <location filename="../subprocesswebelement.cpp" line="281"/>
+        <location filename="../subprocesswebelement.cpp" line="289"/>
+        <location filename="../subprocesswebelement.cpp" line="297"/>
+        <location filename="../subprocesswebelement.cpp" line="305"/>
+        <location filename="../subprocesswebelement.cpp" line="313"/>
+        <location filename="../subprocesswebelement.cpp" line="320"/>
+        <location filename="../subprocesswebelement.cpp" line="331"/>
+        <location filename="../subprocesswebelement.cpp" line="338"/>
+        <location filename="../subprocesswebelement.cpp" line="345"/>
+        <location filename="../subprocesswebelement.cpp" line="352"/>
+        <location filename="../subprocesswebelement.cpp" line="359"/>
+        <location filename="../subprocesswebelement.cpp" line="366"/>
+        <location filename="../subprocesswebelement.cpp" line="373"/>
+        <location filename="../subprocesswebelement.cpp" line="380"/>
+        <location filename="../subprocesswebelement.cpp" line="387"/>
+        <location filename="../subprocesswebelement.cpp" line="394"/>
+        <location filename="../subprocesswebelement.cpp" line="401"/>
+        <location filename="../subprocesswebelement.cpp" line="458"/>
+        <location filename="../subprocesswebelement.cpp" line="484"/>
+        <location filename="../subprocesswebelement.cpp" line="491"/>
         <source>Timeout during </source>
         <translation>Таймаут во время выполнения </translation>
     </message>
@@ -2177,8 +2189,12 @@
     </message>
     <message>
         <location filename="../enterlicensedialog.ui" line="87"/>
+        <source>Login</source>
+        <translation>Логин</translation>
+    </message>
+    <message>
         <source>Email</source>
-        <translation>Почта</translation>
+        <translation type="vanished">Почта</translation>
     </message>
     <message>
         <location filename="../enterlicensedialog.ui" line="119"/>

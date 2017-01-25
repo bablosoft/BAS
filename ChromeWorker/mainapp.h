@@ -77,6 +77,23 @@ class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderP
     bool IsElementRender;
     int RenderX,RenderY,RenderWidth,RenderHeight;
 
+    //Frame Chain Inspect
+    std::vector<InspectResult> InspectFrameChain;
+    bool InspectFrameSearching;
+    int InspectX;
+    int InspectY;
+
+    //Frame Chain Execute Command
+    std::vector<InspectResult> ExecuteFrameChain;
+    int ExecuteFrameSearchingLength = 0;
+    bool ExecuteFrameSearching = false;
+    bool ExecuteFrameScrolling = false;
+    //bool ExecuteInnerFrameScrolling = false;
+    bool ExecuteFrameScrollingSwitch = false;
+    int ExecuteSearchCoordinatesX;
+    int ExecuteSearchCoordinatesY;
+
+
     //Load
     bool IsWaitingForLoad;
 
@@ -99,6 +116,7 @@ class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderP
     bool ResourcesChanged;
     void UpdateScrolls(std::string& data);
     void HandleMainBrowserEvents();
+    void HandleFrameFindEvents();
     void HandleToolboxBrowserEvents();
     void HandleScenarioBrowserEvents();
     void HandleCentralBrowserEvents();
@@ -137,17 +155,18 @@ public:
     void TimezoneCallback(int offset);
     void GeolocationCallback(float latitude, float longitude);
     void VisibleCallback(bool visible);
-    void SetProxyCallback(const std::string& server, int Port, bool IsHttp, const std::string& username, const std::string& password);
-    void AddHeaderCallback(const std::string& key,const std::string& value);
+    void SetProxyCallback(const std::string& server, int Port, bool IsHttp, const std::string& username, const std::string& password, const std::string& target);
+    void AddHeaderCallback(const std::string& key,const std::string& value, const std::string& target);
     void CleanHeaderCallback();
     void GetUrlCallback();
     void SetUserAgentCallback(const std::string& value);
     void SetOpenFileNameCallback(const std::string& value);
-    void SetStartupScriptCallback(const std::string& value);
+    void SetStartupScriptCallback(const std::string& value,const std::string& target);
     void SetPromptResultCallback(const std::string& value);
     void SetHttpAuthResultCallback(const std::string& login,const std::string& password);
     void GetCookiesForUrlCallback(const std::string& value);
     void SaveCookiesCallback();
+    void RestoreLocalStorageCallback(const std::string& value);
     void RestoreCookiesCallback(const std::string& value);
     void IsChangedCallback();
 
@@ -174,6 +193,8 @@ public:
     void IsUrlLoadedByMaskCallback(const std::string& value);
     void GetLoadStatsCallback();
     void ElementCommandCallback(const ElementCommand &Command);
+    void ClearElementCommand();
+
     void SetCodeCallback(const std::string & code);
     void SetResourceCallback(const std::string & resources);
     void SetInitialStateCallback(const std::string & lang);

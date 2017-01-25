@@ -1,0 +1,1 @@
+<%= variable %> = thread_number()

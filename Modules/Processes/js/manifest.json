@@ -14,7 +14,7 @@
 		{
 			"name":"ExecuteProcess",
 			"description":{"en": "Run Process","ru": "Запустить Процесс"},
-			"template":"{{Location}} -> {{Save}}",
+			"template":"{{Command}} -> {{Save}}",
 			"is_element": false,
 			"interface": "execute_process_interface.js",
 			"select": "execute_process_select.js",
@@ -26,7 +26,7 @@
 	{
 		"Wait while process will finish": {"ru": "Ждать завершения"},
 		"Command line": {"ru": "Аргументы командной строки"},
-		"Executable location": {"ru": "Месторасположение exe"}
+		"Command": {"ru": "Комманда"}
 	},
 	"engine": [],
 	"browser": [],

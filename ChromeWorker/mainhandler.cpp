@@ -10,6 +10,7 @@
 #include "randomid.h"
 #include "startwith.h"
 #include "picojson.h"
+#include "browsereventsemulator.h"
 #include <chrono>
 
 using namespace std::placeholders;
@@ -17,7 +18,7 @@ using namespace std::chrono;
 
 MainHandler::MainHandler()
 {
-    worker_log(std::string("MainHandlerCreaate<<") + std::to_string((int)this));
+    WORKER_LOG(std::string("MainHandlerCreaate<<") + std::to_string((int)this));
 
     NeedQuit = false;
     WaitForLoadEvent = false;
@@ -27,6 +28,12 @@ MainHandler::MainHandler()
     ConfirmResultTime = -1;
     ConfirmResultWait = false;
 }
+
+void MainHandler::SetHandlersManager(HandlersManager *_HandlersManager)
+{
+    this->_HandlersManager = _HandlersManager;
+}
+
 
 int MainHandler::GetBrowserId()
 {
@@ -151,11 +158,11 @@ void MainHandler::OnBeforeDownload(CefRefPtr<CefBrowser> browser, CefRefPtr<CefD
     if(Accept)
     {
         std::string file = RandomId() + ".file";
-        worker_log(std::string("OnBeforeDownload<<") + file);
+        WORKER_LOG(std::string("OnBeforeDownload<<") + file);
         callback->Continue(file,false);
     }else
     {
-        worker_log(std::string("OnBeforeDownloadFiltered<<") + url);
+        WORKER_LOG(std::string("OnBeforeDownloadFiltered<<") + url);
     }
 
 
@@ -165,7 +172,7 @@ void MainHandler::OnDownloadUpdated(CefRefPtr<CefBrowser> browser, CefRefPtr<Cef
 {
     if(download_item->IsComplete())
     {
-        worker_log(std::string("OnBeforeDownloadFinished<<") + download_item->GetFullPath().ToString());
+        WORKER_LOG(std::string("OnBeforeDownloadFinished<<") + download_item->GetFullPath().ToString());
         //Place info about downloaded file to cache
         {
             LOCK_BROWSER_DATA
@@ -200,7 +207,7 @@ bool MainHandler::OnJSDialog(CefRefPtr<CefBrowser> browser, const CefString& ori
                 LOCK_PROMPT
                 res = Data->_PromptResult;
             }
-            worker_log(std::string("Prompt<<") + res);
+            WORKER_LOG(std::string("Prompt<<") + res);
             suppress_message = false;
             callback->Continue(true,res);
             return true;
@@ -227,7 +234,7 @@ bool MainHandler::OnJSDialog(CefRefPtr<CefBrowser> browser, const CefString& ori
 
             if(NeedToWait)
             {
-                worker_log("SLEEP_START");
+                WORKER_LOG("SLEEP_START");
                 ConfirmResult = callback;
                 return true;
             }else
@@ -251,7 +258,7 @@ void MainHandler::Timer()
 {
     if(ConfirmResult.get() && ConfirmResultWait && duration_cast< milliseconds >( system_clock::now().time_since_epoch() ).count() >= ConfirmResultTime)
     {
-        worker_log("SLEEP_END");
+        WORKER_LOG("SLEEP_END");
         ConfirmResult->Continue(true,"");
         ConfirmResult = 0;
         ConfirmResultWait = false;
@@ -269,7 +276,7 @@ bool MainHandler::OnBeforeUnloadDialog(CefRefPtr<CefBrowser> browser,const CefSt
 
 bool MainHandler::OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event)
 {
-    worker_log(std::string("CefKeyEvent<<") + std::string("type<<") + std::to_string(event.type)
+    /*WORKER_LOG(std::string("CefKeyEvent<<") + std::string("type<<") + std::to_string(event.type)
                 + std::string("<<modifiers<<") + std::to_string(event.modifiers)
                 + std::string("<<windows_key_code<<") + std::to_string(event.windows_key_code)
                 + std::string("<<native_key_code<<") + std::to_string(event.native_key_code)
@@ -277,7 +284,7 @@ bool MainHandler::OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& e
                 + std::string("<<unmodified_character<<") + std::to_string(event.unmodified_character)
                 + std::string("<<focus_on_editable_field<<") + std::to_string(event.focus_on_editable_field)
                 + std::string("<<is_system_key<<") + std::to_string(event.is_system_key)
-               );
+               );*/
     return false;
 }
 
@@ -294,7 +301,10 @@ CefRefPtr<CefResourceHandler> MainHandler::GetResourceHandler(CefRefPtr<CefBrows
         return 0;
     }
 
+
+
     CurlResourceHandler* h = new CurlResourceHandler(Data);
+    h->SetTabNumber(_HandlersManager->FindTabIdByBrowserId(browser->GetIdentifier()));
     h->SetForceUtf8(Settings->ForceUtf8());
 
     EventOnTimerCurlResources.push_back(h);
@@ -339,13 +349,13 @@ void MainHandler::CleanResourceHandlerList()
 
 bool MainHandler::GetAuthCredentials(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, bool isProxy, const CefString& host, int port, const CefString& realm, const CefString& scheme, CefRefPtr<CefAuthCallback> callback)
 {
-    worker_log(std::string("GetAuthCredentials<<"));
+    WORKER_LOG(std::string("GetAuthCredentials<<"));
     return false;
 }
 
 bool MainHandler::OnCertificateError(CefRefPtr<CefBrowser> browser,cef_errorcode_t cert_error,const CefString& request_url,CefRefPtr<CefSSLInfo> ssl_info,CefRefPtr<CefRequestCallback> callback)
 {
-    worker_log(std::string("OnCertificateError<<") + request_url.ToString());
+    WORKER_LOG(std::string("OnCertificateError<<") + request_url.ToString());
 
     callback->Continue(true);
     return true;
@@ -384,7 +394,7 @@ bool MainHandler::OnFileDialog(CefRefPtr<CefBrowser> browser, FileDialogMode mod
 
 void MainHandler::OnTitleChange(CefRefPtr<CefBrowser> browser, const CefString& title)
 {
-    worker_log("OnTitleChange");
+    WORKER_LOG("OnTitleChange");
 
     SetWindowText(Data->_MainWindowHandle, std::wstring(title).c_str());
 }
@@ -393,10 +403,10 @@ void MainHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
 {
     if(browser->IsPopup() && !IsPopup)
     {
-        worker_log("OnAfterCreatedBad<<" + std::to_string((int)browser->GetHost()->GetClient().get()));
+        WORKER_LOG("OnAfterCreatedBad<<" + std::to_string((int)browser->GetHost()->GetClient().get()));
         browser->GetHost()->CloseBrowser(true);
     }
-    worker_log("OnAfterCreated<<" + std::to_string(browser->IsPopup()));
+    WORKER_LOG("OnAfterCreated<<" + std::to_string(browser->IsPopup()));
 
     this->Browser = browser;
 
@@ -440,13 +450,13 @@ void MainHandler::Show()
 
 bool MainHandler::DoClose(CefRefPtr<CefBrowser> browser)
 {
-    worker_log("DoClose");
+    WORKER_LOG("DoClose");
     return false;
 }
 
 void MainHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser)
 {
-    worker_log("OnBeforeClose");
+    WORKER_LOG("OnBeforeClose");
 
 
     if(IsPopup)
@@ -460,7 +470,7 @@ void MainHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser)
 
 bool MainHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, const CefString& target_url, const CefString& target_frame_name, CefLifeSpanHandler::WindowOpenDisposition target_disposition, bool user_gesture, const CefPopupFeatures& popupFeatures, CefWindowInfo& windowInfo, CefRefPtr<CefClient>& client, CefBrowserSettings& settings, bool* no_javascript_access)
 {
-    worker_log(std::string("OnBeforePopup<<") + target_url.ToString());
+    WORKER_LOG(std::string("OnBeforePopup<<") + target_url.ToString());
 
 
     bool Accept = true;
@@ -481,6 +491,7 @@ bool MainHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFram
         windowInfo.SetAsWindowless(0,true);
         settings.windowless_frame_rate = 5;
         MainHandler * h = new MainHandler();
+        h->SetHandlersManager(_HandlersManager);
         h->SetSettings(Settings);
         h->SetData(Data);
         h->SetIsPopup();
@@ -513,15 +524,22 @@ CefRequestHandler::ReturnValue MainHandler::OnBeforeResourceLoad(CefRefPtr<CefBr
     CefRequest::HeaderMap ReqestHeaders;
     request->GetHeaderMap(ReqestHeaders);
 
-    {
+    /*{
         LOCK_BROWSER_DATA
+        for(std::shared_ptr<std::map<std::string,std::string> > Map: Data->_Headers.MatchAll(frame->GetURL().ToString(),TabNumber))
+        {
+            for(const auto& Header: *Map)
+            {
+
+            }
+        }
         for (auto h : Data->_Headers)
         {
-            worker_log(std::string("AvailableHeader<<") + h.first);
+            WORKER_LOG(std::string("AvailableHeader<<") + h.first);
             ReqestHeaders.erase(h.first);
             ReqestHeaders.insert(std::make_pair(h.first, h.second));
         }
-    }
+    }*/
 
     if(request->GetMethod().ToString() == std::string("POST"))
     {
@@ -555,7 +573,7 @@ void MainHandler::OnResourceLoadComplete(CefRefPtr<CefBrowser> browser, CefRefPt
 
 void MainHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl)
 {
-    worker_log(std::string("OnLoadError<<") + errorText.ToString() + std::string("<<") + failedUrl.ToString());
+    WORKER_LOG(std::string("OnLoadError<<") + errorText.ToString() + std::string("<<") + failedUrl.ToString());
 
     /*if (errorCode == ERR_ABORTED)
       return;
@@ -568,7 +586,7 @@ void MainHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame>
 
 void MainHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, int httpStatusCode)
 {
-    worker_log(std::string("OnLoadEnd ") + std::to_string(frame->IsMain()) + std::string(" ") + frame->GetURL().ToString() + std::string(" ") + std::to_string(httpStatusCode) );
+    WORKER_LOG(std::string("OnLoadEnd ") + std::to_string(frame->IsMain()) + std::string(" ") + frame->GetURL().ToString() + std::string(" ") + std::to_string(httpStatusCode) );
     if(frame->GetURL().ToString() == "about:blank")
     {
         Data->IsAboutBlankLoaded = true;
@@ -588,13 +606,13 @@ void MainHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> f
             SendTextResponce("<Messages><Load>1</Load></Messages>");
         }
     }
-    worker_log("Loaded Data");
+    WORKER_LOG("Loaded Data");
 }
 
-void MainHandler::OnLoadStart(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame)
+/*void MainHandler::OnLoadStart(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame)
 {
 
-}
+}*/
 
 void MainHandler::SendTextResponce(const std::string& text)
 {
@@ -609,7 +627,7 @@ bool MainHandler::IsNeedQuit()
 
 void MainHandler::CloseLastBrowser()
 {
-    //worker_log(std::string("CloseLastBrowser"));
+    //WORKER_LOG(std::string("CloseLastBrowser"));
     //if(!Browser)
         //return;
     //DestroyWindow(Browser->GetHost()->GetWindowHandle());
@@ -618,7 +636,7 @@ void MainHandler::CloseLastBrowser()
 //CefRenderHandler
 bool MainHandler::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect)
 {
-    worker_log(std::string("GetViewRect<<") + std::to_string(Data->WidthBrowser) + std::string("<<") + std::to_string(Data->HeightBrowser));
+    WORKER_LOG(std::string("GetViewRect<<") + std::to_string(Data->WidthBrowser) + std::string("<<") + std::to_string(Data->HeightBrowser));
 
     rect.x = 0;
     rect.y = 0;
@@ -635,9 +653,17 @@ void MainHandler::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, 
     }
 }
 
+bool MainHandler::StartDragging(CefRefPtr<CefBrowser> browser,CefRefPtr<CefDragData> drag_data,DragOperationsMask allowed_ops,int x, int y)
+{
+    WORKER_LOG("StartDragging");
+    Data->IsDrag = true;
+    BrowserEventsEmulator::StartDrag(browser,drag_data,allowed_ops,x,y);
+    return true;
+}
+
 void MainHandler::OnScrollOffsetChanged(CefRefPtr<CefBrowser> browser,double x,double y)
 {
-    worker_log(std::string("OFFSET<<") + std::to_string(x) + std::string("<<") + std::to_string(y));
+    WORKER_LOG(std::string("OFFSET<<") + std::to_string(x) + std::string("<<") + std::to_string(y));
     Data->ScrollX = x;
     Data->ScrollY = y;
 }

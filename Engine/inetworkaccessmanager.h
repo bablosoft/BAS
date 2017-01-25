@@ -22,7 +22,7 @@ namespace BrowserAutomationStudioFramework
         virtual void SetWorker(IWorker *Worker) = 0;
         virtual IWorker * GetWorker() = 0;
 
-        virtual void AddHeader(const QString& name,const QString& value, const QString& callback) = 0;
+        virtual void AddHeader(const QString& name,const QString& value,const QString& target, const QString& callback) = 0;
         virtual void CleanHeader(const QString& callback) = 0;
 
         virtual void AddCacheMaskAllow(const QString& Mask, const QString& callback) = 0;
@@ -36,7 +36,7 @@ namespace BrowserAutomationStudioFramework
         virtual void ClearAll(const QString& callback) = 0;
         virtual void ClearMasks(const QString& callback) = 0;
         virtual void ClearData(const QString& callback) = 0;
-        virtual void SetProxy(const QString& server, int Port, bool IsHttp, const QString& name, const QString& password, const QString& callback) = 0;
+        virtual void SetProxy(const QString& server, int Port, bool IsHttp, const QString& name, const QString& password,const QString& target, const QString& callback) = 0;
 
 
         virtual void FindCacheByMaskBase64(const QString& Mask, const QString& callback) = 0;

@@ -9,8 +9,11 @@ struct ElementCommand
     std::string CommandParam1;
     std::string CommandParam2;
     int StageId;
-    std::string FrameId;
+    std::string FrameUrl;
+
+
     std::vector<std::pair<std::string,std::string> > Path;
+
     std::string SerializePath();
 };
 #endif // ELEMENTCOMMAND

@@ -38,8 +38,6 @@ namespace BrowserAutomationStudioFramework
         QString SoftId;
         void StartMonitor();
         bool MultipleIds;
-        bool DisableImageConvert;
-        QMap<QString, QString> Properties;
     public:
         explicit AntigateCaptchaSolver(QObject *parent = 0);
 
@@ -47,10 +45,9 @@ namespace BrowserAutomationStudioFramework
     public slots:
         void SetServer(const QString& Server);
         void SetSoftId(const QString& SoftId);
-        virtual QString Solve(const QString& base64);
+        virtual QString Solve(const QString& base64,const QStringList& props);
         virtual void ReportBad(const QString& id);
         virtual bool TimeLimited();
-        virtual void SetProperty(const QString& name,const QString& value);
         void SetHttpClientFactory(IHttpClientFactory * HttpClientFactory);
         void SetMultipleIds(bool MultipleIds);
         IHttpClientFactory * GetHttpClientFactory();

@@ -138,7 +138,12 @@ std::string JavaScriptExtensions::GetBasicExtension(bool IsRecord)
             std::ifstream ifs("html/main/css_path.js");
             additional = std::string((std::istreambuf_iterator<char>(ifs)),(std::istreambuf_iterator<char>()));
         }catch(...){}
-        //worker_log(additional);
+        try
+        {
+            std::ifstream ifs("html/main/xpath_path.js");
+            additional += std::string((std::istreambuf_iterator<char>(ifs)),(std::istreambuf_iterator<char>()));
+        }catch(...){}
+        //WORKER_LOG(additional);
     }
 
     std::string inspect_script;
@@ -149,6 +154,7 @@ std::string JavaScriptExtensions::GetBasicExtension(bool IsRecord)
         "var BrowserAutomationStudio_CssSelectorGenerator2 = new CssSelectorGenerator({selectors: ['tag', 'nthchild']});"
         "var BrowserAutomationStudio_CssSelectorGenerator = new CssSelectorGenerator({selectors: ['id', 'tag', 'nthchild']});"
         "var BrowserAutomationStudio_CssSelectorGenerator3 = new CssSelectorGenerator({selectors: ['id', 'class', 'tag', 'nthchild']});"
+
         "function BrowserAutomationStudio_InspectElement(x,y)"
         "{"
             "var el = document.elementFromPoint(x,y);"
@@ -158,16 +164,34 @@ std::string JavaScriptExtensions::GetBasicExtension(bool IsRecord)
                 "var css2 = '';"
                 "var css3 = '';"
                 "var match = '';"
+                "var xpath = '';"
                 "try"
                 "{"
-                    "css = BrowserAutomationStudio_CssSelectorGenerator.getSelector(el);"
-                    "css2 = BrowserAutomationStudio_CssSelectorGenerator2.getSelector(el);"
-                    "css3 = BrowserAutomationStudio_CssSelectorGenerator3.getSelector(el);"
-                    "match = el.outerHTML.substr(0,40).replace(/(?:\\r\\n|\\r|\\n)/g, ' ');"
-                "}catch(e){}"
-                "browser_automation_studio_inspect_result(parseInt(rect.left),parseInt(rect.top),parseInt(rect.width),parseInt(rect.height),css,css,css2,css3,match,x + document.body.scrollLeft,y + document.body.scrollTop,true);"
+                    "css = ' >CSS> ' + BrowserAutomationStudio_CssSelectorGenerator.getSelector(el);"
+                    "css2 = ' >CSS> ' + BrowserAutomationStudio_CssSelectorGenerator2.getSelector(el);"
+                    "css3 = ' >CSS> ' + BrowserAutomationStudio_CssSelectorGenerator3.getSelector(el);"
+                    "match = '>MATCH>' + el.outerHTML.substr(0,40).replace(/(?:\\r\\n|\\r|\\n)/g, ' ');"
+                    "xpath = ' >XPATH> ' + BrowserAutomationStudio_CreateXPathFromElement(el);"
+                "}catch(e){};"
+                "var is_frame=false;"
+                "var frame_name='';"
+                "var frame_url='';"
+                "var frame_tag_html='';"
+                "var frame_index=0;"
+                "var r = BrowserAutomationStudio_GetInternalBoundingRect(el);"
+                "var x_with_padding=r.left;"
+                "var y_with_padding=r.top;"
+                "if(el.tagName.toLowerCase()=='iframe' || el.tagName.toLowerCase()=='frame')"
+                "{"
+                    "is_frame=true;"
+                    "frame_name=el.getAttribute('name') || '';"
+                    "frame_url=el.getAttribute('src') || '';"
+                    "frame_tag_html=el.outerHTML || '';"
+                    "frame_index=Array.prototype.slice.call(document.querySelectorAll('iframe, frame')).indexOf(el);if(frame_index<0)frame_index=0;"
+                "}"
+                "browser_automation_studio_inspect_result(parseInt(rect.left),parseInt(rect.top),parseInt(rect.width),parseInt(rect.height),css,css,css2,css3,match,xpath,x + document.body.scrollLeft,y + document.body.scrollTop,true,is_frame,frame_name,frame_url,frame_tag_html,frame_index,x_with_padding,y_with_padding);"
             "}else{"
-                "browser_automation_studio_inspect_result(0,0,0,0,'','','','','',x,y,false);"
+                "browser_automation_studio_inspect_result(0,0,0,0,'','','','','','',x,y,false,false,'','','',0,0,0);"
             "}"
         "}");
     }
@@ -175,56 +199,104 @@ std::string JavaScriptExtensions::GetBasicExtension(bool IsRecord)
     additional +
     inspect_script
      + std::string(
-    "function BrowserAutomationStudio_ScrollTo(x,y,el)"
+    "function BrowserAutomationStudio_GetInternalBoundingRect(element){"
+        "var style = window.getComputedStyle(element);"
+        "var margin = { left: parseInt(style['margin-left']), right: parseInt(style['margin-right']), top: parseInt(style['margin-top']), bottom: parseInt(style['margin-bottom'])};"
+        "var padding = { left: parseInt(style['padding-left']), right: parseInt(style['padding-right']), top: parseInt(style['padding-top']), bottom: parseInt(style['padding-bottom'])};"
+        "var border = { left: parseInt(style['border-left']), right: parseInt(style['border-right']), top: parseInt(style['border-top']), bottom: parseInt(style['border-bottom']) };"
+        "var rect = element.getBoundingClientRect();"
+        "rect = {left: parseInt(rect.left + padding.left + border.left),right: parseInt(rect.right - padding.right - border.right),top: parseInt(rect.top + padding.top + border.top),bottom: parseInt(rect.bottom  - padding.top - border.top)};"
+        "rect.width = rect.right - rect.left;"
+        "rect.height = rect.bottom - rect.top;"
+        "return rect;"
+    "}"
+    "function BrowserAutomationStudio_ScrollToElement(el)"
     "{"
-        "x = Math.floor(x);y = Math.floor(y);"
-        "if(x > document.body.scrollLeft && x < document.body.scrollLeft + window.innerWidth && y > document.body.scrollTop && y < document.body.scrollTop + window.innerHeight && typeof(el) == 'undefined')"
+        "if(el)"
         "{"
-            "browser_automation_studio_result(document.body.scrollLeft + ',' + document.body.scrollTop + ',' + x.toString() + ',' + y.toString());"
+
+            //"console.log('Moving to element');"
+            //"console.log(el);"
+            "el.scrollIntoViewIfNeeded(true);"
+            //"document.body.scrollLeft = xc - window.innerWidth/2;"
+            //"document.body.scrollTop = yc - window.innerHeight/2;"
+
+            "setTimeout(function(){"
+                "var rect = el.getBoundingClientRect();"
+
+                "var xc = Math.floor(rect.left + rect.width/2);"
+                "var yc = Math.floor(rect.top + rect.height/2);"
+                "var x1 = Math.floor(rect.left);"
+                "var y1 = Math.floor(rect.top);"
+                "var x2 = Math.floor(rect.right);"
+                "var y2 = Math.floor(rect.bottom);"
+
+                //"if(x1 > 0 && x1 < window.innerWidth && y1 > 0 && y1 < window.innerHeight && x2 > 0 && x2 < window.innerWidth && y2 > 0 && y2 < window.innerHeight)"
+                //"{"
+
+                "var res = document.body.scrollLeft + ',' + document.body.scrollTop + ',' + xc + ',' + yc;"
+
+                "if(x1<0)x1=0;"
+                "if(x1>window.innerWidth-2)x1=window.innerWidth-2;"
+
+                "if(y1<0)y1=0;"
+                "if(y1>window.innerHeight-2)y1=window.innerHeight-2;"
+
+                "if(x2<=x1)x2=x1+1;"
+                "if(x2>window.innerWidth-1)x2=window.innerWidth-1;"
+
+                "if(y2<=y1)y2=y1+1;"
+                "if(y2>window.innerHeight-1)y2=window.innerHeight-1;"
+
+                "res += ',' + x1 + ',' + y1 + ',' + x2 + ',' + y2;"
+
+                "browser_automation_studio_result(res);"
+
+                //"return;"
+                //"}"
+            "}, 100)"
+
+        "}else{"
+            "browser_automation_studio_result('BAS_NOT_EXISTS');"
+        "}"
+
+    "}"
+
+    "function BrowserAutomationStudio_ScrollToCoordinates(x,y)"
+    "{"
+        "var x = Math.floor(x);"
+        "var y = Math.floor(y);"
+
+        "if(x > document.body.scrollLeft && x < document.body.scrollLeft + window.innerWidth && y > document.body.scrollTop && y < document.body.scrollTop + window.innerHeight)"
+        "{"
+            "var res = document.body.scrollLeft + ',' + document.body.scrollTop + ',' + x.toString() + ',' + y.toString();"
+            "browser_automation_studio_result(res);"
             "return;"
         "}"
+
+        //"console.log('Moving to coordinates ');"
+        //"console.log(x - window.innerWidth/2);"
+        //"console.log(y - window.innerHeight/2);"
         "document.body.scrollLeft = x - window.innerWidth/2;"
         "document.body.scrollTop = y - window.innerHeight/2;"
 
-        "setTimeout(function(){x-=document.body.scrollLeft;"
-        "if(x<0)x=0;"
-        "if(x>window.innerWidth-2)x=window.innerWidth-2;"
-        "x+=document.body.scrollLeft;"
+        "setTimeout(function(){"
+            "x-=document.body.scrollLeft;"
+            "if(x<0)x=0;"
+            "if(x>window.innerWidth-2)x=window.innerWidth-2;"
+            "x+=document.body.scrollLeft;"
 
-        "y-=document.body.scrollTop;"
-        "if(y<0)y=0;"
-        "if(y>window.innerHeight-2)y=window.innerHeight-2;"
-        "y+=document.body.scrollTop;"
+            "y-=document.body.scrollTop;"
+            "if(y<0)y=0;"
+            "if(y>window.innerHeight-2)y=window.innerHeight-2;"
+            "y+=document.body.scrollTop;"
 
-        "var res = document.body.scrollLeft + ',' + document.body.scrollTop + ',' + x.toString() + ',' + y.toString();"
-        "if(typeof(el)!='undefined')"
-        "{"
-             "var rect = el.getBoundingClientRect();"
-             "var left = rect.left;"
-             "if(left<0)left=0;"
-             "if(left>window.innerWidth-2)left=window.innerWidth-2;"
-
-             "var top = rect.top;"
-             "if(top<0)top=0;"
-             "if(top>window.innerHeight-2)top=window.innerHeight-2;"
-
-             "var right = rect.right;"
-             "if(right<=rect.left)right=rect.left+1;"
-             "if(right>window.innerWidth-1)right=window.innerWidth-1;"
-
-             "var bottom = rect.bottom;"
-             "if(bottom<=rect.top)bottom=rect.top+1;"
-             "if(bottom>window.innerHeight-1)bottom=window.innerHeight-1;"
-
-             "res += ',' + left.toString() + ',' + top.toString()+ ',' + right.toString() + ',' + bottom.toString();"
-        "}"
-        "browser_automation_studio_result(res);}, 10)"
+            "var res = document.body.scrollLeft + ',' + document.body.scrollTop + ',' + x.toString() + ',' + y.toString();"
+            "browser_automation_studio_result(res);"
+        "}, 100)"
     "}"
-    "function BrowserAutomationStudio_ScrollToRelative(x,y,el)"
-    "{"
-        "BrowserAutomationStudio_ScrollTo(x + document.body.scrollLeft, y + document.body.scrollTop,el);"
-    "}"
-    "function BrowserAutomationStudio_ScrollToNoResult(x,y)"
+
+    "function BrowserAutomationStudio_ScrollToCoordinatesNoResult(x,y)"
     "{"
         "if(x > document.body.scrollLeft && x < document.body.scrollLeft + window.innerWidth && y > document.body.scrollTop && y < document.body.scrollTop + window.innerHeight)"
         "{"
@@ -318,6 +390,16 @@ std::string JavaScriptExtensions::GetBasicExtension(bool IsRecord)
             "{"
                 "var select_type = json[i];"
                 "var select_value = json[i+1];"
+                "if(select_type == 'xpath')"
+                "{"
+                    "res = document.evaluate(select_value, res, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null ).snapshotItem(0);"
+                "}"
+                "if(select_type == 'xpath_all')"
+                "{"
+                    "var q = document.evaluate(select_value, res, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );"
+                    "var len = q.snapshotLength;res=[];"
+                    "for(var it = 0;it<len;it++)res.push(q.snapshotItem(it));"
+                "}"
                 "if(select_type == 'css')"
                 "{"
                     "res = res.querySelector(select_value);"
@@ -347,7 +429,7 @@ std::string JavaScriptExtensions::GetBasicExtension(bool IsRecord)
 
                         "y = parseInt(select_value.split(',')[1].trim());"
                     "}catch(e){};"
-                    "BrowserAutomationStudio_ScrollToNoResult(x,y);"
+                    "BrowserAutomationStudio_ScrollToCoordinatesNoResult(x,y);"
                     "res = document.elementFromPoint(x - document.body.scrollLeft,y - document.body.scrollTop);"
                 "}"
                 "if(!res)"

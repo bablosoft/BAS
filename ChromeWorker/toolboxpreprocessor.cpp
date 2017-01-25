@@ -20,8 +20,8 @@ void ScenarioPreprocess(const ModulesDataList & Modules, std::string& OriginalSc
         }
     }
     Localize = "_L = $.extend(_L," +  picojson::value(LocalizeObject).serialize() + ");";
-    worker_log("_MACRO_INSERT_LOCALIZE_");
-    worker_log(Localize);
+    WORKER_LOG("_MACRO_INSERT_LOCALIZE_");
+    WORKER_LOG(Localize);
     ReplaceAllInPlace(OriginalScript,"_MACRO_INSERT_LOCALIZE_",Localize);
 
     std::string Actions;
@@ -41,8 +41,8 @@ void ScenarioPreprocess(const ModulesDataList & Modules, std::string& OriginalSc
 
     }
     Actions = "_A = $.extend(_A," +  picojson::value(ActionsObject).serialize() + ");";
-    worker_log("_MACRO_INSERT_ACTIONS_");
-    worker_log(Actions);
+    WORKER_LOG("_MACRO_INSERT_ACTIONS_");
+    WORKER_LOG(Actions);
     ReplaceAllInPlace(OriginalScript,"_MACRO_INSERT_ACTIONS_",Actions);
 }
 
@@ -67,8 +67,8 @@ void ToolboxPreprocess(const ModulesDataList & Modules, std::string& OriginalScr
 
         }
         Actions = "_A = $.extend(_A," +  picojson::value(ActionsObject).serialize() + ");";
-        worker_log("_MACRO_INSERT_ACTIONS_");
-        worker_log(Actions);
+        WORKER_LOG("_MACRO_INSERT_ACTIONS_");
+        WORKER_LOG(Actions);
         ReplaceAllInPlace(OriginalScript,"_MACRO_INSERT_ACTIONS_",Actions);
     }
 
@@ -109,8 +109,8 @@ void ToolboxPreprocess(const ModulesDataList & Modules, std::string& OriginalScr
             }
         }
     }
-    worker_log("_MACRO_INSERT_ACTION_LIST_");
-    worker_log(ActionList);
+    WORKER_LOG("_MACRO_INSERT_ACTION_LIST_");
+    WORKER_LOG(ActionList);
     //std::string ActionList = ",{ description: \"Test\", type: \"group\" },{ name: \"Test\", description: \"Set proxy for http client\", ref: \"tst\" }";
     ReplaceAllInPlace(OriginalScript,"_MACRO_INSERT_ACTION_LIST_",ActionList);
 
@@ -124,8 +124,8 @@ void ToolboxPreprocess(const ModulesDataList & Modules, std::string& OriginalScr
                 RouterFunc += "," +  Action->Name + ": function(){ _GobalModel.set({ state: \"" + Action->Name + "\" }); }";
         }
     }
-    worker_log("_MACRO_INSERT_ROUTER_FUNC_");
-    worker_log(RouterFunc);
+    WORKER_LOG("_MACRO_INSERT_ROUTER_FUNC_");
+    WORKER_LOG(RouterFunc);
     ReplaceAllInPlace(OriginalScript,"_MACRO_INSERT_ROUTER_FUNC_",RouterFunc);
 
 
@@ -137,8 +137,8 @@ void ToolboxPreprocess(const ModulesDataList & Modules, std::string& OriginalScr
                 RouterDef += ",\"!/" + Action->Name + "\": \"" + Action->Name + "\"";
         }
     }
-    worker_log("_MACRO_INSERT_ROUTER_DEF_");
-    worker_log(RouterDef);
+    WORKER_LOG("_MACRO_INSERT_ROUTER_DEF_");
+    WORKER_LOG(RouterDef);
     ReplaceAllInPlace(OriginalScript,"_MACRO_INSERT_ROUTER_DEF_",RouterDef);
 
     std::string Templates;
@@ -149,8 +149,8 @@ void ToolboxPreprocess(const ModulesDataList & Modules, std::string& OriginalScr
             Templates += ",\"" + Action->Name + "\": _.template($('#" + Action->Name + "').html())";
         }
     }
-    worker_log("_MACRO_INSERT_TEMPLATES_");
-    worker_log(Templates);
+    WORKER_LOG("_MACRO_INSERT_TEMPLATES_");
+    WORKER_LOG(Templates);
     ReplaceAllInPlace(OriginalScript,"_MACRO_INSERT_TEMPLATES_",Templates);
 
 
@@ -165,8 +165,8 @@ void ToolboxPreprocess(const ModulesDataList & Modules, std::string& OriginalScr
             "}";
         }
     }
-    worker_log("_MACRO_INSERT_SELECT_");
-    worker_log(Select);
+    WORKER_LOG("_MACRO_INSERT_SELECT_");
+    WORKER_LOG(Select);
     ReplaceAllInPlace(OriginalScript,"_MACRO_INSERT_SELECT_",Select);
 
 
@@ -180,8 +180,8 @@ void ToolboxPreprocess(const ModulesDataList & Modules, std::string& OriginalScr
             "</script>";
         }
     }
-    worker_log("_MACRO_INSERT_INTERFACE_");
-    worker_log(Interface);
+    WORKER_LOG("_MACRO_INSERT_INTERFACE_");
+    WORKER_LOG(Interface);
     ReplaceAllInPlace(OriginalScript,"_MACRO_INSERT_INTERFACE_",Interface);
 
 
@@ -200,8 +200,8 @@ void ToolboxPreprocess(const ModulesDataList & Modules, std::string& OriginalScr
         }
     }
     Localize = "_L = $.extend(_L," +  picojson::value(LocalizeObject).serialize() + ");";
-    worker_log("_MACRO_INSERT_LOCALIZE_");
-    worker_log(Localize);
+    WORKER_LOG("_MACRO_INSERT_LOCALIZE_");
+    WORKER_LOG(Localize);
     ReplaceAllInPlace(OriginalScript,"_MACRO_INSERT_LOCALIZE_",Localize);
 
     std::string CodeString;
@@ -217,8 +217,8 @@ void ToolboxPreprocess(const ModulesDataList & Modules, std::string& OriginalScr
             }
         }
     }
-    worker_log("_MACRO_INSERT_CODE_");
-    worker_log(CodeString);
+    WORKER_LOG("_MACRO_INSERT_CODE_");
+    WORKER_LOG(CodeString);
     ReplaceAllInPlace(OriginalScript,"_MACRO_INSERT_CODE_",CodeString);
 
 
@@ -237,7 +237,7 @@ void ToolboxPreprocess(const ModulesDataList & Modules, std::string& OriginalScr
             }
         }
     }
-    worker_log("_MACRO_INSERT_ELEMENT_FUNCTION_");
-    worker_log(ElementFunction);
+    WORKER_LOG("_MACRO_INSERT_ELEMENT_FUNCTION_");
+    WORKER_LOG(ElementFunction);
     ReplaceAllInPlace(OriginalScript,"_MACRO_INSERT_ELEMENT_FUNCTION_",ElementFunction);
 }

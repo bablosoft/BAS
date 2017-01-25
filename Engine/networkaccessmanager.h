@@ -41,7 +41,7 @@ namespace BrowserAutomationStudioFramework
     signals:
 
     public slots:
-        virtual void AddHeader(const QString& name,const QString& value, const QString& callback);
+        virtual void AddHeader(const QString& name,const QString& value,const QString& target, const QString& callback);
         virtual void CleanHeader(const QString& callback);
 
         virtual void AddCacheMaskAllow(const QString& Mask, const QString& callback);
@@ -62,7 +62,7 @@ namespace BrowserAutomationStudioFramework
         virtual void IsUrlLoadedByMask(const QString& Mask, const QString& callback);
         virtual void GetLoadStats(const QString& callback);
         virtual QNetworkAccessManager *GetNetworkAccessManager();
-        virtual void SetProxy(const QString& server, int Port, bool IsHttp, const QString& name, const QString& password, const QString& callback);
+        virtual void SetProxy(const QString& server, int Port, bool IsHttp, const QString& name, const QString& password,const QString& target, const QString& callback);
 
 
     private slots:

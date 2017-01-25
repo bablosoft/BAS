@@ -82,12 +82,17 @@ namespace BrowserAutomationStudioFramework
 
         virtual IWebElement* css(const QString& css);
         virtual IWebElement* frame(const QString& name);
+        virtual IWebElement* frame_css(const QString& name);
+        virtual IWebElement* frame_match(const QString& name);
+        virtual IWebElement* frame_element();
         virtual IWebElement* position(int x, int y);
         virtual IWebElement* all(const QString& css);
         virtual void render_file(const QString& path,const QString& callback);
         virtual void render_base64(const QString& callback);
         virtual IWebElement* match(const QString& text);
         virtual IWebElement* match_all(const QString& text);
+        virtual IWebElement* xpath(const QString& text);
+        virtual IWebElement* xpath_all(const QString& text);
         void Received(const QString& value);
         QString PrepareCallback(const QString& callback);
         virtual QRect GetGeometry();

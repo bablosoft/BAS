@@ -628,7 +628,6 @@ OTHER_FILES += \
     scripts/engine/worker/httpclient.js \
     translate/ru.ts \
     translate/en.ts \
-    scripts/engine/worker/smsreg.js \
     scripts/engine/worker/pop3client.js \
     scripts/engine/common/html_parser.js \
     scripts/engine/common/rss_parser.js \

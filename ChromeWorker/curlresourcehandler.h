@@ -81,6 +81,7 @@ private:
     bool CanDelete = false;
     int IteratorWaitAfterDelete = 10;
     int64 StartTime;
+    int TabNumber = -1;
 public:
 
 
@@ -92,6 +93,7 @@ public:
     void Join();
     bool GetCanDelete();
     void SetForceUtf8(bool ForceUtf8);
+    void SetTabNumber(int TabNumber);
 
     void Timer();
 

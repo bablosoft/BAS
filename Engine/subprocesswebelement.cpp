@@ -34,7 +34,6 @@ namespace BrowserAutomationStudioFramework
     }
     SubprocessWebElement::~SubprocessWebElement()
     {
-
     }
 
     QRect SubprocessWebElement::GetGeometry()
@@ -418,6 +417,56 @@ namespace BrowserAutomationStudioFramework
         SubprocessWebElement *element = new SubprocessWebElement();
         element->Selector = this->Selector;
         element->AddSelector("frame",name);
+        element->Worker = Worker;
+        connect(Worker->GetProcessComunicator(),SIGNAL(Received(QString)),element,SLOT(Received(QString)));
+        return element;
+    }
+
+    IWebElement* SubprocessWebElement::frame_css(const QString& name)
+    {
+        SubprocessWebElement *element = new SubprocessWebElement();
+        element->Selector = this->Selector;
+        element->AddSelector("frame_css",name);
+        element->Worker = Worker;
+        connect(Worker->GetProcessComunicator(),SIGNAL(Received(QString)),element,SLOT(Received(QString)));
+        return element;
+    }
+
+    IWebElement* SubprocessWebElement::frame_match(const QString& name)
+    {
+        SubprocessWebElement *element = new SubprocessWebElement();
+        element->Selector = this->Selector;
+        element->AddSelector("frame_match",name);
+        element->Worker = Worker;
+        connect(Worker->GetProcessComunicator(),SIGNAL(Received(QString)),element,SLOT(Received(QString)));
+        return element;
+    }
+
+    IWebElement* SubprocessWebElement::frame_element()
+    {
+        SubprocessWebElement *element = new SubprocessWebElement();
+        element->Selector = this->Selector;
+        element->AddSelector("frame_element","");
+        element->Worker = Worker;
+        connect(Worker->GetProcessComunicator(),SIGNAL(Received(QString)),element,SLOT(Received(QString)));
+        return element;
+    }
+
+    IWebElement* SubprocessWebElement::xpath(const QString& name)
+    {
+        SubprocessWebElement *element = new SubprocessWebElement();
+        element->Selector = this->Selector;
+        element->AddSelector("xpath",name);
+        element->Worker = Worker;
+        connect(Worker->GetProcessComunicator(),SIGNAL(Received(QString)),element,SLOT(Received(QString)));
+        return element;
+    }
+
+    IWebElement* SubprocessWebElement::xpath_all(const QString& name)
+    {
+        SubprocessWebElement *element = new SubprocessWebElement();
+        element->Selector = this->Selector;
+        element->AddSelector("xpath_all",name);
         element->Worker = Worker;
         connect(Worker->GetProcessComunicator(),SIGNAL(Received(QString)),element,SLOT(Received(QString)));
         return element;

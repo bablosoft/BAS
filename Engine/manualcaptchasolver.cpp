@@ -40,19 +40,12 @@ namespace BrowserAutomationStudioFramework
 
     }
 
-
-    void ManualCaptchaSolver::SetProperty(const QString& name,const QString& value)
-    {
-
-
-    }
-
     void ManualCaptchaSolver::DoneSlot(const QString& val, const QString& id, bool res,const QString& solver_id)
     {
         emit ChangedSize(--Size);
     }
 
-    QString ManualCaptchaSolver::Solve(const QString& base64)
+    QString ManualCaptchaSolver::Solve(const QString& base64,const QStringList& props)
     {
         emit Used();
         emit ChangedSize(++Size);

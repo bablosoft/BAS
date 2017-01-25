@@ -8,8 +8,18 @@
 namespace BrowserAutomationStudioFramework
 {
     ScriptMultiWorker::ScriptMultiWorker(QObject *parent) :
-        IMultiWorker(parent), engine(0), Waiter(0), ResourceHandlers(0), IsAborted(false), StageTimeoutTimer(0), DoTrace(false), Helper(0), IsRecord(false)
+        IMultiWorker(parent), engine(0), Waiter(0), ResourceHandlers(0), IsAborted(false), StageTimeoutTimer(0), DoTrace(false), Helper(0), IsRecord(false), DieInstant(false), SuccessNumber(0), FailNumber(0), CurrentThreadNumber(-1)
     {
+    }
+
+
+    void ScriptMultiWorker::SetProjectPath(const QString& ProjectPath)
+    {
+        this->ProjectPath = ProjectPath;
+    }
+    QString ScriptMultiWorker::GetProjectPath()
+    {
+        return ProjectPath;
     }
 
     void ScriptMultiWorker::SetModuleManager(IModuleManager *ModuleManager)
@@ -597,6 +607,7 @@ namespace BrowserAutomationStudioFramework
     {
         if(IsRecord)
         {
+            CurrentThreadNumber = 1;
             ThreadsNumber = 1;
             MaximumSuccess = 1;
             MaximumFailure = 1;
@@ -610,6 +621,7 @@ namespace BrowserAutomationStudioFramework
         NoNeedToCreateWorkersMore = false;
         Browsers = BrowserFactory->Create(ThreadsNumber);
         WorkerRunning = ThreadsNumber;
+        CurrentThreadNumber = ThreadsNumber;
         Waiter->WaitForStageFinished(this,SIGNAL(StageFinished()),this,SLOT(RunSubScript()));
         for(int i = 0;i<ThreadsNumber;i++)
         {
@@ -660,6 +672,28 @@ namespace BrowserAutomationStudioFramework
         int SuspendedCount = ScriptSuspender->Count();
         bool DontCreateNewWaitForSuspended = false;
         bool IsSuspended = false;
+        bool LastDieInstant = DieInstant;
+        if(w->IsDieInstant())
+            DieInstant = true;
+
+        bool DontCreateMore = w->IsDontCreateMore();
+
+        bool IsAllDontCreateMore = true;
+
+        if(Workers.size() < CurrentThreadNumber)
+        {
+            IsAllDontCreateMore = false;
+        }else
+        {
+            foreach(IWorker *w,Workers)
+            {
+                if(w && !w->IsDontCreateMore())
+                {
+                    IsAllDontCreateMore = false;
+                    break;
+                }
+            }
+        }
 
 
         switch(w->GetResultStatus())
@@ -670,9 +704,10 @@ namespace BrowserAutomationStudioFramework
                 {
                     Logger->WriteSuccess(w->GetResultMessage());
 
-                    if(!NoNeedToCreateWorkersMore)
+                    if(!LastDieInstant)
                     {
                         ReportData->Success(w->GetResultMessageRaw());
+                        SuccessNumber ++;
                         emit Success();
                     }
 
@@ -690,9 +725,10 @@ namespace BrowserAutomationStudioFramework
             case IWorker::FailStatus:
             {
                 Logger->WriteFail(w->GetResultMessage());
-                if(!NoNeedToCreateWorkersMore)
+                if(!LastDieInstant)
                 {
                     ReportData->Fail(w->GetResultMessageRaw());
+                    FailNumber ++;
                     emit Failed();
                 }
                 FailLeft--;
@@ -705,12 +741,13 @@ namespace BrowserAutomationStudioFramework
             case IWorker::DieStatus:
             {
                 Logger->Write(w->GetResultMessage());
-                if(!NoNeedToCreateWorkersMore)
+                if(!LastDieInstant)
                 {
                     ReportData->Fail(tr("Ended with message: ") + w->GetResultMessageRaw());
                     ReportData->Final(tr("Ended with message: ") + w->GetResultMessageRaw());
-                    NoNeedToCreateWorkersMore = true;
                 }
+                NoNeedToCreateWorkersMore = true;
+
             }break;
             case IWorker::SuspendStatus:
             {
@@ -740,10 +777,13 @@ namespace BrowserAutomationStudioFramework
             return;
         }
 
+
+
         WorkerRunning --;
 
-        if(WorkerRunning == 0 && NoNeedToCreateWorkersMore)
+        if((WorkerRunning == 0 && NoNeedToCreateWorkersMore) || IsAllDontCreateMore)
         {
+            NoNeedToCreateWorkersMore = true;
             //Logger->Write("Stage Finished");
             if(StageTimeoutTimer)
             {
@@ -756,11 +796,23 @@ namespace BrowserAutomationStudioFramework
         }
         if(NoNeedToCreateWorkersMore)
         {
-            AbortWorkers(false);
+            if(DieInstant)
+                AbortWorkers(false);
+            else
+            {
+                foreach(IWorker *w,Workers)
+                {
+                    if(w)
+                       w->GetWaiter()->SetSkipWaitHandlerMode();
+                }
+            }
         }else
         {
-            WorkerRunning ++;
-            CreateWorker(index);
+            if(!DontCreateMore)
+            {
+                WorkerRunning ++;
+                CreateWorker(index);
+            }
         }
     }
 
@@ -811,6 +863,10 @@ namespace BrowserAutomationStudioFramework
         worker->SetDatabaseConnector(DatabaseConnector);
         worker->SetPreprocessor(Preprocessor);
         worker->SetThreadNumber(index + 1);
+        worker->SetSuccessNumber(&SuccessNumber);
+        worker->SetFailNumber(&FailNumber);
+        worker->SetProjectPath(GetProjectPath());
+
         worker->SetHttpClientFactory(HttpClientFactory);
         worker->SetPop3ClientFactory(Pop3ClientFactory);
         worker->SetImapClientFactory(ImapClientFactory);
@@ -978,8 +1034,8 @@ namespace BrowserAutomationStudioFramework
         if(DieOnFailHandler)
         {
             ResourceHandlers->Fail();
-            ReportData->Final(tr("Failed to get resource inside core"));
-            Logger->Write(tr("failed to get resource"));
+            ReportData->Final(tr("All data have been processed"));
+            Logger->Write(tr("All data have been processed"));
             emit Finished();
         }else
         {

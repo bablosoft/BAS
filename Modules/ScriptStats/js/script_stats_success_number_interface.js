@@ -1,0 +1,2 @@
+<%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "SUCCESS_NUMBER"}) %>
+<%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>

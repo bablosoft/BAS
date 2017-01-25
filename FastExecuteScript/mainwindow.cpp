@@ -447,6 +447,7 @@ void MainWindow::Start()
 
     //Prepare Worker
     ScriptMultiWorker* worker = new ScriptMultiWorker(this);
+    worker->SetProjectPath(QDir::current().absoluteFilePath("project.xml"));
     worker->SetModuleManager(_ModuleManager);
     worker->SetAdditionEngineScripts(_ModuleManager->GetModuleEngineCode());
     worker->SetPreprocessor(_Preprocessor);
@@ -681,9 +682,6 @@ void MainWindow::Start()
     Worker->SetHelperFactory(_HelperFactory);
 
     Worker->AddModule(new MemoryInfo(worker),"MemoryInfo",true,true);
-    /*PeriodicalHttpRequest * SmsRegPeriodicalHttpRequest = new PeriodicalHttpRequest(this);
-    SmsRegPeriodicalHttpRequest->SetHttpClientFactory(_HttpClientFactory);
-    worker->AddModule(SmsRegPeriodicalHttpRequest,"SmsRegPeriodicalHttpRequest",false,true);*/
 
     connect(ui->actionStop,SIGNAL(triggered()),worker,SLOT(Abort()));
     connect(ui->actionResources_Report,SIGNAL(triggered()),this,SLOT(ResourcesReport()));

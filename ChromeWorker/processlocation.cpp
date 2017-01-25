@@ -10,7 +10,7 @@ std::string ProcessLocation(const std::string& RedirectUrlNotEscaped,const std::
     if(RedirectUrlNotEscaped.empty())
         return OriginalUrl;
 
-    worker_log(std::string("Location before escape: ") + RedirectUrlNotEscaped);
+    WORKER_LOG(std::string("Location before escape: ") + RedirectUrlNotEscaped);
     std::string RedirectUrl;
     {
         int len = RedirectUrlNotEscaped.size();
@@ -30,7 +30,7 @@ std::string ProcessLocation(const std::string& RedirectUrlNotEscaped,const std::
         }
 
     }
-    worker_log(std::string("Location escaped: ") + RedirectUrl);
+    WORKER_LOG(std::string("Location escaped: ") + RedirectUrl);
 
     std::string Result = RedirectUrl;
     try

@@ -182,19 +182,19 @@ input[type="number"]::-webkit-outer-spin-button {
   margin-top:4px;
 }
 
-.use-waiter-disabled
+.use-waiter-disabled,.use-target-disabled,.use-timeout-disabled
 {
   color:#31708f !important; 
   opacity: 0.4;
 }
 
-.use-waiter-enabled
+.use-waiter-enabled,.use-target-enabled,.use-timeout-enabled
 {
   color:#31708f !important; 
   opacity: 1.0;
 }
 
-#use-waiter
+#use-waiter, #use-target, #use-timeout
 {
   font-size: 16px;
   line-height: 16px;

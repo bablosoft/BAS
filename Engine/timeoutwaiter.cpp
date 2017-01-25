@@ -13,6 +13,36 @@ namespace BrowserAutomationStudioFramework
         RestoreConnectors();
         GeneralWait = 60000;
         SolverWait = 200000;
+        GeneralWaitNext = -1;
+        SolverWaitNext = -1;
+        SkipWaitHandlerMode = false;
+    }
+
+    int TimeoutWaiter::GetGeneralWait()
+    {
+        if(GeneralWaitNext > 0)
+        {
+            int res = GeneralWaitNext;
+            GeneralWaitNext = -1;
+            return res;
+        }
+        return GeneralWait;
+    }
+
+    int TimeoutWaiter::GetSolverWait()
+    {
+        if(SolverWaitNext > 0)
+        {
+            int res = SolverWaitNext;
+            SolverWaitNext = -1;
+            return res;
+        }
+        return SolverWait;
+    }
+
+    void TimeoutWaiter::SetSkipWaitHandlerMode()
+    {
+        SkipWaitHandlerMode = true;
     }
 
     void TimeoutWaiter::SetGeneralWaitTimeout(int timeout)
@@ -29,6 +59,42 @@ namespace BrowserAutomationStudioFramework
             SolverWait = 1000;
         else
             SolverWait = timeout;
+    }
+
+    void TimeoutWaiter::SetGeneralWaitTimeoutNext(int timeout)
+    {
+        if(timeout<=0)
+        {
+            GeneralWaitNext = -1;
+            return;
+        }
+        if(timeout<1000)
+            GeneralWaitNext = 1000;
+        else
+            GeneralWaitNext = timeout;
+    }
+
+    int TimeoutWaiter::GetGeneralWaitTimeoutNext()
+    {
+        return GeneralWaitNext;
+    }
+
+    int TimeoutWaiter::GetSolverWaitTimeoutNext()
+    {
+        return SolverWaitNext;
+    }
+
+    void TimeoutWaiter::SetSolverWaitTimeoutNext(int timeout)
+    {
+        if(timeout<=0)
+        {
+            SolverWaitNext = -1;
+            return;
+        }
+        if(timeout<1000)
+            SolverWaitNext = 1000;
+        else
+            SolverWaitNext = timeout;
     }
 
     ITimerProxy *TimeoutWaiter::GetTimer()
@@ -80,7 +146,7 @@ namespace BrowserAutomationStudioFramework
         connect(ConnectorFail,SIGNAL(signal()),ConnectorSuccess,SLOT(end()));
         connect(ConnectorFail,SIGNAL(signal()),object_fail,slot_fail);
 
-        GetTimer()->singleShot(GeneralWait,ConnectorFail,SLOT(slot()));
+        GetTimer()->singleShot(GetGeneralWait(),ConnectorFail,SLOT(slot()));
     }
 
     void TimeoutWaiter::WaitInfinity(const QObject *object_wait, const char * slot_signal ,const QObject *object_success,const char * slot_success)
@@ -135,7 +201,7 @@ namespace BrowserAutomationStudioFramework
             connect(ConnectorFail,SIGNAL(signal()),this,SLOT(RestoreConnectors()));
             connect(ConnectorFail,SIGNAL(signal()),ConnectorSuccess,SLOT(end()));
             connect(ConnectorFail,SIGNAL(signal()),object_fail,slot_fail);
-            GetTimer()->singleShot(SolverWait,ConnectorFail,SLOT(slot()));
+            GetTimer()->singleShot(GetSolverWait(),ConnectorFail,SLOT(slot()));
         }
 
         connect(solver,SIGNAL(Done(QString,QString,bool,QString)),this,SLOT(ObtainSolverResult(QString,QString,bool,QString)));
@@ -228,7 +294,7 @@ namespace BrowserAutomationStudioFramework
         {
             case IResourceHandler::Ready: ConnectorSuccess->slot(); return;
             case IResourceHandler::Refused: ResourceRefused = true; ResourceHandler->deleteLater(); ConnectorFail->slot(); return;
-            case IResourceHandler::Wait: ResourceHandler->deleteLater();  break;
+            case IResourceHandler::Wait: ResourceHandler->deleteLater(); if(SkipWaitHandlerMode){ConnectorFail->slot(); return;} break;
             case IResourceHandler::NotAvailable: ResourceHandler->deleteLater(); ConnectorFail->slot(); return;
         }
 

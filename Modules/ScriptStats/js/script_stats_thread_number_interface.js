@@ -1,0 +1,2 @@
+<%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable to save thread index"), default_variable: "THREAD_INDEX"}) %>
+<%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>

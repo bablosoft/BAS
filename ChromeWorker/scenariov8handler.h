@@ -26,10 +26,13 @@ private:
     std::mutex mut_restart;
     std::mutex mut_editstart;
     std::mutex mut_editend;
+    std::mutex mut_runfunction;
 
     bool IsThreadNumberEditStart;
     bool IsSuccessNumberEditStart;
     bool IsFailNumberEditStart;
+    bool IsRunFunctionStart;
+
 
     std::mutex mut_threadnumbereditstart;
     std::mutex mut_successnumbereditstart;
@@ -59,6 +62,7 @@ public:
     bool GetIsThreadNumberEditStart();
     bool GetIsSuccessNumberEditStart();
     bool GetIsFailNumberEditStart();
+    bool GetIsRunFunctionStart();
     std::pair<std::string, bool> GetIsEditStart();
     std::pair<std::string, bool> GetClipboardSetRequest();
     bool GetClipboardGetRequest();

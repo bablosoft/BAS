@@ -22,7 +22,7 @@ std::string GetAllBrowserDataCode(const ModulesDataList& Modules)
 
 ModulesDataList LoadModulesData(const std::string& Locale)
 {
-    worker_log("Start Loading Modules");
+    WORKER_LOG("Start Loading Modules");
     ModulesDataList Result;
 
     std::vector<std::string> DisabledModules;
@@ -37,7 +37,7 @@ ModulesDataList LoadModulesData(const std::string& Locale)
           if(!it->second.get<bool>())
           {
               std::string ModuleName = it->first;
-              worker_log(std::string("Module ") + ModuleName + std::string(" is disabled"));
+              WORKER_LOG(std::string("Module ") + ModuleName + std::string(" is disabled"));
               DisabledModules.push_back(ModuleName);
           }
         }
@@ -53,35 +53,35 @@ ModulesDataList LoadModulesData(const std::string& Locale)
         {
             try
             {
-                worker_log(std::string("Loading Module From ") + Entry.Path);
+                WORKER_LOG(std::string("Loading Module From ") + Entry.Path);
                 std::string Manifest = ReadAllString(Entry.Path + "/manifest.json");
                 picojson::value ManifestJson;
                 picojson::parse(ManifestJson, Manifest);
                 picojson::value::object ManifestObject = ManifestJson.get<picojson::value::object>();
 
-                worker_log(std::string("Found ") + std::to_string(ManifestObject.size()) + std::string(" keys"));
+                WORKER_LOG(std::string("Found ") + std::to_string(ManifestObject.size()) + std::string(" keys"));
 
                 if(ManifestObject.find("name") == ManifestObject.end())
                 {
-                    worker_log("Attribute 'name' is empty");
+                    WORKER_LOG("Attribute 'name' is empty");
                     continue;
                 }
 
                 if(ManifestObject.find("description_small") == ManifestObject.end())
                 {
-                    worker_log("Attribute 'description_small' is empty");
+                    WORKER_LOG("Attribute 'description_small' is empty");
                     continue;
                 }
 
                 if(ManifestObject.find("actions") == ManifestObject.end())
                 {
-                    worker_log("Attribute 'actions' is empty");
+                    WORKER_LOG("Attribute 'actions' is empty");
                     continue;
                 }
 
                 if(ManifestObject.find("browser") == ManifestObject.end())
                 {
-                    worker_log("Attribute 'browser' is empty");
+                    WORKER_LOG("Attribute 'browser' is empty");
                     continue;
                 }
 
@@ -89,11 +89,11 @@ ModulesDataList LoadModulesData(const std::string& Locale)
                 {
                     ModulesData DataItem = std::make_shared<ModulesDataClass>();
                     DataItem->Name = ManifestObject["name"].get<std::string>();
-                    worker_log(std::string("Name ") + DataItem->Name);
+                    WORKER_LOG(std::string("Name ") + DataItem->Name);
 
                     if(std::find(std::begin(DisabledModules), std::end(DisabledModules), DataItem->Name) != std::end(DisabledModules))
                     {
-                        worker_log(std::string("Skip because module is disabled"));
+                        WORKER_LOG(std::string("Skip because module is disabled"));
                         continue;
                     }
 
@@ -105,18 +105,18 @@ ModulesDataList LoadModulesData(const std::string& Locale)
                     {
                         DataItem->Description = DescriptionObject["en"].get<std::string>();
                     }
-                    worker_log(std::string("Description ") + DataItem->Description);
+                    WORKER_LOG(std::string("Description ") + DataItem->Description);
 
                     picojson::value::array BrowserArray = ManifestObject["browser"].get<picojson::value::array>();
                     for(picojson::value BrowserValue: BrowserArray)
                     {
                         std::string BrowserPath = BrowserValue.get<std::string>();
-                        worker_log(std::string("Found browser path ") + BrowserPath);
+                        WORKER_LOG(std::string("Found browser path ") + BrowserPath);
 
                         std::string BrowserData = ReadAllString(Entry.Path + std::string("/") + BrowserPath);
                         if(!BrowserData.empty())
                         {
-                            worker_log(std::string("Found browser script length ") + std::to_string(BrowserData.size()));
+                            WORKER_LOG(std::string("Found browser script length ") + std::to_string(BrowserData.size()));
 
                             DataItem->BrowserScripts.push_back(BrowserData);
                         }
@@ -124,18 +124,18 @@ ModulesDataList LoadModulesData(const std::string& Locale)
 
                     if(ManifestObject.find("localize") != ManifestObject.end())
                     {
-                        worker_log("Found localize element");
+                        WORKER_LOG("Found localize element");
                         picojson::value::object LocalizeObject = ManifestObject["localize"].get<picojson::value::object>();
                         for(picojson::value::object::iterator it = LocalizeObject.begin(); it != LocalizeObject.end(); ++it)
                         {
-                            worker_log(std::string("Found localize key ") + it->first);
+                            WORKER_LOG(std::string("Found localize key ") + it->first);
                             LocalizeData LocalizeKey = std::make_shared<LocalizeDataClass>();
                             LocalizeKey->Key = it->first;
                             picojson::value::object LocalizeValueObject = it->second.get<picojson::value::object>();
 
                             for(picojson::value::object::iterator it = LocalizeValueObject.begin(); it != LocalizeValueObject.end(); ++it)
                             {
-                                worker_log(std::string("Add localize key item ") + it->first + std::string(" ") + it->second.get<std::string>());
+                                WORKER_LOG(std::string("Add localize key item ") + it->first + std::string(" ") + it->second.get<std::string>());
                                 LocalizeKey->Items.insert(std::pair<std::string,std::string>(it->first,it->second.get<std::string>()));
                             }
 
@@ -151,38 +151,38 @@ ModulesDataList LoadModulesData(const std::string& Locale)
 
                         if(ActionObject.find("name") == ActionObject.end())
                         {
-                            worker_log("Found some action, but it has no name");
+                            WORKER_LOG("Found some action, but it has no name");
                             continue;
                         }
 
 
                         if(ActionObject.find("description") == ActionObject.end())
                         {
-                            worker_log("Attribute 'description' is empty");
+                            WORKER_LOG("Attribute 'description' is empty");
                             continue;
                         }
 
                         if(ActionObject.find("is_element") == ActionObject.end())
                         {
-                            worker_log("Attribute 'is_element' is empty");
+                            WORKER_LOG("Attribute 'is_element' is empty");
                             continue;
                         }
 
                         if(ActionObject.find("interface") == ActionObject.end())
                         {
-                            worker_log("Attribute 'interface' is empty");
+                            WORKER_LOG("Attribute 'interface' is empty");
                             continue;
                         }
 
                         if(ActionObject.find("select") == ActionObject.end())
                         {
-                            worker_log("Attribute 'select' is empty");
+                            WORKER_LOG("Attribute 'select' is empty");
                             continue;
                         }
 
                         if(ActionObject.find("code") == ActionObject.end())
                         {
-                            worker_log("Attribute 'code' is empty");
+                            WORKER_LOG("Attribute 'code' is empty");
                             continue;
                         }
 
@@ -190,7 +190,7 @@ ModulesDataList LoadModulesData(const std::string& Locale)
                         ActionItem->Name = ActionObject["name"].get<std::string>();
                         ActionItem->Template = ActionObject["template"].get<std::string>();
 
-                        worker_log(std::string("Found some action with name ") + ActionItem->Name);
+                        WORKER_LOG(std::string("Found some action with name ") + ActionItem->Name);
 
 
                         picojson::value::object ActionDescriptionObject = ActionObject["description"].get<picojson::value::object>();
@@ -203,17 +203,17 @@ ModulesDataList LoadModulesData(const std::string& Locale)
                         }
 
 
-                        worker_log(std::string("Action description ") + ActionItem->Description);
+                        WORKER_LOG(std::string("Action description ") + ActionItem->Description);
 
 
                         ActionItem->IsElement = ActionObject["is_element"].get<bool>();
-                        worker_log(std::string("Action iselement ") + std::to_string(ActionItem->IsElement));
+                        WORKER_LOG(std::string("Action iselement ") + std::to_string(ActionItem->IsElement));
 
                         ActionItem->InterfaceScript = ReadAllString(Entry.Path + std::string("/") + ActionObject["interface"].get<std::string>());
-                        worker_log(std::string("Action interface script length ") + std::to_string(ActionItem->InterfaceScript.length()));
+                        WORKER_LOG(std::string("Action interface script length ") + std::to_string(ActionItem->InterfaceScript.length()));
 
                         ActionItem->SelectScript = ReadAllString(Entry.Path + std::string("/") + ActionObject["select"].get<std::string>());
-                        worker_log(std::string("Action select script length ") + std::to_string(ActionItem->SelectScript.length()));
+                        WORKER_LOG(std::string("Action select script length ") + std::to_string(ActionItem->SelectScript.length()));
 
                         picojson::value::array CodeArray = ActionObject["code"].get<picojson::value::array>();
                         for(picojson::value CodeValue: CodeArray)
@@ -221,26 +221,26 @@ ModulesDataList LoadModulesData(const std::string& Locale)
                             picojson::value::object CodeObject = CodeValue.get<picojson::value::object>();
                             if(CodeObject.find("file") == CodeObject.end())
                             {
-                                worker_log("Attribute 'file' is empty");
+                                WORKER_LOG("Attribute 'file' is empty");
                                 continue;
                             }
 
                             if(CodeObject.find("name") == CodeObject.end())
                             {
-                                worker_log("Attribute 'name' is empty");
+                                WORKER_LOG("Attribute 'name' is empty");
                                 continue;
                             }
 
-                            worker_log(std::string("Found code object"));
+                            WORKER_LOG(std::string("Found code object"));
 
                             CodeData CodeItem = std::make_shared<CodeDataClass>();
 
 
                             CodeItem->Code = ReadAllString(Entry.Path + std::string("/") + CodeObject["file"].get<std::string>());
-                            worker_log(std::string("Code object file length ") + std::to_string(CodeItem->Code.length()));
+                            WORKER_LOG(std::string("Code object file length ") + std::to_string(CodeItem->Code.length()));
 
                             CodeItem->Name = CodeObject["name"].get<std::string>();
-                            worker_log(std::string("Code object name ") + CodeItem->Name);
+                            WORKER_LOG(std::string("Code object name ") + CodeItem->Name);
 
                             ActionItem->CodeScript.push_back(CodeItem);
 
@@ -253,14 +253,14 @@ ModulesDataList LoadModulesData(const std::string& Locale)
                 }
             }catch(...)
             {
-                worker_log("Error loading module");
+                WORKER_LOG("Error loading module");
             }
         }
     }
 
 
 
-    worker_log("End Loading Modules");
+    WORKER_LOG("End Loading Modules");
 
     return Result;
 }
