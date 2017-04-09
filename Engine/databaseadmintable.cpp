@@ -10,6 +10,7 @@
 #include <QMessageBox>
 #include <QFutureWatcher>
 #include <QFuture>
+#include <QMenu>
 #include <QtConcurrent/QtConcurrent>
 #include "databaseadminitemedit.h"
 #include "databaseadminitemmodificationdialog.h"
@@ -28,6 +29,15 @@ DatabaseAdminTable::DatabaseAdminTable(QWidget *parent) :
     ReactRowSelectionChange = true;
     IsInverseSelection = false;
     SortId = -1;
+    ui->AddItem->setVisible(false);
+    ui->DeletSelected->setVisible(false);
+    ui->SelectAll->setVisible(false);
+    ui->SelectNone->setVisible(false);
+    ui->MoveSelectedGroup->setVisible(false);
+    ui->CopySelectedGroup->setVisible(false);
+    ui->DeleteSelectedFromGroups->setVisible(false);
+
+
 }
 
 void DatabaseAdminTable::FilterChanged()
@@ -869,3 +879,18 @@ void DatabaseAdminTable::SingleItemDelete(QString Index)
     }
 }
 
+
+void DatabaseAdminTable::on_MenuButton2_clicked()
+{
+    QMenu myMenu;
+    myMenu.addAction(ui->AddItem->icon(),ui->AddItem->text(),ui->AddItem, SLOT(click()));
+    myMenu.addAction(ui->DeletSelected->icon(),ui->DeletSelected->text(),ui->DeletSelected, SLOT(click()));
+    myMenu.addAction(ui->SelectAll->icon(),ui->SelectAll->text(),ui->SelectAll, SLOT(click()));
+    myMenu.addAction(ui->SelectNone->icon(),ui->SelectNone->text(),ui->SelectNone, SLOT(click()));
+    myMenu.addAction(ui->MoveSelectedGroup->icon(),ui->MoveSelectedGroup->text(),ui->MoveSelectedGroup, SLOT(click()));
+    myMenu.addAction(ui->CopySelectedGroup->icon(),ui->CopySelectedGroup->text(),ui->CopySelectedGroup, SLOT(click()));
+    myMenu.addAction(ui->DeleteSelectedFromGroups->icon(),ui->DeleteSelectedFromGroups->text(),ui->DeleteSelectedFromGroups, SLOT(click()));
+
+
+    myMenu.exec(QCursor::pos());
+}

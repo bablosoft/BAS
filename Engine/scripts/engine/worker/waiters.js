@@ -534,6 +534,9 @@ function wait()
 
 function get_element_selector(selector, need_all)
 {
+    if(selector.length === 0)
+        return page()
+
     var res = []
 
     while(true)

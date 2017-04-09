@@ -105,14 +105,14 @@ namespace BrowserAutomationStudioFramework
         virtual void SetEngineResources(IEngineResources* EngineRes) = 0;
         virtual IEngineResources* GetEngineResources() = 0;
 
-        virtual void SetThreadNumber(int ThreadNumber) = 0;
-        virtual int GetThreadNumber() = 0;
+        virtual void SetThreadNumber(qint64 ThreadNumber) = 0;
+        virtual qint64 GetThreadNumber() = 0;
 
-        virtual void SetSuccessNumber(int* SuccessNumber) = 0;
-        virtual int GetSuccessNumber() = 0;
+        virtual void SetSuccessNumber(qint64* SuccessNumber) = 0;
+        virtual qint64 GetSuccessNumber() = 0;
 
-        virtual void SetFailNumber(int* FailNumber) = 0;
-        virtual int GetFailNumber() = 0;
+        virtual void SetFailNumber(qint64* FailNumber) = 0;
+        virtual qint64 GetFailNumber() = 0;
 
         virtual void SetProjectPath(const QString& Path) = 0;
         virtual QString GetProjectPath() = 0;

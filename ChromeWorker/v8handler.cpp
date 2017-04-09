@@ -1,7 +1,7 @@
 #include "v8handler.h"
 #include "log.h"
 #include <thread>
-V8Handler::V8Handler(BrowserData* Data)
+V8Handler::V8Handler(BrowserData* Data, PostManager* _PostManager)
 {
     Changed = false;
     ChangedInspect = false;
@@ -9,6 +9,7 @@ V8Handler::V8Handler(BrowserData* Data)
     ChangedFrameFind = false;
     NewLocalStorage.clear();
     this->Data = Data;
+    this->_PostManager = _PostManager;
 }
 
 std::pair<std::string,bool> V8Handler::GetResult()
@@ -176,6 +177,14 @@ bool V8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> object, con
             }
             retval = CefV8Value::CreateBool(Res);
         }
+    }
+    else if(name == std::string("BrowserAutomationStudio_SaveBlob"))
+    {
+        if (arguments.size() == 4 && arguments[0]->GetIntValue() && arguments[1]->IsString()&& arguments[2]->IsString()&& arguments[3]->IsString())
+        {
+            _PostManager->AddAttachment(arguments[0]->GetIntValue(), arguments[1]->GetStringValue().ToString(), arguments[2]->GetStringValue().ToString(), arguments[3]->GetStringValue().ToString());
+        }
+
     }
     return true;
 }

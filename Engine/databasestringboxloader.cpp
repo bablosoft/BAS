@@ -37,14 +37,22 @@ namespace BrowserAutomationStudioFramework
         {
             QStringList line;
 
+            if(Columns.empty() || Columns.size() == 1 && Columns[0] == 0)
+            {
+                Columns.clear();
+                for(DatabaseColumn &c: Connector->GetColumns(TableId))
+                {
+                    Columns.append(c.Id);
+                }
+            }
+
             foreach(int ColumnId, Columns)
             {
                 line.append(item.Data[ColumnId].toString());
             }
+            line.append(item.Id);
 
             QString Line = CsvHelper->Generate(line,':');
-            Line.append(QChar(0));
-            Line.append(item.Id);
             res.append(Line);
         }
 
@@ -55,10 +63,10 @@ namespace BrowserAutomationStudioFramework
 
     void DatabaseStringBoxLoader::ItemDeleted(const QString& item)
     {
-        int index = item.indexOf(QChar(0));
-        if(index>=0)
+        QStringList items = CsvHelper->Parse(item);
+        if(!items.isEmpty())
         {
-            QString id = item.right(item.length() - index - 1);
+            QString id = items.last();
 
             DatabaseItems Items;
             Items.IsNull = false;

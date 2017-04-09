@@ -102,11 +102,14 @@ namespace BrowserAutomationStudioFramework
         Worker->GetProcessComunicator()->Send(WriteString);
     }
 
-    void SubprocessBrowser::MouseMove(int x, int y, const QString& callback)
+    void SubprocessBrowser::MouseMove(int x, int y, const QString& params, const QString& callback)
     {
         QString WriteString;
         QXmlStreamWriter xmlWriter(&WriteString);
-        xmlWriter.writeTextElement("MouseMove",QString("%1,%2").arg(QString::number(x)).arg(QString::number(y)));
+        xmlWriter.writeStartElement("MouseMove");
+            xmlWriter.writeAttribute("params", params);
+            xmlWriter.writeCharacters(QString("%1,%2").arg(QString::number(x)).arg(QString::number(y)));
+        xmlWriter.writeEndElement();
 
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("MouseMove"));
@@ -223,18 +226,31 @@ namespace BrowserAutomationStudioFramework
         Worker->GetProcessComunicator()->Send(WriteString);
     }
 
-    void SubprocessBrowser::SetStartupScript(const QString& script,const QString& target, const QString& callback)
+    void SubprocessBrowser::SetStartupScript(const QString& script,const QString& script_id,const QString& target, const QString& callback)
     {
         QString WriteString;
         QXmlStreamWriter xmlWriter(&WriteString);
         xmlWriter.writeStartElement("SetStartupScript");
             xmlWriter.writeAttribute("target", target);
+            xmlWriter.writeAttribute("script_id", script_id);
             xmlWriter.writeCharacters(script);
         xmlWriter.writeEndElement();
 
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("SetStartupScript"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SetStartupScript()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
+    void SubprocessBrowser::SetFontList(const QString& fonts, const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("SetFontList",fonts);
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("SetFontList"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SetFontList()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
 
@@ -420,6 +436,10 @@ namespace BrowserAutomationStudioFramework
             }else if(xmlReader.name() == "SetStartupScript" && token == QXmlStreamReader::StartElement)
             {
                 emit SetStartupScript();
+            }
+            else if(xmlReader.name() == "SetFontList" && token == QXmlStreamReader::StartElement)
+            {
+                emit SetFontList();
             }
             else if(xmlReader.name() == "SetPromptResult" && token == QXmlStreamReader::StartElement)
             {
@@ -625,7 +645,7 @@ namespace BrowserAutomationStudioFramework
         }
 
         //Create process first time
-        if(CreateNewBrowser || NumberUsed > 100)
+        if(CreateNewBrowser || NumberUsed > 10)
         {
             OnSupend();
 

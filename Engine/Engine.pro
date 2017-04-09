@@ -278,7 +278,25 @@ SOURCES += engine.cpp \
     projectbackup.cpp \
     addavexclusion.cpp \
     postpreparestrategyjsonencode.cpp \
-    postpreparestrategycustomencode.cpp
+    postpreparestrategycustomencode.cpp \
+    diff/diff_match_patch.cpp \
+    idiffpatcher.cpp \
+    diffpatcher.cpp \
+    snappy/snappy.cc \
+    snappy/snappy-c.cc \
+    snappy/snappy-sinksource.cc \
+    snappy/snappy-stubs-internal.cc \
+    istringcompress.cpp \
+    snappystringcompress.cpp \
+    idatabaseconnectionwindow.cpp \
+    databaseconnectionwindow.cpp \
+    databaseconnectiondialog.cpp \
+    databaseschemaeditordialog.cpp \
+    idatabaseschemaeditor.cpp \
+    databaseschemaeditor.cpp \
+    databaseschemaeditorcolumndialog.cpp \
+    itabblink.cpp \
+    mainwindowtabblink.cpp
 
 win32:SOURCES += CrashHandler.cpp
 
@@ -549,7 +567,27 @@ HEADERS += engine.h\
     projectbackup.h \
     addavexclusion.h \
     postpreparestrategyjsonencode.h \
-    postpreparestrategycustomencode.h
+    postpreparestrategycustomencode.h \
+    diff/diff_match_patch.h \
+    idiffpatcher.h \
+    diffpatcher.h \
+    snappy/snappy.h \
+    snappy/snappy-c.h \
+    snappy/snappy-internal.h \
+    snappy/snappy-sinksource.h \
+    snappy/snappy-stubs-internal.h \
+    snappy/snappy-stubs-public.h \
+    istringcompress.h \
+    snappystringcompress.h \
+    idatabaseconnectionwindow.h \
+    databaseconnectionwindow.h \
+    databaseconnectiondialog.h \
+    databaseschemaeditordialog.h \
+    idatabaseschemaeditor.h \
+    databaseschemaeditor.h \
+    databaseschemaeditorcolumndialog.h \
+    itabblink.h \
+    mainwindowtabblink.h
 
 win32:HEADERS += CrashHandler.h
 
@@ -598,7 +636,10 @@ FORMS += \
     databaseadminfilteritem.ui \
     databaseadminfiltercreate.ui \
     databaseadmincsvformat.ui \
-    modulemanagerwindow.ui
+    modulemanagerwindow.ui \
+    databaseconnectiondialog.ui \
+    databaseschemaeditordialog.ui \
+    databaseschemaeditorcolumndialog.ui
 
 OTHER_FILES += \
     scripts/pages.js \
@@ -638,7 +679,7 @@ OTHER_FILES += \
     scripts/engine/worker/properties.js \
     scripts/engine/worker/record.js
 
-INCLUDEPATH += zip debug_memory accordion
+INCLUDEPATH += zip debug_memory accordion diff snappy
 
 TRANSLATIONS = translate/ru.ts \
     translate/en.ts

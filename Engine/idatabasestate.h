@@ -17,6 +17,8 @@ namespace BrowserAutomationStudioFramework
         virtual QList<DatabaseTable> GetDatabaseTables() = 0;
         virtual QList<DatabaseColumn> GetColumns(int TableId) = 0;
         virtual QList<DatabaseGroup> GetGroups(int TableId) = 0;
+        virtual QString ToJson() = 0;
+
 
     signals:
         void GroupsChanged();

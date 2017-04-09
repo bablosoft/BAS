@@ -11,6 +11,7 @@
 #include "log.h"
 #include "refcountpublic.h"
 #include "handlersmanager.h"
+#include "postmanager.h"
 
 class HandlersManager;
 
@@ -22,6 +23,7 @@ class MainHandler : public CefClient, public CefDownloadHandler, public CefDispl
     CefRefPtr<CefBrowser> Browser;
     bool IsVisible;
     BrowserData * Data;
+    PostManager * _PostManager;
     settings * Settings;
 
     int GetBrowserId();
@@ -34,6 +36,7 @@ public:
     MainHandler();
     bool GetIsVisible();
     void SetData(BrowserData *Data);
+    void SetPostManager(PostManager *_PostManager);
     void SetSettings(settings *Settings);
     void SetIsPopup();
     bool GetIsPopup();

@@ -1,0 +1,33 @@
+{
+	
+	"name":"IdleEmulation",
+	"description":"Idle emulation",
+	"description_small":{"en": "Idle emulation", "ru": "Эмуляция бездействия"},
+	"major_version": 1,
+	"minor_version": 0,
+	"developer_name": "bablosoft", 
+	"developer_email": "mail.to.twaego@gmail.com", 
+	"developer_site": "https://bablosoft.com",
+	"api_version": 1,
+	"actions":
+	[
+		{
+			"name":"IdleEmulation",
+			"description":{"en": "Idle Emulation","ru": "Эмуляция бездействия"},
+			"template":"{{IddleTime}} sec",
+			"is_element": false,
+			"interface": "idle_emulation_interface.js",
+			"select": "idle_emulation_select.js",
+			"code": [{"file":"idle_emulation_code.js", "name": "idle_emulation_code"}]
+		}
+	],
+	"localize": 
+	{
+		"Time spent on page(seconds)" : {"ru": "Время, проведенное на странице(секунд)"},
+		"Idle emulation" : {"ru": "Эмуляция бездействия"},
+		"Action distribution. 1 - scroll, 2 - long move, 3 - short move, 4 - sleep" : {"ru": "Распределение действий. 1 - прокрутка, 2 - длинное движение, 3 - короткое движение, 4 - сон"}
+	},
+	"engine": [],
+	"browser": [],
+	"depends": []	
+}

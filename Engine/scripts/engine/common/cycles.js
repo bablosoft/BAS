@@ -388,3 +388,27 @@ function _rewind(arg)
     CYCLES.Rewind(arg);
 }
 
+function _goto(label, callback)
+{
+
+    if(typeof(_BAS_GOTO_DATA) == "undefined" || !(label in _BAS_GOTO_DATA))
+    {
+        fail("Goto to non existing label " + label)
+        return
+    }
+    _kill_call_stack()
+    ScriptWorker.SetScript(_get_function_body(_BAS_GOTO_DATA[label]))
+    ScriptWorker.RunSubScript()
+}
+
+function _goto_fast(label, callback)
+{
+
+    if(typeof(_BAS_GOTO_DATA) == "undefined" || !(label in _BAS_GOTO_DATA))
+    {
+        fail("Goto to non existing label " + label)
+        return
+    }
+    ScriptWorker.SetScript(_get_function_body(_BAS_GOTO_DATA[label]))
+    ScriptWorker.RunSubScript()
+}

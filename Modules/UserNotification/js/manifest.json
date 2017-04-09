@@ -2,7 +2,7 @@
 	
 	"name":"UserNotification",
 	"description":"User Notification",
-	"description_small":{"en": "User notification", "ru": "Уведомление пользователя"},
+	"description_small":{"en": "User interaction", "ru": "Взаимодействие с пользователем"},
 	"major_version": 1,
 	"minor_version": 0,
 	"developer_name": "bablosoft", 
@@ -19,11 +19,22 @@
 			"interface": "user_notification_play_sound_interface.js",
 			"select": "user_notification_play_sound_select.js",
 			"code": [{"file":"user_notification_play_sound_code.js", "name": "user_notification_play_sound_code"}]
+		},
+		{
+			"name":"user_notification_user_input",
+			"description":{"en": "Ask user input","ru": "Запросить ввод от пользователя"},
+			"template": "{{Label}}",
+			"is_element": false,
+			"interface": "user_notification_user_input_interface.js",
+			"select": "user_notification_user_input_select.js",
+			"code": [{"file":"user_notification_user_input_code.js", "name": "user_notification_user_input_code"}]
 		}
 	],
 	"localize": 
 	{
-		"Play Sound" : {"ru": "Воспроизвести Звук"}
+		"Play Sound" : {"ru": "Воспроизвести Звук"},
+		"Label which is hown to user" : {"ru": "Текст, который будет показан пользователю"},
+		"Variable to save input" : {"ru": "Переменная для сохранения ввода"}
 	},
 	"engine": [],
 	"browser": [],

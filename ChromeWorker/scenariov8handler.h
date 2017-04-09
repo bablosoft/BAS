@@ -9,8 +9,17 @@ class ScenarioV8Handler : public CefV8Handler
 {
 public:
     enum RestartType{None, Restart, Stop};
+    struct LastResultStruct
+    {
+        std::string LastResultCodeDiff;
+        std::string LastResultVariables;
+        std::string LastResultFunctions;
+        std::string LastResultResources;
+        std::string LastResultLabels;
+    };
 private:
-    std::string LastResult;
+    LastResultStruct LastResult;
+
     std::string LastResultExecute;
     bool Changed;
     bool ChangedExecute;
@@ -54,7 +63,7 @@ public:
 
     ScenarioV8Handler();
     virtual bool Execute(const CefString& name, CefRefPtr<CefV8Value> object, const CefV8ValueList& arguments, CefRefPtr<CefV8Value>& retval, CefString& exception) OVERRIDE;
-    std::pair<std::string, bool> GetResult();
+    std::pair<LastResultStruct, bool> GetResult();
     std::pair<std::string, bool> GetExecuteCode();
     RestartType GetNeedRestart();
     bool GetIsInitialized();

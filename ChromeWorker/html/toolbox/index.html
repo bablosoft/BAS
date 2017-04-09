@@ -26,7 +26,7 @@
             <span id="RecourseControls">
               <select class="form-control" id="RecourseName" placeholder="Recourse Name">
               </select>
-              <input type="checkbox" id="ResourceReuse" checked /> <label for="ResourceReuse" class="tr res-margin">Reuse Resource</label>
+              <input type="checkbox" id="ResourceReuse" checked /> <label for="ResourceReuse" class="tr res-margin trtitle" data-toggle="tooltip" data-placement="top" title="Take new or old resource during this resource request">Reuse Resource</label>
               <input type="checkbox" id="ResourceDontDie"/> <label for="ResourceDontDie" class="tr res-margin">Don't end application if not exists</label>
             </span>
 
@@ -77,6 +77,27 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary funcok standartbutton tr" data-dismiss="modal">Ok</button>
+            <button type="button" class="btn btn-default standartbutton tr" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="LabelModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title tr" id="myModalLabel">Select Label</h4>
+          </div>
+          <div class="modal-body">
+            <select class="form-control" id="LabelNameInput" placeholder="Label">
+            </select>
+            <span id="NoLabelFound" class="tr">No label found. Create one with Set label action.</span>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary labelok standartbutton tr" data-dismiss="modal">Ok</button>
             <button type="button" class="btn btn-default standartbutton tr" data-dismiss="modal">Cancel</button>
           </div>
         </div>
@@ -143,6 +164,14 @@
     <span id="target-data" style="display:none">
       <%= _.template($('#input_constructor').html())({id:"TargetUrl", description:tr("Target url"), default_selector: "string", disable_int:true, value_string: "*"}) %>
       <%= _.template($('#input_constructor').html())({id:"TargetTabNumber", description:tr("Target tab number"), default_selector: "string", value_string: "*", value_number: 0}) %>
+    </span>
+  </script>
+
+  <script type="text/template" id="movefields">
+    <span id="move-data" style="display:none">
+      <%= _.template($('#input_constructor').html())({id:"Speed", description:tr("Speed"), default_selector: "expression", disable_int:true, disable_string:true, value_string: "100"}) %>
+      <%= _.template($('#input_constructor').html())({id:"Gravity", description:tr("Gravity"), default_selector: "expression", disable_int:true, disable_string:true, value_string: "6"}) %>
+      <%= _.template($('#input_constructor').html())({id:"Deviation", description:tr("Deviation"), default_selector: "expression", disable_int:true, disable_string:true, value_string: "2.5"}) %>
     </span>
   </script>
 
@@ -251,6 +280,12 @@
           <a href="#" id="use-timeout" data-value="<%= (typeof(timeout_value) != "undefined" && timeout_value > 0) ? timeout_value : "0" %>" class="<%= (typeof(timeout_value) != "undefined" && timeout_value > 0) ? "" : "use-timeout-disabled" %> trtitle"  data-enabled="<%= (typeof(timeout_value) != "undefined" && timeout_value > 0) ? "true" : "false" %>" data-toggle="tooltip" data-placement="top" title="Maximum time to perform an action.">
             <i class="fa fa-hourglass-end" aria-hidden="true" ><small id="timeout-is-default" class="tr">default</i><small id="timeout-val"></i><%= (typeof(timeout_value) != "undefined" && timeout_value > 0) ? ("" + timeout_value) : "" %></small></a>
         <% } %>
+
+        <% if(typeof(use_move) != "undefined"){ %>
+          <a href="#" id="use-move" class="<%= (typeof(move_enabled) != "undefined" && move_enabled) ? "" : "use-move-disabled" %> trtitle" data-enabled="<%= (typeof(move_enabled) != "undefined" && move_enabled) ? "true" : "false" %>" data-toggle="tooltip" data-placement="top" title="Tweak speed and other parameters for mouse move."><i class="fa fa-sliders" aria-hidden="true"></i></a>
+        <% } %>
+
+
         <a class="btn btn-success standartbutton tr" id="ok">Ok</a> <a class="btn btn-danger standartbutton tr" href="#!/" id="backtomain">Cancel</a>
         <span id="validation" class="text-muted"><%= _GobalModel.GetPageInfo() || name %></span>
         <% if(visible){ %>
@@ -480,6 +515,34 @@
      <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
          <input type="checkbox" id="Check"/> <label for="Check" class="tr">Finish script instantly.</label>
       </span>
+     <%= _.template($('#back').html())({action:"executeandadd", visible:false}) %>
+
+  </script>
+
+  <script type="text/template" id="label">
+    <div class="container-fluid fail">
+     <%= _.template($('#input_constructor').html())({id:"Label", description:tr("Label"), default_selector: "string", disable_int:true, disable_expression:true, disable_resource: true, disable_editor: true, disable_variable:true}) %>
+    </div>
+     <%= _.template($('#back').html())({action:"executeandadd", visible:false}) %>
+
+  </script>
+
+  <script type="text/template" id="goto">
+    <div class="container-fluid executefunction">
+      <div class="col-xs-12">
+        <form class="form-horizontal">
+          <div class="form-group">
+            <div class="col-xs-5">
+              <span data-preserve="true" data-preserve-type="text" data-preserve-id="LabelName">
+                <input class="form-control label-input" type="text" id="LabelName" placeholder="Label">
+              </span>
+            </div>
+            <button type="button" class="btn btn-default lab" data-toggle="modal" data-target="#LabelModal" data-result-target="#LabelName" ><i class="fa fa-tag"></i></button>
+            <label class="col-xs-6 control-label tr" for="LabelName">Label</label>
+          </div>
+        </form>
+      </div>
+    </div>
      <%= _.template($('#back').html())({action:"executeandadd", visible:false}) %>
 
   </script>
@@ -752,6 +815,34 @@
   <script type="text/template" id="cachemaskclear">
     <div class="container-fluid cachemaskclear">
       <div class="tooltipinternal tr">Clear all cache masks.</div>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
+  <script type="text/template" id="restrictpopups">
+    <div class="container-fluid cachemaskclear">
+      <div class="tooltipinternal tr">Restrict all popups. You can restrict specific popup with Request Mask Deny action.</div>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
+  <script type="text/template" id="restrictdownloads">
+    <div class="container-fluid cachemaskclear">
+      <div class="tooltipinternal tr">Restrict all downloads. You can restrict specific download with Request Mask Deny action.</div>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
+  <script type="text/template" id="allowpopups">
+    <div class="container-fluid cachemaskclear">
+      <div class="tooltipinternal tr">Allow all popups. Revokes Allow popup action.</div>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
+  <script type="text/template" id="allowdownloads">
+    <div class="container-fluid cachemaskclear">
+      <div class="tooltipinternal tr">Allow all downloads. Revokes Allow downloads action.</div>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
@@ -1395,15 +1486,28 @@
     <div class="container-fluid moveelement">
       <div class="tooltipinternal tr">Move mouse pointer on element.</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Move On Element")}) %>
+    <%= _.template($('#movefields').html())({}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, use_move: true, name: tr("Move On Element")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
+  </script>
+
+  <script type="text/template" id="mousesettings">
+    <div class="container-fluid dragelement">
+      <%= _.template($('#input_constructor').html())({id:"Speed", description:tr("Speed"), default_selector: "expression", disable_int:true, disable_string:true, value_string: "100"}) %>
+      <%= _.template($('#input_constructor').html())({id:"Gravity", description:tr("Gravity"), default_selector: "expression", disable_int:true, disable_string:true, value_string: "6"}) %>
+      <%= _.template($('#input_constructor').html())({id:"Deviation", description:tr("Deviation"), default_selector: "expression", disable_int:true, disable_string:true, value_string: "2.5"}) %>
+    </div>
+
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
 
   <script type="text/template" id="dragelement">
     <div class="container-fluid dragelement">
       <div class="tooltipinternal tr">Drag On Element</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Drag On Element")}) %>
+    <%= _.template($('#movefields').html())({}) %>
+
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, use_move: true, name: tr("Drag On Element")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1412,7 +1516,9 @@
     <div class="container-fluid dropelement">
       <div class="tooltipinternal tr">Drop On Element</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Drop On Element")}) %>
+    <%= _.template($('#movefields').html())({}) %>
+
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, use_move: true, name: tr("Drop On Element")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1423,7 +1529,8 @@
         <input type="checkbox" id="Check"/> <label for="Check" class="tr">Disable mouse emulation.</label>
       </span>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true,use_timeout: true, visible:true, name: tr("Move And Click On Element")}) %>
+    <%= _.template($('#movefields').html())({}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true,use_timeout: true, use_move:true, visible:true, name: tr("Move And Click On Element")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1431,7 +1538,8 @@
     <div class="container-fluid clear">
       <div class="tooltipinternal tr">Clear edit. Works only on edit.</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Clear Edit")}) %>
+    <%= _.template($('#movefields').html())({}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, use_move: true, name: tr("Clear Edit")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1445,7 +1553,8 @@
          <input type="checkbox" id="Check"/> <label for="Check" class="tr">Disable mouse and keyboard emulation.</label>
       </span>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, use_waiter:true, name: tr("Type Text")}) %>
+    <%= _.template($('#movefields').html())({}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, use_waiter:true, use_move: true, name: tr("Type Text")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1476,7 +1585,9 @@
     <div class="container-fluid check">
       <div class="tooltipinternal tr">Check cehckbox. Works only on checkboxes.</div>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Set Checkbox")}) %>
+    <%= _.template($('#movefields').html())({}) %>
+
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, use_move: true, name: tr("Set Checkbox")}) %>
     <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
@@ -1706,7 +1817,9 @@
       <%= _.template($('#input_constructor').html())({id:"MoveX", description:tr("Move x position"), default_selector: "int", disable_string:true, value_number: model['x']}) %>
       <%= _.template($('#input_constructor').html())({id:"MoveY", description:tr("Move y position"), default_selector: "int", disable_string:true, value_number: model['y']}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Move")}) %>
+    <%= _.template($('#movefields').html())({}) %>
+
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true, use_move: true, name: tr("Move")}) %>
   </script>
 
   <script type="text/template" id="click">
@@ -1722,7 +1835,8 @@
       <%= _.template($('#input_constructor').html())({id:"X", description:tr("Drag x position"), default_selector: "int", disable_string:true, value_number: model['x']}) %>
       <%= _.template($('#input_constructor').html())({id:"Y", description:tr("Drop y position"), default_selector: "int", disable_string:true, value_number: model['y']}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Drag")}) %>
+    <%= _.template($('#movefields').html())({}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true, use_move: true, name: tr("Drag")}) %>
   </script>
 
   <script type="text/template" id="drop">
@@ -1730,7 +1844,8 @@
       <%= _.template($('#input_constructor').html())({id:"X", description:tr("Drop x position"), default_selector: "int", disable_string:true, value_number: model['x']}) %>
       <%= _.template($('#input_constructor').html())({id:"Y", description:tr("Drop y position"), default_selector: "int", disable_string:true, value_number: model['y']}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Drop")}) %>
+    <%= _.template($('#movefields').html())({}) %>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true, use_move: true, name: tr("Drop")}) %>
   </script>
 
   <script type="text/template" id="addtab">
@@ -1780,7 +1895,9 @@
       <%= _.template($('#input_constructor').html())({id:"X", description:tr("Move and click x position"), default_selector: "int", disable_string:true, value_number: model['x']}) %>
       <%= _.template($('#input_constructor').html())({id:"Y", description:tr("Move and click y position"), default_selector: "int", disable_string:true, value_number: model['y']}) %>
     </div>
-    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true,use_timeout: true, visible:true, name: tr("Move And Click")}) %>
+    <%= _.template($('#movefields').html())({}) %>
+
+    <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true,use_timeout: true, use_move: true, visible:true, name: tr("Move And Click")}) %>
   </script>
 
   <script type="text/template" id="type">
@@ -2041,6 +2158,27 @@
       <%= variable %> = _result()
   </script>
 
+
+  <script type="text/template" id="restrictpopups_code">
+      /*Browser*/
+      _restrict_popups()!
+  </script>
+
+  <script type="text/template" id="allowpopups_code">
+      /*Browser*/
+      _allow_popups()!
+  </script>
+
+  <script type="text/template" id="restrictdownloads_code">
+      /*Browser*/
+      _restrict_downloads()!
+  </script>
+
+  <script type="text/template" id="allowdownloads_code">
+      /*Browser*/
+      _allow_downloads()!
+  </script>
+
   <script type="text/template" id="captcha_code">
       /*Browser*/
       solver_properties_clear(<%= method %>)
@@ -2276,7 +2414,7 @@
         <%= path %>.random_point()!
         X = parseInt(_result().split(",")[0])
         Y = parseInt(_result().split(",")[1])
-        move(X,Y)!
+        move(X,Y, <%= move_settings %>)!
         mouse(X,Y)!
         <%= timeout_general() %>
         page().type(<%= text %>,<%= interval %>)!
@@ -2291,7 +2429,7 @@
       <%= path %>.random_point()!
       X = parseInt(_result().split(",")[0])
       Y = parseInt(_result().split(",")[1])
-      move(X,Y)!
+      move(X,Y, <%= move_settings %>)!
       mouse(X,Y)!
       page().type("<CONTROL>a<DELETE>")!
   </script>
@@ -2315,7 +2453,7 @@
       <%= path %>.random_point()!
       X = parseInt(_result().split(",")[0])
       Y = parseInt(_result().split(",")[1])
-      move(X,Y)!
+      move(X,Y, <%= move_settings %>)!
       mouse(X,Y)!
   </script>
 
@@ -2340,7 +2478,7 @@
       <%= path %>.random_point()!
       X = parseInt(_result().split(",")[0])
       Y = parseInt(_result().split(",")[1])
-      move(X,Y)!
+      move(X,Y, <%= move_settings %>)!
   </script>
 
   <script type="text/template" id="moveandclickelement_code">
@@ -2350,7 +2488,7 @@
         <%= path %>.random_point()!
         X = parseInt(_result().split(",")[0])
         Y = parseInt(_result().split(",")[1])
-        move(X,Y)!
+        move(X,Y,<%= move_settings %>)!
         mouse(X,Y)!
       <% }else{ %>
         <%= path %>.script("self.click()")!
@@ -2363,7 +2501,7 @@
       <%= path %>.random_point()!
       X = parseInt(_result().split(",")[0])
       Y = parseInt(_result().split(",")[1])
-      move(X,Y)!
+      move(X,Y, <%= move_settings %>)!
       mouse_down(X,Y)!
   </script>
 
@@ -2373,7 +2511,7 @@
       <%= path %>.random_point()!
       X = parseInt(_result().split(",")[0])
       Y = parseInt(_result().split(",")[1])
-      move(X,Y)!
+      move(X,Y, <%= move_settings %>)!
       mouse_up(X,Y)!
   </script>
 
@@ -2483,7 +2621,7 @@
 
   <script type="text/template" id="move_code">
       /*Browser*/
-      move(<%= x %>,<%= y %>)!
+      move(<%= x %>,<%= y %>, <%= move_settings %>)!
   </script>
 
   <script type="text/template" id="addtab_code">
@@ -2503,19 +2641,19 @@
 
   <script type="text/template" id="moveandclick_code">
       /*Browser*/
-      move(<%= x %>,<%= y %>)!
+      move(<%= x %>,<%= y %>, <%= move_settings %>)!
       mouse(<%= x %>,<%= y %>)!
   </script>
 
   <script type="text/template" id="drag_code">
       /*Browser*/
-      move(<%= x %>,<%= y %>)!
+      move(<%= x %>,<%= y %>, <%= move_settings %>)!
       mouse_down(<%= x %>,<%= y %>)!
   </script>
 
   <script type="text/template" id="drop_code">
       /*Browser*/
-      move(<%= x %>,<%= y %>)!
+      move(<%= x %>,<%= y %>, <%= move_settings %>)!
       mouse_up(<%= x %>,<%= y %>)!
   </script>
 
@@ -2527,6 +2665,11 @@
       <% }else{ %>
         load_instant(<%= url %>)!
       <% } %>
+  </script>
+
+  <script type="text/template" id="mousesettings_code">
+      /*Browser*/
+      _default_move_params({speed: <%= speed %>,gravity: <%= gravity %>,deviation: <%= deviation %>})
   </script>
 
   <script type="text/template" id="resize_code">
@@ -2746,6 +2889,7 @@
         VAR_FOREACH_DATA = FOREACH_ARRAY_<%= r %>[VAR_CYCLE_INDEX]
         section_insert()
       })!
+      delete FOREACH_ARRAY_<%= r %>
   </script>
 
   <script type="text/template" id="loopelement_code">
@@ -2805,6 +2949,14 @@
       die(<%= message %>,<%= instant %>)
   </script>
 
+  <script type="text/template" id="label_code">
+      _set_goto_label(<%= label %>)!
+  </script>
+
+  <script type="text/template" id="goto_code">
+      _goto(<%= label %>)!
+  </script>
+
   <script type="text/template" id="custom_code">
       <%= code %>
   </script>
@@ -2824,6 +2976,7 @@
   <script src="rappid.js"></script>
   <script src="tooledViewPlugin.js"></script>
   <script src="preservemainpage.js"></script>
+  <script src="databasefilter.js"></script>
   
   <script type="text/javascript"> _L = $.extend(_L, _AL)</script>
   <script type="text/javascript"> _MACRO_INSERT_LOCALIZE_ </script>
@@ -2844,6 +2997,8 @@
   <!-- Javascript code -->
   <!-- =============== -->
   <script type="text/javascript">
+    var _Filter = new Filter();
+
     var TaskModel = Backbone.Model.extend({
         defaults: {
             name: "",
@@ -2863,6 +3018,11 @@
         }
     });
     var FunctionModel = Backbone.Model.extend({
+        defaults: {
+            name: ""
+        }
+    });
+    var LabelModel = Backbone.Model.extend({
         defaults: {
             name: ""
         }
@@ -2924,12 +3084,16 @@
     var FunctionCollection = Backbone.Collection.extend({
         model: FunctionModel
     });
+    var LabelCollection = Backbone.Collection.extend({
+        model: LabelModel
+    });
 
     var MainView = Backbone.View.extend({
       el: '#container',
 
       currentInputResource: "none",
       currentInputVariable: "none",
+      currentInputLabel: "none",
 
       events: {
         "click #ok": "accept",
@@ -2939,7 +3103,11 @@
         "show.bs.modal #VariableModal": "varaddstart",
         "click .varok": "varadd",
         "show.bs.modal #FunctionModal": "funcaddstart",
+        "show.bs.modal #LabelModal": "labeladdstart",
+
         "click .funcok": "funcadd",
+        "click .labelok": "labeladd",
+
         "click .timeoutok": "timeoutadd",
         "click .timeoutdefault": "timeoutdefault",
 
@@ -2965,6 +3133,7 @@
         "click #use-waiter": "usewaiterchange",
         "click #use-timeout": "usetimeoutchange",
         "click #use-target": "usetargetchange",
+        "click #use-move": "usemovechange",
 
         "click #searchinputclear": "searchinputclear",
         "input #searchinput": "searchinput",
@@ -2973,7 +3142,16 @@
         "blur .dropdown-menu-path": "dropdownmenupathblur",
         "click .dropdown-menu-path": "stoppropagation",
         "click .dropdown-menu-css-item": "dropdownmenupathselectitem",
+
+        "change #Table": "tablechange"
      },
+
+      tablechange:function(event)
+      {
+        $("*[data-table-id]").hide()
+        $("*[data-table-id=" + $("#Table").val() + "]").show()
+        _Filter.Clear()
+      },
 
      
       interrupt: function(event)
@@ -3103,6 +3281,22 @@
         }else
         {
           $("#target-data").hide()
+        }
+      },
+
+      usemovechange: function(event)
+      {
+        event.preventDefault();
+        var el = $(event.target).closest("a")
+        var new_state = el.attr("data-enabled") != "true"
+        el.attr("data-enabled",((new_state) ? "true" : "false") );
+        el.removeClass().addClass(((new_state) ? "use-move-enabled" : "use-move-disabled") );
+        if(new_state)
+        {
+          $("#move-data").show()
+        }else
+        {
+          $("#move-data").hide()
         }
       },
 
@@ -3400,6 +3594,36 @@
 
       },
 
+      labeladdstart: function(event)
+      {
+        var json = _LabelCollection.toJSON();
+
+        $('#LabelNameInput').html("")
+        if(json.length == 0)
+        {
+          $("#NoLabelFound").show()
+          $("#LabelNameInput").hide()
+          $(".labelok").hide()
+
+        }else
+        {
+          $("#NoLabelFound").hide()
+          $("#LabelNameInput").show()
+          $(".labelok").show()
+          for(var i = 0;i<json.length;i+=1)
+          {
+            $('#LabelNameInput')
+             .append($("<option></option>")
+             .attr("value",json[i]["name"])
+             .text(json[i]["name"]));
+           }
+         }
+
+        $('#LabelNameInput').focus()
+        this.currentInputLabel = $(event.relatedTarget).attr("data-result-target")
+
+      },
+
       resadd: function(event)
       {
         var el = $(this.currentInputResource)
@@ -3481,6 +3705,17 @@
         if(name.length > 0)
         {
           el.val($("#FunctionNameInput").val())
+        }
+      },
+
+      labeladd: function(event)
+      {
+        var el = $(this.currentInputLabel)
+
+        var name = $("#LabelNameInput").val();
+        if(name.length > 0)
+        {
+          el.val($("#LabelNameInput").val())
         }
       },
 
@@ -4942,6 +5177,41 @@
             }catch(e)
             {}
 
+          }else if(State == "label")
+          {
+            var val = GetInputConstructorValue("Label",loader)
+            if(val["original"].length <= 0)
+            {
+                Invalid("Label is empty");
+                return;
+            }
+
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({label:val["updated"]})
+
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
+
+            }catch(e)
+            {}
+
+          }else if(State == "goto")
+          {
+            var val = $("#LabelName").val()
+            if(val.length <= 0)
+            {
+                Invalid("Label is empty");
+                return;
+            }
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({label:JSON.stringify(val)})
+
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
+
+            }catch(e)
+            {}
+
           }else if(State == "sleep")
           {
             if($("#sleeprandom").is(':checked'))
@@ -5226,7 +5496,8 @@
 
             try{
               var path = GetPath(loader,false,true)
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({text:TypeData["updated"],interval:TypeInterval["updated"],path: path["path"],waiter: path["waiter"], disableemulation: Check}) + BrowserAutomationStudio_GetWaitCode()
+              var MoveSettings = BrowserAutomationStudio_GetMoveJson(loader)
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({text:TypeData["updated"],move_settings: MoveSettings,interval:TypeInterval["updated"],path: path["path"],waiter: path["waiter"], disableemulation: Check}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -5452,7 +5723,8 @@
           {
              try{
               var path = GetPath(loader,false,true)
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
+              var MoveSettings = BrowserAutomationStudio_GetMoveJson(loader)
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({move_settings: MoveSettings,path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -5461,7 +5733,9 @@
           {
              try{
               var path = GetPath(loader)
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
+              var MoveSettings = BrowserAutomationStudio_GetMoveJson(loader)
+
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({move_settings: MoveSettings,path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -5470,7 +5744,9 @@
           {
              try{
               var path = GetPath(loader,false,true)
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
+              var MoveSettings = BrowserAutomationStudio_GetMoveJson(loader)
+
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({move_settings: MoveSettings,path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -5480,7 +5756,8 @@
           {
              try{
               var path = GetPath(loader,false,true)
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
+              var MoveSettings = BrowserAutomationStudio_GetMoveJson(loader)
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({move_settings: MoveSettings,path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -5490,7 +5767,8 @@
           {
              try{
               var path = GetPath(loader,false,true)
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
+              var MoveSettings = BrowserAutomationStudio_GetMoveJson(loader)
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({move_settings: MoveSettings,path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -5501,7 +5779,8 @@
 
              try{
               var path = GetPath(loader,false,true)
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"], disableemulation: Check}) + BrowserAutomationStudio_GetWaitCode()
+              var MoveSettings = BrowserAutomationStudio_GetMoveJson(loader)
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"], disableemulation: Check, move_settings: MoveSettings}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -5510,7 +5789,9 @@
           {
              try{
               var path = GetPath(loader,false,true)
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"]})
+              var MoveSettings = BrowserAutomationStudio_GetMoveJson(loader)
+
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({move_settings: MoveSettings,path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -5696,6 +5977,42 @@
               Invalid("Variable is empty");
               return;
             }
+          }else if(State == "restrictpopups")
+          {
+             try{
+              var path = GetPath(loader)
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+          }else if(State == "allowpopups")
+          {
+            try{
+              var path = GetPath(loader)
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+          }else if(State == "restrictdownloads")
+          {
+             try{
+              var path = GetPath(loader)
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+          }else if(State == "allowdownloads")
+          {
+            try{
+              var path = GetPath(loader)
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
           }else if(State == "click")
           {
             var MoveX = GetInputConstructorValue("ClickX", loader);
@@ -5713,7 +6030,8 @@
             var MoveY = GetInputConstructorValue("MoveY", loader);
 
             try{
-              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({x:MoveX["updated"],y:MoveY["updated"]})
+              var MoveSettings = BrowserAutomationStudio_GetMoveJson(loader)
+              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({move_settings: MoveSettings,x:MoveX["updated"],y:MoveY["updated"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -5725,7 +6043,8 @@
             var MoveY = GetInputConstructorValue("Y", loader);
 
             try{
-              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({x:MoveX["updated"],y:MoveY["updated"]})
+              var MoveSettings = BrowserAutomationStudio_GetMoveJson(loader)
+              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({move_settings: MoveSettings,x:MoveX["updated"],y:MoveY["updated"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -5737,7 +6056,21 @@
             var MoveY = GetInputConstructorValue("Y", loader);
 
             try{
-              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({x:MoveX["updated"],y:MoveY["updated"]})
+              var MoveSettings = BrowserAutomationStudio_GetMoveJson(loader)
+              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({move_settings: MoveSettings,x:MoveX["updated"],y:MoveY["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+          }
+          else if(State == "mousesettings")
+          {
+            var Speed = GetInputConstructorValue("Speed", loader);
+            var Gravity = GetInputConstructorValue("Gravity", loader);
+            var Deviation = GetInputConstructorValue("Deviation", loader);
+
+            try{
+              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({speed:Speed["updated"],gravity:Gravity["updated"],deviation:Deviation["updated"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -5776,7 +6109,8 @@
             var MoveY = GetInputConstructorValue("Y", loader);
 
             try{
-              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({x:MoveX["updated"],y:MoveY["updated"]}) + BrowserAutomationStudio_GetWaitCode()
+              var MoveSettings = BrowserAutomationStudio_GetMoveJson(loader)
+              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({move_settings: MoveSettings,x:MoveX["updated"],y:MoveY["updated"]}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -5979,7 +6313,14 @@
           "loadcookiesfrombrowser": _.template($('#loadcookiesfrombrowser').html()),
           "loadcookiesfromhttpclient": _.template($('#loadcookiesfromhttpclient').html()),
           "closebrowser": _.template($('#closebrowser').html()),
-          "openbrowser": _.template($('#openbrowser').html())
+          "openbrowser": _.template($('#openbrowser').html()),
+          "goto": _.template($('#goto').html()),
+          "label": _.template($('#label').html()),
+          "restrictpopups": _.template($('#restrictpopups').html()),
+          "allowpopups": _.template($('#allowpopups').html()),
+          "restrictdownloads": _.template($('#restrictdownloads').html()),
+          "allowdownloads": _.template($('#allowdownloads').html()),
+          "mousesettings": _.template($('#mousesettings').html())
           _MACRO_INSERT_TEMPLATES_
         }
         this.model.bind('change', this.render, this);
@@ -5993,8 +6334,16 @@
 
       render: function(){
         _PreserveMainPosition.BeforUrlChanged(this.model.get("state"))
+        var d = this.collection.toJSON();
+        if(_Schema && _Schema.length == 0)
+        {
+          d = d.filter(function(el){
+            return !el["show_only_with_database"]
+          })
+        }
 
-        $("#containerdata").html(this.templates[this.model.get("state")]({data:this.collection.toJSON(),model:this.model.toJSON(),selector:_SelectorModel.toJSON()}))
+        $("#containerdata").html(this.templates[this.model.get("state")]({data:d,model:this.model.toJSON(),selector:_SelectorModel.toJSON()}))
+        _Filter.InstallEvents()
         $(".variable-input, .function-input").keypress(function(e){
             var charCode = !e.charCode ? e.which : e.charCode;
             var IsGoodchar =  (charCode == ','.charCodeAt(0) && $(e.target).is("[data-append-array]")) || charCode >= 'A'.charCodeAt(0) && charCode <= 'Z'.charCodeAt(0) || charCode >= 'a'.charCodeAt(0) && charCode <= 'z'.charCodeAt(0) || charCode == '_'.charCodeAt(0) || charCode >= '0'.charCodeAt(0) && charCode <= '9'.charCodeAt(0)
@@ -6162,7 +6511,14 @@
             "!/loadcookiesfrombrowser": "loadcookiesfrombrowser",
             "!/loadcookiesfromhttpclient": "loadcookiesfromhttpclient",
             "!/closebrowser": "closebrowser",
-            "!/openbrowser": "openbrowser"
+            "!/openbrowser": "openbrowser",
+            "!/label": "label",
+            "!/goto": "goto",
+            "!/restrictpopups": "restrictpopups",
+            "!/allowpopups": "allowpopups",
+            "!/restrictdownloads": "restrictdownloads",
+            "!/allowdownloads": "allowdownloads",
+            "!/mousesettings": "mousesettings"
             _MACRO_INSERT_ROUTER_DEF_
         },
 
@@ -6562,6 +6918,27 @@
         ,closebrowser: function(){
           _GobalModel.set({ state: "closebrowser" });
         }
+        ,label: function(){
+          _GobalModel.set({ state: "label" });
+        }
+        ,goto: function(){
+          _GobalModel.set({ state: "goto" });
+        }
+        ,restrictpopups: function(){
+          _GobalModel.set({ state: "restrictpopups" });
+        }
+        ,allowpopups: function(){
+          _GobalModel.set({ state: "allowpopups" });
+        }
+        ,restrictdownloads: function(){
+          _GobalModel.set({ state: "restrictdownloads" });
+        }
+        ,allowdownloads: function(){
+          _GobalModel.set({ state: "allowdownloads" });
+        }
+        ,mousesettings: function(){
+          _GobalModel.set({ state: "mousesettings" });
+        }
         _MACRO_INSERT_ROUTER_FUNC_
     });
 
@@ -6586,6 +6963,7 @@
                 { name: tr(_A["solvecaptcha"]["name"]), description: tr(_A["solvecaptcha"]["description"]), ref: "solvecaptcha" },
                 { name: tr(_A["solverfailed"]["name"]), description: tr(_A["solverfailed"]["description"]), ref: "solverfailed" },
                 { name: tr(_A["timeout"]["name"]), description: tr(_A["timeout"]["description"]), ref: "timeout" },
+                { name: tr(_A["mousesettings"]["name"]), description: tr(_A["mousesettings"]["description"]), ref: "mousesettings" },
                 { description: tr("Script logic"), type: "group" },
                 { name: tr(_A["if"]["name"]), description: tr(_A["if"]["description"]), ref: "if" },
                 { name: tr(_A["while"]["name"]), description: tr(_A["while"]["description"]), ref: "while" },
@@ -6596,6 +6974,8 @@
                 { name: tr(_A["success"]["name"]), description: tr(_A["success"]["description"]), ref: "success" },
                 { name: tr(_A["fail"]["name"]), description: tr(_A["fail"]["description"]), ref: "fail" },
                 { name: tr(_A["die"]["name"]), description: tr(_A["die"]["description"]), ref: "die" },
+                { name: tr(_A["label"]["name"]), description: tr(_A["label"]["description"]), ref: "label" },
+                { name: tr(_A["goto"]["name"]), description: tr(_A["goto"]["description"]), ref: "goto" },
                 { name: tr(_A["ignoreerrors"]["name"]), description: tr(_A["ignoreerrors"]["description"]), ref: "ignoreerrors" },
                 { name: tr(_A["setvariable"]["name"]), description: tr(_A["setvariable"]["description"]), ref: "setvariable" },
                 { name: tr(_A["incvariable"]["name"]), description: tr(_A["incvariable"]["description"]), ref: "incvariable" },
@@ -6627,6 +7007,10 @@
                 { name: tr(_A["getstatus"]["name"]), description: tr(_A["getstatus"]["description"]), ref: "getstatus" },
                 { name: tr(_A["isloaded"]["name"]), description: tr(_A["isloaded"]["description"]), ref: "isloaded" },
                 { name: tr(_A["getfromcache"]["name"]), description: tr(_A["getfromcache"]["description"]), ref: "getfromcache" },
+                { name: tr(_A["restrictpopups"]["name"]), description: tr(_A["restrictpopups"]["description"]), ref: "restrictpopups" },
+                { name: tr(_A["allowpopups"]["name"]), description: tr(_A["allowpopups"]["description"]), ref: "allowpopups" },
+                { name: tr(_A["restrictdownloads"]["name"]), description: tr(_A["restrictdownloads"]["description"]), ref: "restrictdownloads" },
+                { name: tr(_A["allowdownloads"]["name"]), description: tr(_A["allowdownloads"]["description"]), ref: "allowdownloads" },
                 { description: tr("Waiters"), type: "group" },
                 { name: tr(_A["waitfullload"]["name"]), description: tr(_A["waitfullload"]["description"]), ref: "waitfullload" },
                 { name: tr(_A["waitload"]["name"]), description: tr(_A["waitload"]["description"]), ref: "waitload" },
@@ -6686,11 +7070,16 @@
 
     var _VariableCollection = new VariableCollection();
 
+    var _Schema = [];
+
     var _FunctionCollection = new FunctionCollection();
+ 
+    var _LabelCollection = new LabelCollection();
 
     var _ExpressionEditor = null;
 
     var ToolboxMaximizeCallback = null;
+
 
 
     function BrowserAutomationStudio_MaximizeCallback()
@@ -6733,6 +7122,9 @@
       .replace(new RegExp("\"","g"),"\\u0022")
       .replace(new RegExp("'","g"),"\\u0027")
       .replace(new RegExp("&","g"),"\\u0026")
+      .replace(new RegExp("{","g"),"\\u007b")
+      .replace(new RegExp("}","g"),"\\u007d")
+
       .replace(new RegExp("\\n","g"),"\\n")
       .replace(new RegExp("\\r","g"),"\\r")
     }
@@ -6828,6 +7220,21 @@
       return "";
     }
 
+    function BrowserAutomationStudio_GetMoveJson(loader)
+    {
+      var usemove = $("#use-move")
+
+      if(usemove.length > 0 && usemove.attr("data-enabled") == "true")  
+      {
+        var Speed = GetInputConstructorValue("Speed",loader);
+        var Gravity = GetInputConstructorValue("Gravity",loader);
+        var Deviation = GetInputConstructorValue("Deviation",loader);
+        return '{"speed": ' + Speed["updated"] + ',"gravity": ' +  Gravity["updated"] + ',"deviation": ' + Deviation["updated"] + '}'
+      }
+
+      return '{}';
+    }
+
     function BrowserAutomationStudio_UsesWaitCode()
     {
       var usewaiter = $("#use-waiter")
@@ -6861,6 +7268,8 @@
       var loader = new ResourceLoader();
 
       var ControlsText = {s:_GobalModel.get("state"),e:$("#executetype .btn-info").attr("data-action"),v: 1}
+
+      ControlsText["f"] = _Filter.GetModels()
       
       var usewaiter = $("#use-waiter")
       if(usewaiter.length > 0 && usewaiter.attr("data-enabled") == "true")  
@@ -6888,6 +7297,15 @@
       }else
       {
         ControlsText["uto"] = "0"
+      }
+
+      var usemove = $("#use-move")
+      if(usemove.length > 0 && usemove.attr("data-enabled") == "true")  
+      {
+        ControlsText["um"] = "1"
+      }else
+      {
+        ControlsText["um"] = "0"
       }
 
       var ControlList = $("*[data-preserve=true]")
@@ -7007,6 +7425,9 @@
         $("#use-waiter").removeClass().addClass("use-waiter-disabled")
       }
 
+      
+
+
       if(data["ut"]  == "1")
       {
         $("#use-target").attr("data-enabled","true")
@@ -7017,6 +7438,18 @@
         $("#use-target").attr("data-enabled","false")
         $("#use-target").removeClass().addClass("use-target-disabled")
         $("#target-data").hide()
+      }
+
+      if(data["um"]  == "1")
+      {
+        $("#use-move").attr("data-enabled","true")
+        $("#use-move").removeClass().addClass("use-move-enabled")
+        $("#move-data").show()
+      }else if(data["um"] == "0")
+      {
+        $("#use-move").attr("data-enabled","false")
+        $("#use-move").removeClass().addClass("use-move-disabled")
+        $("#move-data").hide()
       }
 
       var timeout_value = 0
@@ -7068,6 +7501,9 @@
         }
 
       }
+      _MainView.tablechange();
+      if(typeof(data["f"]) != "undefined" && data["f"])
+        _Filter.RestoreModels(data["f"])
     }
 
     function BrowserAutomationStudio_EditEnd()
@@ -7110,6 +7546,13 @@
       _VariableCollection.add({name:"CYCLE_INDEX"})
     }
 
+    function BrowserAutomationStudio_SetSchema(schema)
+    {
+      _Schema = JSON.parse(schema)
+      _Filter.Install(_Schema)
+      _MainView.render()
+    }
+
     function BrowserAutomationStudio_SetFunctions(functions)
     {
       _FunctionCollection.reset()
@@ -7118,6 +7561,17 @@
       for(var i = 0;i < res.length;i+=1)
       {
         _FunctionCollection.add({name:res[i]["name"]})
+      }
+    }
+
+    function BrowserAutomationStudio_SetLabels(labels)
+    {
+      _LabelCollection.reset()
+      var res = JSON.parse(labels)
+
+      for(var i = 0;i < res.length;i+=1)
+      {
+        _LabelCollection.add({name:res[i]["name"]})
       }
     }
 
@@ -7193,7 +7647,7 @@
           querymatch = loader.Resolve(querymatch+"")
         }
 
-        return {path:"get_element_selector(" + raw + ", " + (typeof(need_all) != "undefined" && need_all).toString() + ")",waiter: timeout_waiter() + "\n" + waiter_func_name + "(" + raw + ")!",raw:"css " + raw_not_escaped, querycss: querycss, querycss2: querycss2, querycss3: querycss3, querymatch: querymatch, queryxpath: queryxpath}
+        return {path:"get_element_selector(" + raw + ", " + (typeof(need_all) != "undefined" && need_all).toString() + ")",waiter: timeout_waiter() + "\n" + waiter_func_name + "(" + raw + ")!",raw:"css " + raw_not_escaped, querycss: querycss, querycss2: querycss2, querycss3: querycss3, querymatch: querymatch, queryxpath: queryxpath, query: raw}
         
        
       }

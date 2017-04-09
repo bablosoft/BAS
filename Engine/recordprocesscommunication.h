@@ -15,6 +15,8 @@ namespace BrowserAutomationStudioFramework
         bool CanSend;
         bool CanSendIsChanged;
         QString SendData;
+        QString SendDataSchema;
+
         QString SendResourcesString;
         QString Window;
         QString ConvertResources(const QList<ResourceDescription>& Resources);
@@ -31,7 +33,7 @@ namespace BrowserAutomationStudioFramework
     public slots:
         virtual void SendIsChanged();
         virtual void StopRecorder();
-        virtual void SendCode(const QString& Code);
+        virtual void SendCode(const QString& Code,const QString& Schema);
         virtual void SetWindow(const QString& Window);
         virtual void SendResources(const QList<ResourceDescription>& Resources);
         virtual void InstallProcessComunicator(IProcessComunicator *Comunicator);

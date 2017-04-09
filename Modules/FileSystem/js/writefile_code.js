@@ -1,1 +1,1 @@
-native("filesystem", "writefile", JSON.stringify({path: <%= path %>,value: <%= value %><%= (eol) ? " + \"\\r\\n\"" : "" %>,base64:<%= base64 %>,append:<%= append %>}))
+native("filesystem", "writefile", JSON.stringify({path: <%= path %>,value: (<%= value %>).toString()<%= (eol) ? " + \"\\r\\n\"" : "" %>,base64:<%= base64 %>,append:<%= append %>}))

@@ -44,7 +44,7 @@ namespace BrowserAutomationStudioFramework
         IWorker::WorkerStatus ResultStatus;
         bool IsAborted;
         QString ResultMessage;
-        int ThreadNumber;
+        qint64 ThreadNumber;
         IProcessComunicator *ProcessComunicator;
         IHttpClientFactory* HttpClientFactory;
         IHelperFactory* HelperFactory;
@@ -95,8 +95,8 @@ namespace BrowserAutomationStudioFramework
         bool DieInstant;
         bool DontCreateMore;
 
-        int *SuccessNumber;
-        int *FailNumber;
+        qint64 *SuccessNumber;
+        qint64 *FailNumber;
         QString ProjectPath;
 
         int HttpClientNextTimeout;
@@ -106,9 +106,9 @@ namespace BrowserAutomationStudioFramework
         explicit ScriptWorker(QObject *parent = 0);
         ~ScriptWorker();
 
-        virtual void SetSuccessNumber(int* SuccessNumber);
+        virtual void SetSuccessNumber(qint64* SuccessNumber);
 
-        virtual void SetFailNumber(int* FailNumber);
+        virtual void SetFailNumber(qint64* FailNumber);
 
         virtual void SetProjectPath(const QString& Path);
 
@@ -156,8 +156,6 @@ namespace BrowserAutomationStudioFramework
         virtual void SetResults9(ILogger *Results9);
         virtual ILogger * GetResults9();
 
-        virtual void SetScript(const QString& Script);
-        virtual QString GetScript();
 
         virtual void SetPreprocessor(IPreprocessor* Preprocessor);
         virtual IPreprocessor* GetPreprocessor();
@@ -177,7 +175,7 @@ namespace BrowserAutomationStudioFramework
         virtual void SetEngineResources(IEngineResources* EngineRes);
         virtual IEngineResources* GetEngineResources();
 
-        virtual void SetThreadNumber(int ThreadNumber);
+        virtual void SetThreadNumber(qint64 ThreadNumber);
 
         virtual void SetHttpClientFactory(IHttpClientFactory* HttpClientFactory);
         virtual IHttpClientFactory* GetHttpClientFactory();
@@ -225,9 +223,9 @@ namespace BrowserAutomationStudioFramework
         virtual void Run();
         virtual void InterruptAction();
         virtual void SetFailMessage(const QString& message);
-        virtual int GetThreadNumber();
-        virtual int GetSuccessNumber();
-        virtual int GetFailNumber();
+        virtual qint64 GetThreadNumber();
+        virtual qint64 GetSuccessNumber();
+        virtual qint64 GetFailNumber();
         virtual QString GetProjectPath();
 
         void Decrypt(const QString& Data);
@@ -235,6 +233,11 @@ namespace BrowserAutomationStudioFramework
         virtual void FailBecauseOfTimeout();
         virtual void FailProcessFinished();
         virtual void RunSubScript();
+
+
+        virtual void SetScript(const QString& Script);
+        virtual QString GetScript();
+
         virtual void SetAsyncResult(const QScriptValue & AsyncResult);
         virtual QScriptValue GetAsyncResult();
         virtual bool IsDieInstant();
@@ -302,7 +305,11 @@ namespace BrowserAutomationStudioFramework
         void SetFailExceedFunction(const QString& FailExceedFunction);
         void SetSuccessExceedFunction(const QString& SuccessExceedFunction);
         void SetAbortFunction(const QString& AbortFunction);
-        void DatabaseAddRecord(const QString& GroupId,const QStringList& Record, int TableId);
+        QString DatabaseAddRecord(const QString& GroupId,const QStringList& Record, int TableId);
+        QStringList DatabaseSelectRecords(const QString& FilterJson,int PageNumber, int PageSize, int TableId);
+        void DatabaseDeleteRecords(const QString& FilterJson,int TableId);
+        void DatabaseUpdateRecord(const QString& RecordId,const QStringList& Record, int TableId);
+        QString DatabaseAddGroup(const QString& GroupName,const QString& GroupDescription, int TableId);
 
         //CallDll functions
         QString ExecuteNativeModuleCodeSync(const QString& DllName, const QString& FunctionName, const QString& InputParam);

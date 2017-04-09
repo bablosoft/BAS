@@ -13,7 +13,7 @@ JavaScriptExtensions::JavaScriptExtensions()
 std::string JavaScriptExtensions::GetReferrerExtension(const std::string& Referrer)
 {
     std::string rescode;
-    if(!Referrer.empty())
+    //if(!Referrer.empty())
     {
         rescode += std::string("Object.defineProperty(window.document, 'referrer', {"
         "    configurable: true, get: function() {"
@@ -187,7 +187,7 @@ std::string JavaScriptExtensions::GetBasicExtension(bool IsRecord)
                     "frame_name=el.getAttribute('name') || '';"
                     "frame_url=el.getAttribute('src') || '';"
                     "frame_tag_html=el.outerHTML || '';"
-                    "frame_index=Array.prototype.slice.call(document.querySelectorAll('iframe, frame')).indexOf(el);if(frame_index<0)frame_index=0;"
+                    "frame_index=BrowserAutomationStudio_GetFrameIndex(el);"
                 "}"
                 "browser_automation_studio_inspect_result(parseInt(rect.left),parseInt(rect.top),parseInt(rect.width),parseInt(rect.height),css,css,css2,css3,match,xpath,x + document.body.scrollLeft,y + document.body.scrollTop,true,is_frame,frame_name,frame_url,frame_tag_html,frame_index,x_with_padding,y_with_padding);"
             "}else{"
@@ -199,6 +199,13 @@ std::string JavaScriptExtensions::GetBasicExtension(bool IsRecord)
     additional +
     inspect_script
      + std::string(
+    "function BrowserAutomationStudio_GetFrameIndex(element){"
+        "try{"
+        "var frame_index = Array.prototype.slice.call(window.frames).indexOf(element.contentWindow);if(frame_index<0)frame_index=0;"
+        "return frame_index;"
+        "}catch(e){};"
+        "return 0;"
+    "}"
     "function BrowserAutomationStudio_GetInternalBoundingRect(element){"
         "var style = window.getComputedStyle(element);"
         "var margin = { left: parseInt(style['margin-left']), right: parseInt(style['margin-right']), top: parseInt(style['margin-top']), bottom: parseInt(style['margin-bottom'])};"

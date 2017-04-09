@@ -1,7 +1,12 @@
 #include "commandparser.h"
 #include "rapidxml.hpp"
+#include "picojson.h"
 #include "log.h"
 #include "split.h"
+#include "replaceall.h"
+#include "snappy.h"
+#include "base64.h"
+
 
 CommandParser::CommandParser()
 {
@@ -23,8 +28,18 @@ void CommandParser::Parse(const std::string& Xml)
             break;
 
         std::string CurrentXml = AllXml.substr(0,pos + FindTag.length());
-        WORKER_LOG(std::string("Found xml : ") + CurrentXml);
+
         AllXml.erase(0,pos + FindTag.length());
+
+        ReplaceAllInPlace(CurrentXml,"</Messages>","");
+        ReplaceAllInPlace(CurrentXml,"<Messages>","");
+
+        std::string Uncompressed;
+        CurrentXml = base64_decode(CurrentXml);
+        snappy::Uncompress(CurrentXml.data(),CurrentXml.length(),&Uncompressed);
+        CurrentXml = std::string("<Messages>") + Uncompressed + std::string("</Messages>");
+
+        //WORKER_LOG(std::string("Found xml : ") + CurrentXml);
 
         std::vector<char> data(CurrentXml.begin(), CurrentXml.end());
         data.push_back(0);
@@ -61,9 +76,17 @@ void CommandParser::Parse(const std::string& Xml)
         if(CommandNode)
         {
             std::string value = CommandNode->value();
+            std::string schema;
+            for (rapidxml::xml_attribute<> *attr = CommandNode->first_attribute(); attr; attr = attr->next_attribute())
+            {
+                if(std::string(attr->name()) == std::string("Schema"))
+                {
+                    schema = attr->value();
+                }
+            }
             WORKER_LOG("SetCode");
             for(auto f:EventSetCode)
-                f(value);
+                f(value,schema);
         }
 
         CommandNode = MessagesNode->first_node("SetResources");
@@ -123,7 +146,7 @@ void CommandParser::Parse(const std::string& Xml)
         {
             std::string value = CommandNode->value();
             WORKER_LOG("EventSetStartupScript");
-            std::string target;
+            std::string target,script_id;
 
             for (rapidxml::xml_attribute<> *attr = CommandNode->first_attribute(); attr; attr = attr->next_attribute())
             {
@@ -131,11 +154,16 @@ void CommandParser::Parse(const std::string& Xml)
                 {
                     target = attr->value();
                 }
+
+                if(std::string(attr->name()) == std::string("script_id"))
+                {
+                    script_id = attr->value();
+                }
             }
 
             for(auto f:EventSetStartupScript)
             {
-                f(value, target);
+                f(value, target, script_id);
             }
 
         }
@@ -233,6 +261,14 @@ void CommandParser::Parse(const std::string& Xml)
                 f(value);
         }
 
+        CommandNode = MessagesNode->first_node("SetFontList");
+        if(CommandNode)
+        {
+            WORKER_LOG("SetFontList");
+            std::string value = CommandNode->value();
+            for(auto f:EventSetFontList)
+                f(value);
+        }
 
         CommandNode = MessagesNode->first_node("GetUrl");
         if(CommandNode)
@@ -378,8 +414,34 @@ void CommandParser::Parse(const std::string& Xml)
             {
                 std::string x = value.substr(0,pos);
                 std::string y = value.substr(pos + 1,value.length() - pos - 1);
+                float speed = -1.0;
+                float gravity = -1.0;
+                float deviation = -1.0;
+                for (rapidxml::xml_attribute<> *attr = CommandNode->first_attribute(); attr; attr = attr->next_attribute())
+                {
+                    if(std::string(attr->name()) == std::string("params"))
+                    {
+                        picojson::value val;
+                        picojson::parse(val,attr->value());
+                        picojson::object obj = val.get<picojson::object>();
+                        if(obj.count("speed")>0)
+                        {
+                            speed = obj["speed"].get<double>();
+                        }
+                        if(obj.count("gravity")>0)
+                        {
+                            gravity = obj["gravity"].get<double>();
+                        }
+                        if(obj.count("deviation")>0)
+                        {
+                            deviation = obj["deviation"].get<double>();
+                        }
+
+                    }
+                }
+
                 for(auto f:EventMouseMove)
-                    f(std::stoi(x),std::stoi(y));
+                    f(std::stoi(x),std::stoi(y),speed,gravity,deviation);
 
             }
         }
@@ -462,6 +524,26 @@ void CommandParser::Parse(const std::string& Xml)
                 f(key,value,target);
         }
 
+        CommandNode = MessagesNode->first_node("SetHeaderList");
+        if(CommandNode)
+        {
+            WORKER_LOG("SetHeaderList");
+
+            std::string json;
+            for (rapidxml::xml_attribute<> *attr = CommandNode->first_attribute(); attr; attr = attr->next_attribute())
+            {
+                WORKER_LOG(attr->name());
+                if(std::string(attr->name()) == std::string("json"))
+                {
+                    WORKER_LOG(attr->value());
+                    json = attr->value();
+                }
+            }
+
+            for(auto f:EventSetHeaderList)
+                f(json);
+        }
+
 
         CommandNode = MessagesNode->first_node("CleanHeader");
         if(CommandNode)
@@ -522,6 +604,38 @@ void CommandParser::Parse(const std::string& Xml)
         {
             WORKER_LOG("ClearRequestMask");
             for(auto f:EventClearRequestMask)
+                f();
+        }
+
+        CommandNode = MessagesNode->first_node("RestrictPopups");
+        if(CommandNode)
+        {
+            WORKER_LOG("RestrictPopups");
+            for(auto f:EventRestrictPopups)
+                f();
+        }
+
+        CommandNode = MessagesNode->first_node("AllowPopups");
+        if(CommandNode)
+        {
+            WORKER_LOG("AllowPopups");
+            for(auto f:EventAllowPopups)
+                f();
+        }
+
+        CommandNode = MessagesNode->first_node("RestrictDownloads");
+        if(CommandNode)
+        {
+            WORKER_LOG("RestrictDownloads");
+            for(auto f:EventRestrictDownloads)
+                f();
+        }
+
+        CommandNode = MessagesNode->first_node("AllowDownloads");
+        if(CommandNode)
+        {
+            WORKER_LOG("AllowDownloads");
+            for(auto f:EventAllowDownloads)
                 f();
         }
 

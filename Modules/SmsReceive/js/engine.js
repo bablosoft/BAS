@@ -104,14 +104,81 @@ function _BAS_GETSMSSITECODE(service,site)
 
 	if(service == "smspva.com")
 	{
-		var services = ["4Game","GMail","Facebook","Spaces.ru","VK","OD","Fiverr","mamba","LinkedIn","Tinder","AOL","Viber","Fotostrana","TimeWeb.com","HotMail","Instagram","MeetMe","Qiwi","*","WhatsAPP","Webtransfer","SEOsprint.net","Yandex","WebMoney","NaSIMke.ru","COM.NU","dodopizza.ru","Tabor.ru","Telegram","Prostockvashino","Drug Vokrug","Drom.RU","Mail.RU","CenoBoy","GetTaxi","VK Serfing","Auto.RU","like4u","VOXOX.COM","Twitter","Sipnet.ru","Ubank.ru","PP.ua","Weebly","Badoo","Royal Canin","Steam","Avito","LD-Info.ru","IMO","Yahoo","Twilio","WeChat","Talk2","SmartCall","Hike","MasterCard","PremiaRuneta.ru","Naver","Taxi Maksim","EsportsPlus","Carousell"]
-		var index = services.indexOf(site)		
-		if(index < 0)
+
+
+
+		var services = {"4Game" : "opt0",
+		"GMail" : "opt1",
+		"Facebook" : "opt2",
+		"Spaces.ru" : "opt3",
+		"VK" : "opt4",
+		"OD" : "opt5",
+		"Fiverr" : "opt6",
+		"mamba" : "opt7",
+		"LinkedIn" : "opt8",
+		"Tinder" : "opt9",
+		"AOL" : "opt10",
+		"Viber" : "opt11",
+		"Fotostrana" : "opt13",
+		"TimeWeb.com" : "opt14",
+		"HotMail" : "opt15",
+		"Instagram" : "opt16",
+		"MeetMe" : "opt17",
+		"Qiwi" : "opt18",
+		"*" : "opt19",
+		"WhatsAPP" : "opt20",
+		"Webtransfer" : "opt21",
+		"SEOsprint.net" : "opt22",
+		"Yandex" : "opt23",
+		"WebMoney" : "opt24",
+		"NaSIMke.ru" : "opt25",
+		"COM.NU" : "opt26",
+		"dodopizza.ru" : "opt27",
+		"Tabor.ru" : "opt28",
+		"Telegram" : "opt29",
+		"Prostockvashino" : "opt30",
+		"Drug Vokrug" : "opt31",
+		"Drom.RU" : "opt32",
+		"Mail.RU" : "opt33",
+		"CenoBoy" : "opt34",
+		"GetTaxi" : "opt35",
+		"VK Serfing" : "opt37",
+		"Auto.RU" : "opt38",
+		"like4u" : "opt39",
+		"VOXOX.COM" : "opt40",
+		"Twitter" : "opt41",
+		"Sipnet.ru" : "opt51",
+		"Ubank.ru" : "opt52",
+		"PP.ua" : "opt53",
+		"Weebly" : "opt54",
+		"Badoo" : "opt56",
+		"Royal Canin" : "opt57",
+		"Steam" : "opt58",
+		"Avito" : "opt59",
+		"LD-Info.ru" : "opt60",
+		"IMO" : "opt61",
+		"Yahoo" : "opt65",
+		"Twilio" : "opt66",
+		"WeChat" : "opt67",
+		"Talk2" : "opt68",
+		"SmartCall" : "opt69",
+		"Hike" : "opt70",
+		"MasterCard" : "opt71",
+		"PremiaRuneta.ru" : "opt72",
+		"Naver" : "opt73",
+		"Taxi Maksim" : "opt74",
+		"EsportsPlus" : "opt75",
+		"Carousell" : "opt77"}
+
+
+
+			
+		if(services[site])
 		{
-			return "opt19"
+			return services[site]
 		}else
 		{
-			return "opt" + index.toString()
+			return "opt19"
 		}
 
 	}
@@ -192,7 +259,24 @@ function _BAS_SMSREGAPIREQUEST()
 	if(_SMS_DEBUG)
 		log("smsreg api request " + url)
 
-	http_client_get2(url,{method:("GET")})!
+	_ensure_http_client()
+	_BAS_FAIL_ON_ERROR = FAIL_ON_ERROR
+	http_client_set_fail_on_error(false)
+	_do(function(){
+		if(_iterator() > 10)
+		{
+			_switch_http_client_main()
+			FAIL_ON_ERROR = _BAS_FAIL_ON_ERROR
+			fail("Failed sms api request")
+		}
+		http_client_get2(url,{method:("GET")})!
+		if(!http_client_was_error())
+			_break()
+		
+		sleep(1000)!
+	})!
+	FAIL_ON_ERROR = _BAS_FAIL_ON_ERROR
+	
 
 	_sms_ban_thread(5)
 	
@@ -234,7 +318,23 @@ function _BAS_SMSACTIVATEPIREQUEST()
 	if(_SMS_DEBUG)
 		log("sms-activate api request " + url)
 
-	http_client_get2(url,{method:("GET")})!
+	_ensure_http_client()
+	_BAS_FAIL_ON_ERROR = FAIL_ON_ERROR
+	http_client_set_fail_on_error(false)
+	_do(function(){
+		if(_iterator() > 10)
+		{
+			_switch_http_client_main()
+			FAIL_ON_ERROR = _BAS_FAIL_ON_ERROR
+			fail("Failed sms api request")
+		}
+		http_client_get2(url,{method:("GET")})!
+		if(!http_client_was_error())
+			_break()
+		
+		sleep(1000)!
+	})!
+	FAIL_ON_ERROR = _BAS_FAIL_ON_ERROR
 
 	_sms_ban_thread(5)
 
@@ -259,7 +359,23 @@ function _BAS_SMSPVAREQUEST()
 	if(_SMS_DEBUG)
 		log("smspva api request " + url)
 
-	http_client_get2(url,{method:("GET")})!
+	_ensure_http_client()
+	_BAS_FAIL_ON_ERROR = FAIL_ON_ERROR
+	http_client_set_fail_on_error(false)
+	_do(function(){
+		if(_iterator() > 10)
+		{
+			_switch_http_client_main()
+			FAIL_ON_ERROR = _BAS_FAIL_ON_ERROR
+			fail("Failed sms api request")
+		}
+		http_client_get2(url,{method:("GET")})!
+		if(!http_client_was_error())
+			_break()
+		
+		sleep(1000)!
+	})!
+	FAIL_ON_ERROR = _BAS_FAIL_ON_ERROR
 
 	_sms_ban_thread(20)
 

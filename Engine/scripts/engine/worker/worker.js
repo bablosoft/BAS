@@ -99,10 +99,46 @@ function scroll(x, y, callback)
     Browser.Scroll(x,y,_get_function_body(callback))
 }
 
-function move(x, y, callback)
+_DEFAULT_MOVE_PARAMS = {}
+
+function _default_move_params(params)
 {
+    _DEFAULT_MOVE_PARAMS = params
+}
+
+function move()
+{
+    var length = arguments.length
+
+    var x = arguments[0]
+    var y = arguments[1]
+    var params = arguments[2]
+    var callback = arguments[3]
+
+
+    if(length == 4)
+    {
+        x = arguments[0]
+        y = arguments[1]
+        params = arguments[2]
+        callback = arguments[3]
+    }else if(length == 3)
+    {
+        x = arguments[0]
+        y = arguments[1]
+        params = {}
+        callback = arguments[2]
+    }else
+    {
+        fail("move, wrong number of arguments")
+    }
+
+    if(Object.keys(params).length == 0)
+    {
+        params = _DEFAULT_MOVE_PARAMS
+    }
     _ensure_browser_created();
-    Browser.MouseMove(x,y,_get_function_body(callback))
+    Browser.MouseMove(x,y,JSON.stringify(params),_get_function_body(callback))
 }
 
 function wait_code(callback)
@@ -178,6 +214,7 @@ function resize(x, y, callback)
 function reset(callback)
 {
     _ensure_browser_created();
+    _DEFAULT_MOVE_PARAMS = {}
     Browser.Reset(_get_function_body(callback));
 }
 
@@ -400,10 +437,23 @@ function script(text, callback)
     page().script(text,callback);
 }
 
+function font_list(fonts, callback)
+{
+    _ensure_browser_created();
+    Browser.SetFontList(fonts,_get_function_body(callback));
+}
+
+
 function onloadjavascript(text, callback)
 {
     _ensure_browser_created();
-    Browser.SetStartupScript(text,_get_target(),_get_function_body(callback));
+    Browser.SetStartupScript(text,"Main",_get_target(),_get_function_body(callback));
+}
+
+function onloadjavascriptinternal(text, script_id, callback)
+{
+    _ensure_browser_created();
+    Browser.SetStartupScript(text,script_id,_get_target(),_get_function_body(callback));
 }
 
 function agent(text, callback)
@@ -635,10 +685,31 @@ function DEC(callback)
     ScriptWorker.Decrypt(callback);
 }
 
-function db_add_record(group_id, data_list, table_id)
+function _db_add_record(group_id, data_list, table_id)
 {
-    ScriptWorker.DatabaseAddRecord(group_id, data_list, table_id);
+    return ScriptWorker.DatabaseAddRecord(group_id, data_list, table_id);
 }
+function _db_select_records(selector, page_number,page_size, table_id)
+{
+    return ScriptWorker.DatabaseSelectRecords(JSON.stringify(selector),page_number,page_size, table_id);
+}
+
+function _db_delete_records(selector, table_id)
+{
+    return ScriptWorker.DatabaseDeleteRecords(JSON.stringify(selector),table_id);
+}
+
+
+function _db_update_record(record_id, data_list, table_id)
+{
+    return ScriptWorker.DatabaseUpdateRecord(record_id, data_list, table_id);
+}
+
+function _db_add_group(group_name, group_description, table_id)
+{
+    return ScriptWorker.DatabaseAddGroup(group_name, group_description, table_id);
+}
+
 
 function _on_start()
 {

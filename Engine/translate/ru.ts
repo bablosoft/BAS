@@ -154,43 +154,63 @@
 <context>
     <name>BrowserAutomationStudioFramework::DatabaseAdmin</name>
     <message>
-        <location filename="../databaseadmin.cpp" line="633"/>
+        <location filename="../databaseadmin.cpp" line="43"/>
+        <source>File</source>
+        <translation>Файл</translation>
+    </message>
+    <message>
+        <location filename="../databaseadmin.cpp" line="44"/>
+        <source>Refresh</source>
+        <translation>Обновить</translation>
+    </message>
+    <message>
+        <location filename="../databaseadmin.cpp" line="45"/>
+        <source>Delete All Data</source>
+        <translation>Удалить Все</translation>
+    </message>
+    <message>
+        <location filename="../databaseadmin.cpp" line="47"/>
+        <source>Convert</source>
+        <translation>Конвертировать</translation>
+    </message>
+    <message>
+        <location filename="../databaseadmin.cpp" line="661"/>
         <source>Delete All?</source>
         <translation>Удалить все?</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.cpp" line="633"/>
+        <location filename="../databaseadmin.cpp" line="661"/>
         <source>Are you sure, that you want to delete all data?</source>
         <translation>Вы уверены, что хотите удалить все данные?</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.cpp" line="681"/>
+        <location filename="../databaseadmin.cpp" line="709"/>
         <source>Csv</source>
         <translation>Csv</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.cpp" line="682"/>
+        <location filename="../databaseadmin.cpp" line="710"/>
         <source>Imported at </source>
         <translation>Импортировано </translation>
     </message>
     <message>
-        <location filename="../databaseadmin.cpp" line="851"/>
-        <location filename="../databaseadmin.cpp" line="891"/>
+        <location filename="../databaseadmin.cpp" line="879"/>
+        <location filename="../databaseadmin.cpp" line="919"/>
         <source>Database Error</source>
         <translation>Ошибка базы</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.cpp" line="851"/>
+        <location filename="../databaseadmin.cpp" line="879"/>
         <source>No Backup Made</source>
         <translation>Не удалось создать бэкап</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.cpp" line="855"/>
+        <location filename="../databaseadmin.cpp" line="883"/>
         <source>Choose Backup To Restore</source>
         <translation>Выберите бэкап</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.cpp" line="856"/>
+        <location filename="../databaseadmin.cpp" line="884"/>
         <source>Restore:</source>
         <translation>Восстановление:</translation>
     </message>
@@ -233,92 +253,97 @@
 <context>
     <name>BrowserAutomationStudioFramework::MongoDatabaseConnector</name>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="49"/>
-        <location filename="../mongodatabaseconnector.cpp" line="220"/>
+        <location filename="../mongodatabaseconnector.cpp" line="66"/>
+        <source>User cancel</source>
+        <translation>Отменено пользователем</translation>
+    </message>
+    <message>
+        <location filename="../mongodatabaseconnector.cpp" line="112"/>
+        <location filename="../mongodatabaseconnector.cpp" line="283"/>
         <source>Failed to write to file</source>
         <translation>Ошибка записи файла</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="170"/>
-        <location filename="../mongodatabaseconnector.cpp" line="279"/>
-        <location filename="../mongodatabaseconnector.cpp" line="376"/>
-        <location filename="../mongodatabaseconnector.cpp" line="745"/>
-        <location filename="../mongodatabaseconnector.cpp" line="810"/>
-        <location filename="../mongodatabaseconnector.cpp" line="835"/>
-        <location filename="../mongodatabaseconnector.cpp" line="861"/>
-        <location filename="../mongodatabaseconnector.cpp" line="914"/>
-        <location filename="../mongodatabaseconnector.cpp" line="974"/>
-        <location filename="../mongodatabaseconnector.cpp" line="999"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1027"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1080"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1107"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1152"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1191"/>
+        <location filename="../mongodatabaseconnector.cpp" line="233"/>
+        <location filename="../mongodatabaseconnector.cpp" line="342"/>
+        <location filename="../mongodatabaseconnector.cpp" line="439"/>
+        <location filename="../mongodatabaseconnector.cpp" line="808"/>
+        <location filename="../mongodatabaseconnector.cpp" line="873"/>
+        <location filename="../mongodatabaseconnector.cpp" line="898"/>
+        <location filename="../mongodatabaseconnector.cpp" line="924"/>
+        <location filename="../mongodatabaseconnector.cpp" line="977"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1037"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1062"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1090"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1143"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1170"/>
         <location filename="../mongodatabaseconnector.cpp" line="1215"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1237"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1268"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1254"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1278"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1300"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1331"/>
         <source>Database Error : </source>
         <translation>Ошибка базы : </translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="176"/>
-        <location filename="../mongodatabaseconnector.cpp" line="285"/>
-        <location filename="../mongodatabaseconnector.cpp" line="382"/>
-        <location filename="../mongodatabaseconnector.cpp" line="751"/>
-        <location filename="../mongodatabaseconnector.cpp" line="816"/>
-        <location filename="../mongodatabaseconnector.cpp" line="841"/>
-        <location filename="../mongodatabaseconnector.cpp" line="867"/>
-        <location filename="../mongodatabaseconnector.cpp" line="920"/>
-        <location filename="../mongodatabaseconnector.cpp" line="980"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1005"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1033"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1086"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1113"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1158"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1197"/>
+        <location filename="../mongodatabaseconnector.cpp" line="239"/>
+        <location filename="../mongodatabaseconnector.cpp" line="348"/>
+        <location filename="../mongodatabaseconnector.cpp" line="445"/>
+        <location filename="../mongodatabaseconnector.cpp" line="814"/>
+        <location filename="../mongodatabaseconnector.cpp" line="879"/>
+        <location filename="../mongodatabaseconnector.cpp" line="904"/>
+        <location filename="../mongodatabaseconnector.cpp" line="930"/>
+        <location filename="../mongodatabaseconnector.cpp" line="983"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1043"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1068"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1096"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1149"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1176"/>
         <location filename="../mongodatabaseconnector.cpp" line="1221"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1243"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1274"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1260"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1284"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1306"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1337"/>
         <source>Database Error</source>
         <translation>Ошибка базы</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="316"/>
+        <location filename="../mongodatabaseconnector.cpp" line="379"/>
         <source>Failed to read to file</source>
         <translation>Ошибка чтения файла</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="938"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1001"/>
         <source>All data in table</source>
         <translation>Все данные в таблице</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="940"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1003"/>
         <source>All</source>
         <translation>Все</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="947"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1010"/>
         <source>Items, which is not present in any group</source>
         <translation>Записи, которых нет ни в одной группе</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="949"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1012"/>
         <source>Not in groups</source>
         <translation>Не в группе</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="1507"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1564"/>
         <source>Database error</source>
         <translation>Ошибка базы</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="1539"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1597"/>
         <source>Failed to create data dir</source>
         <translation>Не удалось создать папку с данными</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="1629"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1685"/>
         <source>Failed to run database server on port %1. Please check firewall settings, maybe exception should be added. This error may occur if you have less than 4GB free space on hard drive.</source>
         <translation>Ошибка запуска базы(порт %1).Пожалуйста, проверьте настройки брандмауэра, возможно нужно добавить исключение. Также, эта ошибка может возникнуть, если у вас меньше, чем 4 Гб свободного места на жестком диске.</translation>
     </message>
@@ -469,39 +494,40 @@
     </message>
     <message>
         <location filename="../scriptmultiworker.cpp" line="539"/>
-        <location filename="../scriptmultiworker.cpp" line="738"/>
-        <location filename="../scriptmultiworker.cpp" line="739"/>
+        <location filename="../scriptmultiworker.cpp" line="752"/>
+        <location filename="../scriptmultiworker.cpp" line="753"/>
         <source>Ended with message: </source>
         <translation>Закончен с сообщением: </translation>
     </message>
     <message>
         <location filename="../scriptmultiworker.cpp" line="555"/>
+        <location filename="../scriptmultiworker.cpp" line="568"/>
         <source>Aborted By User</source>
         <translation>Прервано Пользователем</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="578"/>
+        <location filename="../scriptmultiworker.cpp" line="584"/>
         <source>[%1] Script finished correctly</source>
         <translation>[%1] Скрипт завершен корректно</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="615"/>
+        <location filename="../scriptmultiworker.cpp" line="622"/>
         <source>Success</source>
         <translation>Удачно</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="640"/>
+        <location filename="../scriptmultiworker.cpp" line="648"/>
         <source>Stage Timeout</source>
         <translation>Время На Выполнение Этапа Истекло</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="729"/>
+        <location filename="../scriptmultiworker.cpp" line="743"/>
         <source>Too Much Fails</source>
         <translation>Слишком Много Ошибок</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="1029"/>
-        <location filename="../scriptmultiworker.cpp" line="1030"/>
+        <location filename="../scriptmultiworker.cpp" line="1043"/>
+        <location filename="../scriptmultiworker.cpp" line="1044"/>
         <source>All data have been processed</source>
         <translation>Все данные были обработаны</translation>
     </message>
@@ -553,7 +579,7 @@
         <translation type="vanished">не удалось получить ресурс </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1183"/>
+        <location filename="../scriptworker.cpp" line="1229"/>
         <source>Thread suspended</source>
         <translation>Поток приостановлен</translation>
     </message>
@@ -566,132 +592,132 @@
         <translation type="vanished">Поток аварийно завершился</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1164"/>
+        <location filename="../scriptworker.cpp" line="1210"/>
         <source>All data have been processed for </source>
         <translation>Все данные были обработаны для </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1188"/>
-        <location filename="../scriptworker.cpp" line="1189"/>
+        <location filename="../scriptworker.cpp" line="1234"/>
+        <location filename="../scriptworker.cpp" line="1235"/>
         <source>Thread ended</source>
         <translation>Поток завершился</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1190"/>
+        <location filename="../scriptworker.cpp" line="1236"/>
         <source>Thread succeeded</source>
         <translation>Поток выполнен успешно</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1192"/>
+        <location filename="../scriptworker.cpp" line="1238"/>
         <source> with message &quot;</source>
         <translation> с сообщением &quot;</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1204"/>
+        <location filename="../scriptworker.cpp" line="1250"/>
         <source>Thread #</source>
         <translation>Поток №</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1216"/>
-        <location filename="../scriptworker.cpp" line="1233"/>
+        <location filename="../scriptworker.cpp" line="1262"/>
+        <location filename="../scriptworker.cpp" line="1292"/>
         <source>CAPTCHA_FAIL</source>
         <translation>Ошибка решения капчи</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1216"/>
+        <location filename="../scriptworker.cpp" line="1262"/>
         <source>Failed to get solver</source>
         <translation>Неизвестный метод решения капчи</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1245"/>
+        <location filename="../scriptworker.cpp" line="1305"/>
         <source>Captcha wait timeout</source>
         <translation>Время ожидания решения капчи истекло</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1258"/>
+        <location filename="../scriptworker.cpp" line="1318"/>
         <source>Async function is called in sync mode</source>
         <translation>Асинхронная функция вызвана синхронно</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1266"/>
-        <location filename="../scriptworker.cpp" line="1330"/>
+        <location filename="../scriptworker.cpp" line="1326"/>
+        <location filename="../scriptworker.cpp" line="1390"/>
         <source>Failed to run function </source>
         <translation>Ошибка при запуске функции </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1285"/>
+        <location filename="../scriptworker.cpp" line="1345"/>
         <source>Sync function is called in async mode</source>
         <translation>Синхронная функция вызвана асинхронно</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1295"/>
+        <location filename="../scriptworker.cpp" line="1355"/>
         <source>Failed to execute module function </source>
         <translation>Не удалось выполнить функцию </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1355"/>
+        <location filename="../scriptworker.cpp" line="1415"/>
         <source>Failed to get mail number with Pop3CLient</source>
         <translation>Не удалось получить количество писем с помощью Pop3 клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1363"/>
+        <location filename="../scriptworker.cpp" line="1423"/>
         <source>Failed to get message with Pop3CLient</source>
         <translation>Не удалось получить письмо с помощью Pop3 клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1414"/>
+        <location filename="../scriptworker.cpp" line="1486"/>
         <source>Failed to get mail number with ImapCLient</source>
         <translation>Не удалось получить количество писем с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1422"/>
+        <location filename="../scriptworker.cpp" line="1494"/>
         <source>Failed to search mail with ImapCLient</source>
         <translation>Не удалось выполнить поиск с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1430"/>
+        <location filename="../scriptworker.cpp" line="1502"/>
         <source>Failed to custom search mail with ImapCLient</source>
         <translation>Не удалось выполнить специальный поиск с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1438"/>
+        <location filename="../scriptworker.cpp" line="1510"/>
         <source>Failed to fetch mail with ImapCLient</source>
         <translation>Не удалось получить письмо с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1446"/>
+        <location filename="../scriptworker.cpp" line="1518"/>
         <source>Failed to execute custom query with ImapCLient</source>
         <translation>Не удалось выполнить специальный запрос с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1497"/>
-        <location filename="../scriptworker.cpp" line="1630"/>
-        <location filename="../scriptworker.cpp" line="1638"/>
-        <location filename="../scriptworker.cpp" line="1646"/>
-        <location filename="../scriptworker.cpp" line="1674"/>
+        <location filename="../scriptworker.cpp" line="1569"/>
+        <location filename="../scriptworker.cpp" line="1707"/>
+        <location filename="../scriptworker.cpp" line="1715"/>
+        <location filename="../scriptworker.cpp" line="1724"/>
+        <location filename="../scriptworker.cpp" line="1752"/>
         <source>Failed to get page </source>
         <translation>Не удалось получить страницу </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1497"/>
-        <location filename="../scriptworker.cpp" line="1530"/>
-        <location filename="../scriptworker.cpp" line="1580"/>
-        <location filename="../scriptworker.cpp" line="1630"/>
-        <location filename="../scriptworker.cpp" line="1638"/>
-        <location filename="../scriptworker.cpp" line="1646"/>
-        <location filename="../scriptworker.cpp" line="1674"/>
-        <location filename="../scriptworker.cpp" line="1701"/>
+        <location filename="../scriptworker.cpp" line="1569"/>
+        <location filename="../scriptworker.cpp" line="1606"/>
+        <location filename="../scriptworker.cpp" line="1657"/>
+        <location filename="../scriptworker.cpp" line="1707"/>
+        <location filename="../scriptworker.cpp" line="1715"/>
+        <location filename="../scriptworker.cpp" line="1724"/>
+        <location filename="../scriptworker.cpp" line="1752"/>
+        <location filename="../scriptworker.cpp" line="1780"/>
         <source> with HttpClient</source>
         <translation> с помошью ХТТП клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1530"/>
-        <location filename="../scriptworker.cpp" line="1580"/>
+        <location filename="../scriptworker.cpp" line="1606"/>
+        <location filename="../scriptworker.cpp" line="1657"/>
         <source>Failed to post page </source>
         <translation>Не удалось выполнить пост запрос </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1701"/>
+        <location filename="../scriptworker.cpp" line="1780"/>
         <source>Failed to download page </source>
         <translation>Не удалось скачать страницу </translation>
     </message>
@@ -729,28 +755,30 @@
         <location filename="../subprocessbrowser.cpp" line="76"/>
         <location filename="../subprocessbrowser.cpp" line="88"/>
         <location filename="../subprocessbrowser.cpp" line="100"/>
-        <location filename="../subprocessbrowser.cpp" line="112"/>
-        <location filename="../subprocessbrowser.cpp" line="124"/>
-        <location filename="../subprocessbrowser.cpp" line="136"/>
-        <location filename="../subprocessbrowser.cpp" line="148"/>
-        <location filename="../subprocessbrowser.cpp" line="163"/>
-        <location filename="../subprocessbrowser.cpp" line="183"/>
-        <location filename="../subprocessbrowser.cpp" line="196"/>
-        <location filename="../subprocessbrowser.cpp" line="209"/>
-        <location filename="../subprocessbrowser.cpp" line="221"/>
-        <location filename="../subprocessbrowser.cpp" line="233"/>
-        <location filename="../subprocessbrowser.cpp" line="246"/>
-        <location filename="../subprocessbrowser.cpp" line="258"/>
-        <location filename="../subprocessbrowser.cpp" line="270"/>
-        <location filename="../subprocessbrowser.cpp" line="282"/>
-        <location filename="../subprocessbrowser.cpp" line="294"/>
-        <location filename="../subprocessbrowser.cpp" line="306"/>
-        <location filename="../subprocessbrowser.cpp" line="318"/>
-        <location filename="../subprocessbrowser.cpp" line="330"/>
-        <location filename="../subprocessbrowser.cpp" line="342"/>
-        <location filename="../subprocessbrowser.cpp" line="354"/>
+        <location filename="../subprocessbrowser.cpp" line="115"/>
+        <location filename="../subprocessbrowser.cpp" line="127"/>
+        <location filename="../subprocessbrowser.cpp" line="139"/>
+        <location filename="../subprocessbrowser.cpp" line="151"/>
+        <location filename="../subprocessbrowser.cpp" line="166"/>
+        <location filename="../subprocessbrowser.cpp" line="186"/>
+        <location filename="../subprocessbrowser.cpp" line="199"/>
+        <location filename="../subprocessbrowser.cpp" line="212"/>
+        <location filename="../subprocessbrowser.cpp" line="224"/>
+        <location filename="../subprocessbrowser.cpp" line="240"/>
+        <location filename="../subprocessbrowser.cpp" line="252"/>
+        <location filename="../subprocessbrowser.cpp" line="265"/>
+        <location filename="../subprocessbrowser.cpp" line="277"/>
+        <location filename="../subprocessbrowser.cpp" line="289"/>
+        <location filename="../subprocessbrowser.cpp" line="301"/>
+        <location filename="../subprocessbrowser.cpp" line="313"/>
+        <location filename="../subprocessbrowser.cpp" line="325"/>
+        <location filename="../subprocessbrowser.cpp" line="337"/>
+        <location filename="../subprocessbrowser.cpp" line="349"/>
+        <location filename="../subprocessbrowser.cpp" line="361"/>
         <location filename="../subprocessbrowser.cpp" line="373"/>
-        <location filename="../subprocessbrowser.cpp" line="690"/>
+        <location filename="../subprocessbrowser.cpp" line="385"/>
+        <location filename="../subprocessbrowser.cpp" line="404"/>
+        <location filename="../subprocessbrowser.cpp" line="728"/>
         <source>Timeout during </source>
         <translation>Таймаут во время выполнения </translation>
     </message>
@@ -778,25 +806,30 @@
 <context>
     <name>BrowserAutomationStudioFramework::SubprocessNetworkAccessManager</name>
     <message>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="111"/>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="123"/>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="150"/>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="162"/>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="173"/>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="184"/>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="195"/>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="206"/>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="217"/>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="228"/>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="239"/>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="250"/>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="261"/>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="272"/>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="285"/>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="297"/>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="309"/>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="321"/>
-        <location filename="../subprocessnetworkaccessmanager.cpp" line="333"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="127"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="142"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="154"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="182"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="194"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="205"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="216"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="227"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="238"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="249"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="260"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="271"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="282"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="293"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="304"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="316"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="328"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="340"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="352"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="365"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="377"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="389"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="401"/>
+        <location filename="../subprocessnetworkaccessmanager.cpp" line="413"/>
         <source>Timeout during </source>
         <translation>Таймаут во время выполнения </translation>
     </message>
@@ -827,9 +860,9 @@
         <location filename="../subprocesswebelement.cpp" line="387"/>
         <location filename="../subprocesswebelement.cpp" line="394"/>
         <location filename="../subprocesswebelement.cpp" line="401"/>
-        <location filename="../subprocesswebelement.cpp" line="458"/>
-        <location filename="../subprocesswebelement.cpp" line="484"/>
-        <location filename="../subprocesswebelement.cpp" line="491"/>
+        <location filename="../subprocesswebelement.cpp" line="488"/>
+        <location filename="../subprocesswebelement.cpp" line="514"/>
+        <location filename="../subprocesswebelement.cpp" line="521"/>
         <source>Timeout during </source>
         <translation>Таймаут во время выполнения </translation>
     </message>
@@ -1065,7 +1098,7 @@
     <message>
         <location filename="../chooserresourcewidget.ui" line="1851"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Change table&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Изменять таблицу&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Менять таблицу&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../chooserresourcewidget.ui" line="1871"/>
@@ -1281,87 +1314,87 @@
         <translation>Менеджер данных</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.ui" line="126"/>
+        <location filename="../databaseadmin.ui" line="287"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.ui" line="138"/>
+        <location filename="../databaseadmin.ui" line="378"/>
         <source>Select Table:</source>
         <translation>Таблица:</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.ui" line="152"/>
+        <location filename="../databaseadmin.ui" line="392"/>
         <source>Account</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../databaseadmin.ui" line="157"/>
+        <location filename="../databaseadmin.ui" line="397"/>
         <source>Tweet</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../databaseadmin.ui" line="202"/>
+        <location filename="../databaseadmin.ui" line="299"/>
         <source>Refresh</source>
         <translation>Обновить</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.ui" line="270"/>
+        <location filename="../databaseadmin.ui" line="367"/>
         <source>Delete All Data</source>
         <translation>Удалить Все</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.ui" line="317"/>
+        <location filename="../databaseadmin.ui" line="113"/>
         <source>Convert</source>
         <translation>Конвертировать</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.ui" line="329"/>
+        <location filename="../databaseadmin.ui" line="125"/>
         <source>Import Csv</source>
         <translation>Импорт Csv</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.ui" line="342"/>
+        <location filename="../databaseadmin.ui" line="138"/>
         <source>Export Csv</source>
         <translation>Экспорт Csv</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.ui" line="393"/>
+        <location filename="../databaseadmin.ui" line="189"/>
         <source>Backup</source>
         <translation>Бэкап</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.ui" line="406"/>
+        <location filename="../databaseadmin.ui" line="202"/>
         <source>Restore</source>
         <translation>Восстановить</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.ui" line="438"/>
+        <location filename="../databaseadmin.ui" line="234"/>
         <source>Export Xls</source>
         <translation>Экспорт в Xls</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.ui" line="547"/>
+        <location filename="../databaseadmin.ui" line="506"/>
         <source>Group Filter:</source>
         <translation>Фильтр групп:</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.ui" line="697"/>
+        <location filename="../databaseadmin.ui" line="691"/>
         <source>Add Group</source>
         <translation>Добавить группу</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.ui" line="714"/>
+        <location filename="../databaseadmin.ui" line="708"/>
         <source>Delete Selected</source>
         <translation>Удалить выбранные</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.ui" line="725"/>
+        <location filename="../databaseadmin.ui" line="719"/>
         <source>Select All</source>
         <translation>Выбрать все</translation>
     </message>
     <message>
-        <location filename="../databaseadmin.ui" line="736"/>
+        <location filename="../databaseadmin.ui" line="730"/>
         <source>Select None</source>
         <translation>Очистить выделение</translation>
     </message>
@@ -1851,74 +1884,102 @@
         <translation>Строк:</translation>
     </message>
     <message>
-        <location filename="../databaseadmintable.ui" line="416"/>
+        <location filename="../databaseadmintable.ui" line="469"/>
         <source>Add Item</source>
         <translation>Добавить</translation>
     </message>
     <message>
-        <location filename="../databaseadmintable.ui" line="427"/>
+        <location filename="../databaseadmintable.ui" line="480"/>
         <source>Delete Selected</source>
         <translation>Удалить выбранные</translation>
     </message>
     <message>
-        <location filename="../databaseadmintable.ui" line="438"/>
+        <location filename="../databaseadmintable.ui" line="491"/>
         <source>Select All</source>
         <translation>Выбрать все</translation>
     </message>
     <message>
-        <location filename="../databaseadmintable.ui" line="449"/>
+        <location filename="../databaseadmintable.ui" line="502"/>
         <source>Select None</source>
         <translation>Очистить выделение</translation>
     </message>
     <message>
-        <location filename="../databaseadmintable.ui" line="488"/>
+        <location filename="../databaseadmintable.ui" line="556"/>
         <source>Move Selected To Group</source>
         <translation>Переместить выбранные в группу</translation>
     </message>
     <message>
-        <location filename="../databaseadmintable.ui" line="499"/>
+        <location filename="../databaseadmintable.ui" line="567"/>
         <source>Copy Selected To Group</source>
         <translation>Копировать выбранные в группу</translation>
     </message>
     <message>
-        <location filename="../databaseadmintable.ui" line="510"/>
+        <location filename="../databaseadmintable.ui" line="578"/>
         <source>Delete From All Groups</source>
         <translation>Убрать из групп</translation>
     </message>
     <message>
-        <location filename="../databaseadmintable.cpp" line="398"/>
+        <location filename="../databaseadmintable.cpp" line="408"/>
         <source>None</source>
         <translation>Без групп</translation>
     </message>
     <message>
-        <location filename="../databaseadmintable.cpp" line="628"/>
+        <location filename="../databaseadmintable.cpp" line="638"/>
         <source>Delete Rows</source>
         <translation>Удалить строки</translation>
     </message>
     <message>
-        <location filename="../databaseadmintable.cpp" line="682"/>
+        <location filename="../databaseadmintable.cpp" line="692"/>
         <source>Please Create Group First</source>
         <translation>Сначала создайте группу</translation>
     </message>
     <message>
-        <location filename="../databaseadmintable.cpp" line="736"/>
+        <location filename="../databaseadmintable.cpp" line="746"/>
         <source>Remove From Gorups</source>
         <translation>Удалить из групп</translation>
     </message>
     <message>
-        <location filename="../databaseadmintable.cpp" line="783"/>
+        <location filename="../databaseadmintable.cpp" line="793"/>
         <source>Get Page Number</source>
         <translation>Номер страницы</translation>
     </message>
     <message>
-        <location filename="../databaseadmintable.cpp" line="783"/>
+        <location filename="../databaseadmintable.cpp" line="793"/>
         <source>Page Number:</source>
         <translation>Номер страницы:</translation>
     </message>
     <message>
-        <location filename="../databaseadmintable.cpp" line="835"/>
+        <location filename="../databaseadmintable.cpp" line="845"/>
         <source>Delete Row</source>
         <translation>Удалить строку</translation>
+    </message>
+</context>
+<context>
+    <name>DatabaseConnectionDialog</name>
+    <message>
+        <location filename="../databaseconnectiondialog.ui" line="14"/>
+        <source>Database connection</source>
+        <translation>Соединение с базой</translation>
+    </message>
+    <message>
+        <location filename="../databaseconnectiondialog.ui" line="22"/>
+        <source>Connecting to database</source>
+        <translation>Подключение к базе</translation>
+    </message>
+    <message>
+        <location filename="../databaseconnectiondialog.ui" line="50"/>
+        <source>Show log</source>
+        <translation>Показать лог</translation>
+    </message>
+    <message>
+        <location filename="../databaseconnectiondialog.ui" line="57"/>
+        <source>Run without database</source>
+        <translation>Запуск без базы</translation>
+    </message>
+    <message>
+        <location filename="../databaseconnectiondialog.ui" line="64"/>
+        <source>Close</source>
+        <translation>Закрыть</translation>
     </message>
 </context>
 <context>
@@ -1942,6 +2003,160 @@
         <location filename="../databasegroupwidget.ui" line="233"/>
         <source>Delete Group</source>
         <translation>Удалить</translation>
+    </message>
+</context>
+<context>
+    <name>DatabaseSchemaEditorColumnDialog</name>
+    <message>
+        <location filename="../databaseschemaeditorcolumndialog.ui" line="14"/>
+        <source>Column edit</source>
+        <translation>Редактирование столбца</translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditorcolumndialog.ui" line="39"/>
+        <source>Name : </source>
+        <translation>Имя : </translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditorcolumndialog.ui" line="63"/>
+        <source>Table description en : </source>
+        <translation>Описание таблицы en: </translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditorcolumndialog.ui" line="87"/>
+        <source>Table description ru: </source>
+        <translation>Описание таблицы ru: </translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditorcolumndialog.ui" line="117"/>
+        <source>Type:</source>
+        <translation>Тип:</translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditorcolumndialog.ui" line="137"/>
+        <source>string</source>
+        <translation>string</translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditorcolumndialog.ui" line="142"/>
+        <source>int</source>
+        <translation>int</translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditorcolumndialog.ui" line="147"/>
+        <source>date</source>
+        <translation>date</translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditorcolumndialog.ui" line="152"/>
+        <source>bool</source>
+        <translation>bool</translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditorcolumndialog.ui" line="179"/>
+        <source>Ok</source>
+        <translation>Ок</translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditorcolumndialog.ui" line="186"/>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+</context>
+<context>
+    <name>DatabaseSchemaEditorDialog</name>
+    <message>
+        <location filename="../databaseschemaeditordialog.ui" line="14"/>
+        <source>Schema editor</source>
+        <translation>Редактор схемы</translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditordialog.ui" line="94"/>
+        <source>Tables : </source>
+        <translation>Таблицы : </translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditordialog.ui" line="132"/>
+        <source>Add table</source>
+        <translation>Добавить таблицу</translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditordialog.ui" line="200"/>
+        <source>Name : </source>
+        <translation>Имя : </translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditordialog.ui" line="224"/>
+        <source>Table description en : </source>
+        <translation>Описание таблицы en: </translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditordialog.ui" line="248"/>
+        <source>Table description ru: </source>
+        <translation>Описание таблицы ru: </translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditordialog.ui" line="269"/>
+        <source>Columns:</source>
+        <translation>Колонки:</translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditordialog.ui" line="303"/>
+        <source>Add column</source>
+        <translation>Добавить колонку</translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditordialog.ui" line="372"/>
+        <source>Save</source>
+        <translation>Сохранить</translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditordialog.ui" line="389"/>
+        <source>Close</source>
+        <translation>Закрыть</translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditordialog.cpp" line="30"/>
+        <source>File</source>
+        <translation>Файл</translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditordialog.cpp" line="31"/>
+        <source>Raw mode</source>
+        <translation>Текстовый режим</translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditordialog.cpp" line="32"/>
+        <source>Constructor mode</source>
+        <translation>Режим конструктора</translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditordialog.cpp" line="217"/>
+        <location filename="../databaseschemaeditordialog.cpp" line="282"/>
+        <source>Move up </source>
+        <translation>Переместить вверх </translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditordialog.cpp" line="218"/>
+        <location filename="../databaseschemaeditordialog.cpp" line="283"/>
+        <source>Move down </source>
+        <translation>Переместить вниз </translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditordialog.cpp" line="219"/>
+        <location filename="../databaseschemaeditordialog.cpp" line="285"/>
+        <source>Erase </source>
+        <translation type="unfinished">Стереть </translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditordialog.cpp" line="284"/>
+        <source>Edit </source>
+        <translation>Редактировать</translation>
+    </message>
+    <message>
+        <location filename="../databaseschemaeditordialog.cpp" line="330"/>
+        <source>Are you sure, that you want to delete table?</source>
+        <translation>Вы уверены, что хотите удалить таблицу?</translation>
     </message>
 </context>
 <context>
@@ -2001,12 +2216,12 @@
     <message>
         <location filename="../designchooserresourcewidget.ui" line="454"/>
         <source>Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Таблица</translation>
     </message>
     <message>
         <location filename="../designchooserresourcewidget.ui" line="473"/>
         <source>Format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Формат:</translation>
     </message>
     <message>
         <source>Greedy algorithm</source>

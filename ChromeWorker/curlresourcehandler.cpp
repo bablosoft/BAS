@@ -52,6 +52,25 @@ void ParseHeaders(CurlResourceHandler::CurlThreadDataClass * Data)
     Data->ResultHeaders.erase("content-security-policy");
     Data->ResultHeaders.erase("Content-Security-Policy");
 
+    std::multimap<std::string,std::string> NewResultHeaders;
+    for(auto it:Data->ResultHeaders)
+    {
+        std::string key = it.first;
+        std::string val = it.second;
+        if(key == "Set-Cookie" || key == "set-cookie" )
+        {
+            try{
+                static std::regex SameSiteRegexp(";\\s*[Ss]ame[Ss]ite\\s*\\=\\s*(Lax|lax|Strict|strict)");
+                val = std::regex_replace (val,SameSiteRegexp,"");
+            }catch(...)
+            {
+                val = it.second;
+            }
+        }
+        NewResultHeaders.insert(std::pair<std::string,std::string>(key,val));
+    }
+    Data->ResultHeaders = NewResultHeaders;
+
     std::string ContentLengthHeader = "Content-Length";
     if(Data->ResultHeaders.count("content-length") > 0)
         ContentLengthHeader = "content-length";
@@ -173,123 +192,264 @@ size_t CurlWriteHeaderCallback(char *data, size_t size, size_t nmemb, void *user
 
 void CurlThreadFunction(CurlResourceHandler::CurlThreadDataClass * Data)
 {
-    NETWORK_LOG(std::string("\n>>>> ") + Data->Method + std::string(" ") + Data->Url);
 
-    /* Prepare */
-    CURL *curl_handle = curl_easy_init();
-    curl_easy_setopt(curl_handle, CURLOPT_URL, Data->Url.c_str());
-    curl_easy_setopt(curl_handle,CURLOPT_SSL_VERIFYPEER, 0L);
-    curl_easy_setopt(curl_handle,CURLOPT_SSL_VERIFYHOST, 0L);
-
-    curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, CurlWriteMemoryCallback);
-    curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)Data);
-
-    curl_easy_setopt(curl_handle, CURLOPT_HEADERFUNCTION, CurlWriteHeaderCallback);
-    curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)Data);
-
-    curl_easy_setopt(curl_handle,CURLOPT_TIMEOUT, 1500L);
-
-    curl_easy_setopt(curl_handle,CURLOPT_PROGRESSFUNCTION, CurlProgressCallback);
-    curl_easy_setopt(curl_handle,CURLOPT_PROGRESSDATA,(void *)Data);
-    curl_easy_setopt(curl_handle,CURLOPT_NOPROGRESS,0L);
-
-    if(Data->Proxy.empty())
-    {
-        curl_easy_setopt(curl_handle,CURLOPT_PROXY,"");
-    }else
-    {
-        curl_easy_setopt(curl_handle,CURLOPT_PROXY,Data->Proxy.c_str());
-        if(!Data->ProxyAuth.empty())
-            curl_easy_setopt(curl_handle,CURLOPT_PROXYUSERPWD,Data->ProxyAuth.c_str());
-    }
-
-    if(!Data->HttpAuthLogin.empty() && !Data->HttpAuthPassword.empty())
-    {
-        curl_easy_setopt(curl_handle,CURLOPT_USERNAME,Data->HttpAuthLogin.c_str());
-        curl_easy_setopt(curl_handle,CURLOPT_PASSWORD,Data->HttpAuthPassword.c_str());
-    }
-
-    /*if(write_logs)
-    {
-        curl_easy_setopt(curl_handle, CURLOPT_VERBOSE, 1L);
-        curl_easy_setopt(curl_handle, CURLOPT_DEBUGFUNCTION, CurlTraceCallback);
-        curl_easy_setopt(curl_handle, CURLOPT_DEBUGDATA, (void *)Data);
-
-    }*/
-
-    struct curl_slist *headers = NULL;
-
-    std::string Referer = Data->Referrer;
-    bool EmptyContentType = true;
-    for (const auto& Header : Data->RequestHeaders)
-    {
-        if(Header.first == "Referer")
-        {
-            Referer = Header.second;
-            continue;
-        }
-        if(Header.first == "Content-Type")
-        {
-            EmptyContentType = false;
-        }
-
-        NETWORK_LOG(std::string("> ") + Header.first + std::string("=") + Header.second);
-
-        if(Header.first != "X-DevTools-Emulate-Network-Conditions-Client-Id")
-        {
-            std::string h = Header.first + std::string(": ") + Header.second;
-            headers = curl_slist_append(headers, h.c_str());
-        }
-    }
-
-
-    if(EmptyContentType)
-        headers = curl_slist_append(headers, "Content-Type:");
-
-    headers = curl_slist_append(headers, "Connection: keep-alive");
-    headers = curl_slist_append(headers, "Expect:");
-    curl_easy_setopt(curl_handle, CURLOPT_ACCEPT_ENCODING,"gzip, deflate");
-    curl_easy_setopt(curl_handle, CURLOPT_HTTPHEADER, headers);
-
-    if(!Referer.empty())
-    {
-        NETWORK_LOG(std::string("> Referer=") + Referer);
-        curl_easy_setopt(curl_handle, CURLOPT_REFERER, Referer.c_str());
-    }
-
-    bool postdatawasset = false;
-
-    if(Data->Method == "HEAD")
-        curl_easy_setopt(curl_handle, CURLOPT_NOBODY, 1L);
-    else if(Data->Method == "POST")
-    {
-        curl_easy_setopt(curl_handle, CURLOPT_POST, 1L);
-        curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, Data->PostData.data());
-        curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDSIZE, (long)Data->PostData.size());
-        if(Data->PostData.size() < 3000)
-        {
-            NETWORK_LOG(std::string("~ ") + std::string(Data->PostData.data(),Data->PostData.size()));
-        }
-        postdatawasset = true;
-    }
-    else
-        curl_easy_setopt(curl_handle, CURLOPT_CUSTOMREQUEST, Data->Method.c_str());
-
-    if(!postdatawasset && Data->PostData.size() > 0)
-    {
-        curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, Data->PostData.data());
-        curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDSIZE, (long)Data->PostData.size());
-        if(Data->PostData.size() < 3000)
-        {
-            NETWORK_LOG(std::string("~ ") + std::string(Data->PostData.data(),Data->PostData.size()));
-        }
-    }
 
 
     //Run
     Data->SetStatus(CurlResourceHandler::CurlThreadDataClass::Running);
-    //const clock_t begin_time = clock();
-    Data->Result = curl_easy_perform(curl_handle);
+    clock_t begin_time = clock();
+
+    bool PostDataPrepared = false;
+    std::vector<char> PostData;
+
+
+    while(true)
+    {
+        NETWORK_LOG(std::string("\n>>>> ") + Data->Method + std::string(" ") + Data->Url);
+
+        /* Prepare */
+        CURL *curl_handle = curl_easy_init();
+        curl_easy_setopt(curl_handle, CURLOPT_URL, Data->Url.c_str());
+        curl_easy_setopt(curl_handle,CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl_handle,CURLOPT_SSL_VERIFYHOST, 0L);
+
+        curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, CurlWriteMemoryCallback);
+        curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)Data);
+
+        curl_easy_setopt(curl_handle, CURLOPT_HEADERFUNCTION, CurlWriteHeaderCallback);
+        curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)Data);
+
+        curl_easy_setopt(curl_handle,CURLOPT_TIMEOUT, 1500L);
+
+        curl_easy_setopt(curl_handle,CURLOPT_PROGRESSFUNCTION, CurlProgressCallback);
+        curl_easy_setopt(curl_handle,CURLOPT_PROGRESSDATA,(void *)Data);
+        curl_easy_setopt(curl_handle,CURLOPT_NOPROGRESS,0L);
+
+        if(Data->Proxy.empty())
+        {
+            curl_easy_setopt(curl_handle,CURLOPT_PROXY,"");
+        }else
+        {
+            curl_easy_setopt(curl_handle,CURLOPT_PROXY,Data->Proxy.c_str());
+            if(!Data->ProxyAuth.empty())
+                curl_easy_setopt(curl_handle,CURLOPT_PROXYUSERPWD,Data->ProxyAuth.c_str());
+        }
+
+        if(!Data->HttpAuthLogin.empty() && !Data->HttpAuthPassword.empty())
+        {
+            curl_easy_setopt(curl_handle,CURLOPT_USERNAME,Data->HttpAuthLogin.c_str());
+            curl_easy_setopt(curl_handle,CURLOPT_PASSWORD,Data->HttpAuthPassword.c_str());
+        }
+
+        /*if(write_logs)
+        {
+            curl_easy_setopt(curl_handle, CURLOPT_VERBOSE, 1L);
+            curl_easy_setopt(curl_handle, CURLOPT_DEBUGFUNCTION, CurlTraceCallback);
+            curl_easy_setopt(curl_handle, CURLOPT_DEBUGDATA, (void *)Data);
+
+        }*/
+
+        std::vector<std::pair<std::string,std::string> > Headers;
+
+        std::string Referer = Data->Referrer;
+        bool EmptyContentType = true;
+        for (const auto& Header : Data->RequestHeaders)
+        {
+            if(Header.first == "Referer")
+            {
+                Referer = Header.second;
+                continue;
+            }
+            if(Header.first == "Content-Type")
+            {
+                EmptyContentType = false;
+            }
+
+            NETWORK_LOG(std::string("> ") + Header.first + std::string("=") + Header.second);
+
+            if(Header.first != "X-DevTools-Emulate-Network-Conditions-Client-Id")
+            {
+                Headers.push_back(Header);
+            }
+        }
+
+        {
+            std::pair<std::string,std::string> p;p.first = "Connection";p.second = "keep-alive";Headers.push_back(p);
+        }
+        {
+            std::pair<std::string,std::string> p;p.first = "Accept-Encoding";p.second = "gzip, deflate";Headers.push_back(p);
+        }
+
+        curl_easy_setopt(curl_handle, CURLOPT_ACCEPT_ENCODING,"gzip, deflate");
+
+        if(!Referer.empty())
+        {
+            NETWORK_LOG(std::string("> Referer=") + Referer);
+            std::pair<std::string,std::string> p;p.first = "Referer";p.second = Referer;Headers.push_back(p);
+        }
+
+        //Generate headers list
+
+        struct curl_slist *headers = NULL;
+
+        for(std::string HeaderOrdered: Data->HeadersOrder)
+        {
+
+            std::string Found;
+            std::string FoundValue;
+            for (std::vector<std::pair<std::string,std::string> >::iterator it=Headers.begin(); it!=Headers.end(); )
+            {
+                if(it->first == HeaderOrdered)
+                {
+                    Found = HeaderOrdered;
+                    FoundValue = it->second;
+                    it = Headers.erase(it);
+                    break;
+                }else
+                    ++it;
+             }
+
+            if(!Found.empty())
+            {
+
+                std::string h = Found + std::string(": ") + FoundValue;
+                headers = curl_slist_append(headers, h.c_str());
+
+            }
+        }
+
+        for(std::pair<std::string,std::string> Header: Headers)
+        {
+            std::string h = Header.first + std::string(": ") + Header.second;
+            headers = curl_slist_append(headers, h.c_str());
+        }
+
+        if(EmptyContentType)
+            headers = curl_slist_append(headers, "Content-Type:");
+
+        headers = curl_slist_append(headers, "Expect:");
+
+        curl_easy_setopt(curl_handle, CURLOPT_HTTPHEADER, headers);
+
+        //Prepare post data
+
+        if(!PostDataPrepared)
+        {
+            if(Data->IsPostData)
+            {
+                bool done = false;
+                for(int i = 0;i<30;i++)
+                {
+                    done = Data->_PostManager->FinalizePostParts(Data->_PostParts,PostData);
+                    if(done)
+                        break;
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+                }
+                if(!done)
+                    PostData.clear();
+
+                PostDataPrepared = true;
+                Data->_PostParts.reset();
+            }
+        }
+
+        bool postdatawasset = false;
+
+        if(Data->Method == "HEAD")
+            curl_easy_setopt(curl_handle, CURLOPT_NOBODY, 1L);
+        else if(Data->Method == "POST")
+        {
+            curl_easy_setopt(curl_handle, CURLOPT_POST, 1L);
+            curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, PostData.data());
+            curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDSIZE, (long)PostData.size());
+            if(PostData.size() < 3000)
+            {
+                NETWORK_LOG(std::string("~ ") + std::string(PostData.data(),PostData.size()));
+            }
+            postdatawasset = true;
+        }
+        else
+            curl_easy_setopt(curl_handle, CURLOPT_CUSTOMREQUEST, Data->Method.c_str());
+
+        if(!postdatawasset && PostData.size() > 0)
+        {
+            curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, PostData.data());
+            curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDSIZE, (long)PostData.size());
+            if(PostData.size() < 3000)
+            {
+                NETWORK_LOG(std::string("~ ") + std::string(PostData.data(),PostData.size()));
+            }
+        }
+
+        /* Clear all */
+        {
+            std::lock_guard<std::mutex> lock(Data->ResultHeadersMutex);
+            Data->ResultHeaders.clear();
+            Data->ResponceStatusId = 200;
+            Data->ResponceStatusText.clear();
+            Data->MimeType = "text/html";
+            Data->RedirectUrl.clear();
+            Data->ContentLength = -1;
+            Data->ContentType.clear();
+            Data->LastHeaderClear = false;
+            Data->AllHeaderParsed = false;
+        }
+        {
+            std::lock_guard<std::mutex> lock(Data->ResponseDataMutex);
+            Data->ResponseData.clear();
+            Data->ResponseDataReadLength = 0;
+        }
+
+        Data->NeedToReadWholeResponceAndThanFixEncoding = false;
+        Data->FixEncodingDone = false;
+
+        WORKER_LOG(std::string("Start request ") + Data->Url);
+
+        Data->Result = curl_easy_perform(curl_handle);
+
+        WORKER_LOG(std::string("Got data ") + std::to_string(Data->Result) + std::string(" ") + Data->Url);
+        long total_request_bytes;
+        curl_easy_getinfo(curl_handle, CURLINFO_REQUEST_SIZE, &total_request_bytes);
+
+        curl_easy_cleanup(curl_handle);
+        curl_slist_free_all(headers);
+        CurlResourceHandler::CurlThreadDataClass::StatusClass Status = Data->GetStatus();
+        if(
+                (
+                    Data->Result != CURLE_COULDNT_RESOLVE_PROXY &&
+                    Data->Result != CURLE_COULDNT_RESOLVE_HOST &&
+                    Data->Result != CURLE_COULDNT_CONNECT &&
+                    //Data->Result != CURLE_SEND_ERROR &&
+                    //Data->Result != CURLE_RECV_ERROR &&
+
+                    //Data->Result != CURLE_HTTP_POST_ERROR &&
+                    Data->Result != CURLE_SSL_CONNECT_ERROR
+
+                    //Data->Result == CURLE_OK
+                    //total_request_bytes > 0
+                    ) || float( clock() - begin_time ) /  CLOCKS_PER_SEC > 360
+                    || Data->StopRequest || Status == CurlResourceHandler::CurlThreadDataClass::HeadersParsed || Status == CurlResourceHandler::CurlThreadDataClass::Done
+                    || (!Data->ProxiesReconnect)
+                )
+        {
+            WORKER_LOG(std::string("Break ") + std::to_string(Data->Result)+ std::string(" ") + Data->Url + std::string(" ") + std::to_string(float( clock() - begin_time ) /  CLOCKS_PER_SEC));
+
+            break;
+        }
+
+        WORKER_LOG(std::string("Retry ") + std::to_string(Data->Result)+ std::string(" ") + Data->Url);
+
+        /* Retry */
+        for(int i = 0;i<5;i++)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            if(Data->StopRequest)
+            {
+                break;
+            }
+        }
+
+    }
     ParseHeaders(Data);
     //WORKER_LOG(std::string("Curl Result Status: ") + std::to_string(Data->Result));
     //WORKER_LOG(std::string("Request time : ") + std::to_string(float( clock () - begin_time ) /  CLOCKS_PER_SEC));
@@ -325,19 +485,18 @@ void CurlThreadFunction(CurlResourceHandler::CurlThreadDataClass * Data)
     */
 
     //Clean
-    curl_easy_cleanup(curl_handle);
     Data->SetStatus(CurlResourceHandler::CurlThreadDataClass::Done);
-    curl_slist_free_all(headers);
+
 }
 
 
 
 
-CurlResourceHandler::CurlResourceHandler(BrowserData * _BrowserData)
+CurlResourceHandler::CurlResourceHandler(BrowserData * _BrowserData, PostManager *_PostManager)
 {
     this->_BrowserData = _BrowserData;
     this->StartTime = duration_cast< milliseconds >( system_clock::now().time_since_epoch() ).count();
-
+    this->_PostManager = _PostManager;
 }
 
 void CurlResourceHandler::SetTabNumber(int TabNumber)
@@ -363,6 +522,7 @@ bool CurlResourceHandler::ProcessRequest(CefRefPtr<CefRequest> request, CefRefPt
         ProxyData p = _BrowserData->_Proxy.Match(request->GetURL().ToString(),TabNumber);
         CurlThreadData.Proxy = p.ToString();
         CurlThreadData.ProxyAuth = p.AuthToString();
+        CurlThreadData.HeadersOrder = _BrowserData->_HeadersDefaults;
     }
 
     {
@@ -388,14 +548,25 @@ bool CurlResourceHandler::ProcessRequest(CefRefPtr<CefRequest> request, CefRefPt
         {
             for(const auto& Header: *Map)
             {
-                RequestHeadersNew[Header.first] = Header.second;
                 if(Header.first == "Referer")
                 {
-                    _BrowserData->_NextReferrer = Header.second;
+                    if(Header.second == "_BAS_NO_REFERRER")
+                    {
+                        _BrowserData->_NextReferrer = "_BAS_NO_REFERRER";
+                        RequestHeadersNew.erase("Referer");
+                        CurlThreadData.Referrer.clear();
+                    }else
+                    {
+                        RequestHeadersNew[Header.first] = Header.second;
+                        _BrowserData->_NextReferrer = Header.second;
+                        CurlThreadData.Referrer = Header.second;
+                    }
+                }else
+                {
+                    RequestHeadersNew[Header.first] = Header.second;
                 }
+
             }
-            Map->erase("Referer");
-            Map->erase("referer");
         }
     }
 
@@ -404,144 +575,21 @@ bool CurlResourceHandler::ProcessRequest(CefRefPtr<CefRequest> request, CefRefPt
     {
         CefPostData::ElementVector Elements;
         PostData->GetElements(Elements);
-        for(CefRefPtr<CefPostDataElement> Element:Elements)
-        {
-            bool IsFailedToLoad = false;
-            std::vector<char> Data;
 
-            if(Element->GetType() == PDE_TYPE_BYTES)
-            {
-                int Count = Element->GetBytesCount();
-                Data.resize(Count);
-                if(Count != Element->GetBytes(Count,Data.data()))
-                    continue;
+        PostParts _PostParts = _PostManager->PreparePostParts(Elements);
+        CurlThreadData._PostParts = _PostParts;
+        CurlThreadData._PostManager = _PostManager;
+        CurlThreadData.IsPostData = true;
 
-
-                std::string DataString(Data.data(),Count);
-                std::string ContentType;
-
-
-                try
-                {
-                    bool DataStringChanged = false;
-                    while(true)
-                    {
-                        std::size_t StartPos = DataString.find("BrowserAutomationStudioBase64DataStart");
-                        if(StartPos == std::string::npos)
-                            break;
-
-                        std::size_t EndPos = DataString.find("BrowserAutomationStudioBase64DataEnd");
-                        if(EndPos == std::string::npos)
-                            break;
-
-                        if(StartPos >= EndPos)
-                            break;
-
-                        std::size_t SeparatorPos = DataString.find(";",StartPos);
-                        if(SeparatorPos == std::string::npos)
-                            break;
-
-                        DataStringChanged = true;
-
-                        ContentType = DataString.substr((StartPos + 38) + 1,SeparatorPos - (StartPos + 38) - 1);
-                        DataString.erase(EndPos,36);
-                        DataString.erase(StartPos,SeparatorPos - StartPos + 1);
-                    }
-
-                    if(DataStringChanged)
-                    {
-                        Data.assign(DataString.begin(),DataString.end());
-                    }
-
-                }catch(...)
-                {
-                }
-
-                try
-                {
-                    bool DataStringChanged = false;
-                    while(true)
-                    {
-                        std::size_t StartPos = DataString.find("66,114,111,119,115,101,114,65,117,116,111,109,97,116,105,111,110,83,116,117,100,105,111,66,97,115,101,54,52,68,97,116,97,83,116,97,114,116,");
-                        if(StartPos == std::string::npos)
-                            break;
-
-                        std::size_t EndPos = DataString.find("66,114,111,119,115,101,114,65,117,116,111,109,97,116,105,111,110,83,116,117,100,105,111,66,97,115,101,54,52,68,97,116,97,69,110,100");
-                        if(EndPos == std::string::npos)
-                            break;
-
-                        if(StartPos >= EndPos)
-                            break;
-
-                        DataStringChanged = true;
-
-                        std::string Current;
-                        std::string DataStringDecoded;
-                        for(std::size_t i = StartPos + 139;i<EndPos;i++)
-                        {
-                            char c = DataString.at(i);
-                            if(c == 44)
-                            {
-                                DataStringDecoded.push_back(std::stoi(Current));
-                                Current.clear();
-                            }else
-                            {
-                                Current.push_back(c);
-                            }
-                        }
-
-                        std::size_t SeparatorPos = DataStringDecoded.find(";");
-                        ContentType = DataStringDecoded.substr(0,SeparatorPos);
-                        DataStringDecoded.erase(0,SeparatorPos + 1);
-
-                        DataString.replace(StartPos,EndPos - StartPos + 131,DataStringDecoded);
-                    }
-
-                    if(DataStringChanged)
-                    {
-                        Data.assign(DataString.begin(),DataString.end());
-                    }
-
-                }catch(...)
-                {
-                }
-
-
-
-                if(!ContentType.empty())
-                {
-                    static std::regex ContentTypeRegexp("Content-Disposition:([^\\r]*)");
-
-                    std::smatch Match;
-                    if(std::regex_search(DataString,Match,ContentTypeRegexp))
-                    {
-                         std::string m = Match[1];
-                         DataString.replace(Match.position(),Match.length(),std::string("Content-Disposition:") + m + std::string("\r\nContent-Type: ") + ContentType);
-                         Data.assign(DataString.begin(),DataString.end());
-                    }
-                }
-            }
-
-
-            if(Element->GetType() == PDE_TYPE_FILE && !Element->GetFile().ToString().empty())
-            {
-                try{
-                    Data = ReadAllBytes(Element->GetFile().ToString());
-                }catch(...)
-                {
-                   IsFailedToLoad = true;
-                }
-            }
-            if(!IsFailedToLoad && Data.size() > 0)
-                CurlThreadData.PostData.insert(CurlThreadData.PostData.end(), Data.begin(), Data.end());
-
-        }
         /*WORKER_LOG("!!Post Data!!");
         std::string DataString(CurlThreadData.PostData.data(),CurlThreadData.PostData.size());
 
         WORKER_LOG(DataString);
         WORKER_LOG("!!Post Data End!!");*/
 
+    }else
+    {
+        CurlThreadData.IsPostData = false;
     }
 
     CurlThreadData.RequestHeaders = RequestHeadersNew;
@@ -581,8 +629,16 @@ void CurlResourceHandler::SetForceUtf8(bool ForceUtf8)
     CurlThreadData.ForceUtf8 = ForceUtf8;
 }
 
+void CurlResourceHandler::SetProxiesReconnect(bool ProxiesReconnect)
+{
+    CurlThreadData.ProxiesReconnect = ProxiesReconnect;
+}
+
+
 void CurlResourceHandler::Timer()
 {
+    _PostManager->Cleanup();
+
     CurlThreadDataClass::StatusClass Status = CurlThreadData.GetStatus();
 
     if(_BrowserData->IsReset)
@@ -693,7 +749,19 @@ void CurlResourceHandler::GetResponseHeaders(CefRefPtr<CefResponse> response, in
         std::string OriginalUrl = CurlThreadData.Url;
         std::string Result = ProcessLocation(RedirectUrl,OriginalUrl);
 
+
+
         redirectUrl = Result;
+    }else
+    {
+        LOCK_BROWSER_DATA
+
+        for(std::shared_ptr<std::map<std::string,std::string> > Map: _BrowserData->_Headers.MatchAll(CurlThreadData.Url,TabNumber))
+        {
+            if(Map->count("Referer") > 0 && Map->at("Referer") != "_BAS_NO_REFERRER")
+                Map->erase("Referer");
+        }
+
     }
 
     NETWORK_LOG(std::string("<~") + redirectUrl.ToString());

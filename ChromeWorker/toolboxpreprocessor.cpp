@@ -88,6 +88,7 @@ void ToolboxPreprocess(const ModulesDataList & Modules, std::string& OriginalScr
 
                     res["description"] = picojson::value(Module->Description);
                     res["type"] = picojson::value("group");
+                    res["show_only_with_database"] = picojson::value(Module->OnlyWithDatabase);
 
 
                     ActionList += ",";
@@ -101,6 +102,8 @@ void ToolboxPreprocess(const ModulesDataList & Modules, std::string& OriginalScr
                     res["name"] = picojson::value(Action->Description);
                     res["description"] = picojson::value(Action->Description);
                     res["ref"] = picojson::value(Action->Name);
+                    res["show_only_with_database"] = picojson::value(Module->OnlyWithDatabase);
+
 
                     ActionList += ",";
                     ActionList += picojson::value(res).serialize();

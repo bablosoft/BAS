@@ -1,0 +1,21 @@
+{
+	
+	"name":"AjaxReCaptcha2",
+	"description":"Rucaptcha new api support",
+	"description_small":{"en": "Rucaptcha new api support", "ru": "Rucaptcha new api support"},
+	"major_version": 1,
+	"minor_version": 0,
+	"developer_name": "bablosoft", 
+	"developer_email": "mail.to.twaego@gmail.com", 
+	"developer_site": "https://bablosoft.com",
+	"api_version": 1,
+	"actions":
+	[
+	],
+	"localize": 
+	{
+	},
+	"engine": [],
+	"browser": ["browser.js"],
+	"depends": []	
+}

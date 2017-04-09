@@ -1,42 +1,29 @@
 (function(append,set) {
-    
-    FormData.prototype.BlobToUint8Array = function(blob)
+
+    FormData.prototype.MakeAttachment = function(blob, filename)
     {
-      var res = URL.createObjectURL(blob)
-      var request = new XMLHttpRequest();
-      request.open('GET', res, false);
-      request.overrideMimeType("text/plain; charset=x-user-defined");
-      request.send();
-
-      var s = "BrowserAutomationStudioBase64DataStart" + blob.type + ";"
-      var e = "BrowserAutomationStudioBase64DataEnd"
-      
-      var res = new Uint8Array(request.responseText.length + s.length + e.length);
-      var ir = 0
-
-      for(var i = 0;i<s.length;i++)
-      {
-        res[ir] = s.charCodeAt(i);ir++
-      }
-
-      for(var i = 0;i<request.responseText.length;i++)
-      {
-        res[ir] = request.responseText.charCodeAt(i);ir++
-      }
-
-      for(var i = 0;i<e.length;i++)
-      {
-        res[ir] = e.charCodeAt(i);ir++
-      }
-
-      return res;
+      var id = Math.floor(Math.random() * (1000000)) + 1
+      var reader = new FileReader();
+      reader.onload = function() {
+        var dataUrl = reader.result;
+        var filename_string = ""
+        if(filename)
+        {
+          filename_string = filename.toString()
+        }
+        var base64 = dataUrl.split(',')[1]
+        BrowserAutomationStudio_SaveBlob(id, base64, blob.type, filename_string);
+      };
+      reader.readAsDataURL(blob);
+      return new TextEncoder("UTF-8").encode("BrowserAutomationStudioAttachmentStart" + id + "BrowserAutomationStudioAttachmentEnd");
     }
 
     FormData.prototype.append = function()
     {
         if(arguments.length > 1 && arguments[1] instanceof Blob && !(arguments[1] instanceof File))
         {
-          arguments[1] = this.BlobToUint8Array(arguments[1])
+          arguments[1] = this.MakeAttachment(arguments[1],arguments[2])
+          arguments = [arguments[0],arguments[1]]
         }
       return append.apply(this, arguments);
     };
@@ -45,7 +32,8 @@
     {
         if(arguments.length > 1 && arguments[1] instanceof Blob && !(arguments[1] instanceof File))
         {
-          arguments[1] = this.BlobToUint8Array(arguments[1])
+          arguments[1] = this.MakeAttachment(arguments[1],arguments[2])
+          arguments = [arguments[0],arguments[1]]
         }
       return set.apply(this, arguments);
     };
@@ -54,45 +42,25 @@
 
 (function(send) {
 
-    XMLHttpRequest.prototype.BlobToUint8Array = function(blob)
+    XMLHttpRequest.prototype.MakeAttachment = function(blob)
     {
-      var res = URL.createObjectURL(blob)
-      var request = new XMLHttpRequest();
-      request.open('GET', res, false);
-      request.overrideMimeType("text/plain; charset=x-user-defined");
-      request.send();
-
-      var s = "BrowserAutomationStudioBase64DataStart" + blob.type + ";"
-      var e = "BrowserAutomationStudioBase64DataEnd"
-      
-      var res = new Uint8Array(request.responseText.length + s.length + e.length);
-      var ir = 0
-
-      for(var i = 0;i<s.length;i++)
-      {
-        res[ir] = s.charCodeAt(i);ir++
-      }
-
-      for(var i = 0;i<request.responseText.length;i++)
-      {
-        res[ir] = request.responseText.charCodeAt(i);ir++
-      }
-
-      for(var i = 0;i<e.length;i++)
-      {
-        res[ir] = e.charCodeAt(i);ir++
-      }
-
-      return res;
+      var id = Math.floor(Math.random() * (1000000)) + 1
+      var reader = new FileReader();
+      reader.onload = function() {
+        var dataUrl = reader.result;
+        var base64 = dataUrl.split(',')[1]
+        BrowserAutomationStudio_SaveBlob(id, base64, blob.type, "");
+      };
+      reader.readAsDataURL(blob);
+      return new TextEncoder("UTF-8").encode("BrowserAutomationStudioAttachmentStart" + id + "BrowserAutomationStudioAttachmentEnd");
     }
-
     
 
     XMLHttpRequest.prototype.send = function()
     {
         if(arguments.length > 0 && arguments[0] instanceof Blob && !(arguments[0] instanceof File))
         {
-          arguments[0] = this.BlobToUint8Array(arguments[0])
+          arguments[0] = this.MakeAttachment(arguments[0])
         }
         return send.apply(this, arguments);
     }
@@ -100,3 +68,36 @@
     
    
 })(XMLHttpRequest.prototype.send);
+
+
+
+(function(fetchOriginal) {
+
+    var MakeAttachment = function(blob)
+    {
+      var id = Math.floor(Math.random() * (1000000)) + 1
+      var reader = new FileReader();
+      reader.onload = function() {
+        var dataUrl = reader.result;
+        var base64 = dataUrl.split(',')[1]
+        BrowserAutomationStudio_SaveBlob(id, base64, blob.type, "");
+      };
+      reader.readAsDataURL(blob);
+      return new TextEncoder("UTF-8").encode("BrowserAutomationStudioAttachmentStart" + id + "BrowserAutomationStudioAttachmentEnd");
+    }
+    
+
+    window.fetch = function()
+    {
+        console.log(arguments)
+
+        if(arguments.length > 1 && typeof(arguments[1]) == "object" && typeof(arguments[1]["body"]) == "object" && arguments[1]["body"] instanceof Blob)
+        {
+          arguments[1]["body"] = MakeAttachment(arguments[1]["body"])
+        }
+        return fetchOriginal.apply(window, arguments);
+    }
+
+    
+   
+})(window.fetch);

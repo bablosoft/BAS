@@ -48,6 +48,11 @@ void MainHandler::SetData(BrowserData *Data)
     this->Data = Data;
 }
 
+void MainHandler::SetPostManager(PostManager *_PostManager)
+{
+    this->_PostManager = _PostManager;
+}
+
 void MainHandler::SetSettings(settings *Settings)
 {
     this->Settings = Settings;
@@ -113,43 +118,49 @@ CefRefPtr<CefDownloadHandler> MainHandler::GetDownloadHandler()
 void MainHandler::OnBeforeDownload(CefRefPtr<CefBrowser> browser, CefRefPtr<CefDownloadItem> download_item, const CefString& suggested_name, CefRefPtr<CefBeforeDownloadCallback> callback)
 {
     bool Accept = true;
-    std::string url = download_item->GetOriginalUrl();
+    if(!Data->AllowDownloads)
     {
-        //Check if can download
-        LOCK_BROWSER_DATA
-        for(std::pair<bool, std::string> p:Data->_RequestMask)
+        Accept = false;
+    }else
+    {
+        std::string url = download_item->GetOriginalUrl();
         {
-            if(match(p.second,url))
+            //Check if can download
+            LOCK_BROWSER_DATA
+            for(std::pair<bool, std::string> p:Data->_RequestMask)
             {
-                Accept = p.first;
-            }
-        }
-        if(Accept)
-        {
-            //errase all info about previous download
-            {
-                auto i = Data->_LoadedUrls.begin();
-                while (i != Data->_LoadedUrls.end())
+                if(match(p.second,url))
                 {
-                    if(starts_with(i->first,"download://"))
-                    {
-                        i = Data->_LoadedUrls.erase(i);
-                    }else
-                    {
-                        ++i;
-                    }
+                    Accept = p.first;
                 }
             }
+            if(Accept)
             {
-                auto i = Data->_CachedData.begin();
-                while (i != Data->_CachedData.end())
+                //errase all info about previous download
                 {
-                    if(starts_with(i->first,"download://"))
+                    auto i = Data->_LoadedUrls.begin();
+                    while (i != Data->_LoadedUrls.end())
                     {
-                        i = Data->_CachedData.erase(i);
-                    }else
+                        if(starts_with(i->first,"download://"))
+                        {
+                            i = Data->_LoadedUrls.erase(i);
+                        }else
+                        {
+                            ++i;
+                        }
+                    }
+                }
+                {
+                    auto i = Data->_CachedData.begin();
+                    while (i != Data->_CachedData.end())
                     {
-                        ++i;
+                        if(starts_with(i->first,"download://"))
+                        {
+                            i = Data->_CachedData.erase(i);
+                        }else
+                        {
+                            ++i;
+                        }
                     }
                 }
             }
@@ -162,7 +173,7 @@ void MainHandler::OnBeforeDownload(CefRefPtr<CefBrowser> browser, CefRefPtr<CefD
         callback->Continue(file,false);
     }else
     {
-        WORKER_LOG(std::string("OnBeforeDownloadFiltered<<") + url);
+        //WORKER_LOG(std::string("OnBeforeDownloadFiltered<<") + url);
     }
 
 
@@ -303,9 +314,10 @@ CefRefPtr<CefResourceHandler> MainHandler::GetResourceHandler(CefRefPtr<CefBrows
 
 
 
-    CurlResourceHandler* h = new CurlResourceHandler(Data);
+    CurlResourceHandler* h = new CurlResourceHandler(Data,_PostManager);
     h->SetTabNumber(_HandlersManager->FindTabIdByBrowserId(browser->GetIdentifier()));
     h->SetForceUtf8(Settings->ForceUtf8());
+    h->SetProxiesReconnect(Settings->ProxiesReconnect());
 
     EventOnTimerCurlResources.push_back(h);
     CurlResourcesLength = EventOnTimerCurlResources.size();
@@ -474,14 +486,20 @@ bool MainHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFram
 
 
     bool Accept = true;
-    std::string url = target_url.ToString();
+    if(!Data->AllowPopups)
     {
-        LOCK_BROWSER_DATA
-        for(std::pair<bool, std::string> p:Data->_RequestMask)
+        Accept = false;
+    }else
+    {
+        std::string url = target_url.ToString();
         {
-            if(match(p.second,url))
+            LOCK_BROWSER_DATA
+            for(std::pair<bool, std::string> p:Data->_RequestMask)
             {
-                Accept = p.first;
+                if(match(p.second,url))
+                {
+                    Accept = p.first;
+                }
             }
         }
     }
@@ -494,6 +512,7 @@ bool MainHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFram
         h->SetHandlersManager(_HandlersManager);
         h->SetSettings(Settings);
         h->SetData(Data);
+        h->SetPostManager(_PostManager);
         h->SetIsPopup();
         h->EventPopupCreated = EventPopupCreated;
         client = h;
@@ -598,13 +617,18 @@ void MainHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> f
         if(httpStatusCode >= 200 && httpStatusCode < 300)
         {
            browser->GetMainFrame()->ExecuteJavaScript("if(document.body.style['background-color'].length === 0)document.body.style['background-color']='white';", browser->GetMainFrame()->GetURL(), 0);
-           SendTextResponce("<Messages><Load>0</Load></Messages>");
+           SendTextResponce("<Load>0</Load>");
            for(auto f:EventLoadSuccess)
                f(GetBrowserId());
         }else
         {
-            SendTextResponce("<Messages><Load>1</Load></Messages>");
+            {
+                LOCK_BROWSER_DATA
+                Data->_NextReferrer.clear();
+            }
+            SendTextResponce("<Load>1</Load>");
         }
+
     }
     WORKER_LOG("Loaded Data");
 }

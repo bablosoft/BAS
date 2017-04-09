@@ -82,5 +82,11 @@
         <file>images/modules.png</file>
         <file>scripts/engine/worker/translate.js</file>
         <file>scripts/engine/worker/template.js</file>
+        <file>images/column.png</file>
+        <file>images/menu.png</file>
+        <file>images/redball.png</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>images/grayball.png</file>
     </qresource>
 </RCC>

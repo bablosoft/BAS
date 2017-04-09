@@ -74,11 +74,7 @@ namespace BrowserAutomationStudioFramework
         QList<QScriptValue> res;
         foreach(QString str,Box->GetRandomSubarrayData(size))
         {
-            int index = str.indexOf(QChar(0));
-            if(index>=0)
-                res.append(QScriptValue(str.mid(0,index)));
-            else
-                res.append(QScriptValue(str));
+            res.append(QScriptValue(str));
         }
         return res;
     }
@@ -90,11 +86,7 @@ namespace BrowserAutomationStudioFramework
         if(IsNull)
             return QScriptValue(QScriptValue::NullValue);
 
-        int i = res.indexOf(QChar(0));
-        if(i>=0)
-            return QScriptValue(res.mid(0,i));
-        else
-            return QScriptValue(res);
+        return QScriptValue(res);
     }
 
     void EngineResourceStringBox::SetAtIndex(int index, const QString& val)
@@ -137,7 +129,8 @@ namespace BrowserAutomationStudioFramework
     {
         StringResourceHandler* handler = qobject_cast<StringResourceHandler*>(sender());
         QString string = handler->GetString();
-        int index = string.indexOf(QChar(0));
+
+        int index = string.lastIndexOf(QChar(':'));
 
         QString id = string.right(string.length() - index - 1);
         QString dat = string.mid(0,index);
@@ -163,7 +156,17 @@ namespace BrowserAutomationStudioFramework
                         case DatabaseColumn::Int: VariantParam = QVariant(val.toInt());break;
                         case DatabaseColumn::String: VariantParam = QVariant(val);break;
                         case DatabaseColumn::Bool: VariantParam = QVariant(val == "true");break;
-                        case DatabaseColumn::Date: VariantParam = QVariant(QDateTime::fromString(val,"yyyy-MM-ddTHH:mm:ss"));break;
+                        case DatabaseColumn::Date:
+                        {
+                            QDateTime timestamp;
+                            if(val.length() > 0)
+                            {
+                                timestamp.setTime_t(val.toLongLong() / 1000);
+                            }
+                            else
+                                timestamp = QDateTime::currentDateTime();
+                            VariantParam = QVariant(timestamp);
+                        }break;
                     }
 
                     break;
@@ -194,7 +197,8 @@ namespace BrowserAutomationStudioFramework
             }
 
 
-            QString new_string = _CsvHelper->Generate(dat_parsed,':') + QChar(0) + id;
+            dat_parsed.append(id);
+            QString new_string = _CsvHelper->Generate(dat_parsed,':');
 
             Box->Update(string,new_string);
             handler->SetString(new_string);
@@ -209,7 +213,7 @@ namespace BrowserAutomationStudioFramework
         StringResourceHandler* handler = qobject_cast<StringResourceHandler*>(sender());
         QString string = handler->GetString();
 
-        int index = string.indexOf(QChar(0));
+        int index = string.lastIndexOf(QChar(':'));
         if(index>=0)
         {
             QString id = string.right(string.length() - index - 1);

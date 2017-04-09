@@ -25,6 +25,8 @@
 #include "chromecommandlineparser.h"
 #include "replaceall.h"
 #include "split.h"
+#include "fontreplace.h"
+#include "extract_labels.h"
 
 using namespace std::placeholders;
 MainApp * App;
@@ -48,15 +50,20 @@ MainApp::MainApp()
     IsMouseMoveSimulation = false;
     NeedRenderNextFrame = false;
     SkipBeforeRenderNextFrame = 0;
-    Speed = 15.0f;
     RunElementCommandCallbackOnNextTimer = -1;
     TypeTextDelayCurrent = 0;
+    ClearElementCommand();
 
 }
 
 void MainApp::SetData(BrowserData *Data)
 {
     this->Data = Data;
+}
+
+void MainApp::SetPostManager(PostManager *_PostManager)
+{
+    this->_PostManager = _PostManager;
 }
 
 void MainApp::SetSettings(settings *Settings)
@@ -102,6 +109,7 @@ void MainApp::OnContextInitialized()
 
     _HandlersManager->GetHandler()->SetSettings(Settings);
     _HandlersManager->GetHandler()->SetData(Data);
+    _HandlersManager->GetHandler()->SetPostManager(_PostManager);
 
     dhandler = new DevToolsHandler();
     dhandler->SetData(Data);
@@ -160,7 +168,7 @@ void MainApp::Paint(char * data, int width, int height)
             WORKER_LOG(std::string("Render result screen <<") + base64);
 
             xml_encode(base64);
-            SendTextResponce(std::string("<Messages><Render>") + base64 + std::string("</Render></Messages>"));
+            SendTextResponce(std::string("<Render>") + base64 + std::string("</Render>"));
         }
     }
     if(_HandlersManager->GetHandler()->GetIsVisible() || _HandlersManager->GetHandler()->GetIsPopup())
@@ -218,7 +226,7 @@ void MainApp::LoadCallback(const std::string& page)
         CefRefPtr< CefFrame > Frame = _HandlersManager->GetBrowser()->GetMainFrame();
         Frame->LoadURL(page);
     }
-    SendTextResponce("<Messages><LoadedInstant></LoadedInstant></Messages>");
+    SendTextResponce("<LoadedInstant></LoadedInstant>");
 
 
 }
@@ -255,6 +263,10 @@ void MainApp::ResetCallbackFinalize()
     CefRefPtr<CefCookieManager> CookieManager = CefCookieManager::GetGlobalManager(NULL);
     CookieManager->DeleteCookies("","",0);
 
+    //Clear fonts
+    FontReplace::GetInstance().SetFonts("");
+    FontReplace::GetInstance().UnHook();
+
     {
         LOCK_BROWSER_DATA
 
@@ -271,14 +283,18 @@ void MainApp::ResetCallbackFinalize()
         Data->_OpenFileName.clear();
 
         //Startup script
-        Data->_StartupScript.Clear();
+        Data->_StartupScript.clear();
 
         //Headers
         Data->_Headers.Clear();
+        Data->_HeadersDefaults.clear();
 
         //Resolution
         Data->WidthBrowser = 1024;
         Data->HeightBrowser = 600;
+
+        Data->AllowPopups = true;
+        Data->AllowDownloads = true;
     }
 
     {
@@ -313,7 +329,7 @@ void MainApp::ResetCallbackFinalize()
     Layout->Update(Data->WidthBrowser,Data->HeightBrowser,Data->WidthAll,Data->HeightAll);
     Data->IsReset = false;
 
-    SendTextResponce("<Messages><Reset/></Messages>");
+    SendTextResponce("<Reset/>");
 }
 
 void MainApp::SetOpenFileNameCallback(const std::string& value)
@@ -322,16 +338,33 @@ void MainApp::SetOpenFileNameCallback(const std::string& value)
         LOCK_BROWSER_DATA
         Data->_OpenFileName = value;
     }
-    SendTextResponce("<Messages><SetOpenFileName>1</SetOpenFileName></Messages>");
+    SendTextResponce("<SetOpenFileName>1</SetOpenFileName>");
 }
 
-void MainApp::SetStartupScriptCallback(const std::string& value,const std::string& target)
+void MainApp::SetStartupScriptCallback(const std::string& value,const std::string& target,const std::string& script_id)
 {
     {
         LOCK_BROWSER_DATA
-        Data->_StartupScript.Set(value, target);
+        auto it = Data->_StartupScript.find(script_id);
+        if(it == Data->_StartupScript.end())
+        {
+            ConfigurableItem<std::string> item;
+            item.Set(value, target);
+            Data->_StartupScript[script_id] = item;
+        }else
+        {
+            it->second.Set(value, target);
+        }
+
     }
-    SendTextResponce("<Messages><SetStartupScript></SetStartupScript></Messages>");
+    SendTextResponce("<SetStartupScript></SetStartupScript>");
+}
+
+void MainApp::SetFontListCallback(const std::string& fonts)
+{
+    FontReplace::GetInstance().Hook();
+    FontReplace::GetInstance().SetFonts(fonts);
+    SendTextResponce("<SetFontList></SetFontList>");
 }
 
 
@@ -341,7 +374,7 @@ void MainApp::SetPromptResultCallback(const std::string& value)
         LOCK_PROMPT
         Data->_PromptResult = value;
     }
-    SendTextResponce("<Messages><SetPromptResult>1</SetPromptResult></Messages>");
+    SendTextResponce("<SetPromptResult>1</SetPromptResult>");
 }
 
 void MainApp::SetHttpAuthResultCallback(const std::string& login,const std::string& password)
@@ -351,14 +384,14 @@ void MainApp::SetHttpAuthResultCallback(const std::string& login,const std::stri
         Data->_HttpAuthLogin = login;
         Data->_HttpAuthPassword = password;
     }
-    SendTextResponce("<Messages><SetHttpAuthResult>1</SetHttpAuthResult></Messages>");
+    SendTextResponce("<SetHttpAuthResult>1</SetHttpAuthResult>");
 }
 
 void MainApp::GetCookiesForUrlCallback(const std::string& value)
 {
     WORKER_LOG("GetCookiesForUrlCallback");
     std::string cookies;
-    if(_HandlersManager->GetBrowser())
+    //if(_HandlersManager->GetBrowser())
     {
         CefRefPtr<CefCookieManager> CookieManager = CefCookieManager::GetGlobalManager(NULL);
         CefCookie cookie = CookieVisitor::GetEmptyCookie();
@@ -370,12 +403,12 @@ void MainApp::GetCookiesForUrlCallback(const std::string& value)
         cookievisitor->EventCookiesLoaded.push_back(std::bind(&MainApp::GetCookiesForUrlCompleteCallback,this));
         if(!CookieManager->VisitAllCookies(cookievisitor))
         {
-            SendTextResponce(std::string("<Messages><GetCookiesForUrl>") + cookies + std::string("</GetCookiesForUrl></Messages>"));
+            SendTextResponce(std::string("<GetCookiesForUrl>") + cookies + std::string("</GetCookiesForUrl>"));
             return;
         }
         return;
     }
-    SendTextResponce(std::string("<Messages><GetCookiesForUrl>") + cookies + std::string("</GetCookiesForUrl></Messages>"));
+    SendTextResponce(std::string("<GetCookiesForUrl>") + cookies + std::string("</GetCookiesForUrl>"));
 }
 
 void MainApp::GetCookiesForUrlCompleteCallback()
@@ -383,7 +416,7 @@ void MainApp::GetCookiesForUrlCompleteCallback()
     WORKER_LOG("GetCookiesForUrlCompleteCallback");
     std::string cookies = cookievisitor->GetBuffer();
     xml_encode(cookies);
-    SendTextResponce(std::string("<Messages><GetCookiesForUrl>") + cookies + std::string("</GetCookiesForUrl></Messages>"));
+    SendTextResponce(std::string("<GetCookiesForUrl>") + cookies + std::string("</GetCookiesForUrl>"));
 }
 
 void MainApp::SaveCookiesCallback()
@@ -402,11 +435,11 @@ void MainApp::SaveCookiesCallback()
         cookievisitor->EventCookiesLoaded.push_back(std::bind(&MainApp::SaveCookiesCompleteCallback,this));
         if(!CookieManager->VisitAllCookies(cookievisitor))
         {
-            SendTextResponce(std::string("<Messages><SaveCookies>") + cookies + std::string("</SaveCookies></Messages>"));
+            SendTextResponce(std::string("<SaveCookies>") + cookies + std::string("</SaveCookies>"));
         }
         return;
     }
-    SendTextResponce(std::string("<Messages><SaveCookies>") + cookies + std::string("</SaveCookies></Messages>"));
+    SendTextResponce(std::string("<SaveCookies>") + cookies + std::string("</SaveCookies>"));
 }
 
 void MainApp::SaveCookiesCompleteCallback()
@@ -414,7 +447,7 @@ void MainApp::SaveCookiesCompleteCallback()
     WORKER_LOG("SaveCookiesCompleteCallback");
     std::string cookies = cookievisitor->GetBuffer();
     xml_encode(cookies);
-    SendTextResponce(std::string("<Messages><SaveCookies>") + cookies + std::string("</SaveCookies></Messages>"));
+    SendTextResponce(std::string("<SaveCookies>") + cookies + std::string("</SaveCookies>"));
 }
 
 void MainApp::RestoreLocalStorageCallback(const std::string& value)
@@ -424,7 +457,7 @@ void MainApp::RestoreLocalStorageCallback(const std::string& value)
         Data->_LocalStorageData.Parse(value);
     }
     _HandlersManager->UpdateLocalStorageString(value);*/
-    SendTextResponce(std::string("<Messages><RestoreLocalStorage></RestoreLocalStorage></Messages>"));
+    SendTextResponce(std::string("<RestoreLocalStorage></RestoreLocalStorage>"));
 }
 
 void MainApp::RestoreCookiesCallback(const std::string& value)
@@ -442,11 +475,12 @@ void MainApp::RestoreCookiesCallback(const std::string& value)
             CefCookie cookie;
             CookieVisitor::DeserializeCookie(o, cookie);
 
-            WORKER_LOG(std::to_string(CookieManager->SetCookie("http://" + url,cookie,NULL)));
+            std::string res = std::to_string(CookieManager->SetCookie("http://" + url,cookie,NULL));
+            WORKER_LOG(res);
         }
     }
 
-    SendTextResponce(std::string("<Messages><RestoreCookies></RestoreCookies></Messages>"));
+    SendTextResponce(std::string("<RestoreCookies></RestoreCookies>"));
 }
 
 void MainApp::ResizeCallback(int width, int height)
@@ -456,7 +490,7 @@ void MainApp::ResizeCallback(int width, int height)
         _HandlersManager->GetBrowser()->GetHost()->WasResized();
         _HandlersManager->GetBrowser()->GetHost()->Invalidate(PET_VIEW);
     }
-    SendTextResponce("<Messages><Resize></Resize></Messages>");
+    SendTextResponce("<Resize></Resize>");
 }
 
 void MainApp::ForceUpdateWindowPositionWithParent()
@@ -518,7 +552,7 @@ void MainApp::MouseClickCallback(int x, int y)
         _HandlersManager->GetBrowser()->GetMainFrame()->ExecuteJavaScript(std::string("BrowserAutomationStudio_ScrollToCoordinates(") + std::to_string(x) + std::string(",") + std::to_string(y) + std::string(")"),_HandlersManager->GetBrowser()->GetMainFrame()->GetURL(), 0);
     }else
     {
-        SendTextResponce("<Messages><MouseClick></MouseClick></Messages>");
+        SendTextResponce("<MouseClick></MouseClick>");
     }
 }
 
@@ -535,7 +569,7 @@ void MainApp::MouseClickUpCallback(int x, int y)
         _HandlersManager->GetBrowser()->GetMainFrame()->ExecuteJavaScript(std::string("BrowserAutomationStudio_ScrollToCoordinates(") + std::to_string(x) + std::string(",") + std::to_string(y) + std::string(")"),_HandlersManager->GetBrowser()->GetMainFrame()->GetURL(), 0);
     }else
     {
-        SendTextResponce("<Messages><MouseClickUp></MouseClickUp></Messages>");
+        SendTextResponce("<MouseClickUp></MouseClickUp>");
     }
 }
 
@@ -553,7 +587,7 @@ void MainApp::MouseClickDownCallback(int x, int y)
         _HandlersManager->GetBrowser()->GetMainFrame()->ExecuteJavaScript(std::string("BrowserAutomationStudio_ScrollToCoordinates(") + std::to_string(x) + std::string(",") + std::to_string(y) + std::string(")"),_HandlersManager->GetBrowser()->GetMainFrame()->GetURL(), 0);
     }else
     {
-        SendTextResponce("<Messages><MouseClickDown></MouseClickDown></Messages>");
+        SendTextResponce("<MouseClickDown></MouseClickDown>");
     }
 }
 
@@ -561,18 +595,18 @@ void MainApp::MouseClickDownCallback(int x, int y)
 void MainApp::PopupCloseCallback(int index)
 {
     if(!_HandlersManager->CloseByIndex(index))
-        SendTextResponce("<Messages><PopupClose></PopupClose></Messages>");
+        SendTextResponce("<PopupClose></PopupClose>");
 }
 
 void MainApp::PopupSelectCallback(int index)
 {
     _HandlersManager->SwitchByIndex(index);
-    SendTextResponce("<Messages><PopupSelect></PopupSelect></Messages>");
+    SendTextResponce("<PopupSelect></PopupSelect>");
 }
 
-void MainApp::MouseMoveCallback(int x, int y)
+void MainApp::MouseMoveCallback(int x, int y, double speed, double gravity, double deviation)
 {
-    WORKER_LOG(std::string("MouseMoveCallback<<") + std::to_string(x) + std::string("<<") + std::to_string(y));
+    WORKER_LOG(std::string("MouseMoveCallback<<") + std::to_string(x) + std::string("<<") + std::to_string(y) + std::string("<<") + std::to_string(speed) + std::string("<<") + std::to_string(gravity) + std::string("<<") + std::to_string(deviation));
     if(_HandlersManager->GetBrowser())
     {
         BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
@@ -581,6 +615,27 @@ void MainApp::MouseMoveCallback(int x, int y)
         LastCommand.CommandParam2 = std::to_string(y);
         MouseStartX = Data->CursorX;
         MouseStartY = Data->CursorY;
+        if(speed>=-0.01)
+        {
+            MouseSpeed = speed;
+        }else
+        {
+            MouseSpeed = 100.0;
+        }
+        if(gravity>=-0.01)
+        {
+            MouseGravity = gravity;
+        }else
+        {
+            MouseGravity = 6.0;
+        }
+        if(deviation>=-0.01)
+        {
+            MouseDeviation = deviation;
+        }else
+        {
+            MouseDeviation = 2.5;
+        }
         MouseEndX = x;
         MouseEndY = y;
         IsLastCommandNull = false;
@@ -589,7 +644,9 @@ void MainApp::MouseMoveCallback(int x, int y)
 
     }else
     {
-        SendTextResponce("<Messages><MouseMove></MouseMove></Messages>");
+        Data->CursorX = x;
+        Data->CursorY = y;
+        SendTextResponce("<MouseMove></MouseMove>");
     }
 }
 
@@ -606,7 +663,7 @@ void MainApp::ScrollCallback(int x, int y)
         _HandlersManager->GetBrowser()->GetMainFrame()->ExecuteJavaScript(std::string("BrowserAutomationStudio_ScrollToCoordinates(") + std::to_string(x) + std::string(",") + std::to_string(y) + std::string(")"),_HandlersManager->GetBrowser()->GetMainFrame()->GetURL(), 0);
     }else
     {
-        SendTextResponce("<Messages><Scroll></Scroll></Messages>");
+        SendTextResponce("<Scroll></Scroll>");
     }
 }
 
@@ -615,7 +672,7 @@ void MainApp::DebugVariablesResultCallback(const std::string & data)
     if(BrowserScenario)
         BrowserScenario->GetMainFrame()->ExecuteJavaScript(std::string("BrowserAutomationStudio_UpdateVariablesResult(") + picojson::value(data).serialize() + std::string(")"),BrowserScenario->GetMainFrame()->GetURL(), 0);
 
-    SendTextResponce("<Messages><DebugVariablesResult></DebugVariablesResult></Messages>");
+    SendTextResponce("<DebugVariablesResult></DebugVariablesResult>");
 }
 
 void MainApp::RenderCallback(int x, int y, int width, int height)
@@ -634,7 +691,7 @@ void MainApp::RenderCallback(int x, int y, int width, int height)
         _HandlersManager->GetBrowser()->GetMainFrame()->ExecuteJavaScript(std::string("BrowserAutomationStudio_ScrollToCoordinates(") + std::to_string(x + width/2) + std::string(",") + std::to_string(y + width/2) + std::string(")"),_HandlersManager->GetBrowser()->GetMainFrame()->GetURL(), 0);
     }else
     {
-        SendTextResponce("<Messages><Render></Render></Messages>");
+        SendTextResponce("<Render></Render>");
     }
 }
 
@@ -753,6 +810,7 @@ void MainApp::AfterReadyToCreateBrowser(bool Reload)
 
     CefBrowserSettings browser_settings;
     browser_settings.windowless_frame_rate = 5;
+    browser_settings.webgl = STATE_DISABLED;
 
     std::wstring wencoding = L"UTF-8";
     cef_string_utf16_set(wencoding.data(),wencoding.size(),&browser_settings.default_encoding,true);
@@ -807,7 +865,7 @@ void MainApp::TimezoneCallback(int offset)
             Data->Timezone = offset;
         }
     }
-    SendTextResponce("<Messages><Timezone></Timezone></Messages>");
+    SendTextResponce("<Timezone></Timezone>");
 }
 
 void MainApp::GeolocationCallback(float latitude, float longitude)
@@ -824,7 +882,7 @@ void MainApp::GeolocationCallback(float latitude, float longitude)
             Data->Latitude = latitude;
         }
     }
-    SendTextResponce("<Messages><Geolocation></Geolocation></Messages>");
+    SendTextResponce("<Geolocation></Geolocation>");
 
 }
 
@@ -913,7 +971,7 @@ void MainApp::SetProxyCallback(const std::string& server, int Port, bool IsHttp,
         LOCK_BROWSER_DATA
         Data->_Proxy.Set(NewProxy,target);
     }
-    SendTextResponce("<Messages><SetProxy></SetProxy></Messages>");
+    SendTextResponce("<SetProxy></SetProxy>");
 }
 
 void MainApp::AddHeaderCallback(const std::string& key,const std::string& value, const std::string& target)
@@ -926,12 +984,63 @@ void MainApp::AddHeaderCallback(const std::string& key,const std::string& value,
             Headers = std::make_shared<std::map<std::string,std::string> >();
         }
         if(value.empty())
-            Headers->erase(key);
+        {
+            if((key == "Referer" || key == "referer"))
+            {
+                if(Headers->count(key) == 0 || Headers->at(key) == "")
+                {
+                    Headers->erase(key);
+                    Headers->insert(std::pair<std::string,std::string>(key, "_BAS_NO_REFERRER"));
+                }else
+                {
+                    Headers->erase(key);
+                }
+
+            }else
+            {
+                Headers->erase(key);
+            }
+        }
         else
+        {
+            Headers->erase(key);
             Headers->insert(std::pair<std::string,std::string>(key, value));
+        }
         Data->_Headers.Set(Headers,target);
     }
-    SendTextResponce("<Messages><AddHeader></AddHeader></Messages>");
+    SendTextResponce("<AddHeader></AddHeader>");
+}
+
+void MainApp::SetHeaderListCallback(const std::string& json)
+{
+    bool success = true;
+    std::vector<std::string> HeadersDefaults;
+    try
+    {
+        picojson::value v;
+        picojson::parse(v, json);
+        picojson::value::array a = v.get<picojson::value::array>();
+
+        for(picojson::value p: a)
+        {
+            std::string ps = p.get<std::string>();
+            if(ps != "Host")
+            {
+                HeadersDefaults.push_back(ps);
+            }
+        }
+
+    }catch(...)
+    {
+        success = false;
+    }
+
+    if(success)
+    {
+        LOCK_BROWSER_DATA
+        Data->_HeadersDefaults = HeadersDefaults;
+    }
+    SendTextResponce("<SetHeaderList></SetHeaderList>");
 }
 
 void MainApp::SetUserAgentCallback(const std::string& value)
@@ -943,7 +1052,7 @@ void MainApp::SetUserAgentCallback(const std::string& value)
         else
             Data->_Headers["User-Agent"] = value;
     }*/
-    //SendTextResponce("<Messages><SetUserAgent>1</SetUserAgent></Messages>");
+    //SendTextResponce("<SetUserAgent>1</SetUserAgent>");
 }
 
 void MainApp::CleanHeaderCallback()
@@ -951,8 +1060,9 @@ void MainApp::CleanHeaderCallback()
     {
         LOCK_BROWSER_DATA
         Data->_Headers.Clear();
+        Data->_HeadersDefaults.clear();
     }
-    SendTextResponce("<Messages><CleanHeader></CleanHeader></Messages>");
+    SendTextResponce("<CleanHeader></CleanHeader>");
 }
 
 void MainApp::GetUrlCallback()
@@ -964,7 +1074,7 @@ void MainApp::GetUrlCallback()
         url = _HandlersManager->GetBrowser()->GetMainFrame()->GetURL();
     }
     xml_encode(url);
-    SendTextResponce(std::string("<Messages><GetUrl>") + url + std::string("</GetUrl></Messages>"));
+    SendTextResponce(std::string("<GetUrl>") + url + std::string("</GetUrl>"));
 }
 
 void MainApp::OnBeforeCommandLineProcessing(const CefString& process_type,CefRefPtr<CefCommandLine> command_line)
@@ -1024,7 +1134,7 @@ void MainApp::AddCacheMaskAllowCallback(const std::string& value)
         LOCK_BROWSER_DATA
         Data->_CacheMask.push_back(data);
     }
-    SendTextResponce("<Messages><AddCacheMaskAllow/></Messages>");
+    SendTextResponce("<AddCacheMaskAllow/>");
 }
 void MainApp::AddCacheMaskDenyCallback(const std::string& value)
 {
@@ -1036,7 +1146,7 @@ void MainApp::AddCacheMaskDenyCallback(const std::string& value)
         LOCK_BROWSER_DATA
         Data->_CacheMask.push_back(data);
     }
-    SendTextResponce("<Messages><AddCacheMaskDeny/></Messages>");
+    SendTextResponce("<AddCacheMaskDeny/>");
 }
 void MainApp::AddRequestMaskAllowCallback(const std::string& value)
 {
@@ -1048,7 +1158,7 @@ void MainApp::AddRequestMaskAllowCallback(const std::string& value)
         LOCK_BROWSER_DATA
         Data->_RequestMask.push_back(data);
     }
-    SendTextResponce("<Messages><AddRequestMaskAllow/></Messages>");
+    SendTextResponce("<AddRequestMaskAllow/>");
 }
 void MainApp::AddRequestMaskDenyCallback(const std::string& value)
 {
@@ -1060,7 +1170,7 @@ void MainApp::AddRequestMaskDenyCallback(const std::string& value)
         LOCK_BROWSER_DATA
         Data->_RequestMask.push_back(data);
     }
-    SendTextResponce("<Messages><AddRequestMaskDeny/></Messages>");
+    SendTextResponce("<AddRequestMaskDeny/>");
 }
 void MainApp::ClearCacheMaskCallback()
 {
@@ -1069,8 +1179,33 @@ void MainApp::ClearCacheMaskCallback()
         LOCK_BROWSER_DATA
         Data->_CacheMask.clear();
     }
-    SendTextResponce("<Messages><ClearCacheMask/></Messages>");
+    SendTextResponce("<ClearCacheMask/>");
 }
+
+void MainApp::AllowPopups()
+{
+    Data->AllowPopups = true;
+    SendTextResponce("<AllowPopups/>");
+}
+
+void MainApp::RestrictPopups()
+{
+    Data->AllowPopups = false;
+    SendTextResponce("<RestrictPopups/>");
+}
+
+void MainApp::AllowDownloads()
+{
+    Data->AllowDownloads = true;
+    SendTextResponce("<AllowDownloads/>");
+}
+
+void MainApp::RestrictDownloads()
+{
+    Data->AllowDownloads = false;
+    SendTextResponce("<RestrictDownloads/>");
+}
+
 void MainApp::ClearRequestMaskCallback()
 {
     WORKER_LOG(std::string("ClearRequestMaskCallback<<"));
@@ -1078,7 +1213,7 @@ void MainApp::ClearRequestMaskCallback()
         LOCK_BROWSER_DATA
         Data->_RequestMask.clear();
     }
-    SendTextResponce("<Messages><ClearRequestMask/></Messages>");
+    SendTextResponce("<ClearRequestMask/>");
 }
 void MainApp::ClearLoadedUrlCallback()
 {
@@ -1087,7 +1222,7 @@ void MainApp::ClearLoadedUrlCallback()
         LOCK_BROWSER_DATA
         Data->_LoadedUrls.clear();
     }
-    SendTextResponce("<Messages><ClearLoadedUrl/></Messages>");
+    SendTextResponce("<ClearLoadedUrl/>");
 }
 void MainApp::ClearCachedDataCallback()
 {
@@ -1096,7 +1231,7 @@ void MainApp::ClearCachedDataCallback()
         LOCK_BROWSER_DATA
         Data->_CachedData.clear();
     }
-    SendTextResponce("<Messages><ClearCachedData/></Messages>");
+    SendTextResponce("<ClearCachedData/>");
 }
 void MainApp::ClearAllCallback()
 {
@@ -1108,7 +1243,7 @@ void MainApp::ClearAllCallback()
         Data->_LoadedUrls.clear();
         Data->_CachedData.clear();
     }
-    SendTextResponce("<Messages><ClearAll/></Messages>");
+    SendTextResponce("<ClearAll/>");
 }
 void MainApp::ClearMasksCallback()
 {
@@ -1118,7 +1253,7 @@ void MainApp::ClearMasksCallback()
         Data->_CacheMask.clear();
         Data->_RequestMask.clear();
     }
-    SendTextResponce("<Messages><ClearMasks/></Messages>");
+    SendTextResponce("<ClearMasks/>");
 }
 void MainApp::ClearDataCallback()
 {
@@ -1128,7 +1263,7 @@ void MainApp::ClearDataCallback()
         Data->_LoadedUrls.clear();
         Data->_CachedData.clear();
     }
-    SendTextResponce("<Messages><ClearData/></Messages>");
+    SendTextResponce("<ClearData/>");
 }
 void MainApp::WaitCodeCallback()
 {
@@ -1191,9 +1326,24 @@ void MainApp::FindCacheByMaskBase64Callback(const std::string& value)
                 break;
             }
         }
+        if(value == "download://*")
+        {
+            //errase all info about previous download
+            auto i = Data->_LoadedUrls.begin();
+            while (i != Data->_LoadedUrls.end())
+            {
+                if(starts_with(i->first,"download://"))
+                {
+                    i = Data->_LoadedUrls.erase(i);
+                }else
+                {
+                    ++i;
+                }
+            }
+        }
     }
     xml_encode(res);
-    SendTextResponce(std::string("<Messages><FindCacheByMaskBase64>") + res + ("</FindCacheByMaskBase64></Messages>"));
+    SendTextResponce(std::string("<FindCacheByMaskBase64>") + res + ("</FindCacheByMaskBase64>"));
 }
 void MainApp::FindStatusByMaskCallback(const std::string& value)
 {
@@ -1210,7 +1360,7 @@ void MainApp::FindStatusByMaskCallback(const std::string& value)
             }
         }
     }
-    SendTextResponce(std::string("<Messages><FindStatusByMask>") + res + ("</FindStatusByMask></Messages>"));
+    SendTextResponce(std::string("<FindStatusByMask>") + res + ("</FindStatusByMask>"));
 }
 
 void MainApp::GetLoadStatsCallback()
@@ -1220,7 +1370,7 @@ void MainApp::GetLoadStatsCallback()
         is_loading = _HandlersManager->GetBrowser()->IsLoading();
 
 
-    SendTextResponce(std::string("<Messages><GetLoadStats>") + std::to_string(is_loading) + "," + std::to_string(Data->OldestRequestTime) + std::string("</GetLoadStats></Messages>"));
+    SendTextResponce(std::string("<GetLoadStats>") + std::to_string(is_loading) + "," + std::to_string(Data->OldestRequestTime) + std::string("</GetLoadStats>"));
     return;
 }
 
@@ -1240,9 +1390,24 @@ void MainApp::FindCacheByMaskStringCallback(const std::string& value)
                 break;
             }
         }
+        if(value == "download://*")
+        {
+            //errase all info about previous download
+            auto i = Data->_LoadedUrls.begin();
+            while (i != Data->_LoadedUrls.end())
+            {
+                if(starts_with(i->first,"download://"))
+                {
+                    i = Data->_LoadedUrls.erase(i);
+                }else
+                {
+                    ++i;
+                }
+            }
+        }
     }
     xml_encode(res);
-    SendTextResponce(std::string("<Messages><FindCacheByMaskString>") + res + std::string("</FindCacheByMaskString></Messages>"));
+    SendTextResponce(std::string("<FindCacheByMaskString>") + res + std::string("</FindCacheByMaskString>"));
 }
 void MainApp::IsUrlLoadedByMaskCallback(const std::string& value)
 {
@@ -1259,16 +1424,19 @@ void MainApp::IsUrlLoadedByMaskCallback(const std::string& value)
             }
         }
     }
-    SendTextResponce(std::string("<Messages><IsUrlLoadedByMask>") + res + ("</IsUrlLoadedByMask></Messages>"));
+    SendTextResponce(std::string("<IsUrlLoadedByMask>") + res + ("</IsUrlLoadedByMask>"));
 
 }
 
-void MainApp::SetCodeCallback(const std::string & code)
+void MainApp::SetCodeCallback(const std::string & code,const std::string & schema)
 {
+
+    Schema = schema;
     Code = code;
     if(code.empty())
         Code = " ";
     Variables = extract_variables(code);
+    Labels = extract_labels(code);
     Functions = extract_functions(code);
     std::string AdditionalResourcesPrev = AdditionalResources;
     AdditionalResources = extract_resources(code);
@@ -1318,9 +1486,14 @@ void MainApp::ClearElementCommand()
     TypeTextTaskIsActive = false;
     IsMouseMoveSimulation = false;
 }
-
-
 void MainApp::ElementCommandCallback(const ElementCommand &Command)
+{
+    ClearElementCommand();
+    LastCommandCopy = Command;
+    ElementCommandInternalCallback(Command);
+}
+
+void MainApp::ElementCommandInternalCallback(const ElementCommand &Command)
 {
     WORKER_LOG(std::string("ElementCommandCallback<<"));
     RunElementCommandCallbackOnNextTimer = -1;
@@ -1407,7 +1580,7 @@ void MainApp::ElementCommandCallback(const ElementCommand &Command)
         {
             script = std::string("{var el = BrowserAutomationStudio_FindElement(") + path + std::string(");if(!el){browser_automation_studio_frame_find_result(0,0,'','','','',0,0,false);return;};"
                 "var rect = el.getBoundingClientRect();"
-                "var frame_index=Array.prototype.slice.call(document.querySelectorAll('iframe, frame')).indexOf(el);if(frame_index<0)frame_index=0;"
+                "var frame_index=BrowserAutomationStudio_GetFrameIndex(el);"
                 "var r = BrowserAutomationStudio_GetInternalBoundingRect(el);"
                 "browser_automation_studio_frame_find_result(parseInt(rect.left),parseInt(rect.top),el.getAttribute('name')||'',el.getAttribute('src')||'',el.outerHTML||'',frame_index,r.left,r.top,true);}");
         }
@@ -1611,7 +1784,7 @@ void MainApp::ElementCommandCallback(const ElementCommand &Command)
                 }
                 if(!done)
                 {
-                    SendTextResponce(std::string("<Messages><Element ID=\"") + Command.CommandId + std::string("\"><") + Command.CommandName + std::string(">") + std::string("</") + Command.CommandName + ("></Element></Messages>"));
+                    SendTextResponce(std::string("<Element ID=\"") + Command.CommandId + std::string("\"><") + Command.CommandName + std::string(">") + std::string("</") + Command.CommandName + ("></Element>"));
                     WORKER_LOG(std::string("ElementCommandCallbackDefault>>FailedToFindFrame"));
                 }
 
@@ -1619,7 +1792,7 @@ void MainApp::ElementCommandCallback(const ElementCommand &Command)
         }
     }else
     {
-        SendTextResponce(std::string("<Messages><Element ID=\"") + Command.CommandId + std::string("\"><") + Command.CommandName + std::string(">") + std::string("</") + Command.CommandName + ("></Element></Messages>"));
+        SendTextResponce(std::string("<Element ID=\"") + Command.CommandId + std::string("\"><") + Command.CommandName + std::string(">") + std::string("</") + Command.CommandName + ("></Element>"));
         WORKER_LOG(std::string("ElementCommandCallbackDefault>>"));
     }
 }
@@ -1645,7 +1818,7 @@ void MainApp::Timer()
         {
             WORKER_LOG("Execute last command");
             if(!IsLastCommandNull)
-                ElementCommandCallback(LastCommand);
+                ElementCommandCallback(LastCommandCopy);
         }else
         {
             RunElementCommandCallbackOnNextTimer --;
@@ -1693,7 +1866,7 @@ void MainApp::Timer()
 
     if(_HandlersManager->CheckIsClosed())
     {
-        SendTextResponce("<Messages><PopupClose></PopupClose></Messages>");
+        SendTextResponce("<PopupClose></PopupClose>");
     }
 
     UpdateWindowPositionWithParent();
@@ -1710,7 +1883,7 @@ void MainApp::HandleCentralBrowserEvents()
             url = url.substr(7,url.length() - 7);
             WORKER_LOG(std::string("OpenScriptExample<<") + url);
             xml_encode(url);
-            SendTextResponce(std::string("<Messages><LoadScript>") + url + std::string("</LoadScript></Messages>"));
+            SendTextResponce(std::string("<LoadScript>") + url + std::string("</LoadScript>"));
 
         }else
         {
@@ -1750,19 +1923,20 @@ void MainApp::HandleScenarioBrowserEvents()
         SetNextActionId.clear();
     }
 
-    std::pair<std::string, bool> res = scenariov8handler->GetResult();
+    std::pair<ScenarioV8Handler::LastResultStruct, bool> res = scenariov8handler->GetResult();
     if(res.second)
     {
-        std::string new_code = res.first;
+        std::string new_code = res.first.LastResultCodeDiff;
         WORKER_LOG(std::string("HandleScenarioBrowserEvents<<") + new_code);
-        Variables = extract_variables(new_code);
-        Functions = extract_functions(new_code);
+        Variables = res.first.LastResultVariables;
+        Labels = res.first.LastResultLabels;
+        Functions = res.first.LastResultFunctions;
         std::string AdditionalResourcesPrev = AdditionalResources;
-        AdditionalResources = extract_resources(new_code);
+        AdditionalResources = res.first.LastResultResources;
         if(AdditionalResourcesPrev != AdditionalResources)
             ResourcesChanged = true;
         xml_encode(new_code);
-        SendTextResponce(std::string("<Messages><ReceivedCode>") + new_code + std::string("</ReceivedCode></Messages>"));
+        SendTextResponce(std::string("<ReceivedCode>") + new_code + std::string("</ReceivedCode>"));
         if(!DelayedSend.empty())
         {
             SendTextResponce(DelayedSend);
@@ -1779,7 +1953,7 @@ void MainApp::HandleScenarioBrowserEvents()
         std::string CodeSend = res2.first;
         WORKER_LOG(std::string("GetExecuteCode<<") + CodeSend);
         xml_encode(CodeSend);
-        SendTextResponce(std::string("<Messages><WaitCode>") + CodeSend + std::string("</WaitCode></Messages>"));
+        SendTextResponce(std::string("<WaitCode>") + CodeSend + std::string("</WaitCode>"));
     }
 
     std::pair<std::string, bool> res6 = scenariov8handler->GetClipboardSetRequest();
@@ -1860,7 +2034,7 @@ void MainApp::HandleToolboxBrowserEvents()
                     if(BrowserToolbox)
                         BrowserToolbox->GetMainFrame()->ExecuteJavaScript(std::string("BrowserAutomationStudio_ShowWaiting(") + picojson::value(CodeSend).serialize() + std::string(")"),BrowserToolbox->GetMainFrame()->GetURL(), 0);
                     xml_encode(CodeSend);
-                    std::string DelayedSendCode = std::string("<Messages><WaitCode>") + CodeSend + std::string("</WaitCode></Messages>");
+                    std::string DelayedSendCode = std::string("<WaitCode>") + CodeSend + std::string("</WaitCode>");
                     if(res.first.HowToExecute == ToolboxV8Handler::OnlyExecute)
                     {
                         SendTextResponce(DelayedSendCode);
@@ -1909,7 +2083,7 @@ void MainApp::HandleToolboxBrowserEvents()
     if(toolboxv8handler->GetIsInterrupt())
     {
         WORKER_LOG("BrowserAutomationStudio_Interrupt<<");
-        SendTextResponce("<Messages><Interrupt></Interrupt></Messages>");
+        SendTextResponce("<Interrupt></Interrupt>");
     }
 
     if(toolboxv8handler->GetIsInitialized() && (ResourcesChanged))
@@ -1924,6 +2098,20 @@ void MainApp::HandleToolboxBrowserEvents()
         std::string script = std::string("BrowserAutomationStudio_SetVariables(") + picojson::value(Variables.data()).serialize() + std::string(")");
         BrowserToolbox->GetMainFrame()->ExecuteJavaScript(script,BrowserToolbox->GetMainFrame()->GetURL(), 0);
         Variables.clear();
+    }
+
+    if(toolboxv8handler->GetIsInitialized() && !Schema.empty())
+    {
+        std::string script = std::string("BrowserAutomationStudio_SetSchema(") + picojson::value(Schema).serialize() + std::string(")");
+        BrowserToolbox->GetMainFrame()->ExecuteJavaScript(script,BrowserToolbox->GetMainFrame()->GetURL(), 0);
+        Schema.clear();
+    }
+
+    if(toolboxv8handler->GetIsInitialized() && !Labels.empty())
+    {
+        std::string script = std::string("BrowserAutomationStudio_SetLabels(") + picojson::value(Labels.data()).serialize() + std::string(")");
+        BrowserToolbox->GetMainFrame()->ExecuteJavaScript(script,BrowserToolbox->GetMainFrame()->GetURL(), 0);
+        Labels.clear();
     }
 
     if(toolboxv8handler->GetIsInitialized() && !Functions.empty())
@@ -2044,7 +2232,7 @@ void MainApp::HandleFrameFindEvents()
 
                     ExecuteFrameChain.push_back(res.first);
                     LastCommand.Path.erase(LastCommand.Path.begin(),LastCommand.Path.begin() + ExecuteFrameSearchingLength + 1);
-                    ElementCommandCallback(LastCommand);
+                    ElementCommandInternalCallback(LastCommand);
                     success = true;
 
                 }
@@ -2096,7 +2284,7 @@ void MainApp::HandleMainBrowserEvents()
 
             WORKER_LOG("Frame Scrolling Done");
             v8handler->SetResultProcessed();
-            ElementCommandCallback(LastCommand);
+            ElementCommandInternalCallback(LastCommand);
             //RunElementCommandCallbackOnNextTimer = 100;
 
         }else  if(LastCommand.CommandName == std::string("_mouseclick") || LastCommand.CommandName == std::string("_mouseclickup") || LastCommand.CommandName == std::string("_mouseclickdown"))
@@ -2124,15 +2312,15 @@ void MainApp::HandleMainBrowserEvents()
                 if(LastCommand.CommandName == std::string("_mouseclickup"))
                 {
                     type = 1;
-                    resp = "<Messages><MouseClickUp></MouseClickUp></Messages>";
+                    resp = "<MouseClickUp></MouseClickUp>";
                 }else if(LastCommand.CommandName == std::string("_mouseclickdown"))
                 {
                     type = 2;
-                    resp = "<Messages><MouseClickDown></MouseClickDown></Messages>";
+                    resp = "<MouseClickDown></MouseClickDown>";
                 }else
                 {
                     type = 0;
-                    resp = "<Messages><MouseClick></MouseClick></Messages>";
+                    resp = "<MouseClick></MouseClick>";
                 }
 
                 v8handler->SetResultProcessed();
@@ -2190,11 +2378,11 @@ void MainApp::HandleMainBrowserEvents()
             }else
             {
                 v8handler->SetResultProcessed();
-                SendTextResponce("<Messages><Scroll></Scroll></Messages>");
+                SendTextResponce("<Scroll></Scroll>");
             }*/
 
             v8handler->SetResultProcessed();
-            SendTextResponce("<Messages><Scroll></Scroll></Messages>");
+            SendTextResponce("<Scroll></Scroll>");
 
 
         }else if(LastCommand.CommandName == std::string("_render"))
@@ -2457,6 +2645,11 @@ void MainApp::HandleMainBrowserEvents()
                 MouseEndX = x - Data->ScrollX;
                 MouseEndY = y - Data->ScrollY;
                 IsMouseMoveSimulation = true;
+
+                MouseSpeed = 15.0;
+                MouseGravity = 6.0;
+                MouseDeviation = 2.5;
+
                 if(Settings->EmulateMouse())
                 {
                     int t1,t2;
@@ -2649,7 +2842,7 @@ std::pair<int,int> MainApp::GetScrollPosition()
 
 void MainApp::FinishedLastCommand(const std::string& data)
 {
-    SendTextResponce(std::string("<Messages><Element ID=\"") + LastCommand.CommandId + std::string("\"><") + LastCommand.CommandName + std::string(">") + data + std::string("</") + LastCommand.CommandName + ("></Element></Messages>"));
+    SendTextResponce(std::string("<Element ID=\"") + LastCommand.CommandId + std::string("\"><") + LastCommand.CommandName + std::string(">") + data + std::string("</") + LastCommand.CommandName + ("></Element>"));
 }
 
 void MainApp::ExecuteMouseMove()
@@ -2663,9 +2856,14 @@ void MainApp::ExecuteMouseMove()
     int CursorY = Data->CursorY;
 
     if(Settings->EmulateMouse())
-        BrowserEventsEmulator::MouseMove(_HandlersManager->GetBrowser(), IsMouseMoveSimulation, MouseStartX, MouseStartY, MouseEndX, MouseEndY , CursorX, CursorY, Speed, Data->WidthBrowser, Data->HeightBrowser, 6.0f, 2.5f, 0.0f, false, true,Data->IsMousePress,Data->IsDrag);
+    {
+        BrowserEventsEmulator::MouseMove(_HandlersManager->GetBrowser(), IsMouseMoveSimulation, MouseStartX, MouseStartY, MouseEndX, MouseEndY , CursorX, CursorY, MouseSpeed, Data->WidthBrowser, Data->HeightBrowser, MouseGravity, MouseDeviation, 0.0f, false, true,Data->IsMousePress,Data->IsDrag);
+    }
     else
-        BrowserEventsEmulator::MouseMoveLine(_HandlersManager->GetBrowser(), IsMouseMoveSimulation, MouseStartX, MouseStartY, MouseEndX, MouseEndY , CursorX, CursorY, Speed, Data->WidthBrowser, Data->HeightBrowser,Data->IsMousePress,Data->IsDrag);
+    {
+
+        BrowserEventsEmulator::MouseMoveLine(_HandlersManager->GetBrowser(), IsMouseMoveSimulation, MouseStartX, MouseStartY, MouseEndX, MouseEndY , CursorX, CursorY, MouseSpeed, Data->WidthBrowser, Data->HeightBrowser,Data->IsMousePress,Data->IsDrag);
+    }
     Data->CursorX = CursorX;
     Data->CursorY = CursorY;
 
@@ -2677,7 +2875,7 @@ void MainApp::ExecuteMouseMove()
         if(LastCommand.CommandName == "move")
             FinishedLastCommand("");
         else
-            SendTextResponce("<Messages><MouseMove></MouseMove></Messages>");
+            SendTextResponce("<MouseMove></MouseMove>");
     }
 }
 
@@ -2812,6 +3010,7 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
 
     //Main Browser
     //if(_HandlersManager->GetBrowser() && _HandlersManager->GetBrowser()->GetIdentifier() == browser->GetIdentifier())
+    if(!starts_with(frame->GetURL().ToString(),"chrome-devtools://"))
     {
         WORKER_LOG(std::string("OnContextCreated<<MainBrowser<<") + std::to_string(browser->GetIdentifier()) + "<<" + std::to_string(frame->IsMain()) + "<<" + frame->GetURL().ToString());
         CefRefPtr<CefV8Value> object = context->GetGlobal();
@@ -2821,12 +3020,13 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
         {
             LOCK_V8_HANDLER
             if(!v8handler)
-                v8handler = new V8Handler(Data);
+                v8handler = new V8Handler(Data,_PostManager);
             object->SetValue("browser_automation_studio_result", CefV8Value::CreateFunction("browser_automation_studio_result", v8handler), V8_PROPERTY_ATTRIBUTE_NONE);
             object->SetValue("browser_automation_studio_inspect_result", CefV8Value::CreateFunction("browser_automation_studio_inspect_result", v8handler), V8_PROPERTY_ATTRIBUTE_NONE);
             object->SetValue("browser_automation_studio_frame_find_result", CefV8Value::CreateFunction("browser_automation_studio_frame_find_result", v8handler), V8_PROPERTY_ATTRIBUTE_NONE);
             //object->SetValue("BrowserAutomationStudio_SaveLocalStorage", CefV8Value::CreateFunction("BrowserAutomationStudio_SaveLocalStorage", v8handler), V8_PROPERTY_ATTRIBUTE_NONE);
             object->SetValue("BrowserAutomationStudio_DomainDataNeedClear", CefV8Value::CreateFunction("BrowserAutomationStudio_DomainDataNeedClear", v8handler), V8_PROPERTY_ATTRIBUTE_NONE);
+            object->SetValue("BrowserAutomationStudio_SaveBlob", CefV8Value::CreateFunction("BrowserAutomationStudio_SaveBlob", v8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         }
 
         JavaScriptExtensions extensions;
@@ -2871,7 +3071,10 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
 
             if(!frame->GetURL().ToString().empty())
             {
-                if(!Data->_NextReferrer.empty())
+                if(Data->_NextReferrer == "_BAS_NO_REFERRER")
+                {
+                    jscode += extensions.GetReferrerExtension("");
+                }else if(!Data->_NextReferrer.empty())
                 {
                     jscode += extensions.GetReferrerExtension(Data->_NextReferrer);
                 }else
@@ -2882,19 +3085,7 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
             }
         }
 
-        {
-            LOCK_BROWSER_DATA
-            std::string StartupScript = Data->_StartupScript.Match(frame->GetURL().ToString(),_HandlersManager->FindTabIdByBrowserId(browser->GetIdentifier()));
-            if(!StartupScript.empty())
-            {
-                if(!jscode.empty())
-                    jscode += ";";
-                jscode += "try{";
-                jscode += StartupScript;
-                jscode += "}catch(e){};";
-            }
 
-        }
 
         /*{
             LOCK_LOCAL_STORAGE
@@ -2949,6 +3140,24 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
                 jscode += "BrowserAutomationStudio_GeolocationRestore();";
                 jscode += "}catch(e){};";
             }
+        }
+
+        {
+            LOCK_BROWSER_DATA
+            for (auto& Startup : Data->_StartupScript)
+            {
+                 std::string StartupScript = Startup.second.Match(frame->GetURL().ToString(),_HandlersManager->FindTabIdByBrowserId(browser->GetIdentifier()));
+                 if(!StartupScript.empty())
+                 {
+                     if(!jscode.empty())
+                         jscode += ";";
+                     jscode += "try{";
+                     jscode += StartupScript;
+                     jscode += "}catch(e){};";
+                 }
+            }
+
+
         }
 
         if(!jscode.empty())
@@ -3055,12 +3264,12 @@ void MainApp::CloseTab(int i)
 
 void MainApp::Terminate()
 {
-    SendTextResponce("<Messages><Terminate/></Messages>");
+    SendTextResponce("<Terminate/>");
 }
 
 void MainApp::Restart()
 {
-    SendTextResponce("<Messages><Restart/></Messages>");
+    SendTextResponce("<Restart/>");
 }
 
 //Element Subtasks

@@ -1,6 +1,18 @@
 _R = {}
 _RKEY = null
 
+function _get_last_record_id(record)
+{
+    if(RInfo(_RKEY,'Type') === 'Database')
+    {
+        var res = csv_parse(_result().get())
+        if(res.length > 0)
+        {
+            LAST_DATABASE_RECORD = res[res.length - 1];
+        }
+    }
+}
+
 function RS(key, notreuse, onlyfail, callback)
 {
     IS_REFUSED=false
@@ -18,7 +30,7 @@ function RS(key, notreuse, onlyfail, callback)
         }
 
         _RKEY = key
-        ScriptWorker.GetHandler(key,true,"_R[_RKEY]=_result();" + _get_function_body(callback));
+        ScriptWorker.GetHandler(key,true,"_get_last_record_id();_R[_RKEY]=_result();" + _get_function_body(callback));
     }else if(notreuse && !onlyfail)
     {
         if(key in _R && _R[key])
@@ -28,7 +40,7 @@ function RS(key, notreuse, onlyfail, callback)
         }
 
         _RKEY = key
-        ScriptWorker.GetHandler(key,true,"_R[_RKEY]=_result();" + _get_function_body(callback));
+        ScriptWorker.GetHandler(key,true,"_get_last_record_id();_R[_RKEY]=_result();" + _get_function_body(callback));
     }else if(!notreuse && onlyfail)
     {
         if(key in _R && _R[key])
@@ -39,7 +51,7 @@ function RS(key, notreuse, onlyfail, callback)
         }
 
         _RKEY = key
-        ScriptWorker.GetHandler(key,false,"if(_result() == null){fail('Resource get error for ' + _RKEY);return;}else{_R[_RKEY]=_result();}" + _get_function_body(callback));
+        ScriptWorker.GetHandler(key,false,"_get_last_record_id();if(_result() == null){fail('Resource get error for ' + _RKEY);return;}else{_R[_RKEY]=_result();}" + _get_function_body(callback));
 
     }else if(notreuse && onlyfail)
     {
@@ -50,7 +62,7 @@ function RS(key, notreuse, onlyfail, callback)
         }
 
         _RKEY = key
-        ScriptWorker.GetHandler(key,false,"if(_result() == null){fail('Resource get error for ' + _RKEY);return;}else{_R[_RKEY]=_result();}" + _get_function_body(callback));
+        ScriptWorker.GetHandler(key,false,"_get_last_record_id();if(_result() == null){fail('Resource get error for ' + _RKEY);return;}else{_R[_RKEY]=_result();}" + _get_function_body(callback));
     }
 }
 

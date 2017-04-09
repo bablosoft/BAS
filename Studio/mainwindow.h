@@ -37,6 +37,8 @@
 #include "databasestate.h"
 #include "recordprocesscommunication.h"
 #include "modulemanager.h"
+#include "diffpatcher.h"
+#include "mainwindowtabblink.h"
 
 namespace Ui {
     class MainWindow;
@@ -51,6 +53,7 @@ public:
 
 protected:
     void changeEvent(QEvent *e);
+    DiffPatcher _DiffPatcher;
     MultiTimer *_MultiTimer;
     QString LogFileName;
     OutputSection *Output;
@@ -72,6 +75,10 @@ protected:
     MongoDatabaseConnector *_DataBaseConnector3;
     DatabaseState *_DataBaseState;
     RecordProcessCommunication *_RecordProcessCommunication;
+    MainWindowTabBlink *_TabBlink;
+    QString Schema;
+    QString DatabaseId;
+    bool IsDatabaseDirty;
 
     QList<IRecordProcessCommunication::ResourceDescription> LastResourceList;
 
@@ -137,17 +144,19 @@ private slots:
     void Open();
     bool SavePrevious();
     void Close();
+    void CloseNoSave();
     void ResourcesReport();
     QString OpenFromFile(const QString& fileName);
     void OpenFromFileOrDisplayMessageBox(const QString& fileName);
 
     void OpenDefault();
+    void LoadSchema();
     void Save();
+    void AbortInstant();
+    void Abort();
     void SaveAs();
     QPair<bool,QString> SaveToFileSilent(const QString& file);
     void SaveToFile(const QString& file);
-    void EditSchema();
-    void DeleteSchema();
     void InitAction();
     void InitRecources();
     void InitWidgets();
@@ -165,6 +174,8 @@ private slots:
     void LabelAllLog_Click();
     void SetDefault();
     void ShowData();
+    void ShowDataBaseDialogNoAsk();
+    void ShowDataBaseManager();
     void ShowDataBase();
     void ShowDataBaseDialog();
     void SaveActual(const QString& filename);
@@ -177,6 +188,7 @@ private slots:
 
     void AboutEngine();
     void RegexpConstructor();
+    void FingerprintSwitcher();
     void ShowModuleManager();
     void SetDefaultText();
 

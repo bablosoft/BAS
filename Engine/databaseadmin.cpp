@@ -8,6 +8,7 @@
 #include <QDesktopServices>
 #include <QInputDialog>
 #include <QDesktopWidget>
+#include <QMenuBar>
 
 #include "databaseadmincsvformat.h"
 #include "every_cpp.h"
@@ -30,6 +31,31 @@ namespace BrowserAutomationStudioFramework
         connect(ui->DatabaseTables,SIGNAL(Activate()),this,SLOT(Activate()));
         connect(ui->DatabaseTables,SIGNAL(Deactivate()),this,SLOT(Deactivate()));
         IsDeactivated = false;
+        ui->ClearDatabaseFilter->setVisible(false);
+
+        ui->AddGroup->setVisible(false);
+        ui->DeleteSelectedGroups->setVisible(false);
+        ui->SelectAllGroups->setVisible(false);
+        ui->SelectNoGroups->setVisible(false);
+
+        QMenuBar *Menu = new QMenuBar(this);
+
+        QMenu *FileMenu = Menu->addMenu(tr("File"));
+        FileMenu->addAction(ui->RefreshButton->icon(),tr("Refresh"),ui->RefreshButton,SLOT(click()));
+        FileMenu->addAction(ui->DeleteAllButton->icon(),tr("Delete All Data"),ui->DeleteAllButton,SLOT(click()));
+
+        QMenu *ConvertMenu = Menu->addMenu(tr("Convert"));
+        ConvertMenu->addAction(QIcon(":/engine/images/csv.png"),ui->ImportCsv->text(),ui->ImportCsv,SLOT(click()));
+        ConvertMenu->addAction(QIcon(":/engine/images/csv.png"),ui->ExportCsv->text(),ui->ExportCsv,SLOT(click()));
+        ConvertMenu->addAction(QIcon(":/engine/images/sql.png"),ui->Backup->text(),ui->Backup,SLOT(click()));
+        ConvertMenu->addAction(QIcon(":/engine/images/sql.png"),ui->Restore->text(),ui->Restore,SLOT(click()));
+        ConvertMenu->addAction(QIcon(":/engine/images/xls.png"),ui->ExportXls->text(),ui->ExportXls,SLOT(click()));
+
+        ui->groupBox->setVisible(false);
+        ui->groupBox_2->setVisible(false);
+
+        this->layout()->setMenuBar(Menu);
+
     }
 
     void DatabaseAdmin::Deactivate()
@@ -620,6 +646,8 @@ namespace BrowserAutomationStudioFramework
         {
             Group->SetFilter(arg1);
         }
+        ui->ClearDatabaseFilter->setVisible(!arg1.isEmpty());
+
     }
 
     void DatabaseAdmin::on_ClearDatabaseFilter_clicked()
@@ -893,5 +921,19 @@ namespace BrowserAutomationStudioFramework
          }
     }
 
+}
+
+
+
+
+void BrowserAutomationStudioFramework::DatabaseAdmin::on_MenuButton_clicked()
+{
+    QMenu myMenu;
+    myMenu.addAction(ui->AddGroup->icon(),ui->AddGroup->text(),ui->AddGroup, SLOT(click()));
+    myMenu.addAction(ui->DeleteSelectedGroups->icon(),ui->DeleteSelectedGroups->text(),ui->DeleteSelectedGroups, SLOT(click()));
+    myMenu.addAction(ui->SelectAllGroups->icon(),ui->SelectAllGroups->text(),ui->SelectAllGroups, SLOT(click()));
+    myMenu.addAction(ui->SelectNoGroups->icon(),ui->SelectNoGroups->text(),ui->SelectNoGroups, SLOT(click()));
+
+    myMenu.exec(QCursor::pos());
 }
 

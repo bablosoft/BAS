@@ -22,5 +22,10 @@
         <file>images/Record.png</file>
         <file>data/new.txt</file>
         <file>images/regexp.png</file>
+        <file>images/fingerprint.png</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>images/greenball.png</file>
+        <file>images/redball.png</file>
     </qresource>
 </RCC>

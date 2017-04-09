@@ -144,6 +144,7 @@ namespace BrowserAutomationStudioFramework
 
         virtual void Run() = 0;
         virtual void Abort() = 0;
+        virtual void AbortNotInstant() = 0;
         virtual void InterruptAction() = 0;
 
 

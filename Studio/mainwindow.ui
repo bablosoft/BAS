@@ -256,20 +256,12 @@
      <addaction name="actionInterface_language"/>
      <addaction name="actionLog_Location_Chooser"/>
     </widget>
-    <widget class="QMenu" name="menuDatabase">
-     <property name="title">
-      <string>Database</string>
-     </property>
-     <addaction name="actionEdit_Schema"/>
-     <addaction name="actionDelete_Schema"/>
-     <addaction name="actionShow_Database"/>
-    </widget>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
     <addaction name="separator"/>
-    <addaction name="menuDatabase"/>
+    <addaction name="actionShow_Database"/>
     <addaction name="separator"/>
     <addaction name="menuSettings"/>
     <addaction name="separator"/>
@@ -304,6 +296,7 @@
      <string>Tools</string>
     </property>
     <addaction name="actionRegexp_Constructor"/>
+    <addaction name="actionFingerprint_Switcher"/>
    </widget>
    <addaction name="menuProject"/>
    <addaction name="menuReports"/>
@@ -798,6 +791,15 @@
     <string>Regular Expression Constructor</string>
    </property>
   </action>
+  <action name="actionFingerprint_Switcher">
+   <property name="icon">
+    <iconset resource="studio.qrc">
+     <normaloff>:/studio/images/fingerprint.png</normaloff>:/studio/images/fingerprint.png</iconset>
+   </property>
+   <property name="text">
+    <string>Fingerprint Switcher</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -809,8 +811,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="studio.qrc"/>
   <include location="../Engine/engine.qrc"/>
+  <include location="studio.qrc"/>
  </resources>
  <connections/>
 </ui>

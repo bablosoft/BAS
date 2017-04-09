@@ -16,6 +16,8 @@ struct multithreading
     base::Lock _LockDomainClear;
     base::Lock _LockTimezone;
     base::Lock _LockGeolocation;
+    base::Lock _LockFonts;
+    base::Lock _LockPostManager;
 };
 extern multithreading mthreading;
 
@@ -29,6 +31,8 @@ extern multithreading mthreading;
 #define LOCK_DOMAIN_CLEAR base::AutoLock lock_scope(mthreading._LockDomainClear);
 #define LOCK_TIMEZONE base::AutoLock lock_scope(mthreading._LockTimezone);
 #define LOCK_GEOLOCATION base::AutoLock lock_scope(mthreading._LockGeolocation);
+#define LOCK_FONTS base::AutoLock lock_scope(mthreading._LockFonts);
+#define LOCK_POST_MANAGER base::AutoLock lock_scope(mthreading._LockPostManager);
 
 std::string GetCurrentThreadString();
 

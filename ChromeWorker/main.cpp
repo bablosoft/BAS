@@ -15,6 +15,8 @@
 #include "opensslmultithreaded.h"
 #include "multithreading.h"
 #include "modulesdata.h"
+#include "fontreplace.h"
+#include "postmanager.h"
 
 #if defined(BAS_DEBUG)
     #include "CrashHandler.h"
@@ -324,7 +326,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         {
             WORKER_LOG("Minimized");
             app->Hide();
-            Client->Write("<Messages><Minimized>1</Minimized></Messages>");
+            Client->Write("<Minimized>1</Minimized>");
         }
         break;
         case WM_DESTROY:
@@ -395,7 +397,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     break;
                     case IDButtonQuit:
                         app->Hide();
-                        Client->Write("<Messages><Minimized>1</Minimized></Messages>");
+                        Client->Write("<Minimized>1</Minimized>");
                         return 0;
                     break;
                     case IDButtonUp:
@@ -751,7 +753,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 std::string Xml = Client->Read();
                 if(!Xml.empty())
                 {
-                    app->ClearElementCommand();
+                    /*if(Xml.find("<Visible") == std::string::npos && Xml.find("<SetWindow") == std::string::npos)
+                        app->ClearElementCommand();*/
                     Parser->Parse(Xml);
                 }
 
@@ -790,7 +793,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                         info.bmiHeader.biCompression = BI_RGB;
 
                         if(br.right > br.left && br.bottom > br.top)
+                        {
+                            /*if(app->GetData()->IsRecord)
+                                SetStretchBltMode(hdc, STRETCH_HALFTONE);*/
                             StretchDIBits(hdc, br.left, br.bottom, br.right - br.left, br.top - br.bottom, 0, 0, size.first, size.second, data, &info, DIB_RGB_COLORS, SRCCOPY);
+                        }
                     }
 
                     if(app->GetData()->IsRecord)
@@ -880,7 +887,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     app->SetSettings(&Settings);
     app->SetLayout(Layout);
     BrowserData * Data = new BrowserData();
-
+    PostManager * _PostManager = new PostManager();
 
     {
         LPWSTR *szArgList;
@@ -891,6 +898,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         Layout->IsRecord = Data->IsRecord;
         worker_log_init(Data->IsRecord);
     }
+
+    FontReplace::GetInstance().Initialize();
 
     WORKER_LOG(std::string("IsRecord<<") + std::to_string(Data->IsRecord));
 
@@ -909,10 +918,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Data->NeedClear = false;
     Data->IsDrag = false;
     Data->IsMousePress = false;
+    Data->AllowPopups = true;
+    Data->AllowDownloads = true;
 
     app->SetData(Data);
-
-
+    app->SetPostManager(_PostManager);
 
     int exit_code = CefExecuteProcess(main_args, app.get(), NULL);
 
@@ -962,6 +972,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Parser->EventVisible.push_back(std::bind(&MainApp::VisibleCallback,app.get(),_1));
     Parser->EventSetProxy.push_back(std::bind(&MainApp::SetProxyCallback,app.get(),_1,_2,_3,_4,_5,_6));
     Parser->EventAddHeader.push_back(std::bind(&MainApp::AddHeaderCallback,app.get(),_1,_2,_3));
+    Parser->EventSetHeaderList.push_back(std::bind(&MainApp::SetHeaderListCallback,app.get(),_1));
     Parser->EventCleanHeader.push_back(std::bind(&MainApp::CleanHeaderCallback,app.get()));
     Parser->EventSetUserAgent.push_back(std::bind(&MainApp::SetUserAgentCallback,app.get(),_1));
     Parser->EventGetUrl.push_back(std::bind(&MainApp::GetUrlCallback,app.get()));
@@ -975,11 +986,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Parser->EventMouseClickDown.push_back(std::bind(&MainApp::MouseClickDownCallback,app.get(),_1,_2));
     Parser->EventPopupClose.push_back(std::bind(&MainApp::PopupCloseCallback,app.get(),_1));
     Parser->EventPopupSelect.push_back(std::bind(&MainApp::PopupSelectCallback,app.get(),_1));
-    Parser->EventMouseMove.push_back(std::bind(&MainApp::MouseMoveCallback,app.get(),_1,_2));
+    Parser->EventMouseMove.push_back(std::bind(&MainApp::MouseMoveCallback,app.get(),_1,_2,_3,_4,_5));
     Parser->EventScroll.push_back(std::bind(&MainApp::ScrollCallback,app.get(),_1,_2));
     Parser->EventRender.push_back(std::bind(&MainApp::RenderCallback,app.get(),_1,_2,_3,_4));
     Parser->EventSetOpenFileName.push_back(std::bind(&MainApp::SetOpenFileNameCallback,app.get(),_1));
-    Parser->EventSetStartupScript.push_back(std::bind(&MainApp::SetStartupScriptCallback,app.get(),_1,_2));
+    Parser->EventSetStartupScript.push_back(std::bind(&MainApp::SetStartupScriptCallback,app.get(),_1,_2,_3));
     Parser->EventSetPromptResult.push_back(std::bind(&MainApp::SetPromptResultCallback,app.get(),_1));
     Parser->EventSetHttpAuthResult.push_back(std::bind(&MainApp::SetHttpAuthResultCallback,app.get(),_1,_2));
     Parser->EventGetCookiesForUrl.push_back(std::bind(&MainApp::GetCookiesForUrlCallback,app.get(),_1));
@@ -988,8 +999,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Parser->EventRestoreLocalStorage.push_back(std::bind(&MainApp::RestoreLocalStorageCallback,app.get(),_1));
     Parser->EventWaitCode.push_back(std::bind(&MainApp::WaitCodeCallback,app.get()));
     Parser->EventStartSection.push_back(std::bind(&MainApp::StartSectionCallback,app.get(),_1));
+    Parser->EventSetFontList.push_back(std::bind(&MainApp::SetFontListCallback,app.get(),_1));
     Parser->EventScriptFinished.push_back(std::bind(&MainApp::ScriptFinishedCallback,app.get()));
-    Parser->EventSetCode.push_back(std::bind(&MainApp::SetCodeCallback,app.get(),_1));
+    Parser->EventSetCode.push_back(std::bind(&MainApp::SetCodeCallback,app.get(),_1,_2));
     Parser->EventSetResources.push_back(std::bind(&MainApp::SetResourceCallback,app.get(),_1));
     Parser->EventReset.push_back(std::bind(&MainApp::ResetCallback,app.get()));
     Parser->EventIsChanged.push_back(std::bind(&MainApp::IsChangedCallback,app.get()));
@@ -1003,6 +1015,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Parser->EventAddRequestMaskDeny.push_back(std::bind(&MainApp::AddRequestMaskDenyCallback,app.get(),_1));
     Parser->EventClearCacheMask.push_back(std::bind(&MainApp::ClearCacheMaskCallback,app.get()));
     Parser->EventClearRequestMask.push_back(std::bind(&MainApp::ClearRequestMaskCallback,app.get()));
+    Parser->EventAllowPopups.push_back(std::bind(&MainApp::AllowPopups,app.get()));
+    Parser->EventRestrictPopups.push_back(std::bind(&MainApp::RestrictPopups,app.get()));
+    Parser->EventAllowDownloads.push_back(std::bind(&MainApp::AllowDownloads,app.get()));
+    Parser->EventRestrictDownloads.push_back(std::bind(&MainApp::RestrictDownloads,app.get()));
     Parser->EventClearLoadedUrl.push_back(std::bind(&MainApp::ClearLoadedUrlCallback,app.get()));
     Parser->EventClearCachedData.push_back(std::bind(&MainApp::ClearCachedDataCallback,app.get()));
     Parser->EventClearAll.push_back(std::bind(&MainApp::ClearAllCallback,app.get()));
@@ -1083,6 +1099,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     CefShutdown();
 
     WORKER_LOG("Exit");
+
+    FontReplace::GetInstance().Uninitialize();
 
     return Msg.wParam;
 }

@@ -22,6 +22,7 @@ namespace BrowserAutomationStudioFramework
         virtual QList<DatabaseTable> GetDatabaseTables();
         virtual QList<DatabaseColumn> GetColumns(int TableId);
         virtual QList<DatabaseGroup> GetGroups(int TableId);
+        virtual QString ToJson();
         void SetDatabaseConnector(IDatabaseConnector *DatabaseConnector);
     signals:
 

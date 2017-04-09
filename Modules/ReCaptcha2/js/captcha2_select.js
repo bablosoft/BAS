@@ -16,7 +16,7 @@ if(TimesToSolve["original"].length == 0)
 
 try{
   var path = GetPath(loader)
-  var code = loader.GetAdditionalData() + _.template($("#ReCaptcha2_code").html())({path: path["path"],waiter: path["waiter"],method: Method["updated"], rucaptcha: Rucaptcha["updated"], timestosolve:TimesToSolve["updated"], serverurl: Server["updated"]})
+  var code = loader.GetAdditionalData() + _.template($("#ReCaptcha2_code").html())({path: path["path"],waiter: path["waiter"],method: Method["updated"], rucaptcha: Rucaptcha["updated"], timestosolve:TimesToSolve["updated"], serverurl: Server["updated"], query: path["query"]})
   code = Normalize(code,0)
   BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
 }catch(e)

@@ -1,0 +1,45 @@
+{
+	
+	"name":"FingerprintSwitcher",
+	"description":"Fingerprint switcher",
+	"description_small":{"en": "Fingerprint switcher", "ru": "Смена отпечатка браузера"},
+	"major_version": 1,
+	"minor_version": 0,
+	"developer_name": "bablosoft", 
+	"developer_email": "mail.to.twaego@gmail.com", 
+	"developer_site": "https://bablosoft.com",
+	"api_version": 1,
+	"actions":
+	[
+
+		{
+			"name":"FingerprintSwitcher_Get",
+			"description":{"en": "Get fingerprint","ru": "Получить отпечаток"},
+			"template": "{{Tags}} -> {{Save}}",
+			"is_element": false,
+			"interface": "get_fingerprint_interface.js",
+			"select": "get_fingerprint_select.js",
+			"code": [{"file":"get_fingerprint_code.js", "name": "get_fingerprint_code"}]
+		},
+		{
+			"name":"FingerprintSwitcher_Apply",
+			"description":{"en": "Apply fingerprint","ru": "Применить отпечаток"},
+			"template": "{{Fingerprint}}",
+			"is_element": false,
+			"interface": "apply_fingerprint_interface.js",
+			"select": "apply_fingerprint_select.js",
+			"code": [{"file":"apply_fingerprint_code.js", "name": "apply_fingerprint_code"}]
+		}
+	],
+	"localize": 
+	{
+		"Tags. Can use several values separated by commas": {"ru":"Теги. Можно использовать несколько значений, разделенных запятыми"},
+		"Service key. Can be empty": {"ru":"Ключ сервиса. Может быть пустым"},
+		"Fingerprint": {"ru":"Отпечаток"},
+		"Fingerprint switcher service": {"ru":"Смена отпечатка"}
+	},
+	"engine": ["engine.js"],
+	"browser": [],
+	"depends": []	
+}
+

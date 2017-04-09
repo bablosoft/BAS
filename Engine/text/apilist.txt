@@ -75,6 +75,7 @@ RTake(resource_name)!
 RInfo(resource_name, resource_key)
 RPick(resource_name)
 header(name, value)!
+header_order(json)!
 clear_header()!
 proxy(proxy_string)!
 set_proxy(server, Port, IsHttp, name, password)!
@@ -191,6 +192,7 @@ success_number()
 project_path()
 script(text)!
 onloadjavascript(text)!
+font_list(fonts)!
 agent(text)!
 antigate(key)
 rucaptcha(key)
@@ -242,8 +244,10 @@ image_central_crop(image_data_base64,x,y)
 oauth1_header(auth_token, consumer_secret_key, consumer_public_key, url, method, realm, params)
 RPickRandom(name, size)
 RMap(name)
-db_add_group(group_name, group_description, table_id)
-db_add_record(group_id, data_list, table_id)
+_db_add_group(group_name, group_description, table_id)
+_db_add_record(group_id, data_list, table_id)
+_db_select_records(selector, page_number, page_size, table_id)
+_db_delete_records(selector, table_id)
 date_format(date, format)
 db_date_now()
 date_format_now(format)
@@ -259,3 +263,9 @@ _preprocess(script)
 _template(template)!
 _switch_http_client_main()
 _switch_http_client_internal()
+_goto(label)!
+_set_goto_label(label)!
+_restrict_popups()!
+_allow_popups()!
+_restrict_downloads()!
+_allow_downloads()!

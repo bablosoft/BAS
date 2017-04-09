@@ -19,7 +19,7 @@ namespace BrowserAutomationStudioFramework
     {
         Q_OBJECT
         IDatabaseConnector *DatabaseConnector;
-        void RefreshData();
+
         void RefreshTable();
         QList<DatabaseGroupWidget *> GroupWidgets;
         void InsertGroupInsideInterface(DatabaseGroup Group, int index);
@@ -68,6 +68,8 @@ namespace BrowserAutomationStudioFramework
         void on_Backup_clicked();
         void on_Restore_clicked();
         void on_ExportXls_clicked();
+        void on_MenuButton_clicked();
+        void RefreshData();
     };
 }
 

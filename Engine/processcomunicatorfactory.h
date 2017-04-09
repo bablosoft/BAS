@@ -6,6 +6,7 @@
 #include <QStringList>
 #include <QLocalServer>
 #include <QHash>
+#include "snappystringcompress.h"
 #include <memory>
 
 namespace BrowserAutomationStudioFramework
@@ -16,6 +17,7 @@ namespace BrowserAutomationStudioFramework
         QString ProcessName;
         QStringList Params;
         QLocalServer *Server;
+        SnappyStringCompress *Compress;
 
         struct LocalServerDataClass
         {

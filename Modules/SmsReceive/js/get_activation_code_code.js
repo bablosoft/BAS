@@ -35,8 +35,6 @@ _if(_SMS_CONFIRM_DATA["method"] == "sms-reg.com", function(){
 
     })!
 
-    _call(_BAS_SMSREGAPIREQUEST,{method: "setReady", number: _SMS_CONFIRM_DATA["number"]})!
-
 	_SMS_MAX_WAIT = Date.now() + 60000 * (<%= max_wait %>)
 	_do(function(){
         if(Date.now() > _SMS_MAX_WAIT)
@@ -53,7 +51,7 @@ _if(_SMS_CONFIRM_DATA["method"] == "sms-reg.com", function(){
             _break();
         }
 
-        if(json["response"] !== "TZ_NUM_WAIT")
+        if(json["response"] !== "TZ_NUM_WAIT" && json["response"] !== "TZ_NUM_PREPARE")
         {
             fail("Sms Reg Error: " + json["response"] + " for getNum");
         }
@@ -66,12 +64,18 @@ _if(_SMS_CONFIRM_DATA["method"] == "sms-reg.com", function(){
 
 
 _if(_SMS_CONFIRM_DATA["method"] == "sms-activate.ru", function(){
-    _call(_BAS_SMSACTIVATEPIREQUEST,{api_key: _SMS_CONFIRM_DATA["api"], action: "setStatus", status: ((_SMS_CONFIRM_DATA["not_first"]) ? "3" : "1"), id: _SMS_CONFIRM_DATA["id"]})!
-    var arr = _result()
-    if(arr[0].indexOf("ACCESS_") != 0)
-    {
-        fail("Error during sms-activate setStatus(" + ((_SMS_CONFIRM_DATA["not_first"]) ? "3" : "1") + ") " + arr.join(":"))
-    }
+    
+    _if(_SMS_CONFIRM_DATA["not_first"], function(){
+        _call(_BAS_SMSACTIVATEPIREQUEST,{api_key: _SMS_CONFIRM_DATA["api"], action: "setStatus", status: "3", id: _SMS_CONFIRM_DATA["id"]})!
+        var arr = _result()
+        if(arr[0].indexOf("ACCESS_") != 0)
+        {
+            fail("Error during sms-activate setStatus(3) " + arr.join(":"))
+        }
+
+    })!
+    
+    
 
     _SMS_MAX_WAIT = Date.now() + 60000 * (<%= max_wait %>)
     _do(function(){
@@ -84,7 +88,7 @@ _if(_SMS_CONFIRM_DATA["method"] == "sms-activate.ru", function(){
 
         if(arr[0] == "STATUS_OK")
         {
-            <%= variable %> = arr.slice(1).join(":")
+            <%= variable %> = arr[1]
             _SMS_CONFIRM_DATA["not_first"] = true
             _BAS_SMSCONFIRMDATA[ _SMS_CONFIRM_DATA["number"] ] = _SMS_CONFIRM_DATA
             _break();

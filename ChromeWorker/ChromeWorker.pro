@@ -59,12 +59,21 @@ SOURCES += main.cpp \
     randomid.cpp \
     CrashHandler.cpp \
     localstoragedata.cpp \
-    fixpagecontent.cpp
+    fixpagecontent.cpp \
+    fontreplace.cpp \
+    snappy/snappy.cc \
+    snappy/snappy-c.cc \
+    snappy/snappy-sinksource.cc \
+    snappy/snappy-stubs-internal.cc \
+    extract_labels.cpp \
+    postmanager.cpp
 
 INCLUDEPATH += $(BAS_PATH_WORKER)/include
 
 
 LIBS += -L$(BAS_PATH_WORKER)/lib -llibiconv -llibcef -llibcef_dll_wrapper -lAdvapi32 -luser32 -lPsapi -lshell32 -lDbgHelp -lgdi32 -llibcurl -llibeay32 -lssleay32 -lnetwork-uri
+win32:LIBS += -lminhook
+
 QMAKE_CXXFLAGS_RELEASE += /MT
 
 QMAKE_CXXFLAGS_DEBUG += /MTd
@@ -125,9 +134,18 @@ HEADERS += \
     CrashHandler.h \
     configurableitem.h \
     localstoragedata.h \
-    fixpagecontent.h
+    fixpagecontent.h \
+    fontreplace.h \
+    snappy/snappy.h \
+    snappy/snappy-c.h \
+    snappy/snappy-internal.h \
+    snappy/snappy-sinksource.h \
+    snappy/snappy-stubs-internal.h \
+    snappy/snappy-stubs-public.h \
+    extract_labels.h \
+    postmanager.h
 
-INCLUDEPATH += xml json png
+INCLUDEPATH += xml json png snappy
 
 win32:RC_FILE = main.rc
 

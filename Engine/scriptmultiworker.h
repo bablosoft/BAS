@@ -63,12 +63,12 @@ namespace BrowserAutomationStudioFramework
 
         bool IsAborted;
         int WorkerRunning;
-        int CurrentThreadNumber;
+        qint64 CurrentThreadNumber;
         bool NoNeedToCreateWorkersMore;
-        int SuccessLeft;
-        int SuccessNumber;
-        int FailLeft;
-        int FailNumber;
+        qint64 SuccessLeft;
+        qint64 SuccessNumber;
+        qint64 FailLeft;
+        qint64 FailNumber;
         bool DieOnFailHandler;
         void CreateWorker(int index);
         IScriptMultiWorkerReportData *ReportData;
@@ -194,10 +194,11 @@ namespace BrowserAutomationStudioFramework
     signals:
         void InterruptActionSignal();
     public slots:
-        void RunStage(int ThreadsNumber, int MaximumSuccess, int MaximumFailure, int MaxRunTime,const QString& WorkerFunction, const QString& callback);
+        void RunStage(qint64 ThreadsNumber, qint64 MaximumSuccess, qint64 MaximumFailure, qint64 MaxRunTime,const QString& WorkerFunction, const QString& callback);
         virtual void Run();
         virtual void RunSubScript();
         virtual void Abort();
+        virtual void AbortNotInstant();
         virtual void InterruptAction();
         void Decrypt(const QString& Data);
         void SuccessInternal();

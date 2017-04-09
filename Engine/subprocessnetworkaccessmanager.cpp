@@ -29,6 +29,9 @@ namespace BrowserAutomationStudioFramework
             }else if(xmlReader.name() == "AddHeader" && token == QXmlStreamReader::StartElement)
             {
                 emit AddHeader();
+            }else if(xmlReader.name() == "SetHeaderList" && token == QXmlStreamReader::StartElement)
+            {
+                emit SetHeaderList();
             }else if(xmlReader.name() == "CleanHeader" && token == QXmlStreamReader::StartElement)
             {
                 emit CleanHeader();
@@ -62,6 +65,18 @@ namespace BrowserAutomationStudioFramework
             }else if(xmlReader.name() == "ClearData" && token == QXmlStreamReader::StartElement)
             {
                 emit ClearData();
+            }else if(xmlReader.name() == "AllowPopups" && token == QXmlStreamReader::StartElement)
+            {
+                emit AllowPopups();
+            }else if(xmlReader.name() == "RestrictPopups" && token == QXmlStreamReader::StartElement)
+            {
+                emit RestrictPopups();
+            }else if(xmlReader.name() == "AllowDownloads" && token == QXmlStreamReader::StartElement)
+            {
+                emit AllowDownloads();
+            }else if(xmlReader.name() == "RestrictDownloads" && token == QXmlStreamReader::StartElement)
+            {
+                emit RestrictDownloads();
             }else if(xmlReader.name() == "FindCacheByMaskBase64" && token == QXmlStreamReader::StartElement)
             {
                 xmlReader.readNext();
@@ -111,6 +126,21 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("AddHeader"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(AddHeader()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
+    void SubprocessNetworkAccessManager::SetHeaderList(const QString& json,const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeStartElement("SetHeaderList");
+            xmlWriter.writeAttribute("json", json);
+        xmlWriter.writeEndElement();
+
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("SetHeaderList"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SetHeaderList()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
 
@@ -273,6 +303,54 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("ClearData"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(ClearData()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
+    void SubprocessNetworkAccessManager::RestrictPopups(const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("RestrictPopups","");
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("RestrictPopups"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(RestrictPopups()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
+    void SubprocessNetworkAccessManager::AllowPopups(const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("AllowPopups","");
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("AllowPopups"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(AllowPopups()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
+    void SubprocessNetworkAccessManager::RestrictDownloads(const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("RestrictDownloads","");
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("RestrictDownloads"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(RestrictDownloads()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
+    void SubprocessNetworkAccessManager::AllowDownloads(const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("AllowDownloads","");
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("AllowDownloads"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(AllowDownloads()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
         Worker->GetProcessComunicator()->Send(WriteString);
     }
 

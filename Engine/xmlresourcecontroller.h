@@ -13,6 +13,8 @@ namespace BrowserAutomationStudioFramework
     {
         Q_OBJECT
         QString Script;
+        QString DatabaseId;
+        QString Schema;
         QString FileName;
         QString FileContent;
         bool Result;
@@ -49,6 +51,8 @@ namespace BrowserAutomationStudioFramework
     public:
         explicit XmlResourceController(QObject *parent = 0);
         void SetScript(const QString & Script);
+        void SetDatabaseId(const QString & DatabaseId);
+        void SetSchema(const QString & Schema);
         void SetAvailableLanguages(const QString & AvailableLanguages);
         void SetScriptName(const QString & Name);
         void SetScriptVersion(const QString & Version);
@@ -80,6 +84,8 @@ namespace BrowserAutomationStudioFramework
         void SetOutputVisible9(bool OutputVisible9);
 
         QString GetScript();
+        QString GetDatabaseId();
+        QString GetSchema();
         QString GetScriptName();
         QString GetScriptVersion();
         QString GetFileName();

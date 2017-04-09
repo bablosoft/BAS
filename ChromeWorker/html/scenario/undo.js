@@ -1,6 +1,6 @@
 function UndoManager()
 {
-	this.MaxDataLength = 100
+	this.MaxDataLength = 15
 	this.Data = []
 	this.DataIndex = 0
 	this.CanUndo = function()

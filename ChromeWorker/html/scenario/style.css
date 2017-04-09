@@ -41,6 +41,17 @@
   color:#529653;
 }
 
+.textitemtag
+{
+  color:#31708f;
+  font-weight: bold
+}
+
+.textitemtagtext
+{
+  font-style: italic
+}
+
 .fa-check-square-o
 {
  font-size: 13px !important;

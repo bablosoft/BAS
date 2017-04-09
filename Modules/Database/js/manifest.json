@@ -1,0 +1,84 @@
+{
+	
+	"name":"Database",
+	"description":"Database",
+	"description_small":{"en": "Database", "ru": "База данных"},
+	"major_version": 1,
+	"minor_version": 0,
+	"show_only_with_database": true,
+	"developer_name": "bablosoft", 
+	"developer_email": "mail.to.twaego@gmail.com", 
+	"developer_site": "https://bablosoft.com",
+	"api_version": 1,
+	"actions":
+	[
+
+		{
+			"name":"Database_CreateGroup",
+			"description":{"en": "Create Group","ru": "Создать Группу"},
+			"template": "{{Name}}",
+			"is_element": false,
+			"interface": "database_create_group_interface.js",
+			"select": "database_create_group_select.js",
+			"code": [{"file":"database_create_group_code.js", "name": "database_create_group_code"}]
+		},
+		{
+			"name":"Database_InsertRecord",
+			"description":{"en": "Insert Record","ru": "Вставить Запись"},
+			"template": "",
+			"is_element": false,
+			"interface": "database_insert_record_interface.js",
+			"select": "database_insert_record_select.js",
+			"code": [{"file":"database_insert_record_code.js", "name": "database_insert_record_code"}]
+		},
+		{
+			"name":"Database_UpdateRecord",
+			"description":{"en": "Update Record","ru": "Изменить Запись"},
+			"template": "",
+			"is_element": false,
+			"interface": "database_update_record_interface.js",
+			"select": "database_update_record_select.js",
+			"code": [{"file":"database_update_record_code.js", "name": "database_update_record_code"}]
+		},
+		{
+			"name":"Database_SelectRecords",
+			"description":{"en": "Select Records","ru": "Получить Записи"},
+			"template": "",
+			"is_element": false,
+			"interface": "database_select_records_interface.js",
+			"select": "database_select_records_select.js",
+			"code": [{"file":"database_select_records_code.js", "name": "database_select_records_code"}]
+		},
+		{
+			"name":"Database_DeleteRecords",
+			"description":{"en": "Delete Records","ru": "Удалить Записи"},
+			"template": "",
+			"is_element": false,
+			"interface": "database_delete_records_interface.js",
+			"select": "database_delete_records_select.js",
+			"code": [{"file":"database_delete_records_code.js", "name": "database_delete_records_code"}]
+		}
+	],
+	"localize": 
+	{
+		"Page number" : {"ru": "Номер страницы"},
+		"Page size" : {"ru": "Размер страницы"},
+		"Record list" : {"ru": "Список записей"},
+		"Group id" : {"ru": "Ид группы"},
+		"Description" : {"ru": "Описание"},
+		"Table" : {"ru": "Таблица"},
+		"New Record id" : {"ru": "Ид новой записи"},
+		"Add filter" : {"ru": "Добавить фильтр"},
+		"Remove all filters" : {"ru": "Убрать все фильтры"},
+		"Using resources is the best way to select record." : {"ru": "Использование ресурсов - лучший способ получить запись."},
+
+		"Set only those fields that you want to change in the database." : {"ru": "Задайте только те поля, которые хотите заменить в базе."},
+		"Record id. Leave blank to update last record obtained as resource": {"ru": "Ид записи. Оставьте поле пустым, чтобы обновить последнюю запись, полученную как ресурс"},
+		"Group id. Leave blank to insert in last created group." : {"ru": "Идентификатор группы. Оставьте поле пустым, чтобы вставить запись в последнюю созданную группу."},
+		"(seconds from 1 january 1970, leave blank to use current date)": {"ru": "(cекунд с 1 января 1970 года, оставьте поле пустым, чтобы использовать текущую дату)"}
+	},
+	"engine": [],
+	"browser": [],
+	"depends": []	
+}
+

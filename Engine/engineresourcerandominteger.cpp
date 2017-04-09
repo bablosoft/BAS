@@ -77,7 +77,7 @@ namespace BrowserAutomationStudioFramework
     }
     void EngineResourceRandomInteger::Die()
     {
-        Active = false;
+        //Active = false;
     }
     void EngineResourceRandomInteger::Reload()
     {

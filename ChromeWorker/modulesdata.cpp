@@ -97,6 +97,11 @@ ModulesDataList LoadModulesData(const std::string& Locale)
                         continue;
                     }
 
+                    if(ManifestObject.find("show_only_with_database") != ManifestObject.end())
+                    {
+                        DataItem->OnlyWithDatabase = ManifestObject["show_only_with_database"].get<bool>();
+                    }
+
                     picojson::value::object DescriptionObject = ManifestObject["description_small"].get<picojson::value::object>();
                     if((DescriptionObject).find(Locale) != DescriptionObject.end())
                     {

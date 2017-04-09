@@ -1,7 +1,38 @@
 _L = 
 {
+	"Record list": {"ru": "Список записей"},
+	"Remove this filter?": {"ru": "Удалить этот фильтр?"},
+	"Not empty": {"ru": "Не пустое"},
+	"Is empty": {"ru": "Пустое"},
+	"Contains": {"ru": "Содержит"},
+	"Equals": {"ru": "Равно"},
+	"Not equals": {"ru": "Не равно"},
+	"Is true": {"ru": "Истина"},
+	"Is false": {"ru": "Ложь"},
+	"Earlier then": {"ru": "Раньше чем"},
+	"Later then": {"ru": "Позже чем"},
+	"Same year": {"ru": "В том же году"},
+	"Same month": {"ru": "В тот же месяц"},
+	"Same day": {"ru": "В тот же день"},
+	"Same hour": {"ru": "В тот же час"},
+
+	"Table": {"ru": "Таблица"},
+	"Field": {"ru": "Поле"},
+	"Filter type": {"ru": "Тип фильтра"},
+	"Add filter": {"ru": "Добавить фильтр"},
+	"Take new or old resource during this resource request": {"ru": "Брать новый ресурс или использовать старый при этом запросе ресурса"},
+	"Restrict all popups. You can restrict specific popup with Request Mask Deny action.": {"ru": "Запретить все всплывающие окна. Запретить конкретные окна можно с помощью действия Запретить запрос"},
+	"Restrict all downloads. You can restrict specific download with Request Mask Deny action.": {"ru": "Запретить загрузку файлов. Запретить конкретные загрузки можно с помощью действия Запретить запрос"},
+	"Allow all popups. Revokes Allow popup action.": {"ru": "Разрешить все всплывающие окна. Отменяет действие Запретить всплывающие окна"},
+	"Allow all downloads. Revokes Allow downloads action.": {"ru": "Разрешить все загрузки. Отменяет действие Запретить загрузку файлов"},
+	"Tweak speed and other parameters for mouse move.": {"ru": "Настроить скорость и другие параметры для перемещения мыши."},
+	"Speed": {"ru": "Скорость"},
+	"Gravity": {"ru": "Притяжение"},
+	"Deviation": {"ru": "Отклонение"},
 	"Use 'Timeout' action to set default timeout.": {"ru": "Используйте действие 'Таймаут' чтобы установить максимальное время ожидания по умолчанию."},
 	"default": {"ru": "дефолт"},
+	"Select Label": {"ru": "Выберите Метку"},
+	"No label found. Create one with Set label action.": {"ru": "Меток не найдено. Ее можно создать с помощью действия Установить метку."},
 	"Default": {"ru": "По умолчанию"},
 	"seconds": {"ru": "секунд"},
 	"Maximum time to perform an action.": {"ru": "Максимальное время выполнения задания"},
@@ -71,6 +102,8 @@ _L =
 	"OK": {"ru": "ОК"},
 	"Enter Value": {"ru": "Введите значение"},
 	"CANCEL": {"ru": "ОТМЕНА"},
+	
+	
 
 	"ACCEPT": {"ru": "ПРИНЯТЬ"},
 	"value1": {"ru": "значение1"},
@@ -448,10 +481,10 @@ function tr(key)
 		for(var i = 0;i< all.length;i++)
 		{
 			var el = $(all[i])
-			if(typeof(el.attr("tr")) == "undefined" || el.attr("tr") != "true" )
+			if(typeof(el.attr("trtitle")) == "undefined" || el.attr("tr") != "true" )
 			{
 				el.attr("title",tr(el.attr("title")))
-				el.attr("tr","true")
+				el.attr("trtitle","true")
 			}
 		}
 

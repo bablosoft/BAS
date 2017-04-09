@@ -18,9 +18,10 @@ public:
     BrowserData();
 
     ConfigurableItem<std::shared_ptr<std::map<std::string,std::string> > > _Headers;
+    std::vector<std::string> _HeadersDefaults;
     std::string _NextReferrer;
     std::string _OpenFileName;
-    ConfigurableItem<std::string> _StartupScript;
+    std::map<std::string,ConfigurableItem<std::string> > _StartupScript;
     ConfigurableItem<ProxyData> _Proxy;
     CefWindowHandle _MainWindowHandle;
     CefWindowHandle _ParentWindowHandle;
@@ -38,6 +39,8 @@ public:
     std::atomic_int CursorX;
     std::atomic_int CursorY;
     std::atomic_bool IsRecord;
+    std::atomic_bool AllowPopups;
+    std::atomic_bool AllowDownloads;
     InspectResult _Inspect;
     ModulesDataList _ModulesData;
 

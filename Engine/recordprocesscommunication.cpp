@@ -45,18 +45,25 @@ namespace BrowserAutomationStudioFramework
         return res;
     }
 
-    void RecordProcessCommunication::SendCode(const QString& Code)
+    void RecordProcessCommunication::SendCode(const QString& Code,const QString& Schema)
     {
         if(Comunicator && CanSend)
         {
+
             QString WriteString;
             QXmlStreamWriter xmlWriter(&WriteString);
-            xmlWriter.writeTextElement("SetCode",Code);
+            xmlWriter.writeStartElement("SetCode");
+            xmlWriter.writeAttribute("Schema", Schema);
+            xmlWriter.writeCharacters(Code);
+
+            xmlWriter.writeEndElement();
             Comunicator->Send(WriteString);
             SendData.clear();
+            SendDataSchema.clear();
         }else
         {
             SendData = Code;
+            SendDataSchema = Schema;
         }
     }
 
@@ -148,9 +155,14 @@ namespace BrowserAutomationStudioFramework
         {
             QString WriteString;
             QXmlStreamWriter xmlWriter(&WriteString);
-            xmlWriter.writeTextElement("SetCode",SendData);
+            xmlWriter.writeStartElement("SetCode");
+            xmlWriter.writeAttribute("Schema", SendDataSchema);
+            xmlWriter.writeCharacters(SendData);
+
+            xmlWriter.writeEndElement();
             Comunicator->Send(WriteString);
             SendData.clear();
+            SendDataSchema.clear();
         }
 
         if(!SendResourcesString.isEmpty() && Comunicator)

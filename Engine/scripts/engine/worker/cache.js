@@ -33,6 +33,11 @@ function header(name, value, callback)
     _get_network_access_manager().AddHeader(name, value, _get_target(), _get_function_body(callback));
 }
 
+function header_order(json, callback)
+{
+    _get_network_access_manager().SetHeaderList(JSON.stringify(json), _get_function_body(callback));
+}
+
 function clear_header(callback)
 {
     _get_network_access_manager().CleanHeader(_get_function_body(callback));
@@ -109,3 +114,22 @@ function get_load_stats(callback)
     _get_network_access_manager().GetLoadStats(_get_function_body(callback))
 }
 
+function _restrict_popups(callback)
+{
+    _get_network_access_manager().RestrictPopups(_get_function_body(callback))
+}
+
+function _allow_popups(callback)
+{
+    _get_network_access_manager().AllowPopups(_get_function_body(callback))
+}
+
+function _restrict_downloads(callback)
+{
+    _get_network_access_manager().RestrictDownloads(_get_function_body(callback))
+}
+
+function _allow_downloads(callback)
+{
+    _get_network_access_manager().AllowDownloads(_get_function_body(callback))
+}

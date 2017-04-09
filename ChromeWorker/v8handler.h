@@ -7,6 +7,7 @@
 #include "inspectresult.h"
 #include "localstoragedata.h"
 #include "browserdata.h"
+#include "postmanager.h"
 #include "multithreading.h"
 
 class V8Handler : public CefV8Handler
@@ -25,8 +26,9 @@ class V8Handler : public CefV8Handler
     bool ChangedLocalStorage;
     bool ChangedFrameFind;
     BrowserData* Data;
+    PostManager* _PostManager;
 public:
-    V8Handler(BrowserData* Data);
+    V8Handler(BrowserData* Data, PostManager* _PostManager);
 
     virtual bool Execute(const CefString& name, CefRefPtr<CefV8Value> object, const CefV8ValueList& arguments, CefRefPtr<CefV8Value>& retval, CefString& exception) OVERRIDE;
     std::pair<std::string,bool> GetResult();

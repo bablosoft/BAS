@@ -12,12 +12,14 @@ settings::settings()
     use_flash = false;
     force_utf8 = true;
     skip_frames = 1;
+    is_safe = true;
     toolbox_height = 250;
     scenario_width = 500;
     zoom = 100;
     maximized = false;
     restart = false;
     emulate_mouse = true;
+    proxies_reconnect = false;
     std::ifstream fin("settings_worker.ini");
     if(fin.is_open())
     {
@@ -28,9 +30,17 @@ settings::settings()
             {
                 force_utf8 = false;
             }
+            if(line.find("IsSafe=false") != std::string::npos)
+            {
+                is_safe = false;
+            }
             if(line.find("EnableFlash=true") != std::string::npos)
             {
                 use_flash = true;
+            }
+            if(line.find("ProxiesReconnect=true") != std::string::npos)
+            {
+                proxies_reconnect = true;
             }
             if(line.find("SkipFrames=") != std::string::npos)
             {
@@ -85,6 +95,16 @@ bool settings::UseFlash()
     return use_flash;
 }
 
+bool settings::IsSafe()
+{
+    return is_safe;
+}
+
+bool settings::ProxiesReconnect()
+{
+    return proxies_reconnect;
+}
+
 bool settings::ForceUtf8()
 {
     return force_utf8;
@@ -129,7 +149,9 @@ void settings::SaveToFile()
         if(outfile.is_open())
         {
             outfile<<"EnableFlash="<<((use_flash) ? "true" : "false")<<std::endl;
+            outfile<<"ProxiesReconnect="<<((proxies_reconnect) ? "true" : "false")<<std::endl;
             outfile<<"ForceUtf8="<<((force_utf8) ? "true" : "false")<<std::endl;
+            outfile<<"IsSafe="<<((is_safe) ? "true" : "false")<<std::endl;
             outfile<<"SkipFrames="<<skip_frames<<std::endl;
             outfile<<"ToolboxHeight="<<toolbox_height<<std::endl;
             outfile<<"ScenarioWidth="<<scenario_width<<std::endl;
@@ -149,7 +171,9 @@ std::string settings::Serialize()
 {
     picojson::value::object res;
     res["use_flash"] = picojson::value(use_flash);
+    res["proxies_reconnect"] = picojson::value(proxies_reconnect);
     res["force_utf8"] = picojson::value(force_utf8);
+    res["is_safe"] = picojson::value(is_safe);
     res["skip_frames"] = picojson::value((double)skip_frames);
     res["toolbox_height"] = picojson::value((double)toolbox_height);
     res["scenario_width"] = picojson::value((double)scenario_width);
@@ -168,7 +192,9 @@ void settings::Deserialize(const std::string & Data)
         picojson::value::object o = val.get<picojson::value::object>();
 
         use_flash = o["use_flash"].get<bool>();
+        proxies_reconnect = o["proxies_reconnect"].get<bool>();
         force_utf8 = o["force_utf8"].get<bool>();
+        is_safe = o["is_safe"].get<bool>();
         skip_frames = o["skip_frames"].get<double>();
         toolbox_height = o["toolbox_height"].get<double>();
         scenario_width = o["scenario_width"].get<double>();

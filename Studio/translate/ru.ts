@@ -68,6 +68,158 @@
     </message>
 </context>
 <context>
+    <name>DatabaseStateDialog</name>
+    <message>
+        <location filename="../databasestatedialog.ui" line="14"/>
+        <source>Database State</source>
+        <translation>Состояние базы данных</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.ui" line="44"/>
+        <source>Status</source>
+        <translation>Статус</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.ui" line="55"/>
+        <source>WorkNotWorkButton</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.ui" line="62"/>
+        <source>WorkNotWorkLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.ui" line="75"/>
+        <source>EditDatabaseSchema</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.ui" line="101"/>
+        <source>DeleteDatabase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.ui" line="116"/>
+        <source>Manager</source>
+        <translation>Менеджер</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.ui" line="128"/>
+        <source>Data Manager</source>
+        <translation>Менеджер данных</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.ui" line="155"/>
+        <location filename="../databasestatedialog.ui" line="163"/>
+        <source>Database Id</source>
+        <translation>Идентификатор базы данных</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.ui" line="176"/>
+        <source>Not Valid</source>
+        <translation>Поле пустое</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.ui" line="188"/>
+        <source>Set this identifier to use one database in several projects</source>
+        <translation>Установите этот идентификатор для использования одной базы данных в нескольких проектах</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.ui" line="201"/>
+        <location filename="../databasestatedialog.ui" line="207"/>
+        <source>Database location</source>
+        <translation>Расположение базы данных</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.ui" line="243"/>
+        <source>Relevance</source>
+        <translation>Актуальность</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.ui" line="252"/>
+        <source>RelevanceRelevant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.ui" line="259"/>
+        <source>RelevanceRelevantLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.ui" line="272"/>
+        <source>RestartProcess</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.ui" line="329"/>
+        <source>Save</source>
+        <translation>Сохранить</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.ui" line="346"/>
+        <source>Close</source>
+        <translation>Закрыть</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.cpp" line="42"/>
+        <source>Changes will take effect only after restart</source>
+        <translation>Изменения вступят в силу только после перезапуска</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.cpp" line="44"/>
+        <location filename="../databasestatedialog.cpp" line="54"/>
+        <source>Restart process</source>
+        <translation>Перезапустить процесс</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.cpp" line="53"/>
+        <source>No need to restart</source>
+        <translation>Нет необходимости перезапускать</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.cpp" line="93"/>
+        <source>Database works</source>
+        <translation>База работает</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.cpp" line="94"/>
+        <source>Edit database schema</source>
+        <translation>Редактировать схему базы данных</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.cpp" line="95"/>
+        <location filename="../databasestatedialog.cpp" line="106"/>
+        <source>Delete database</source>
+        <translation>Удалить базу данных</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.cpp" line="104"/>
+        <source>Database does not work</source>
+        <translation>База не работает</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.cpp" line="105"/>
+        <source>Create database</source>
+        <translation>Создать базу</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.cpp" line="127"/>
+        <source>Restart</source>
+        <translation>Перезапуск</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.cpp" line="131"/>
+        <source>Changes will take effect only after restart.</source>
+        <translation>Изменения вступят в силу только после перезагрузки.</translation>
+    </message>
+    <message>
+        <location filename="../databasestatedialog.cpp" line="174"/>
+        <source>Are you sure, that you want to delete database?</source>
+        <translation>Вы уверены, что хотите удалить базу данных?</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/studio/images/question.png&quot;/&gt; After script will launch, this section will contain list of browsers.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -89,47 +241,47 @@
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="282"/>
+        <location filename="../mainwindow.ui" line="274"/>
         <source>Build</source>
         <translation>Сборка</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="290"/>
+        <location filename="../mainwindow.ui" line="282"/>
         <source>Help</source>
         <translation>Помощь</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="297"/>
+        <location filename="../mainwindow.ui" line="289"/>
         <source>Reports</source>
         <translation>Отчеты</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="322"/>
+        <location filename="../mainwindow.ui" line="315"/>
         <source>toolBar</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="370"/>
+        <location filename="../mainwindow.ui" line="363"/>
         <source>Data</source>
         <translation>Ресурсы</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="441"/>
+        <location filename="../mainwindow.ui" line="434"/>
         <source> + Create New Resource</source>
         <translation> + Создать новый ресурс</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="477"/>
+        <location filename="../mainwindow.ui" line="470"/>
         <source>Script</source>
         <translation>Скрипт</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="514"/>
+        <location filename="../mainwindow.ui" line="507"/>
         <source>Log</source>
         <translation>Лог</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="560"/>
+        <location filename="../mainwindow.ui" line="553"/>
         <source>Result</source>
         <translation>Результаты</translation>
     </message>
@@ -144,167 +296,172 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="123"/>
-        <location filename="../mainwindow.ui" line="780"/>
+        <location filename="../mainwindow.ui" line="773"/>
         <source>Record</source>
         <translation>Запись</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="261"/>
         <source>Database</source>
-        <translation>База</translation>
+        <translation type="vanished">База</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="304"/>
+        <location filename="../mainwindow.ui" line="296"/>
         <source>Tools</source>
         <translation>Инструменты</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="591"/>
+        <location filename="../mainwindow.ui" line="584"/>
         <source>New</source>
         <translation>Новый</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="594"/>
+        <location filename="../mainwindow.ui" line="587"/>
         <source>Ctrl+N</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="603"/>
+        <location filename="../mainwindow.ui" line="596"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="606"/>
+        <location filename="../mainwindow.ui" line="599"/>
         <source>Ctrl+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="615"/>
+        <location filename="../mainwindow.ui" line="608"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="618"/>
+        <location filename="../mainwindow.ui" line="611"/>
         <source>Ctrl+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="623"/>
+        <location filename="../mainwindow.ui" line="616"/>
         <source>Exit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="626"/>
+        <location filename="../mainwindow.ui" line="619"/>
         <source>Ctrl+Q</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="635"/>
+        <location filename="../mainwindow.ui" line="628"/>
         <source>Compile</source>
         <translation>Скомпилировать</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="638"/>
+        <location filename="../mainwindow.ui" line="631"/>
         <source>Ctrl+F5</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="647"/>
+        <location filename="../mainwindow.ui" line="640"/>
         <source>Run</source>
         <translation>Запуск</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="650"/>
+        <location filename="../mainwindow.ui" line="643"/>
         <source>F5</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="659"/>
+        <location filename="../mainwindow.ui" line="652"/>
+        <location filename="../mainwindow.cpp" line="764"/>
         <source>Stop</source>
         <translation>Остановить</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="668"/>
+        <location filename="../mainwindow.ui" line="661"/>
         <source>Save As</source>
         <translation>Сохранить как</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="673"/>
+        <location filename="../mainwindow.ui" line="666"/>
         <source>test</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="682"/>
+        <location filename="../mainwindow.ui" line="675"/>
         <source>About Engine</source>
         <translation>О движке</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="687"/>
+        <location filename="../mainwindow.ui" line="680"/>
         <source>About Qt</source>
         <translation>О Qt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="696"/>
+        <location filename="../mainwindow.ui" line="689"/>
         <source>Documentation</source>
         <translation>Документация</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="705"/>
+        <location filename="../mainwindow.ui" line="698"/>
         <source>Localization</source>
         <translation>Локализация</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="714"/>
+        <location filename="../mainwindow.ui" line="707"/>
         <source>Interface Language</source>
         <translation>Язык интерфейса</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="723"/>
+        <location filename="../mainwindow.ui" line="716"/>
         <source>Script Report</source>
         <translation>Отчет о работе</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="744"/>
-        <location filename="../mainwindow.ui" line="747"/>
+        <location filename="../mainwindow.ui" line="737"/>
+        <location filename="../mainwindow.ui" line="740"/>
         <source>Resources Report</source>
         <translation>Отчет о ресурсах</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="752"/>
+        <location filename="../mainwindow.ui" line="745"/>
         <source>Show</source>
         <translation>Показать</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="761"/>
+        <location filename="../mainwindow.ui" line="754"/>
         <source>Show Database</source>
         <translation>База</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="766"/>
+        <location filename="../mainwindow.ui" line="759"/>
         <source>Edit Schema</source>
         <translation>Редактировать структуру базы</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="771"/>
+        <location filename="../mainwindow.ui" line="764"/>
         <source>Delete Schema</source>
         <translation>Удалить базу</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="789"/>
+        <location filename="../mainwindow.ui" line="782"/>
         <source>Module Manager</source>
         <translation>Менеджер Модулей</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="798"/>
+        <location filename="../mainwindow.ui" line="791"/>
         <source>Regular Expression Constructor</source>
         <translation>Конструктор Регулярных Выражений</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="800"/>
+        <source>Fingerprint Switcher</source>
+        <translation>Смена отпечатка</translation>
     </message>
     <message>
         <source>Show Report</source>
         <translation type="vanished">Отчет</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="732"/>
+        <location filename="../mainwindow.ui" line="725"/>
         <source>Log Location Chooser</source>
         <translation>Папка с логами</translation>
     </message>
@@ -313,73 +470,83 @@
         <translation type="vanished">Весь лог</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1561"/>
+        <location filename="../mainwindow.cpp" line="1671"/>
         <source>All log</source>
         <translation>Весь лог</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="548"/>
-        <location filename="../mainwindow.cpp" line="761"/>
+        <location filename="../mainwindow.cpp" line="597"/>
+        <location filename="../mainwindow.cpp" line="860"/>
         <source>Error saving file</source>
         <translation>Ошибка сохранения файла</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="175"/>
-        <location filename="../mainwindow.cpp" line="188"/>
-        <location filename="../mainwindow.cpp" line="201"/>
         <source>Database Error</source>
-        <translation>Ошибка базы</translation>
+        <translation type="vanished">Ошибка базы</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="322"/>
         <source>Need to restart after edit</source>
-        <translation>Нужно перезапустить приложение после редактирования</translation>
+        <translation type="vanished">Нужно перезапустить приложение после редактирования</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="347"/>
         <source>Need to restart application</source>
-        <translation>Нужно перезапустить приложение</translation>
+        <translation type="vanished">Нужно перезапустить приложение</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="548"/>
-        <location filename="../mainwindow.cpp" line="761"/>
+        <location filename="../mainwindow.cpp" line="597"/>
+        <location filename="../mainwindow.cpp" line="860"/>
         <source>Error saving file : %1</source>
         <translation>Ошибка сохранения файла : %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="576"/>
+        <location filename="../mainwindow.cpp" line="635"/>
         <source>Application is still running</source>
         <translation>Приложение еще работает</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="576"/>
+        <location filename="../mainwindow.cpp" line="635"/>
         <source>Use exit menu item to shut it down</source>
         <translation>Используйте кнопку выход, чтобы закрыть его</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="601"/>
+        <location filename="../mainwindow.cpp" line="660"/>
         <source>Open Project</source>
         <translation>Открыть проект</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="601"/>
-        <location filename="../mainwindow.cpp" line="772"/>
-        <location filename="../mainwindow.cpp" line="791"/>
+        <location filename="../mainwindow.cpp" line="660"/>
+        <location filename="../mainwindow.cpp" line="871"/>
+        <location filename="../mainwindow.cpp" line="890"/>
         <source>Project Files (*.xml);;All Files (*.*)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="614"/>
+        <location filename="../mainwindow.cpp" line="673"/>
         <source>Error loading file</source>
         <translation>Ошибка загрузки файла</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="614"/>
+        <location filename="../mainwindow.cpp" line="673"/>
         <source>Error loading file : %1</source>
         <translation>Ошибка загрузки файла : %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="772"/>
+        <location filename="../mainwindow.cpp" line="761"/>
+        <source>Stop instant</source>
+        <translation>Остановить мгновенно</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="761"/>
+        <source>Wait each thread</source>
+        <translation>Ждать каждый поток</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="764"/>
+        <source>Stop type</source>
+        <translation>Тип остановки</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="871"/>
         <source>Save Project</source>
         <translation>Сохранить проект</translation>
     </message>
@@ -388,7 +555,7 @@
         <translation type="vanished">Вы хотите сохранить предыдущий проект?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="791"/>
+        <location filename="../mainwindow.cpp" line="890"/>
         <source>Create Project</source>
         <translation>Создать проект</translation>
     </message>
@@ -409,12 +576,12 @@
         <translation type="vanished">Отмена</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="907"/>
+        <location filename="../mainwindow.cpp" line="1009"/>
         <source>Captcha (%1)</source>
         <translation>Капча (%1)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1312"/>
+        <location filename="../mainwindow.cpp" line="1422"/>
         <source>Running ...</source>
         <translation>Скрипт работает ...</translation>
     </message>

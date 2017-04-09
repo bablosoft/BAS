@@ -9,6 +9,7 @@ DatabaseAdminFilterWidget::DatabaseAdminFilterWidget(QWidget *parent) :
     ui->setupUi(this);
     Layout = new FlowLayout(ui->FilterContent);
     ui->FilterContent->setLayout(Layout);
+    Clear();
 
 }
 
@@ -24,6 +25,9 @@ void DatabaseAdminFilterWidget::Clear()
         Item->deleteLater();
     }
     Items.clear();
+    ui->DeleteAllFilters->hide();
+    this->setMinimumHeight(34);
+    this->setMaximumHeight(34);
 }
 
 void DatabaseAdminFilterWidget::SetColumns(QList<DatabaseColumn> Columns)
@@ -44,6 +48,12 @@ void DatabaseAdminFilterWidget::DeleteFilter()
 {
     Items.remove(qobject_cast<DatabaseAdminFilterItem*>(sender()));
     sender()->deleteLater();
+    if(Items.isEmpty())
+    {
+        ui->DeleteAllFilters->hide();
+        this->setMinimumHeight(34);
+        this->setMaximumHeight(34);
+    }
 
     emit FiltersChanged();
 }
@@ -61,6 +71,9 @@ void DatabaseAdminFilterWidget::on_AddFilter_clicked()
         Layout->addWidget(Item);
 
         emit FiltersChanged();
+        ui->DeleteAllFilters->show();
+        this->setMinimumHeight(72);
+        this->setMaximumHeight(72);
     }
 }
 

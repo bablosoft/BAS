@@ -19,17 +19,20 @@ ScenarioV8Handler::ScenarioV8Handler()
 }
 
 
-std::pair<std::string, bool> ScenarioV8Handler::GetResult()
+std::pair<ScenarioV8Handler::LastResultStruct, bool> ScenarioV8Handler::GetResult()
 {
     std::lock_guard<std::mutex> lock(mut);
 
-    std::pair<std::string, bool> r;
+    std::pair<LastResultStruct, bool> r;
     r.first = LastResult;
     r.second = Changed;
 
     Changed = false;
 
-    LastResult.clear();
+    LastResult.LastResultCodeDiff.clear();
+    LastResult.LastResultVariables.clear();
+    LastResult.LastResultFunctions.clear();
+    LastResult.LastResultResources.clear();
 
     return r;
 }
@@ -94,10 +97,14 @@ bool ScenarioV8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> obj
 {
     if(name == std::string("BrowserAutomationStudio_SendCode"))
     {
-        if (arguments.size() == 1 && arguments[0]->IsString())
+        if (arguments.size() == 5 && arguments[0]->IsString() && arguments[1]->IsString() && arguments[2]->IsString() && arguments[3]->IsString()&& arguments[4]->IsString())
         {
             std::lock_guard<std::mutex> lock(mut);
-            LastResult = arguments[0]->GetStringValue().ToString();
+            LastResult.LastResultCodeDiff = arguments[0]->GetStringValue().ToString();
+            LastResult.LastResultFunctions = arguments[1]->GetStringValue().ToString();
+            LastResult.LastResultResources = arguments[2]->GetStringValue().ToString();
+            LastResult.LastResultVariables = arguments[3]->GetStringValue().ToString();
+            LastResult.LastResultLabels = arguments[4]->GetStringValue().ToString();
             Changed = true;
         }
     }else if(name == std::string("BrowserAutomationStudio_Initialized"))

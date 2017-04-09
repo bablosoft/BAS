@@ -45,7 +45,8 @@ namespace BrowserAutomationStudioFramework
         virtual void SetWorker(IWorker* Worker);
         virtual IWorker* GetWorker();
         virtual void SetOpenFileName(const QString & OpenFileName, const QString& callback);
-        virtual void SetStartupScript(const QString& script,const QString& target, const QString& callback);
+        virtual void SetStartupScript(const QString& script,const QString& script_id,const QString& target, const QString& callback);
+        virtual void SetFontList(const QString& fonts, const QString& callback);
         virtual void SetPromptResult(const QString & Text, const QString& callback);
         virtual void SetHttpAuthResult(const QString & Login, const QString & Password, const QString& callback);
         virtual void MouseClickInstant(int x, int y);
@@ -56,7 +57,7 @@ namespace BrowserAutomationStudioFramework
         virtual void PopupSelect(int index, const QString& callback);
         virtual void Timezone(int offset, const QString& callback);
         virtual void Geolocation(float latitude, float longitude, const QString& callback);
-        virtual void MouseMove(int x, int y, const QString& callback);
+        virtual void MouseMove(int x, int y,const QString& params, const QString& callback);
         virtual void Resize(int x, int y, const QString& callback);
         virtual void Reset(const QString& callback);
         virtual void Jquery(const QString& callback);
@@ -84,6 +85,7 @@ namespace BrowserAutomationStudioFramework
         void RestoreCookies();
         void SetOpenFileName();
         void SetStartupScript();
+        void SetFontList();
         void SetHttpAuthResult();
         void SetPromptResult();
         void MouseClick();

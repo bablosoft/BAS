@@ -124,7 +124,7 @@ function DEC(callback)
     MultiScriptWorker.Decrypt(callback);
 }
 
-function db_add_group(group_name, group_description, table_id)
+function _db_add_group(group_name, group_description, table_id)
 {
     return MultiScriptWorker.DatabaseAddGroup(group_name, group_description, table_id);
 }

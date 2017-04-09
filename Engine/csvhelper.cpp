@@ -18,7 +18,7 @@ namespace BrowserAutomationStudioFramework
         foreach(QString Item,List)
         {
             QString add = Item;
-            if(Item.contains(Separator))
+            if(Item.contains(";") || Item.contains(":") || Item.contains(","))
             {
                 add = QString("\"") + add.replace("\"","\"\"") + QString("\"");
             }

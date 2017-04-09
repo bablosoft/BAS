@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
     //SafeApplication a(argc, argv);
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     SingleApplication a(argc, argv,"BAS_UNIQUE_KEY");
-    if(a.alreadyExists())
+    if(a.alreadyExists() && !a.arguments().contains("--notasksingleinstance"))
     {
         QMessageBox msgBox;
         msgBox.setText(QObject::tr("BrowserAutomationStudio is already running, do you want to start another instance?"));

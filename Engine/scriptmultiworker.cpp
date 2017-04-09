@@ -2,6 +2,7 @@
 #include <QTime>
 #include <QTimer>
 #include "csvhelperwrapper.h"
+#include <limits>
 #include "every_cpp.h"
 
 
@@ -562,6 +563,12 @@ namespace BrowserAutomationStudioFramework
 
     }
 
+    void ScriptMultiWorker::AbortNotInstant()
+    {
+        NoNeedToCreateWorkersMore = true;
+        ReportData->Final(tr("Aborted By User"));
+    }
+
     void ScriptMultiWorker::InterruptAction()
     {
         emit InterruptActionSignal();
@@ -603,7 +610,7 @@ namespace BrowserAutomationStudioFramework
         }
     }
 
-    void ScriptMultiWorker::RunStage(int ThreadsNumber, int MaximumSuccess, int MaximumFailure, int MaxRunTime, const QString& WorkerFunction, const QString& callback)
+    void ScriptMultiWorker::RunStage(qint64 ThreadsNumber, qint64 MaximumSuccess, qint64 MaximumFailure, qint64 MaxRunTime, const QString& WorkerFunction, const QString& callback)
     {
         if(IsRecord)
         {
@@ -613,6 +620,11 @@ namespace BrowserAutomationStudioFramework
             MaximumFailure = 1;
             MaxRunTime = 0;
         }
+
+        if(MaximumSuccess < 0)
+            MaximumSuccess = std::numeric_limits<qint64>::max();
+        if(MaximumFailure < 0)
+            MaximumFailure = std::numeric_limits<qint64>::max();
         ReportData->Final(tr("Success"));
         Script = callback;
         SuccessLeft = MaximumSuccess;

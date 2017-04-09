@@ -65,12 +65,36 @@
   <!-- ========= -->
   <!-- TEMPLATES -->
   <!-- ========= -->
+  <script type="text/template" id="isscriptexecuting">
+    <i class="fa fa-play-circle-o action-button text-success <%= (isscriptexecuting || execute_next_id == 1) ? "actionbuttongray" : "" %>" id="play"></i>
+    <i class="fa fa-step-forward action-button text-warning <%= (isscriptexecuting || execute_next_id == 1) ? "actionbuttongray2" : "" %>" id="stepnext"></i>
+    <i class="fa fa-pause-circle-o action-button text-info <%= (isscriptexecuting) ? "" : ((isscriptexecuting || execute_next_id == 1) ? "actionbuttongray" : "actionbuttongray2") %>" id="pause"></i>
+  </script>
+
+  <script type="text/template" id="selectiontemplate">
+    <% _TotalSelected = TotalSelected(); %>
+    <div style="width:50%;float:left;text-align:center">
+      <img src="undo.png" class="action-button2 <%= (_UndoManager.CanUndo()) ? "" : "disabled" %>" title="Undo (Ctrl-Z)" id="action-undo" />
+      <img src="redo.png" class="action-button2 <%= (_UndoManager.CanRedo()) ? "" : "disabled" %>" title="Redo (Ctrl-Y)" id="action-redo" />
+
+      <img src="copy.png" class="action-button2 <%= (_TotalSelected > 0) ? "" : "disabled" %>" title="Copy (Ctrl-C)" id="action-copy" />
+      <img src="cut.png" class="action-button2 <%= (_TotalSelected > 0) ? "" : "disabled" %>" title="Cut (Ctrl-X)" id="action-cut" />
+      <img src="paste.png" class="action-button2" title="Paste (Ctrl-V)" id="action-paste" />
+      <img src="checkall.png" class="action-button2" title="Check All" id="action-checkall" />
+      <img src="uncheckall.png" class="action-button2 <%= (_TotalSelected > 0) ? "" : "disabled" %>"  title="Clear Selection" id="action-uncheckall" />      
+    </div>
+    <div style="width:50%;float:left">
+      <span class="tr small">Selected</span>: <strong><%= TotalSelected() %></strong>
+    </div>
+    
+  </script>
+
   <script type="text/template" id="main">
     <div class="threads" >
       <div class="text-center toolbox" style="width:50%; float:left">
-        <i class="fa fa-play-circle-o action-button text-success <%= (global["isscriptexecuting"] || global.execute_next_id == 1) ? "actionbuttongray" : "" %>" id="play"></i>
-        <i class="fa fa-step-forward action-button text-warning <%= (global["isscriptexecuting"] || global.execute_next_id == 1) ? "actionbuttongray2" : "" %>" id="stepnext"></i>
-        <i class="fa fa-pause-circle-o action-button text-info <%= (global["isscriptexecuting"]) ? "" : ((global["isscriptexecuting"] || global.execute_next_id == 1) ? "actionbuttongray" : "actionbuttongray2") %>" id="pause"></i>
+        <span id="isscriptexecutingcontainer">
+          
+        </span>
         <i class="fa fa-stop-circle-o  action-button text-danger" id="stop"></i>
         <i class="fa fa-repeat action-button text-info" id="restart"></i>
 
@@ -81,22 +105,9 @@
         <div class="nowrap"><a href="#" id="fail-number-edit"><i class="fa fa-pencil" aria-hidden="true"></i></a> <span style="white-space: nowrap;"><span class="tr small">Fail Number</span>: <strong><%= global["failnumber"] %></strong></span></div>
       </div>
       <div class="maintoolbox">
-        <div style="width:50%;float:left;text-align:center">
-          <% _TotalSelected = TotalSelected(); %>
-          
-          <img src="undo.png" class="action-button2 <%= (_UndoManager.CanUndo()) ? "" : "disabled" %>" title="Undo (Ctrl-Z)" id="action-undo" />
-          <img src="redo.png" class="action-button2 <%= (_UndoManager.CanRedo()) ? "" : "disabled" %>" title="Redo (Ctrl-Y)" id="action-redo" />
-
-          <img src="copy.png" class="action-button2 <%= (_TotalSelected > 0) ? "" : "disabled" %>" title="Copy (Ctrl-C)" id="action-copy" />
-          <img src="cut.png" class="action-button2 <%= (_TotalSelected > 0) ? "" : "disabled" %>" title="Cut (Ctrl-X)" id="action-cut" />
-          <img src="paste.png" class="action-button2" title="Paste (Ctrl-V)" id="action-paste" />
-          <img src="checkall.png" class="action-button2" title="Check All" id="action-checkall" />
-          <img src="uncheckall.png" class="action-button2 <%= (_TotalSelected > 0) ? "" : "disabled" %>"  title="Clear Selection" id="action-uncheckall" />
-          
-        </div>
-        <div style="width:50%;float:left">
-          <span class="tr small">Selected</span>: <strong><%= TotalSelected() %></strong>
-        </div>
+        <span id="selectiontemplatecontainer">
+        
+        </span>
       </div>
     </div>
     <div class="bottompannel" >
@@ -145,16 +156,14 @@
               <% if(NeedToShowUpperInsert(index)){ %>
                 <div class="toolinsert toolinsertdata <%= (global.insert_index == -index && global.insert_parent == task.parentid || global.insert_index == 0 && (parseInt(task["id"]) == parseInt(GetFirstNotFunctionId())) ) ? "toolselected":"" %>" data-insert-index="-<%= index %>" data-insert-parent="<%= task.parentid %>"></div>
               <% } %>
-              <div class=" <%= (task.donotexecuteduringrecord)? "notactive" : "" %> tool <%= (index==0)? "toolmenufirst" : (AllowToExecuteOnce(task["id"]) ? "toolmenuextended" : "toolmenu") %> <%= ((parseInt(task["id"]) == parseInt(GetFirstNotFunctionId()) && global.execute_next_id == 0 || global.execute_next_id == task.id) && index != 0)? "toolexecutecurrent" : "toolnotexecute" %>" data-index="<%= index %>">
+              <div class=" <%= (task.donotexecuteduringrecord)? "notactive" : "" %> tool <%= (index==0)? "toolmenufirst" : (AllowToExecuteOnce(task["id"]) ? "toolmenuextended" : "toolmenu") %> <%= ((parseInt(task["id"]) == parseInt(GetFirstNotFunctionId()) && global.execute_next_id == 0 || global.execute_next_id == task.id) && index != 0)? "toolexecutecurrent" : "toolnotexecute" %> taskcontainer" task-id="<%= task["id"] %>" data-index="<%= index %>">
                 <div class="tooltitle <%= prepare_styles(task.code,task.name) %>"><%= prepare_title(task.code,task.name) %></div>
 
                 <div class="titlebody">
                   <% if(task["id"]!=0){ %>
                     <span class="executing"><i class="fa fa-share"></i></span>
                   <% } %>
-                  <% if(task.is_selected){ %>
-                    <i class="fa fa-check-square-o selected"></i>
-                  <% } %>
+                    <i class="fa fa-check-square-o selected" style="<%= (!task.is_selected) ? "display:none" : "" %>"></i>
                   <%= prepare_body(task.code,task.name) %>
                 </div>
               </div>
@@ -224,6 +233,7 @@
   <script src="translate.js"></script>
   <script src="undo.js"></script>
   <script src="jsontree.js"></script>
+  <script src="diff_match_patch.js"></script>
 
   <script type="text/javascript"> _L = $.extend(_L, _AL)</script>
   <script type="text/javascript"> _MACRO_INSERT_LOCALIZE_ </script>
@@ -246,7 +256,7 @@
   <!-- =============== -->
   <script type="text/javascript">
 
-	  var TaskModel = Backbone.Model.extend({
+    var TaskModel = Backbone.Model.extend({
         defaults: {
             name: "",
             code: "",
@@ -374,9 +384,14 @@
              return true 
             })
 
-         this.model.set("dontsend",false)
+           $(".taskcontainer .selected").show()
+           $(".taskcontainer[data-index=0] .selected").hide()
 
-         this.render()
+         this.model.set("dontsend",false)
+         BrowserAutomationStudio_SaveToUndoManager()
+         BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
+         this.renderselectiontemplatecontainer()
+         //this.render()
       },
      
       
@@ -412,7 +427,7 @@
             $("#editfunctionmodal").modal({})
             return
           }
-          var id = Math.floor(Math.random() * (100000 - 100)) + 100
+          var id = Math.floor(Math.random() * (1000000000 - 100)) + 100
           var code = Normalize(_.template($('#function_code').html())({name:name}))
           var task = { name: name, code: code, id: id, donotexecuteduringrecord: false, parentid: 0}
           _TaskCollection.add(task,{at: 1})
@@ -451,7 +466,10 @@
           this.model.set("function_name",name)
           this.SetDefaultInsert()
           this.model.set("dontsend",false)
+          BrowserAutomationStudio_SaveToUndoManager()
+          BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
           this.send()
+          this.render()
         }
         
         
@@ -489,7 +507,10 @@
               self.SetDefaultInsert()
             }
             self.model.set("dontsend",false)
+            BrowserAutomationStudio_SaveToUndoManager()
+            BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
             self.send()
+            self.render()
           }
 
         });
@@ -519,7 +540,8 @@
         this.SetDefaultInsert()
 
         this.model.set("dontsend",false)
-
+        this.render()
+        BrowserAutomationStudio_SaveToUndoManager()
       },
 
       key: function(e)
@@ -607,6 +629,8 @@
         this.collection.at(this.currentTargetId).set("donotexecuteduringrecord",true == $("#TaskDontRunWhenRecording").prop('checked'))
         //console.log("Set " + this.collection.at(this.currentTargetId).get("donotexecuteduringrecord"))
         this.model.set("dontsend",false)
+        BrowserAutomationStudio_SaveToUndoManager()
+        BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
 
         this.render()
         this.send()
@@ -619,7 +643,8 @@
         this.collection.at(this.currentTargetId).set("code",code)
         this.collection.at(this.currentTargetId).set("donotexecuteduringrecord",dontexecute)
         this.model.set("dontsend",false)
-
+        BrowserAutomationStudio_SaveToUndoManager()
+        BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
         this.render()
         this.send()
       },
@@ -699,7 +724,7 @@
               id = id_map[parseInt(task.get("id"))]
             }else
             {
-              id = Math.floor(Math.random() * (100000 - 100)) + 100
+              id = Math.floor(Math.random() * (1000000000 - 100)) + 100
               id_map[parseInt(task.get("id"))] = id
             }
             var new_task = new TaskModel(task.toJSON())
@@ -728,7 +753,7 @@
         })
 
         BrowserAutomationStudio_SetClipboard(JSON.stringify(_CopyBuffer.toJSON()))
-        this.render()
+        //this.render()
         /*_.each(this.collection.models, function(task){
           task.set("is_selected",false)
         })*/
@@ -769,7 +794,7 @@
             id = id_map[parseInt(task.get("id"))]
           }else
           {
-            id = Math.floor(Math.random() * (100000 - 100)) + 100
+            id = Math.floor(Math.random() * (1000000000 - 100)) + 100
             id_map[parseInt(task.get("id"))] = id
           }
           var new_task = new TaskModel(task.toJSON())
@@ -777,8 +802,14 @@
           newbuffer.push(new_task)
         })
 
+        var insert_parent = _GobalModel.get("insert_parent")
+        var insert_index = _GobalModel.get("insert_index")
+        var insert_index_first = null;
+        var insert_task_list = []
+
+
         _.each(_CopyBuffer.models, function(task){
-          var insert_index = _GobalModel.get("insert_index")
+
           if(insert_index == 0)
           {
             insert_index = GetFirstNotFunctionId()
@@ -789,16 +820,24 @@
           }
           insert_index = ((insert_index<0) ? - insert_index : insert_index + 1)
 
-          var insert_parent = _GobalModel.get("insert_parent")
-
           if(parseInt(task.get("parentid")) == 0)
           {
             task.set("parentid", insert_parent)
           }
-          _TaskCollection.add(task,{at: insert_index})
+          if(!insert_index_first)
+            insert_index_first = insert_index
 
-          _GobalModel.set("insert_index", insert_index)
+          insert_task_list.push(task)
+          //_TaskCollection.add(task,{at: insert_index})
+
+          //console.log(insert_index)
         })
+        if(insert_index_first)
+          _TaskCollection.add(insert_task_list,{at: insert_index_first})
+
+        _GobalModel.set("insert_index", insert_index)
+        //console.log(insert_index)
+
 
         _CopyBuffer.reset()
         _CopyBuffer.add(newbuffer)
@@ -812,7 +851,10 @@
         })
 
         this.model.set("dontsend",false)
+        BrowserAutomationStudio_SaveToUndoManager()
+        BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
         this.send()
+        this.render()
 
         this.ClearSelection();
 
@@ -825,6 +867,7 @@
         this.model.set("dontsend",true)
 
         this.Copy()
+
         var stillexists = true
 
         while(stillexists)
@@ -842,8 +885,12 @@
             return true
           })
         }
+
         this.model.set("dontsend",false)
+        BrowserAutomationStudio_SaveToUndoManager()
+        BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
         this.send()
+        this.render()
       },
 
       DeleteSelected: function()
@@ -866,8 +913,12 @@
             return true
           })
         }
+
         this.model.set("dontsend",false)
+        BrowserAutomationStudio_SaveToUndoManager()
+        BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
         this.send()
+        this.render()
       },
 
       ClearSelection: function()
@@ -877,9 +928,14 @@
             task.set("is_selected",false)
             return true
           })
+         $(".taskcontainer .selected").hide()
          this.model.set("dontsend",false)
+         
+         BrowserAutomationStudio_SaveToUndoManager()
+         BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
 
-         this.render()
+         this.renderselectiontemplatecontainer()
+         //this.render()
       },
 
       ToggleVariableInspector: function()
@@ -902,12 +958,14 @@
         if(typeof(is_single) == "undefined")
           is_single = false
 
-        if(is_single)
-          this.model.set("dontsend",true)
-
         var currentTargetId = parseInt(this.currentTargetId)
         if(this.currentTargetId > 0)
         {
+          if(is_single)
+          {
+            this.model.set("dontsend",true)
+          }
+
           var self = this
           var task = this.collection.at(currentTargetId);
           var taskstoremove = []
@@ -963,7 +1021,10 @@
           if(is_single)
           {
             this.model.set("dontsend",false)
+            BrowserAutomationStudio_SaveToUndoManager()
+            BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
             this.send()
+            this.render()
           }
         }
 
@@ -1027,16 +1088,35 @@
           var currentTargetId = this.currentTargetId
           if(currentTargetId >= this.collection.models.length || currentTargetId < 0)
             return
+          
+          this.model.set("dontsend",true)
+
           var task = this.collection.models[currentTargetId]
+
           if(task)
           {
+            var is_selected;
+            var el = $(".taskcontainer[task-id=" + task.get("id") + "] .selected")
             if(task.get("is_selected"))
-              task.set("is_selected",false)
+            {
+              el.hide()
+              is_selected = false
+            }
             else
-              task.set("is_selected",true)
+            {
+              el.show()
+              is_selected = true
+            }
+
+            task.set("is_selected",is_selected)
           }
 
-          this.render()
+          this.model.set("dontsend",false)
+          BrowserAutomationStudio_SaveToUndoManager()
+          this.renderselectiontemplatecontainer()
+
+
+          //this.render()
       },
 
       DeleteThisAndAllUpper: function(){
@@ -1044,6 +1124,7 @@
         var task = this.collection.models[this.currentTargetId]
         if(!task)
           return
+
         var func_original = GetFunctionData(parseInt(task.get("id")))["name"]
 
         while(parseInt(this.currentTargetId)>0)
@@ -1055,8 +1136,12 @@
             this.Delete()
           this.currentTargetId = this.currentTargetId - 1
         }
+
         this.model.set("dontsend",false)
+        BrowserAutomationStudio_SaveToUndoManager()
+        BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
         this.send()
+        this.render()
       },
 
       DeleteThisAndAllLower: function(){
@@ -1064,6 +1149,7 @@
         var task = this.collection.models[this.currentTargetId]
         if(!task)
           return
+
         var parent_id = task.get("parentid")
         while(parseInt(this.currentTargetId)<this.collection.length)
         {
@@ -1072,8 +1158,12 @@
             break
           this.Delete()
         }
+
         this.model.set("dontsend",false)
+        BrowserAutomationStudio_SaveToUndoManager()
+        BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
         this.send()
+        this.render()
       },
 
 
@@ -1122,6 +1212,18 @@
             var second_line = "section_start(\"test\", " + execute_next_id + ")!"
             var code = task.get("code") + "\n" + second_line
 
+
+            if(code.indexOf("_goto(")>=0)
+            {
+              code = code.split("_goto(")[1]
+              code = code.split(")!")[0]
+              var label = JSON.parse(code)
+              second_line = "section_start(\"test\", " + FindTaskIdByLabel(label) + ")!"
+              code = second_line
+            }else if(code.indexOf("_set_goto_label(")>=0)
+            {
+              code = second_line
+            }
             BrowserAutomationStudio_Execute(code)
           }
       },
@@ -1160,13 +1262,40 @@
           {
             //alert("send")
             try{
-              BrowserAutomationStudio_SendCode(GenerateCode(self.collection.toJSON(),self.model.toJSON()));
+              var time = Date.now()
+              var code = GenerateCode(self.collection.toJSON(),self.model.toJSON())
+              console.log("Generate in " + (Date.now() - time).toString())
+              
+              var d = new diff_match_patch()
+
+              var diff = d.diff_main(BrowserAutomationStudio_LastCode, code)
+
+              var patch = d.patch_toText(d.patch_make(diff))
+
+              BrowserAutomationStudio_LastCode = code
+
+              console.log("Patch in " + (Date.now() - time).toString())
+
+
+              console.log("Patch length " + patch.length)
+
+              
+
+              BrowserAutomationStudio_SendCode(patch, extract_functions(code), extract_resources(code), extract_variables(code), extract_labels(code));
+              console.log("Send in " + (Date.now() - time).toString())
             }catch(e)
             {}
           }
         }
 
         this.model.bind('change', this.render, this);
+        
+        this.collection.bind('add', function(){_CacheLoader.StartCarefully()});
+        this.collection.bind('change', function(){_CacheLoader.StartCarefully()});
+        this.collection.bind('remove', function(){_CacheLoader.StartCarefully()});  
+        this.collection.bind('reset', function(){_CacheLoader.StartCarefully()});  
+
+
         this.collection.bind('add', this.render, this);
         this.collection.bind('add', this.send, this);
         this.collection.bind('remove', this.render, this);
@@ -1179,27 +1308,79 @@
         this.render();
       },
 
-      render: function(event){
+      renderisscriptexecutingcontainer: function(){
+        var isscriptexecutingcontainer =  _.template($('#isscriptexecuting').html())({isscriptexecuting:_GobalModel.get("isscriptexecuting"), execute_next_id: _GobalModel.get("execute_next_id")});
+        $("#isscriptexecutingcontainer").html(isscriptexecutingcontainer);
+      },
 
+      rendertaksid: function(){
+        $(".taskcontainer").removeClass("toolexecutecurrent").removeClass("toolnotexecute").addClass("toolnotexecute")
+        
+        var id;
+        if(parseInt(_GobalModel.get("execute_next_id")) == 0)
+        {
+          id = GetFirstNotFunctionId();
+        }else
+        {
+          id = _GobalModel.get("execute_next_id");
+        }
+
+        $(".taskcontainer[task-id=" + id + "]").removeClass("toolexecutecurrent").removeClass("toolnotexecute").addClass("toolexecutecurrent")
+      },
+
+      renderselectiontemplatecontainer: function(){
+        var selectiontemplatecontainer =  _.template($('#selectiontemplate').html())();
+        $("#selectiontemplatecontainer").html(selectiontemplatecontainer);
+      },
+
+      render: function(model){
+
+        if(_GobalModel.hasChanged("dontsend"))
+        {
+          return;
+        }
+
+
+        if(_GobalModel.hasChanged("isstepnextactivated") || _GobalModel.hasChanged("run_only_one_enabled") || _GobalModel.hasChanged("istaskexecuting"))
+        {
+          return;
+        }
+
+        if(_GobalModel.hasChanged("execute_next_id"))
+        {
+          this.rendertaksid();
+          this.renderisscriptexecutingcontainer();
+          return; 
+        }
+
+        if(_GobalModel.hasChanged("isscriptexecuting"))
+        {
+          this.renderisscriptexecutingcontainer();
+          return;
+        }
 
         if(this.model.get("dontsend"))
           return
+
 
         var t = new Date()
 
         _CacheLoader.Start()
 
-        console.log("Cache time" + (new Date() - t) )
-
         t = new Date()
 
         //alert("render")
-		    $("#containerdata").html(this.templates[this.model.get("state")]({data:this.collection.toJSON(),global:this.model.toJSON()}))
+        $("#containerdata").html(this.templates[this.model.get("state")]({data:this.collection.toJSON(),global:this.model.toJSON()}))
 
-        console.log("Render time" + (new Date() - t) )
+        console.trace("Render time" + (new Date() - t) )
+        if(window.startTime)
+          console.log(Date.now() - window.startTime)
 
-        _CacheLoader.Stop()
+        
+        //_CacheLoader.Stop()
 
+        this.renderisscriptexecutingcontainer();
+        this.renderselectiontemplatecontainer();
 
         var self = this
 
@@ -1308,6 +1489,8 @@
 
     var _UndoManager = new UndoManager();
 
+    var BrowserAutomationStudio_LastCode = ""
+
 
     Backbone.history.start();
 
@@ -1385,10 +1568,14 @@
         }
 
       _GobalModel.set("dontsend",false)
+      BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
       _MainView.send()
+      _MainView.render()
+
 
 
       BrowserAutomationStudio_StopSaveToUndoManager = false
+
     }
 
     /*
@@ -1405,7 +1592,7 @@
 
       BrowserAutomationStudio_HandlerIsInitialized = true
 
-      _GobalModel.bind('change', BrowserAutomationStudio_SaveToUndoManager);
+      //_GobalModel.bind('change', BrowserAutomationStudio_SaveToUndoManager);
       _TaskCollection.bind('add', BrowserAutomationStudio_SaveToUndoManager);
       _TaskCollection.bind('change', BrowserAutomationStudio_SaveToUndoManager);
       _TaskCollection.bind('remove', BrowserAutomationStudio_SaveToUndoManager);  
@@ -1443,6 +1630,22 @@
           return task
         }
       }
+    }
+
+    function FindTaskIdByLabel(Label)
+    {
+      var search = "_set_goto_label(" + JSON.stringify(Label) + ")!"
+      var models = _TaskCollection.models
+      var len = models.length
+      for(var i = 0;i<len;i++)
+      {
+        var task = models[i]
+        if(task.get('code').indexOf(search) >= 0)
+        {
+          return task.get('id')
+        }
+      }
+      return 1
     }
 
     function TotalSelected()
@@ -1932,10 +2135,24 @@
         if(!task.get("donotexecuteduringrecord"))
         {
           code += task.get("code")
-          var taskansector = FindFirstAncestor(parseInt(execute_next_id))
-          if(taskansector)
+          if(code.indexOf("_goto(")>=0)
           {
-            code = code.replace("section_insert()","section_insert()\n" + "section_start(\"test\", " + taskansector.get("id") + ")!")
+            code = code.split("_goto(")[1]
+            code = code.split(")!")[0]
+            var label = JSON.parse(code)
+            second_line = "section_start(\"test\", " + FindTaskIdByLabel(label) + ")!"
+            code = ""
+          }else if(code.indexOf("_set_goto_label(")>=0)
+          {
+            code = ""
+          }
+          else
+          {
+            var taskansector = FindFirstAncestor(parseInt(execute_next_id))
+            if(taskansector)
+            {
+              code = code.replace("section_insert()","section_insert()\n" + "section_start(\"test\", " + taskansector.get("id") + ")!")
+            }
           }
         }
         var FunctionRegexp = new RegExp("\\_call\\(\\s*([^\\,\\s]+)\\s*\\,")
@@ -1949,6 +2166,8 @@
         code += "\n"
         code += second_line
         BrowserAutomationStudio_Execute(code)
+
+
 
       }
 
@@ -1974,6 +2193,9 @@
 
     function BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
     {
+      if(_GobalModel.get("dontsend"))
+          return
+
       if(JSON.stringify(VariablesListPrev) != JSON.stringify(BrowserAutomationStudio_GetVariablesList()))
         BrowserAutomationStudio_AskForVariablesUpdateOrWait()
     }
@@ -2087,14 +2309,21 @@
         }
         insert_index = ((insert_index<0) ? - insert_index : insert_index + 1)
         var insert_parent = _GobalModel.get("insert_parent")
-
+        Id = Math.floor(Math.random() * (1000000000 - 100)) + 100
         var task = { name: Name, code: Code, id: Id, donotexecuteduringrecord: donotexecuteduringrecord, parentid: insert_parent}
-        _TaskCollection.add(task,{at: insert_index})
-        /*if(Code.indexOf("section_insert()") >= 0)
-        {
-          _GobalModel.set("insert_parent", Id)
-        }*/
-        _GobalModel.set("insert_index", insert_index)
+
+        _GobalModel.set("dontsend",true)
+          _TaskCollection.add(task,{at: insert_index})
+          _GobalModel.set("insert_index", insert_index)
+        _GobalModel.set("dontsend",false)
+
+        BrowserAutomationStudio_SaveToUndoManager()
+        BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
+        _MainView.send()
+
+
+        _MainView.render()
+        
       }
     }
 
@@ -2107,6 +2336,7 @@
           BrowserAutomationStudio_AskForVariablesUpdate()
         return
       }
+
       if(typeof(Id) != "undefined" && Id == -2)
           Id = 0
 
@@ -2139,7 +2369,7 @@
         {
           //_GobalModel.set("insert_index", _TaskCollection.length - 1)
           //_GobalModel.set("insert_parent", 0)
-          _GobalModel.set("function_name", "Main")
+          //_GobalModel.set("function_name", "Main")
           _MainView.SetDefaultInsert()
         }
 
@@ -2175,6 +2405,7 @@
         _GobalModel.set("show_variable_inspector_pending", false)
         BrowserAutomationStudio_AskForVariablesUpdate()
       }
+
     }
 
     function BrowserAutomationStudio_RunningTask()
@@ -2184,7 +2415,7 @@
 
     function BrowserAutomationStudio_Parse(Code)
     {
-
+      BrowserAutomationStudio_LastCode = Code
       var RegexpStart = new RegExp("section_start\\(\\s*\\\"([^\\\"]*)\\\"\\s*\\,\\s*(\\-?\\d*)\\)\\!")
       var RegexpInsert = new RegExp("section_insert\\(\\)")
       var RegexpEnd = new RegExp("section_end\\(\\)\\!")
@@ -2332,6 +2563,8 @@
       _TaskCollection.add(InsertData)
       _GobalModel.set("dontsend",false)
       _MainView.SetDefaultInsert()
+      BrowserAutomationStudio_SaveToUndoManager()
+      BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
       _MainView.render()
 
     }
@@ -2344,6 +2577,84 @@
       .replace(new RegExp("\"","g"),"\\u0022")
       .replace(new RegExp("'","g"),"\\u0027")
       .replace(new RegExp("&","g"),"\\u0026")
+    }
+
+    function extract_functions(code)
+    {
+      var res = []
+
+      var regexp = new RegExp("function ([^\\(]+)\\(\\)","g")
+      var matches;
+      while (matches = regexp.exec(code))
+      {
+        res.push(matches[1]);
+      }
+
+      res = res.filter(function(item, pos) {
+            return res.indexOf(item) == pos && item!="OnApplicationStart";
+      })
+
+      res = res.map(function(el){return {name: el.toString()}})
+
+      return JSON.stringify(res)
+
+    }
+    function extract_resources(code)
+    {
+      var res = []
+
+      var regexp = new RegExp("RCreate\\(\\\"([^\\\"]+)","g")
+      var matches;
+      while (matches = regexp.exec(code))
+      {
+        res.push(matches[1]);
+      }
+
+      res = res.filter(function(item, pos) {
+            return res.indexOf(item) == pos;
+      })
+
+      res = res.map(function(el){return {name: el.toString()}})
+
+      return JSON.stringify(res)
+      
+    }
+    function extract_variables(code)
+    {
+      var res = []
+      var regexp = new RegExp("VAR_([A-Z0-9_]+)","g")
+      var matches;
+      while (matches = regexp.exec(code))
+      {
+        res.push(matches[1]);
+      }
+
+      res = res.filter(function(item, pos) {
+            return res.indexOf(item) == pos;
+      })
+
+      res = res.map(function(el){return {name: el.toString()}})
+
+      return JSON.stringify(res)
+    }
+
+    function extract_labels(code)
+    {
+      var res = []
+      var regexp = new RegExp("_set_goto_label\\(([^\\)]+)","g")
+      var matches;
+      while (matches = regexp.exec(code))
+      {
+        res.push(matches[1]);
+      }
+
+      res = res.filter(function(item, pos) {
+            return JSON.parse(res.indexOf(item)) == JSON.parse(pos);
+      })
+
+      res = res.map(function(el){return {name: JSON.parse(el.toString())}})
+
+      return JSON.stringify(res)
     }
 
     function utf8_to_b64( str ) {
@@ -2391,6 +2702,7 @@
       var IdToFunctionDataForThisNode = {}
       var IndexToIsEmptyAndGroup = []
       var IndexToGroupsEndings = []
+      var TimesStarted = []
 
 
       this.GetIsActiveForFindTaskById = function()
@@ -2418,9 +2730,21 @@
         return IsActiveForGetFirstNotFunctionId
       }
 
+      this.StartCarefully = function()
+      {
+        if(TimesStarted.length == 0 || Date.now() - TimesStarted[0] > 1000)
+        {
+          this.Start()
+        }else
+        {
+          this.Stop()
+        }
+      }
 
       this.Start = function()
       {
+        TimesStarted = TimesStarted.slice(-2)
+        TimesStarted.push(Date.now())
 
         IsActiveForFindTaskById = false;
         IsActiveForIsEmptyAndGroup = false;
@@ -2452,10 +2776,6 @@
 
         IsActiveForFindTaskById = true
 
-        console.log("IdToTask " + (new Date() - t) )
-
-        t = new Date()
-
         for(var i = 0;i<len;i++)
         {
           var task = models[i]
@@ -2464,10 +2784,6 @@
         }
 
         IsActiveForIsEmptyAndGroup = true
-
-        console.log("IndexToIsEmptyAndGroup " + (new Date() - t) )
-
-        t = new Date()
 
         for(var i = 0;i<len;i++)
         {
@@ -2478,10 +2794,6 @@
 
         IsActiveForGetGroupsEndings = true
 
-        console.log("IndexToGroupsEndings " + (new Date() - t) )
-
-        t = new Date()
-
         for(var i = 0;i<len;i++)
         {
           var task = models[i]
@@ -2490,10 +2802,6 @@
         }
 
         IsActiveForGetFunctionDataOfThisNode = true
-
-        console.log("IdToFunctionDataForThisNode " + (new Date() - t) )
-
-        t = new Date()
 
         for(var i = 0;i<len;i++)
         {
@@ -2504,15 +2812,10 @@
 
         IsActiveForGetFunctionData = true
 
-        console.log("IdToFunctionData " + (new Date() - t) )
-
-        t = new Date()
-
         firstNotFunctionId = GetFirstNotFunctionId()
         IsActiveForGetFirstNotFunctionId = true
 
-        console.log("firstNotFunctionId " + (new Date() - t) )
-
+        console.trace("Cache time " + (new Date() - t) )
 
       }
 
@@ -2702,6 +3005,7 @@
 
     function GenerateCode(data,global)
     {
+      //console.trace("GenerateCode")
       var res = "";
       var loader = new ResourceLoader();
       loader.SetIsString(false)

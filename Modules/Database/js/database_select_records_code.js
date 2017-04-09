@@ -1,0 +1,1 @@
+<%= variable %> = _db_select_records(<%= filters %>, <%= page_number %>,<%= page_size %>,<%= table %>)

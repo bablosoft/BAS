@@ -22,6 +22,7 @@
 #include "extract_resources.h"
 #include "settings.h"
 #include "handlersmanager.h"
+#include "postmanager.h"
 
 
 class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderProcessHandler
@@ -41,19 +42,26 @@ class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderP
     CefRefPtr<ScenarioV8Handler> scenariov8handler;
     CefRefPtr<CentralV8Handler> central8handler;
     ElementCommand LastCommand;
+    ElementCommand LastCommandCopy;
+
     bool IsLastCommandNull;
     BrowserData *Data;
+    PostManager *_PostManager;
     settings* Settings;
     int ScrollX;
     int ScrollY;
 
     //MouseMove
     bool IsMouseMoveSimulation;
-    float Speed;
     int MouseStartX;
     int MouseStartY;
     int MouseEndX;
     int MouseEndY;
+
+    double MouseSpeed;
+    double MouseGravity;
+    double MouseDeviation;
+
 
     //MouseTrack
     clock_t LastMouseTrack;
@@ -112,7 +120,7 @@ class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderP
     int ImageHeight;
     MainLayout *Layout;
 
-    std::string Code, Resources, AdditionalResources, Variables, Functions;
+    std::string Code, Schema, Resources, AdditionalResources, Variables, Functions, Labels;
     bool ResourcesChanged;
     void UpdateScrolls(std::string& data);
     void HandleMainBrowserEvents();
@@ -131,6 +139,7 @@ public:
     void ForceUpdateWindowPositionWithParent();
     void UpdateWindowPositionWithParent();
     void SetData(BrowserData *Data);
+    void SetPostManager(PostManager *_PostManager);
     void SetSettings(settings *Settings);
     void SetLayout(MainLayout *Layout);
     BrowserData * GetData();
@@ -157,11 +166,13 @@ public:
     void VisibleCallback(bool visible);
     void SetProxyCallback(const std::string& server, int Port, bool IsHttp, const std::string& username, const std::string& password, const std::string& target);
     void AddHeaderCallback(const std::string& key,const std::string& value, const std::string& target);
+    void SetHeaderListCallback(const std::string& json);
     void CleanHeaderCallback();
     void GetUrlCallback();
     void SetUserAgentCallback(const std::string& value);
     void SetOpenFileNameCallback(const std::string& value);
-    void SetStartupScriptCallback(const std::string& value,const std::string& target);
+    void SetStartupScriptCallback(const std::string& value,const std::string& target,const std::string& script_id);
+    void SetFontListCallback(const std::string& fonts);
     void SetPromptResultCallback(const std::string& value);
     void SetHttpAuthResultCallback(const std::string& login,const std::string& password);
     void GetCookiesForUrlCallback(const std::string& value);
@@ -176,6 +187,10 @@ public:
     void AddRequestMaskAllowCallback(const std::string& value);
     void AddRequestMaskDenyCallback(const std::string& value);
     void ClearCacheMaskCallback();
+    void AllowPopups();
+    void RestrictPopups();
+    void AllowDownloads();
+    void RestrictDownloads();
     void ClearRequestMaskCallback();
     void ClearLoadedUrlCallback();
     void ClearCachedDataCallback();
@@ -193,9 +208,10 @@ public:
     void IsUrlLoadedByMaskCallback(const std::string& value);
     void GetLoadStatsCallback();
     void ElementCommandCallback(const ElementCommand &Command);
+    void ElementCommandInternalCallback(const ElementCommand &Command);
     void ClearElementCommand();
 
-    void SetCodeCallback(const std::string & code);
+    void SetCodeCallback(const std::string & code,const std::string & schema);
     void SetResourceCallback(const std::string & resources);
     void SetInitialStateCallback(const std::string & lang);
     void DebugVariablesResultCallback(const std::string & data);
@@ -205,7 +221,7 @@ public:
     void MouseClickDownCallback(int x, int y);
     void PopupCloseCallback(int index);
     void PopupSelectCallback(int index);
-    void MouseMoveCallback(int x, int y);
+    void MouseMoveCallback(int x, int y, double speed, double gravity, double deviation);
     void LoadSuccessCallback();
     void ResizeCallback(int width, int height);
     void SetWindowCallback(const std::string& Window);

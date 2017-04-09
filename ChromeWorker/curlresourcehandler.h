@@ -3,6 +3,7 @@
 
 #include "include/cef_app.h"
 #include "browserdata.h"
+#include "postmanager.h"
 #include <vector>
 #include <mutex>
 #include <thread>
@@ -44,15 +45,20 @@ public:
             /* Inputs */
             /* Inputs are not protected, because set only one time before thread start */
             std::atomic_bool ForceUtf8 = true;
+            std::atomic_bool ProxiesReconnect = false;
             std::string Url;
             std::string Method;
             std::string Referrer;
             std::map<std::string,std::string> RequestHeaders;
-            std::vector<char> PostData;
+            //std::vector<char> PostData;
+            bool IsPostData = false;
+            PostParts _PostParts;
+            PostManager *_PostManager;
             std::string Proxy;
             std::string ProxyAuth;
             std::string HttpAuthLogin;
             std::string HttpAuthPassword;
+            std::vector<std::string> HeadersOrder;
 
             /* Sync */
             std::atomic_bool StopRequest = false;
@@ -76,7 +82,7 @@ private:
     CurlThreadDataClass CurlThreadData;
 
     BrowserData * _BrowserData;
-
+    PostManager * _PostManager;
 
     bool CanDelete = false;
     int IteratorWaitAfterDelete = 10;
@@ -86,13 +92,14 @@ public:
 
 
 
-    CurlResourceHandler(BrowserData * _BrowserData);
+    CurlResourceHandler(BrowserData * _BrowserData, PostManager *_PostManager);
 
     int64 GetStartTime();
     //~CurlResourceHandler();
     void Join();
     bool GetCanDelete();
     void SetForceUtf8(bool ForceUtf8);
+    void SetProxiesReconnect(bool ProxiesReconnect);
     void SetTabNumber(int TabNumber);
 
     void Timer();

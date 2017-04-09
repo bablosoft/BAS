@@ -5,6 +5,8 @@
 #include <string>
 
 std::vector<char> ReadAllBytes(const std::string& filename);
+void ReadAllBytes(const std::string& filename,std::vector<char>& result);
+
 std::string ReadAllString(const std::string& filename);
 struct FileEntry
 {

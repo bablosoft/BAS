@@ -33,6 +33,7 @@
 #include "csvhelper.h"
 #include "databasestate.h"
 #include "modulemanager.h"
+#include "mainwindowtabblink.h"
 
 
 namespace Ui {
@@ -74,6 +75,7 @@ class MainWindow : public QMainWindow
     MongoDatabaseConnector *_DataBaseConnector2;
     MongoDatabaseConnector *_DataBaseConnector3;
     DatabaseState *_DataBaseState;
+    MainWindowTabBlink *_TabBlink;
 
 
     AskUserForResourcesDialog *Ask;
@@ -142,6 +144,7 @@ private slots:
 
 public slots:
     void Start();
+    void Abort();
 
 };
 

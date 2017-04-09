@@ -201,6 +201,18 @@ namespace BrowserAutomationStudioFramework
 
     }
 
+    void XmlResourceController::SetDatabaseId(const QString & DatabaseId)
+    {
+        this->DatabaseId = DatabaseId;
+
+    }
+
+    void XmlResourceController::SetSchema(const QString & Schema)
+    {
+        this->Schema = Schema;
+
+    }
+
     void XmlResourceController::SetFileName(const QString & FileName)
     {
         this->FileName = FileName;
@@ -254,6 +266,16 @@ namespace BrowserAutomationStudioFramework
     QString XmlResourceController::GetScript()
     {
         return Script;
+    }
+
+    QString XmlResourceController::GetDatabaseId()
+    {
+        return DatabaseId;
+    }
+
+    QString XmlResourceController::GetSchema()
+    {
+        return Schema;
     }
 
     QString XmlResourceController::GetFileName()
@@ -521,10 +543,18 @@ namespace BrowserAutomationStudioFramework
             QXmlStreamReader::TokenType token = xmlReader.readNext();
 
 
-            if(xmlReader.name() == "Script" && token == QXmlStreamReader::StartElement)
+            if(xmlReader.name() == "DatabaseId" && token == QXmlStreamReader::StartElement)
+            {
+                xmlReader.readNext();
+                DatabaseId = xmlReader.text().toString();
+            }else if(xmlReader.name() == "Script" && token == QXmlStreamReader::StartElement)
             {
                 xmlReader.readNext();
                 Script = xmlReader.text().toString();
+            }else if(xmlReader.name() == "Schema" && token == QXmlStreamReader::StartElement)
+            {
+                xmlReader.readNext();
+                Schema = xmlReader.text().toString();
             }else if(xmlReader.name() == "ScriptName" && token == QXmlStreamReader::StartElement)
             {
                 xmlReader.readNext();
@@ -866,6 +896,8 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeStartDocument();
         xmlWriter.writeStartElement("BrowserAutomationStudioProject");
         xmlWriter.writeTextElement("Script",Script);
+        xmlWriter.writeTextElement("DatabaseId",DatabaseId);
+        xmlWriter.writeTextElement("Schema",Schema);
         xmlWriter.writeTextElement("ScriptName",ScriptName);
         xmlWriter.writeTextElement("ScriptVersion",ScriptVersion);
         xmlWriter.writeTextElement("AvailableLanguages",AvailableLanguages);

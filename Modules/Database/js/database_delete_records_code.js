@@ -1,0 +1,1 @@
+_db_delete_records(<%= filters %>, <%= table %>)

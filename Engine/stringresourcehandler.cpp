@@ -10,11 +10,6 @@ namespace BrowserAutomationStudioFramework
 
     QScriptValue StringResourceHandler::get()
     {
-         int index = Value.indexOf(QChar(0));
-         if(index>=0)
-         {
-             return QScriptValue(Value.mid(0,index));
-         }
          return QScriptValue(Value);
     }
 

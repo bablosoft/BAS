@@ -24,6 +24,7 @@ namespace BrowserAutomationStudioFramework
 
         virtual void AddHeader(const QString& name,const QString& value,const QString& target, const QString& callback) = 0;
         virtual void CleanHeader(const QString& callback) = 0;
+        virtual void SetHeaderList(const QString& json,const QString& callback) = 0;
 
         virtual void AddCacheMaskAllow(const QString& Mask, const QString& callback) = 0;
         virtual void AddCacheMaskDeny(const QString& Mask, const QString& callback) = 0;
@@ -36,6 +37,10 @@ namespace BrowserAutomationStudioFramework
         virtual void ClearAll(const QString& callback) = 0;
         virtual void ClearMasks(const QString& callback) = 0;
         virtual void ClearData(const QString& callback) = 0;
+        virtual void RestrictPopups(const QString& callback) = 0;
+        virtual void AllowPopups(const QString& callback) = 0;
+        virtual void RestrictDownloads(const QString& callback) = 0;
+        virtual void AllowDownloads(const QString& callback) = 0;
         virtual void SetProxy(const QString& server, int Port, bool IsHttp, const QString& name, const QString& password,const QString& target, const QString& callback) = 0;
 
 

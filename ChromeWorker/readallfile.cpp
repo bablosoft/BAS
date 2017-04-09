@@ -45,6 +45,27 @@ std::vector<char> ReadAllBytes(const std::string& filename)
     return result;
 }
 
+void ReadAllBytes(const std::string& filename,std::vector<char>& result)
+{
+    //std::vector<char> result;
+    try
+    {
+        std::ifstream ifs(s2ws(filename), std::ios::binary|std::ios::ate);
+        std::ifstream::pos_type pos = ifs.tellg();
+
+        int len = result.size();
+        result.resize(len + pos);
+
+        ifs.seekg(0, std::ios::beg);
+        ifs.read(result.data() + len, pos);
+    }catch(...)
+    {
+
+    }
+
+    //return result;
+}
+
 std::vector<FileEntry> GetFilesInDirectory(const std::string &Directory)
 {
     std::vector<FileEntry> out;

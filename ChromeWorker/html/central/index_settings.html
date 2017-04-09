@@ -51,6 +51,16 @@
 	    </div>
 	  </div>
 
+	  <div class="form-group">
+	    <div class="col-sm-offset-5 col-sm-7">
+	      <div class="checkbox">
+	        <label>
+	          <input type="checkbox" id="IsSafe"> <span class="tr">Disable webrtc and canvas</span>
+	        </label>
+	      </div>
+	    </div>
+	  </div>
+
 
 	  <div class="form-group form-item">
 	    <label for="SkipFrames" class="col-sm-5 control-label tr">Skip Frames</label>
@@ -91,6 +101,16 @@
 	    </div>
 	  </div>
 
+	  <div class="form-group" style="margin-top:20px">
+	    <div class="col-sm-offset-5 col-sm-7">
+	      <div class="checkbox">
+	        <label>
+	          <input type="checkbox" id="ProxiesReconnect"> <span class="tr">Proxies reconnect</span>
+	        </label>
+	      </div>
+	    </div>
+	  </div>
+
 	</div>
 </div>
 
@@ -123,10 +143,13 @@
 		$("#LeftPanelWidth").val(json["scenario_width"])
 		$("#Zoom").val(json["zoom"])
 		$("#EnableFlash").prop("checked",json["use_flash"])
+		$("#IsSafe").prop("checked",json["is_safe"])
 		$("#SkipFrames").val(json["skip_frames"])
 		$("#ForceUTF8Encoding").prop("checked",json["force_utf8"])
 		$("#RestartBrowserProcessOnThreadStart").prop("checked",json["restart"])
 		$("#UseHumanLikeMouseMoves").prop("checked",json["emulatemouse"])
+		$("#ProxiesReconnect").prop("checked",json["proxies_reconnect"])
+
 		
 
 		$("#defaults").click(function(event){
@@ -137,8 +160,10 @@
 			$("#EnableFlash").prop("checked",false)
 			$("#SkipFrames").val("1")
 			$("#ForceUTF8Encoding").prop("checked",true)
+			$("#IsSafe").prop("checked",true)
 			$("#RestartBrowserProcessOnThreadStart").prop("checked",false)
 			$("#UseHumanLikeMouseMoves").prop("checked",true)
+			$("#ProxiesReconnect").prop("checked",false)
     	})
 
     	$("#close, #cancel").click(function(event){
@@ -154,10 +179,12 @@
 	    			"scenario_width": parseInt($("#LeftPanelWidth").val()),
 	    			"zoom": parseInt($("#Zoom").val()),
 	    			"use_flash": $("#EnableFlash").prop("checked"),
+	    			"is_safe": $("#IsSafe").prop("checked"),
 	    			"skip_frames": parseInt($("#SkipFrames").val()),
 	    			"force_utf8": $("#ForceUTF8Encoding").prop("checked"),
 	    			"restart": $("#RestartBrowserProcessOnThreadStart").prop("checked"),
-	    			"emulatemouse": $("#UseHumanLikeMouseMoves").prop("checked")
+	    			"emulatemouse": $("#UseHumanLikeMouseMoves").prop("checked"),
+	    			"proxies_reconnect": $("#ProxiesReconnect").prop("checked")
 	    		}
     		));
 

@@ -18,27 +18,39 @@ namespace BrowserAutomationStudioFramework
     void SingleCaptchaWidget::SetCaptcha(const QString& base64,const QString& id)
     {
         this->id = id;
-        QPixmap p;
-        QByteArray array;
-        QByteArray temp = QByteArray();
-        temp.append(base64);
-        array = array.fromBase64(temp);
-        if(p.loadFromData(array))
+        if(base64.startsWith("BAS_USER_ASK"))
         {
-            int w = p.width();
-            int h = p.height() + 25;
-            if(w<150)
-                w = 150;
-            if(h<90)
-                h = 90;
+            QString lab = base64;
 
-            this->setMinimumWidth(w);
-            this->setMinimumHeight(h);
-            this->setMaximumWidth(w);
-            this->setMaximumHeight(h);
-            ui->Picture->setPixmap(p);
+            lab = lab.remove(0,12);
+            ui->Picture->setText(lab);
             ui->Picture->show();
+            ui->Picture->setWordWrap(true);
             update();
+        }else
+        {
+            QPixmap p;
+            QByteArray array;
+            QByteArray temp = QByteArray();
+            temp.append(base64);
+            array = array.fromBase64(temp);
+            if(p.loadFromData(array))
+            {
+                int w = p.width();
+                int h = p.height() + 25;
+                if(w<150)
+                    w = 150;
+                if(h<90)
+                    h = 90;
+
+                this->setMinimumWidth(w);
+                this->setMinimumHeight(h);
+                this->setMaximumWidth(w);
+                this->setMaximumHeight(h);
+                ui->Picture->setPixmap(p);
+                ui->Picture->show();
+                update();
+            }
         }
     }
 

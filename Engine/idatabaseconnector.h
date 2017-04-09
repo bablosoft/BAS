@@ -4,6 +4,7 @@
 #include <QObject>
 #include "DatabaseConnectorHelperClass.h"
 #include "icsvhelper.h"
+#include "idatabaseconnectionwindow.h"
 
 namespace BrowserAutomationStudioFramework
 {
@@ -17,7 +18,7 @@ namespace BrowserAutomationStudioFramework
         virtual bool HasDatabase() = 0;
         virtual QStringList SelectFormatted(DatabaseSelector Selector,QString Format) = 0;
         virtual QList<DatabaseItem> Select(DatabaseSelector Selector) = 0;
-        virtual void Insert(DatabaseGroups Groups,DatabaseItem Item, int TableId) = 0;
+        virtual QString Insert(DatabaseGroups Groups,DatabaseItem Item, int TableId) = 0;
         virtual int Count(DatabaseSelector Selector) = 0;
         virtual void Delete(DatabaseMassSelector Selector) = 0;
         virtual void Update(DatabaseItem Item, int TableId) = 0;
@@ -53,6 +54,10 @@ namespace BrowserAutomationStudioFramework
         virtual QStringList ShowBackupList() = 0;
         virtual void Backup() = 0;
         virtual void Restore(const QString& BackupLabel) = 0;
+
+        virtual void SetDatabaseConnectionWindow(IDatabaseConnectionWindow * DatabaseConnectionWindow) = 0;
+
+        virtual DatabaseFilters ParseFilter(const QString& JsonFilters) = 0;
 
     signals:
         void Started();

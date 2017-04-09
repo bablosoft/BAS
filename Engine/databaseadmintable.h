@@ -71,6 +71,7 @@ private slots:
     void SingleItemEdit(QString Index);
     void SingleItemDelete(QString Index);
     void FilterChanged();
+    void on_MenuButton2_clicked();
 };
 
 #endif // DATABASEADMINTABLE_H

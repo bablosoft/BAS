@@ -28,7 +28,7 @@ namespace BrowserAutomationStudioFramework
     public slots:
         virtual void SendIsChanged() = 0;
         virtual void StopRecorder() = 0;
-        virtual void SendCode(const QString& Code) = 0;
+        virtual void SendCode(const QString& Code,const QString& Schema) = 0;
         virtual void SendResources(const QList<ResourceDescription>& Resources) = 0;
         virtual void SetWindow(const QString& Window) = 0;
         virtual void InstallProcessComunicator(IProcessComunicator *Comunicator) = 0;

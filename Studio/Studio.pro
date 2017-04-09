@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     compilewindow.cpp \
     compiler.cpp \
     recentswidget.cpp \
-    singleapplication.cpp
+    singleapplication.cpp \
+    databasestatedialog.cpp
 
 
 INCLUDEPATH += debug_memory
@@ -31,11 +32,13 @@ HEADERS += mainwindow.h \
     compiler.h \
     every_cpp.h \
     recentswidget.h \
-    singleapplication.h
+    singleapplication.h \
+    databasestatedialog.h
 
 FORMS += mainwindow.ui \
     compilewindow.ui \
-    recentswidget.ui
+    recentswidget.ui \
+    databasestatedialog.ui
 
 RESOURCES += \
     studio.qrc

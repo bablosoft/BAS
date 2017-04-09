@@ -9,6 +9,14 @@ namespace BrowserAutomationStudioFramework
     {
         Q_OBJECT
         bool IsInsideComment(const QString& str,int start);
+
+        struct GotoLabelData
+        {
+          bool IsGotoLabel;
+          int Index;
+          QString Label;
+        };
+        GotoLabelData ParseSetGotoLabel(const QString& str,int start);
         QString Encrypt(const QString& Script,int ParanoicLevel);
         IEncryptor* Encryptor;
         QString Key;

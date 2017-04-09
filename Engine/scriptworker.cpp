@@ -14,22 +14,22 @@ namespace BrowserAutomationStudioFramework
     }
 
 
-    void ScriptWorker::SetSuccessNumber(int* SuccessNumber)
+    void ScriptWorker::SetSuccessNumber(qint64* SuccessNumber)
     {
         this->SuccessNumber = SuccessNumber;
     }
-    int ScriptWorker::GetSuccessNumber()
+    qint64 ScriptWorker::GetSuccessNumber()
     {
         if(!SuccessNumber)
             return -1;
         return *SuccessNumber;
     }
 
-    void ScriptWorker::SetFailNumber(int* FailNumber)
+    void ScriptWorker::SetFailNumber(qint64* FailNumber)
     {
         this->FailNumber = FailNumber;
     }
-    int ScriptWorker::GetFailNumber()
+    qint64 ScriptWorker::GetFailNumber()
     {
         if(!FailNumber)
             return -1;
@@ -178,11 +178,11 @@ namespace BrowserAutomationStudioFramework
     }
 
 
-    void ScriptWorker::SetThreadNumber(int ThreadNumber)
+    void ScriptWorker::SetThreadNumber(qint64 ThreadNumber)
     {
         this->ThreadNumber = ThreadNumber;
     }
-    int ScriptWorker::GetThreadNumber()
+    qint64 ScriptWorker::GetThreadNumber()
     {
         return ThreadNumber;
     }
@@ -1789,8 +1789,71 @@ namespace BrowserAutomationStudioFramework
         Terminate().DoTerminate(how);
     }
 
-    void ScriptWorker::DatabaseAddRecord(const QString& GroupId,const QStringList& Record, int TableId)
+    QString ScriptWorker::DatabaseAddGroup(const QString& GroupName,const QString& GroupDescription, int TableId)
     {
+        DatabaseGroup Group;
+        Group.IsNull = false;
+        Group.Name = GroupName;
+        Group.Description = GroupDescription;
+        return DatabaseConnector->InsertGroup(Group,TableId);
+    }
+
+    QStringList ScriptWorker::DatabaseSelectRecords(const QString& FilterJson,int PageNumber, int PageSize, int TableId)
+    {
+        DatabaseSelector Selector;
+
+        Selector.TableId = TableId;
+        Selector.Filter = DatabaseConnector->ParseFilter(FilterJson);
+
+        DatabaseGroups DbGroups;
+        DbGroups.IsNull = false;
+        DbGroups.GroupIdList.append("-1");
+        Selector.Groups = DbGroups;
+
+        DatabasePage Page;
+        Page.IsNull = false;
+        Page.PageNumber = PageNumber;
+        Page.PageSize = PageSize;
+        Selector.Page = Page;
+
+        QList<DatabaseItem> ResData = DatabaseConnector->Select(Selector);
+
+        QList<DatabaseColumn> Columns = DatabaseConnector->GetColumns(TableId);
+        QStringList res;
+        for(DatabaseItem &item: ResData)
+        {
+            QStringList line;
+
+            for(DatabaseColumn &Column: Columns)
+            {
+                line.append(item.Data[Column.Id].toString());
+            }
+            line.append(item.Id);
+
+            QString Line = CsvHelper->Generate(line,':');
+            res.append(Line);
+        }
+        return res;
+    }
+
+    void ScriptWorker::DatabaseDeleteRecords(const QString& FilterJson,int TableId)
+    {
+        DatabaseMassSelector Selector;
+
+        Selector.TableId = TableId;
+        Selector.Filters = DatabaseConnector->ParseFilter(FilterJson);
+
+        DatabaseGroups DbGroups;
+        DbGroups.IsNull = false;
+        DbGroups.GroupIdList.append("-1");
+        Selector.Groups = DbGroups;
+
+        DatabaseConnector->Delete(Selector);
+    }
+
+    QString ScriptWorker::DatabaseAddRecord(const QString& GroupId,const QStringList& Record, int TableId)
+    {
+
         DatabaseItem Item;
         Item.IsNull = false;
 
@@ -1810,7 +1873,17 @@ namespace BrowserAutomationStudioFramework
                         case DatabaseColumn::Int: VariantParam = QVariant(StringParam.toInt());break;
                         case DatabaseColumn::String: VariantParam = QVariant(StringParam);break;
                         case DatabaseColumn::Bool: VariantParam = QVariant(StringParam == "true");break;
-                        case DatabaseColumn::Date: VariantParam = QVariant(QDateTime::fromString(StringParam,"yyyy-MM-ddTHH:mm:ss"));break;
+                        case DatabaseColumn::Date:
+                        {
+                            QDateTime timestamp;
+                            if(StringParam.length() > 0)
+                            {
+                                timestamp.setTime_t(StringParam.toLongLong() / 1000);
+                            }
+                            else
+                                timestamp = QDateTime::currentDateTime();
+                            VariantParam = QVariant(timestamp);
+                        }break;
                     }
 
                     break;
@@ -1821,9 +1894,58 @@ namespace BrowserAutomationStudioFramework
 
         DatabaseGroups Groups;
         Groups.IsNull = false;
-        Groups.GroupIdList.append(GroupId);
-        DatabaseConnector->Insert(Groups,Item,TableId);
+        if(GroupId.isEmpty())
+            Groups.GroupIdList.append("-1");
+        else
+            Groups.GroupIdList.append(GroupId);
+        return DatabaseConnector->Insert(Groups,Item,TableId);
     }
+
+
+    void ScriptWorker::DatabaseUpdateRecord(const QString& RecordId,const QStringList& Record, int TableId)
+    {
+        DatabaseItem item;
+        item.Id = RecordId;
+        item.IsNull = false;
+
+        QList<DatabaseColumn> Columns = DatabaseConnector->GetColumns(TableId);
+
+        for(int i = 0;i<Record.length() - 1;i+=2)
+        {
+            int ColumnId = Record.at(i).toInt();
+            QString StringParam = Record.at(i+1);
+            QVariant VariantParam;
+            foreach(DatabaseColumn Column, Columns)
+            {
+                if(ColumnId == Column.Id)
+                {
+                    switch(Column.Type)
+                    {
+                        case DatabaseColumn::Int: VariantParam = QVariant(StringParam.toInt());break;
+                        case DatabaseColumn::String: VariantParam = QVariant(StringParam);break;
+                        case DatabaseColumn::Bool: VariantParam = QVariant(StringParam == "true");break;
+                        case DatabaseColumn::Date:
+                        {
+                            QDateTime timestamp;
+                            if(StringParam.length() > 0)
+                            {
+                                timestamp.setTime_t(StringParam.toLongLong() / 1000);
+                            }
+                            else
+                                timestamp = QDateTime::currentDateTime();
+                            VariantParam = QVariant(timestamp);
+                        }break;
+                    }
+
+                    break;
+                }
+            }
+            item.Data[ColumnId] = VariantParam;
+        }
+
+        DatabaseConnector->Update(item,TableId);
+    }
+
 
 
 }

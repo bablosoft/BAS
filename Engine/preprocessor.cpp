@@ -1,5 +1,6 @@
 #include "preprocessor.h"
 #include <QRegExp>
+#include <QMap>
 #include "every_cpp.h"
 
 
@@ -50,6 +51,37 @@ namespace BrowserAutomationStudioFramework
         return res;
     }
 
+    Preprocessor::GotoLabelData Preprocessor::ParseSetGotoLabel(const QString& str,int start)
+    {
+        GotoLabelData res;
+        int index = str.lastIndexOf("(",start);
+        if(index<0)
+        {
+            res.IsGotoLabel = false;
+            return res;
+        }
+        int IndexBracket = index;
+        QString func_name = "_set_goto_label";
+        index -= func_name.length();
+        if(index<0)
+        {
+            res.IsGotoLabel = false;
+            return res;
+        }
+        if(str.mid(index,func_name.length()) == func_name)
+        {
+            res.IsGotoLabel = true;
+            res.Index = index;
+            res.Label = str.mid(IndexBracket + 1,start - IndexBracket-1);
+            return res;
+        }else
+        {
+            res.IsGotoLabel = false;
+            return res;
+        }
+
+    }
+
     void Preprocessor::SetEncryptor(IEncryptor* Encryptor)
     {
         this->Encryptor = Encryptor;
@@ -95,6 +127,7 @@ namespace BrowserAutomationStudioFramework
 
     QString Preprocessor::Preprocess(const QString& Script,int ParanoicLevel)
     {
+        QMap<QString,QString> GotoData;
         EncryptIterator = 0;
         QString Res = Script;
         Res = Res.replace(")/*async!*/",")!");
@@ -216,10 +249,18 @@ namespace BrowserAutomationStudioFramework
                     QString all = Res.mid(index_start + 2);
                     if(all.indexOf(")!")>=0)
                         break;
-                    Res = Res.replace(index_start + 2,all.length(),Encrypt(all,ParanoicLevel));
+                    GotoLabelData ParseData = ParseSetGotoLabel(Res,index_start);
+                    if(ParseData.IsGotoLabel)
+                    {
+                        Res = Res.replace(ParseData.Index,index_end - ParseData.Index,"_goto_fast(" + ParseData.Label + ")!");
+                        GotoData[ParseData.Label] = Encrypt(all,ParanoicLevel);
+                    }else
+                    {
+                        Res = Res.replace(index_start + 2,all.length(),Encrypt(all,ParanoicLevel));
 
-                    Res = Res.replace(index_start,2,", function(){");
-                    Res = Res.append("})");
+                        Res = Res.replace(index_start,2,", function(){");
+                        Res = Res.append("})");
+                    }
                     from = 0;
 
                     break;
@@ -239,14 +280,23 @@ namespace BrowserAutomationStudioFramework
                                 break;
 
 
-                            Res = Res.replace(index_end,1,"})}");
-                            Res = Res.replace(index_start + 2,all.length(),Encrypt(all,ParanoicLevel));
+                            GotoLabelData ParseData = ParseSetGotoLabel(Res,index_start);
+                            if(ParseData.IsGotoLabel)
+                            {
+                                Res = Res.replace(ParseData.Index,index_end - ParseData.Index,"_goto_fast(" + ParseData.Label + ")!");
+                                GotoData[ParseData.Label] = Encrypt(all,ParanoicLevel);
+                            }else
+                            {
+                                Res = Res.replace(index_end,1,"})}");
+                                Res = Res.replace(index_start + 2,all.length(),Encrypt(all,ParanoicLevel));
 
-                            QString replace_string = "function(){";
-                            if(!is_one_argument)
-                                replace_string = "," + replace_string;
+                                QString replace_string = "function(){";
+                                if(!is_one_argument)
+                                    replace_string = "," + replace_string;
 
-                            Res = Res.replace(index_start,2,replace_string);
+                                Res = Res.replace(index_start,2,replace_string);
+                            }
+
                             from = 0;
 
                             break;
@@ -258,15 +308,23 @@ namespace BrowserAutomationStudioFramework
                         QString all = Res.mid(index_start + 2);
                         if(all.indexOf(")!")>=0)
                             break;
-                        Res = Res.replace(index_start + 2,all.length(),Encrypt(all,ParanoicLevel));
 
+                        GotoLabelData ParseData = ParseSetGotoLabel(Res,index_start);
+                        if(ParseData.IsGotoLabel)
+                        {
+                            Res = Res.replace(ParseData.Index,index_end - ParseData.Index,"_goto_fast(" + ParseData.Label + ")!");
+                            GotoData[ParseData.Label] = Encrypt(all,ParanoicLevel);
+                        }else
+                        {
+                            Res = Res.replace(index_start + 2,all.length(),Encrypt(all,ParanoicLevel));
 
-                        Res.append("})");
-                        QString replace_string = "function(){";
-                        if(!is_one_argument)
-                            replace_string = "," + replace_string;
+                            Res.append("})");
+                            QString replace_string = "function(){";
+                            if(!is_one_argument)
+                                replace_string = "," + replace_string;
 
-                        Res = Res.replace(index_start,2,replace_string);
+                            Res = Res.replace(index_start,2,replace_string);
+                        }
                         from = 0;
 
                         break;
@@ -278,6 +336,27 @@ namespace BrowserAutomationStudioFramework
 
         }
 
+        //Insert goto data
+        if(!GotoData.empty())
+        {
+            int index = Res.indexOf("section(");
+            if(index >= 0)
+            {
+                index = Res.indexOf("function(){", index);
+                if(index >= 0)
+                {
+                    QString payload = "_BAS_GOTO_DATA = {};";
+
+                    QMapIterator<QString, QString> i(GotoData);
+                    while (i.hasNext())
+                    {
+                        i.next();
+                        payload.append("_BAS_GOTO_DATA[" + i.key() + "] = function(){" + i.value() + "};");
+                    }
+                    Res = Res.insert(index + 11,payload);
+                }
+            }
+        }
         return Res;
 
     }

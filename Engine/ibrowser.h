@@ -42,7 +42,8 @@ namespace BrowserAutomationStudioFramework
         virtual void SetWorker(IWorker* Worker) = 0;
         virtual IWorker* GetWorker() = 0;
         virtual void SetOpenFileName(const QString & OpenFileName, const QString& callback) = 0;
-        virtual void SetStartupScript(const QString& script, const QString& target, const QString& callback) = 0;
+        virtual void SetStartupScript(const QString& script,const QString& script_id, const QString& target, const QString& callback) = 0;
+        virtual void SetFontList(const QString& fonts, const QString& callback) = 0;
         virtual void SetPromptResult(const QString & Text, const QString& callback) = 0;
         virtual void SetHttpAuthResult(const QString & Login, const QString & Password, const QString& callback) = 0;
         virtual void MouseClickInstant(int x, int y) = 0;
@@ -50,7 +51,7 @@ namespace BrowserAutomationStudioFramework
         virtual void MouseClickUp(int x, int y, const QString& callback) = 0;
         virtual void MouseClickDown(int x, int y, const QString& callback) = 0;
 
-        virtual void MouseMove(int x, int y, const QString& callback) = 0;
+        virtual void MouseMove(int x, int y, const QString& params, const QString& callback) = 0;
         virtual void Timezone(int offset, const QString& callback) = 0;
         virtual void Geolocation(float latitude, float longitude, const QString& callback) = 0;
         virtual void PopupClose(int index, const QString& callback) = 0;

@@ -84,7 +84,7 @@ void BrowserEventsEmulator::MouseMoveLine(CefRefPtr<CefBrowser> Browser, bool & 
     float DistanceAll = sqrtf(DistanceSquareAll);
     float DistanceCurrent = sqrtf(DistanceSquareCurrent);
 
-    DistanceCurrent += Speed;
+    DistanceCurrent += (Speed * 15.0) / 100.0;
 
     if(DistanceCurrent >= DistanceAll)
     {
@@ -278,6 +278,10 @@ void BrowserEventsEmulator::MouseMove(CefRefPtr<CefBrowser> Browser,
                 D = 3 + rand() % 2;
             }
         }
+
+        D *= Speed/100.0;
+        if(D<3)
+            D = 5;
 
         if (D <= round(dist))
             maxStep = D;

@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDateTime>
+#include <QInputDialog>
 #include <QTextStream>
 #include "manualcaptchasolver.h"
 #include "solverfactory.h"
@@ -59,15 +60,20 @@
 #include <QDirIterator>
 #include "modulemanagerwindow.h"
 #include "projectbackup.h"
+#include "databaseconnectionwindow.h"
+#include "databasestatedialog.h"
 #include "every_cpp.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow), Worker(0), UserWidgetControllerPointer(0), dockWidgetCaptcha(0), IsClosingWindow(false), Output(0),_DatabaseAdmin(0)
+    ui(new Ui::MainWindow), Worker(0), UserWidgetControllerPointer(0), dockWidgetCaptcha(0), IsClosingWindow(false), Output(0),_DatabaseAdmin(0), Ask(0)
 {
 
     qsrand(QTime(0,0,0).msecsTo(QTime::currentTime()));
+
+    _TabBlink = new MainWindowTabBlink(this);
+    _TabBlink->SetWidget(this);
 
     AlreadyShowsMessage = false;
 
@@ -85,21 +91,37 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(_RecordProcessCommunication,SIGNAL(ReceiveCode(QString)),this,SLOT(ReceiveCode(QString)));
     connect(_RecordProcessCommunication,SIGNAL(LoadScript(QString)),this,SLOT(OpenFromFileOrDisplayMessageBox(QString)));
     connect(_RecordProcessCommunication,SIGNAL(NeedRestart()),this,SLOT(SetNeedRestart()));
-    connect(_RecordProcessCommunication,SIGNAL(Stop()),ui->actionStop,SLOT(trigger()));
+    connect(_RecordProcessCommunication,SIGNAL(Stop()),this,SLOT(AbortInstant()));
 
 
     _MultiTimer = new MultiTimer(this);
     //_MultiTimer = 0;
 
     _DataBaseConnector = new MongoDatabaseConnector(this);
+    {
+        DatabaseConnectionWindow * _DatabaseConnectionWindow = new DatabaseConnectionWindow(_DataBaseConnector);
+        _DatabaseConnectionWindow->SetIsSilent(false);
+        _DataBaseConnector->SetDatabaseConnectionWindow(_DatabaseConnectionWindow);
+    }
+
     _CsvHelper = new CsvHelper(_DataBaseConnector);
     _DataBaseConnector->SetCsvHelper(_CsvHelper);
 
     _DataBaseState = new DatabaseState(this);
     _DataBaseConnector2 = new MongoDatabaseConnector(_DataBaseState);
+    {
+        DatabaseConnectionWindow * _DatabaseConnectionWindow = new DatabaseConnectionWindow(_DataBaseConnector2);
+        _DatabaseConnectionWindow->SetIsSilent(false);
+        _DataBaseConnector2->SetDatabaseConnectionWindow(_DatabaseConnectionWindow);
+    }
     _DataBaseState->SetDatabaseConnector(_DataBaseConnector2);
 
     _DataBaseConnector3 = new MongoDatabaseConnector(this);
+    {
+        DatabaseConnectionWindow * _DatabaseConnectionWindow = new DatabaseConnectionWindow(_DataBaseConnector3);
+        _DatabaseConnectionWindow->SetIsSilent(false);
+        _DataBaseConnector3->SetDatabaseConnectionWindow(_DatabaseConnectionWindow);
+    }
 
     connect(_DataBaseConnector,SIGNAL(GroupManipulated()),_DataBaseState,SLOT(Reload()));
 
@@ -151,7 +173,7 @@ MainWindow::MainWindow(QWidget *parent) :
         LangDialog.SetLanguageModel(LangModel);
         if(!LangDialog.exec())
         {
-            QTimer::singleShot(50,this,SLOT(Close()));
+            QTimer::singleShot(50,this,SLOT(CloseNoSave()));
             return;
         }
         LanguageInterface = LangDialog.GetLang();
@@ -162,7 +184,11 @@ MainWindow::MainWindow(QWidget *parent) :
     LanguageScript = Settings->value("DefaultLanguageScript",LanguageInterface).toString().toLower();
     _DataBaseConnector->Init(LanguageScript);
     _DataBaseConnector2->Init(LanguageScript);
-    if(!_DataBaseConnector->Start())
+
+    LoadSchema();
+
+
+    if(!_DataBaseConnector->Start(Schema, DatabaseId))
     {
         QEventLoop loop;
         connect(_DataBaseConnector, SIGNAL(Started()), &loop, SLOT(quit()));
@@ -172,12 +198,11 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         if(_DataBaseConnector->WasError())
         {
-            QMessageBox::information(0, tr("Database Error"), _DataBaseConnector->GetError());
-            QTimer::singleShot(50,this,SLOT(Close()));
+            QTimer::singleShot(50,this,SLOT(CloseNoSave()));
             return;
         }
 
-        if(!_DataBaseConnector2->Start())
+        if(!_DataBaseConnector2->Start(Schema, DatabaseId))
         {
             QEventLoop loop;
             connect(_DataBaseConnector2, SIGNAL(Started()), &loop, SLOT(quit()));
@@ -185,12 +210,11 @@ MainWindow::MainWindow(QWidget *parent) :
         }
         if(_DataBaseConnector2->WasError())
         {
-            QMessageBox::information(0, tr("Database Error"), _DataBaseConnector2->GetError());
-            QTimer::singleShot(50,this,SLOT(Close()));
+            QTimer::singleShot(50,this,SLOT(CloseNoSave()));
             return;
         }
 
-        if(!_DataBaseConnector3->Start())
+        if(!_DataBaseConnector3->Start(Schema, DatabaseId))
         {
             QEventLoop loop;
             connect(_DataBaseConnector3, SIGNAL(Started()), &loop, SLOT(quit()));
@@ -198,16 +222,13 @@ MainWindow::MainWindow(QWidget *parent) :
         }
         if(_DataBaseConnector3->WasError())
         {
-            QMessageBox::information(0, tr("Database Error"), _DataBaseConnector3->GetError());
-            QTimer::singleShot(50,this,SLOT(Close()));
+            QTimer::singleShot(50,this,SLOT(CloseNoSave()));
             return;
         }
 
         _DataBaseState->Reload();
-    }else
-    {
-        ui->actionShow_Database->setVisible(false);
     }
+
 
     TranslateEngine.Translate(LanguageInterface);
     TranslateStudio.Translate(LanguageInterface);
@@ -245,11 +266,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionInterface_language, SIGNAL(triggered()), this, SLOT(ChangeInterfaceLanguage()));
     connect(ui->actionLog_Location_Chooser,SIGNAL(triggered()),this,SLOT(ChooseLogLocation()));
     connect(ui->actionResourcesReport,SIGNAL(triggered()),this,SLOT(ResourcesReport()));
-    connect(ui->actionShow_Database,SIGNAL(triggered()),this,SLOT(ShowDataBase()));
-    connect(ui->actionEdit_Schema,SIGNAL(triggered()),this,SLOT(EditSchema()));
-    connect(ui->actionDelete_Schema,SIGNAL(triggered()),this,SLOT(DeleteSchema()));
+    connect(ui->actionShow_Database,SIGNAL(triggered()),this,SLOT(ShowDataBaseManager()));
     connect(ui->actionModules_Manager,SIGNAL(triggered()),this,SLOT(ShowModuleManager()));
     connect(ui->actionRegexp_Constructor,SIGNAL(triggered()),this,SLOT(RegexpConstructor()));
+    connect(ui->actionFingerprint_Switcher,SIGNAL(triggered()),this,SLOT(FingerprintSwitcher()));
+    connect(ui->actionStop,SIGNAL(triggered()),this,SLOT(Abort()));
+
+
 
     connect(TrayNotifier,SIGNAL(Show()),this,SLOT(show()));
     QMenu *Menu = new QMenu(this);
@@ -263,13 +286,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     RestoreState();
-
     InitRecources();
     InitWidgets();
     InitAction();
     OpenDefault();
     //connect(ui->EditScript,SIGNAL(textChanged()),SLOT(Documentation()));
     SetNotModified();
+
+
+    IsDatabaseDirty = false;
+
+    if(DatabaseId.isEmpty())
+        DatabaseId = QString("Database.") + QString::number(qrand() % 100000);
+
 
     ui->Recents->Reload(CurrentFileName);
     ui->Recents->setVisible(true);
@@ -316,36 +345,30 @@ void MainWindow::SetNeedRestart()
     NeedRestart = true;
 }
 
-void MainWindow::EditSchema()
+void MainWindow::ShowDataBaseManager()
 {
-
-    QMessageBox::warning(0, tr("Need to restart after edit"), QString(tr("Need to restart after edit")));
-
-    QFileInfo info("schema.xml");
-    if(!info.exists())
+    DatabaseStateDialog dialog;
+    connect(&dialog,SIGNAL(EditDatabase()),this,SLOT(ShowDataBaseDialogNoAsk()));
+    dialog.SetHasDabase(_DataBaseConnector->HasDatabase());
+    dialog.SetSchema(Schema);
+    dialog.SetIsDirty(IsDatabaseDirty);
+    dialog.SetDatabaseId(DatabaseId);
+    dialog.SetDatabaseBaseLocation(_DataBaseConnector->GetDatabaseBaseLocation());
+    dialog.exec();
+    if(dialog.GetIsSuccess())
     {
-        QFile fileout("schema.xml");
-        fileout.open(QIODevice::WriteOnly | QIODevice::Text);
-        QFile filein(":/engine/text/schemaEmpty.xml");
-        filein.open(QFile::ReadOnly | QFile::Text);
-        QTextStream in(&filein);
-        QString text = in.readAll();
-
-        QTextStream out(&fileout);
-        out.setCodec("UTF-8");
-        out << text;
-
-        fileout.close();
-        filein.close();
+        Schema = dialog.GetSchema();
+        DatabaseId = dialog.GetDatabaseId();
+        IsDatabaseDirty = dialog.GetIsDirty();
+        IsModified = true;
+        UpdateTitle();
+        if(dialog.GetNeedRestart())
+        {
+            SaveToFile(CurrentFileName);
+            qApp->quit();
+            QProcess::startDetached(QFileInfo( QCoreApplication::applicationFilePath() ).fileName(), QStringList()<<"--notasksingleinstance");
+        }
     }
-
-    QDesktopServices::openUrl(QUrl::fromLocalFile(info.absoluteFilePath()));
-}
-
-void MainWindow::DeleteSchema()
-{
-    QMessageBox::warning(0, tr("Need to restart application"), QString(tr("Need to restart application")));
-    QFile("schema.xml").remove();
 }
 
 void MainWindow::ShowDataBase()
@@ -360,7 +383,7 @@ void MainWindow::ShowDataBase()
 
 }
 
-void MainWindow::ShowDataBaseDialog()
+void MainWindow::ShowDataBaseDialogNoAsk()
 {
     if(!_DatabaseAdmin)
     {
@@ -379,6 +402,13 @@ void MainWindow::ShowDataBaseDialog()
     _DatabaseAdmin->Show();
     d.exec();
     _DatabaseAdmin->setParent(0);
+
+
+}
+
+void MainWindow::ShowDataBaseDialog()
+{
+    ShowDataBaseDialogNoAsk();
     if(Ask)
         Ask->show();
 
@@ -424,8 +454,22 @@ void MainWindow::SetDefaultText()
     QFile f(":/studio/data/new.txt");
     if(f.open(QFile::ReadOnly | QFile::Text))
     {
-        TextEditor->SetText(QString::fromUtf8(f.readAll()));
+        QString text = QString::fromUtf8(f.readAll());
+        TextEditor->SetText(text);
+        _DiffPatcher.Init(text);
     }
+}
+
+void MainWindow::LoadSchema()
+{
+    XmlResourceController loader;
+    loader.SetFileName(CurrentFileName);
+    Resources r;
+    loader.FromViewToModel(&r);
+
+    Schema = loader.GetSchema();
+    DatabaseId = loader.GetDatabaseId();
+    IsDatabaseDirty = true;
 }
 
 void MainWindow::OpenDefault()
@@ -467,6 +511,12 @@ void MainWindow::RegexpConstructor()
     QDesktopServices::openUrl(QUrl(Regexp));
 }
 
+void MainWindow::FingerprintSwitcher()
+{
+    QString Regexp = Settings->value("FingerprintSwitcher","https://fingerprints.bablosoft.com/").toString();
+    QDesktopServices::openUrl(QUrl(Regexp));
+}
+
 void MainWindow::ShowModuleManager()
 {
     ModuleManagerWindow Window;
@@ -488,7 +538,9 @@ void MainWindow::Compile()
                 QFile("schema.xml").copy(d.absoluteFilePath("schema.xml"));*/
             saver.SetFileName(d.absoluteFilePath("project.xml"));
             saver.SetScript(TextEditor->GetText());
+            saver.SetSchema(Schema);
             saver.SetScriptName(compiler->GetName());
+            saver.SetDatabaseId(DatabaseId);
             saver.SetAvailableLanguages(LangModel->GetScriptAvailableLanguagesString());
             saver.SetScriptVersion(compiler->GetVersion());
             saver.SetOutputTitle1(Output->GetOutputTitle1());
@@ -566,6 +618,16 @@ void MainWindow::Close()
     close();
 }
 
+void MainWindow::CloseNoSave()
+{
+    IsClosingWindow = true;
+    if(Worker)
+        Worker->Abort();
+    if(_DatabaseAdmin)
+        _DatabaseAdmin->close();
+    close();
+}
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     if(!IsClosingWindow)
@@ -617,7 +679,7 @@ void MainWindow::OpenFromFileOrDisplayMessageBox(const QString& fileName)
         if(_RecordProcessCommunication)
             _RecordProcessCommunication->StopRecorder();
         SetCurrentFileName(fileName);
-		Settings->setValue("CurrentFileName",CurrentFileName);
+        Settings->setValue("CurrentFileName",CurrentFileName);
     }
 }
 
@@ -625,8 +687,6 @@ QString MainWindow::OpenFromFile(const QString& fileName)
 {
     XmlResourceController loader;
     loader.SetFileName(fileName);
-
-
 
     Res->FromViewToModel(&loader);
     Res->FromModelToView(WidgetController);
@@ -655,10 +715,12 @@ QString MainWindow::OpenFromFile(const QString& fileName)
     Output->SetOutputVisible8(loader.GetOutputVisible8());
     Output->SetOutputVisible9(loader.GetOutputVisible9());
 
-
-
+    Schema = loader.GetSchema();
+    DatabaseId = loader.GetDatabaseId();
+    IsDatabaseDirty = true;
 
     TextEditor->SetText(loader.GetScript());
+    _DiffPatcher.Init(loader.GetScript());
     if(!loader.GetResult())
     {
         return loader.GetErrorString();
@@ -679,6 +741,44 @@ void MainWindow::Save()
     }
 }
 
+
+void MainWindow::AbortInstant()
+{
+    if(Worker)
+    {
+        Worker->Abort();
+    }
+}
+
+void MainWindow::Abort()
+{
+    if(Worker)
+    {
+        if(IsRecordLast)
+        {
+            Worker->Abort();
+            return;
+        }
+
+        QStringList items;
+        items << tr("Stop instant") << tr("Wait each thread");
+
+        bool ok;
+        QString item = QInputDialog::getItem(this, tr("Stop"), tr("Stop type"), items, 0, false, &ok);
+
+        if(Worker)
+        {
+            if(ok && !item.isEmpty())
+            {
+                if(item == items[0])
+                    Worker->Abort();
+                else
+                    Worker->AbortNotInstant();
+            }
+        }
+    }
+}
+
 QPair<bool,QString> MainWindow::SaveToFileSilent(const QString& file)
 {
     QPair<bool,QString> res;
@@ -689,6 +789,8 @@ QPair<bool,QString> MainWindow::SaveToFileSilent(const QString& file)
     XmlResourceController saver;
     saver.SetAvailableLanguages(LangModel->GetScriptAvailableLanguagesString());
     saver.SetFileName(file);
+    saver.SetSchema(Schema);
+    saver.SetDatabaseId(DatabaseId);
     saver.SetScript(TextEditor->GetText());
     saver.SetScriptName(compiler->GetName());
     saver.SetScriptVersion(compiler->GetVersion());
@@ -799,6 +901,9 @@ void MainWindow::New()
         WidgetController->DeleteAllView();
         SetCurrentFileName(fileName);
         Settings->setValue("CurrentFileName",CurrentFileName);
+        Schema.clear();
+        IsDatabaseDirty = true;
+        DatabaseId = QString("Database.") + QString::number(qrand() % 100000);
         SetNotModified();
     }
 }
@@ -904,7 +1009,16 @@ void MainWindow::UpdateCaptchaSize(int size)
         l->addWidget(cw->GetWidget());
 
     }
-    dockWidgetCaptcha->setWindowTitle(QString(tr("Captcha (%1)")).arg(size));
+
+    QString text = QString(tr("Captcha (%1)")).arg(size);
+    dockWidgetCaptcha->setWindowTitle(text);
+    _TabBlink->SetText(text.split(" ").first());
+    if(size > 0)
+        _TabBlink->Start();
+    else
+        _TabBlink->Stop();
+
+
 }
 
 void MainWindow::InitAction()
@@ -980,7 +1094,7 @@ void MainWindow::SendCode()
     QString Code = TextEditor->GetText();
     if(Code.isEmpty())
         Code = " ";
-    _RecordProcessCommunication->SendCode(Code);
+    _RecordProcessCommunication->SendCode(Code,_DataBaseState->ToJson());
     _RecordProcessCommunication->SendResources(LastResourceList);
     _RecordProcessCommunication->SetWindow(QString::number(ui->centralWidget->winId()));
 
@@ -988,7 +1102,7 @@ void MainWindow::SendCode()
 
 void MainWindow::ReceiveCode(const QString& Code)
 {
-    TextEditor->SetText(Code);
+    TextEditor->SetText(_DiffPatcher.ApplyPatch(Code));
 }
 
 void MainWindow::InitBrowserList(const QString& WrokerType, bool IsRecord)
@@ -1018,10 +1132,18 @@ void MainWindow::InitBrowserList(const QString& WrokerType, bool IsRecord)
             connect(cf,SIGNAL(ProcessComunicatorCreated(IProcessComunicator*)),this,SLOT(SendCode()));
         }
 
+
+
         if(WrokerType == "MultiProcessQt4")
             cf->SetProcessName(Settings->value("Worker4",QVariant("../worker/Worker.exe")).toString());
         else if (WrokerType == "MultiProcessQt5")
-            cf->SetProcessName(Settings->value("Worker5",QVariant("./worker/Worker.exe")).toString());
+        {
+            QSettings SettingsWorker("settings_worker.ini",QSettings::IniFormat);
+            bool IsSafe = SettingsWorker.value("IsSafe",true).toBool();
+            QString WorkerPath = (IsSafe) ? "Worker" : "WorkerNotSafe";
+
+            cf->SetProcessName(Settings->value("Worker5",QVariant("./" + WorkerPath + "/Worker.exe")).toString());
+        }
 
         QStringList params = QStringList()<<"%keyin%"<<"%keyout%"<<"%pid%";
         if(IsRecord)
@@ -1502,8 +1624,8 @@ void MainWindow::RunInternal(bool IsRecord)
     Worker = worker;
 
     //Prepare abort button
-    disconnect(ui->actionStop,SIGNAL(triggered()),0,0);
-    connect(ui->actionStop,SIGNAL(triggered()),worker,SLOT(Abort()));
+    //disconnect(ui->actionStop,SIGNAL(triggered()),0,0);
+    //connect(ui->actionStop,SIGNAL(triggered()),worker,SLOT(Abort()));
 
     TrayNotifier->Start();
 

@@ -4,6 +4,26 @@ _A = {
       "description":"Load cookies from browser",
       "template" : ""
    },
+   "restrictpopups":{
+      "name":"Restrict popups",
+      "description":"Restrict popups",
+      "template" : ""
+   },
+   "allowpopups":{
+      "name":"Allow popups",
+      "description":"Allow popups",
+      "template" : ""
+   },
+   "restrictdownloads":{
+      "name":"Restrict downloads",
+      "description":"Restrict downloads",
+      "template" : ""
+   },
+   "allowdownloads":{
+      "name":"Allow downloads",
+      "description":"Allow downloads",
+      "template" : ""
+   },
    "loadcookiesfromhttpclient":{
       "name":"Load cookies from http client",
       "description":"Load cookies from http client",
@@ -128,6 +148,11 @@ _A = {
       "description":"Set Timeout",
       "template":"{{Value}}"
    },
+   "mousesettings":{
+      "name":"Mouse Settings",
+      "description":"Mouse Settings",
+      "template":"{{Speed}}"
+   },
    "if":{
       "name":"If",
       "description":"Execute conditional actions",
@@ -175,6 +200,17 @@ _A = {
       "class": "logic",
       "description":"Immediately End Script",
       "template":"{{FailMessage}}"
+   },
+   "goto":{
+      "name":"Move to label",
+      "class": "logic",
+      "description":"Move to label",
+      "template":"<~ {{LabelName}}"
+   },
+   "label":{
+      "name":"Set label",
+      "description":"Set label",
+      "template":"~> {{Label}}"
    },
    "ignoreerrors":{
       "name":"Ignore Errors",
@@ -662,6 +698,11 @@ _A = {
 
 _AL = 
 {
+   "Mouse Settings": {"ru": "Настройки Мыши"},
+   "Restrict popups": {"ru": "Запретить всплывающие окна"},
+   "Allow popups": {"ru": "Разрешить всплывающие окна"},
+   "Restrict downloads": {"ru": "Запретить загрузку файлов"},
+   "Allow downloads": {"ru": "Разрешить загрузку файлов"},
    "Load cookies from browser": {"ru": "Загрузить cookies из браузера"},
    "Load cookies from http client": {"ru": "Загрузить cookies из http клиента"},
    "Thread index": {"ru": "Номер потока"},
@@ -686,7 +727,9 @@ _AL =
    "HTTP-Client Set Header": {"ru": "HTTP-Клиент Установить Заголовок"},
    "HTTP-Client Save Cookies": {"ru": "HTTP-Клиент Сохранить cookies"},
    "HTTP-Client Restore Cookies": {"ru": "HTTP-Клиент Загрузить cookies"},
-
+   "Label": {"ru": "Метка"},
+   "Set label": {"ru": "Установить метку"},
+   "Move to label": {"ru": "Перейти к метке"},
 
 	"Click" : {"ru": "Кликнуть"},
 	"Move" : {"ru": "Двигать Мышь"},
@@ -822,7 +865,15 @@ _AL =
      if(!match)
        return ""
 
+
      var dat = JSON.parse(b64_to_utf8(match[1]))
+
+     if(_A[dat["s"]]["template"].indexOf("~>")>=0)
+      return "textitemtag"
+
+     if(_A[dat["s"]]["template"].indexOf("<~")>=0)
+      return "tooltitle-red"
+
 
      var Type = _A[dat["s"]]["class"]
      if(typeof(Type) == "undefined")
@@ -855,10 +906,17 @@ _AL =
 
      var dat = JSON.parse(b64_to_utf8(match[1]))
 
-     return tr(_A[dat["s"]]["name"])
+
+
+     var pref = "" 
+     if(_A[dat["s"]]["template"].indexOf("~>")>=0)
+      pref = "<i class='fa fa-tag textitemtag' aria-hidden='true'></i> "
+     if(_A[dat["s"]]["template"].indexOf("<~")>=0)
+      pref = "<i class='fa fa-arrow-circle-right tooltitle-red' aria-hidden='true'></i> "
+     
+     return pref + tr(_A[dat["s"]]["name"])
    }catch(e)
    {
-
    }
    return ""
  }
@@ -934,6 +992,8 @@ function BrowserAutomationStudio_GenerateActionText(action, data)
 	var Split = Template.split(/\{\{(.*?)\}\}/g)
 	var Res = ""
    var LastArrow = false
+   var LastTag = false
+   var LastGoto = false
    var IsEmpty = true
 	for(var i = 0;i<Split.length;i++)
 	{
@@ -943,11 +1003,38 @@ function BrowserAutomationStudio_GenerateActionText(action, data)
             IsEmpty = false
 
          LastArrow = Split[i].indexOf("->") >= 0
-			Res += _.escape(tr(Split[i])).replace("-&gt;","<i class='fa fa-arrow-circle-right ' aria-hidden='true'></i>")
+         if(LastArrow)
+			   Res += _.escape(tr(Split[i])).replace("-&gt;","<i class='fa fa-arrow-circle-right ' aria-hidden='true'></i>")
+
+         LastTag = Split[i].indexOf("~>") >= 0
+         if(LastTag)
+            Res += _.escape(tr(Split[i])).replace("~&gt;","")
+
+         LastGoto = Split[i].indexOf("<~") >= 0
+         if(LastGoto)
+         {
+            Res += _.escape(tr(Split[i])).replace("&lt;~","")
+         }
+
+         if(!LastGoto && !LastTag && !LastArrow)
+         {
+            Res += _.escape(tr(Split[i]))
+         }
 
 		}else
 		{
-         var Class = (LastArrow)? "textitemsignificant":""
+         var Class = ""
+         if(LastArrow)
+            Class = "textitemsignificant"
+         if(LastTag)
+         {
+            Class = "textitemtagtext"
+         }
+
+         if(LastGoto)
+         {
+            Class = "textitemtagtext"
+         }
          
 			if(Split[i] == "PATH")
 			{

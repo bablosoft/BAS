@@ -135,7 +135,7 @@ int64 HandlersManager::FindFrameId(const FrameInspectResult& Inspect)
         if(depth != Inspect.frame_depth)
             continue;
 
-        if(!Frame->GetURL().ToString().empty() && !Inspect.frame_url.empty())
+        if(!Frame->GetURL().ToString().empty() && !Inspect.frame_url.empty() && Inspect.frame_url != "about:blank")
         {
             std::size_t found = Frame->GetURL().ToString().find(Inspect.frame_url);
             if (found!=std::string::npos)

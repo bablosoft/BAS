@@ -20,7 +20,7 @@ namespace BrowserAutomationStudioFramework
     class ENGINESHARED_EXPORT  MongoDatabaseConnector : public IDatabaseConnector
     {
         Q_OBJECT
-
+        IDatabaseConnectionWindow *DatabaseConnectionWindow;
         ICsvHelper * CsvHelper;
         QSet<int> EnsureIndexTables;
         bool _WasError;
@@ -32,6 +32,8 @@ namespace BrowserAutomationStudioFramework
         QProcess *CurrentNetshProcess;
         DBClientConnection _c;
         bool IsBusy;
+        QString ConnectionLog;
+        QString DatabaseId;
 
 
         enum ColumnType{String,Int,Bool,Date};
@@ -40,7 +42,7 @@ namespace BrowserAutomationStudioFramework
         struct Database{QList<Table> Tables;}Schema;
 
         QString Lang;
-        void LoadSchema();
+        void LoadSchema(const QString& SchemaText);
         BSONObj GenerateDatabaseGroupsQuery(DatabaseGroups Groups);
         BSONObj GenerateDatabaseItemsQuery(DatabaseItems Items);
         BSONObj GenerateFilterQuery(DatabaseFilters Filters);
@@ -56,7 +58,7 @@ namespace BrowserAutomationStudioFramework
         virtual QStringList SelectFormatted(DatabaseSelector Selector,QString Format);
 
         virtual QList<DatabaseItem> Select(DatabaseSelector Selector);
-        virtual void Insert(DatabaseGroups Groups,DatabaseItem Item, int TableId);
+        virtual QString Insert(DatabaseGroups Groups,DatabaseItem Item, int TableId);
         virtual int Count(DatabaseSelector Selector);
 
         virtual void Update(DatabaseItem Item, int TableId);
@@ -85,7 +87,10 @@ namespace BrowserAutomationStudioFramework
         virtual QList<DatabaseTable> GetTables();
         virtual QList<DatabaseColumn> GetColumns(int TableId);
         void Init(const QString &Lang);
-        bool Start();
+        bool Start(const QString& SchemaText,const QString& DatabaseId);
+        QString GetDatabaseBaseLocation();
+        QString GetDatabaseLocation();
+
 
 
         virtual void SetCsvHelper(ICsvHelper * CsvHelper);
@@ -101,6 +106,10 @@ namespace BrowserAutomationStudioFramework
         virtual void Backup();
         virtual void Restore(const QString& BackupLabel);
 
+        virtual void SetDatabaseConnectionWindow(IDatabaseConnectionWindow * DatabaseConnectionWindow);
+
+        virtual DatabaseFilters ParseFilter(const QString& JsonFilters);
+
     signals:
 
     private slots:
@@ -113,6 +122,11 @@ namespace BrowserAutomationStudioFramework
         bool TryConnect();
         void MongoServerClosed();
         void TryConnectFinal();
+
+        void StartAnyway();
+        void UserCancel();
+        void DatabaseConnectionOk();
+        void ShowLog();
 
     };
 }

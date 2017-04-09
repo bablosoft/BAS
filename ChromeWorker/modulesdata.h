@@ -40,6 +40,7 @@ struct ModulesDataClass
 {
     std::string Name;
     std::string Description;
+    bool OnlyWithDatabase = false;
     std::vector<std::string> BrowserScripts;
     std::vector<ActionData> Actions;
     std::vector<LocalizeData> Localization;

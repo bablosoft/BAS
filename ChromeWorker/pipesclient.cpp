@@ -3,6 +3,8 @@
 #include <Windows.h>
 #include <locale>
 #include <codecvt>
+#include "snappy.h"
+#include "base64.h"
 
 PipesClient::PipesClient()
 {
@@ -148,8 +150,12 @@ void PipesClient::Join()
 
 void PipesClient::Write(const std::string& Data)
 {
+    std::string Compressed;
+    snappy::Compress(Data.c_str(),Data.length(),&Compressed);
+    Compressed = std::string("<Messages>") + base64_encode((const unsigned char*)Compressed.data(),Compressed.length()) + std::string("</Messages>");
+
     std::lock_guard<std::mutex> lock(MutexOutput);
-    OutputString.append(Data);
+    OutputString.append(Compressed);
 }
 
 std::string PipesClient::Read()

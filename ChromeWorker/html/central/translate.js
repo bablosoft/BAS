@@ -1,5 +1,6 @@
 _L = 
 {
+	"Proxies reconnect" :{"ru": "Восстановление соединения"},
 	"Emulate mouse movements" :{"ru": "Эмулировать движения мыши"},
 	"Settings" :{"ru": "Настройки"},
 	"Top Panel Height (pixels)" :{"ru": "Высота Верхней Панели (пикселей)"},
@@ -14,6 +15,7 @@ _L =
 	"Defaults" :{"ru": "По Умолчанию"},
 	"Disable System Log" :{"ru": "Отключить лог системных сообщений"},
 	"Restart browser process on thread start" :{"ru": "Перезапускать процесс в начале работы потока"},
+	"Disable webrtc and canvas" :{"ru": "Отключить webrtc и canvas"}
 }
 
 
