@@ -15,10 +15,10 @@ This is compiled script user interface:
 ![Compiled script interface](http://bablosoft.com/uploads/screens/UserInterface20En.png)
 
 Visual editor to generate javascript expression:
-![Visual Editor](https://bablosoft.com/uploads/ExpressionEditor20En.png)
+![Visual Editor](https://bablosoft.com/uploads/screens/ExpressionEditor20En.png)
 
 Account manager:
-![Database Manager](https://bablosoft.com/uploads/DatabaseInterface20En.png)
+![Database Manager](https://bablosoft.com/uploads/screens/DatabaseInterface20En.png)
 
 
 
