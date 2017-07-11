@@ -27,6 +27,9 @@
 #include "split.h"
 #include "fontreplace.h"
 #include "extract_labels.h"
+#include "writefile.h"
+#include <fstream>
+
 
 using namespace std::placeholders;
 MainApp * App;
@@ -42,6 +45,7 @@ MainApp::MainApp()
     InspectFrameSearching = false;
     TypeTextLastTime = 0;
     LastMouseTrack = 0;
+    LastHighlight = 0;
     ImageWidth = 0;
     ImageHeight = 0;
     ParentWidth = 0;
@@ -53,7 +57,42 @@ MainApp::MainApp()
     RunElementCommandCallbackOnNextTimer = -1;
     TypeTextDelayCurrent = 0;
     ClearElementCommand();
+    IsInterfaceInitialSent = false;
+    HighlightFrameId = -1;
+    HighlightOffsetX = 0;
+    HighlightOffsetY = 0;
 
+    ReadDoTour();
+
+}
+
+void MainApp::ReadDoTour()
+{
+    std::string filename = "../../not_first_run.txt";
+
+    if(ReadAllString(filename) == "true")
+    {
+        DoTour = false;
+    }else
+    {
+        DoTour = true;
+        WriteStringToFile(filename,"true");
+    }
+}
+
+int MainApp::GetHighlightOffsetX()
+{
+    return HighlightOffsetX;
+}
+
+int MainApp::GetHighlightOffsetY()
+{
+    return HighlightOffsetY;
+}
+
+int MainApp::GetHighlightFrameId()
+{
+    return HighlightFrameId;
 }
 
 void MainApp::SetData(BrowserData *Data)
@@ -127,37 +166,43 @@ void MainApp::Paint(char * data, int width, int height)
 {
     if(NeedRenderNextFrame && SkipBeforeRenderNextFrame <= 1)
     {
-        NeedRenderNextFrame = false;
-        SkipBeforeRenderNextFrame = 0;
-        std::vector<unsigned char> out;
-        std::vector<unsigned char> in;
-        int w = 0;
-        int h = 0;
-        for(int j = 0;j<height;j++)
+        std::string base64;
+
+        if(RenderWidth > 0 && RenderHeight > 0)
         {
-            if(j>RenderY && j<RenderY + RenderHeight)
+            NeedRenderNextFrame = false;
+            SkipBeforeRenderNextFrame = 0;
+            std::vector<unsigned char> out;
+            std::vector<unsigned char> in;
+            int w = 0;
+            int h = 0;
+            for(int j = 0;j<height;j++)
             {
-                h++;
-            }
-            for(int i = 0;i<width;i++)
-            {
-
-                if(i>RenderX && i<RenderX + RenderWidth && j>RenderY && j<RenderY + RenderHeight)
+                if(j>RenderY && j<RenderY + RenderHeight)
                 {
-                    if(h==1)
-                        w++;
-                    in.push_back((unsigned char)data[i*4+j*width*4 + 2]);
-                    in.push_back((unsigned char)data[i*4+j*width*4 + 1]);
-                    in.push_back((unsigned char)data[i*4+j*width*4 + 0]);
-                    in.push_back((unsigned char)data[i*4+j*width*4 + 3]);
+                    h++;
                 }
+                for(int i = 0;i<width;i++)
+                {
+
+                    if(i>RenderX && i<RenderX + RenderWidth && j>RenderY && j<RenderY + RenderHeight)
+                    {
+                        if(h==1)
+                            w++;
+                        in.push_back((unsigned char)data[i*4+j*width*4 + 2]);
+                        in.push_back((unsigned char)data[i*4+j*width*4 + 1]);
+                        in.push_back((unsigned char)data[i*4+j*width*4 + 0]);
+                        in.push_back((unsigned char)data[i*4+j*width*4 + 3]);
+                    }
+                }
+
             }
 
+
+            lodepng::encode(out,(unsigned const char *)(in.data()),w,h);
+            base64 = base64_encode(out.data(),out.size());
         }
 
-
-        lodepng::encode(out,(unsigned const char *)(in.data()),w,h);
-        std::string base64 = base64_encode(out.data(),out.size());
         if(IsElementRender)
         {
             WORKER_LOG(std::string("Render result element <<") + base64);
@@ -171,18 +216,122 @@ void MainApp::Paint(char * data, int width, int height)
             SendTextResponce(std::string("<Render>") + base64 + std::string("</Render>"));
         }
     }
+
+    if(/*Layout->GetIsRenderEmpty() && */Data->IsRecord)
+    {
+        bool is_break = false;
+        int len = width * height * 4;
+        for(int i = 0;i<len;i++)
+        {
+            char c = data[i];
+            if(c != 0)
+            {
+                Layout->SetIsRenderEmpty(false);
+                is_break = true;
+                break;
+            }
+        }
+        if(!is_break)
+        {
+            Layout->SetIsRenderEmpty(true);
+        }
+    }
+    ImageData.assign(data, data + width * height * 4);
+    ImageWidth = width;
+    ImageHeight = height;
+
     if(_HandlersManager->GetHandler()->GetIsVisible() || _HandlersManager->GetHandler()->GetIsPopup())
     {
-        ImageData.assign(data, data + width * height * 4);
-        ImageWidth = width;
-        ImageHeight = height;
+
         InvalidateRect(Data->_MainWindowHandle,NULL,false);
     }
+}
+
+void MainApp::ClearImageDataCallback()
+{
+    _ImageFinder.ClearImage();
+    SendTextResponce("<ClearImageData></ClearImageData>");
+}
+void MainApp::SetImageDataCallback(const std::string& base64)
+{
+    _ImageFinder.SetImage(base64);
+    SendTextResponce("<SetImageData></SetImageData>");
+}
+void MainApp::FindImageCallback()
+{
+    std::string res = _ImageFinder.FindImage(ImageData.data(),ImageWidth,ImageHeight,Data->ScrollX,Data->ScrollY);
+    xml_encode(res);
+
+    SendTextResponce(std::string("<FindImage>") + res + std::string("</FindImage>"));
 }
 
 char* MainApp::GetImageData()
 {
     return ImageData.data();
+}
+
+std::string MainApp::GetSubImageDataBase64(int x1, int y1, int x2, int y2)
+{
+    int RenderX;
+    int RenderY;
+    int RenderWidth;
+    int RenderHeight;
+    int width = ImageWidth;
+    int height = ImageHeight;
+    char * data = ImageData.data();
+
+    if(x1 < x2)
+    {
+        RenderX = x1;
+        RenderWidth = x2 - x1;
+    }else
+    {
+        RenderX = x2;
+        RenderWidth = x1 - x2;
+    }
+
+    if(y1 < y2)
+    {
+        RenderY = y1;
+        RenderHeight = y2 - y1;
+    }else
+    {
+        RenderY = y2;
+        RenderHeight = y1 - y2;
+    }
+
+    std::vector<unsigned char> out;
+    std::vector<unsigned char> in;
+
+    int w = 0;
+    int h = 0;
+
+    for(int j = 0;j<height;j++)
+    {
+        if(j>RenderY && j<RenderY + RenderHeight)
+        {
+            h++;
+        }
+        for(int i = 0;i<width;i++)
+        {
+
+            if(i>RenderX && i<RenderX + RenderWidth && j>RenderY && j<RenderY + RenderHeight)
+            {
+                if(h==1)
+                    w++;
+                in.push_back((unsigned char)data[i*4+j*width*4 + 2]);
+                in.push_back((unsigned char)data[i*4+j*width*4 + 1]);
+                in.push_back((unsigned char)data[i*4+j*width*4 + 0]);
+                in.push_back((unsigned char)data[i*4+j*width*4 + 3]);
+            }
+        }
+
+    }
+
+    lodepng::encode(out,(unsigned const char *)(in.data()),w,h);
+    std::string base64 = base64_encode(out.data(),out.size());
+
+    return base64;
 }
 
 std::pair<int,int> MainApp::GetImageSize()
@@ -231,6 +380,15 @@ void MainApp::LoadCallback(const std::string& page)
 
 }
 
+void MainApp::LoadNoDataCallback()
+{
+    if(BrowserCentral)
+    {
+        std::string page = std::string("file:///html/central/no_data_") + Lang + std::string(".html");
+        BrowserCentral->GetMainFrame()->LoadURL(page);
+    }
+}
+
 void MainApp::IsChangedCallback()
 {
     if(BrowserScenario)
@@ -266,6 +424,8 @@ void MainApp::ResetCallbackFinalize()
     //Clear fonts
     FontReplace::GetInstance().SetFonts("");
     FontReplace::GetInstance().UnHook();
+
+    Settings->Init();
 
     {
         LOCK_BROWSER_DATA
@@ -329,6 +489,7 @@ void MainApp::ResetCallbackFinalize()
     Layout->Update(Data->WidthBrowser,Data->HeightBrowser,Data->WidthAll,Data->HeightAll);
     Data->IsReset = false;
 
+    Layout->SetIsRenderEmpty(true);
     SendTextResponce("<Reset/>");
 }
 
@@ -358,6 +519,14 @@ void MainApp::SetStartupScriptCallback(const std::string& value,const std::strin
 
     }
     SendTextResponce("<SetStartupScript></SetStartupScript>");
+}
+
+void MainApp::SetWorkerSettingsCallback(bool EncodeUtf8, bool RefreshConnections, int SkipFrames)
+{
+    Settings->SetForceUtf8(EncodeUtf8);
+    Settings->SetProxiesReconnect(RefreshConnections);
+    Settings->SetSkipFrames(SkipFrames);
+    SendTextResponce("<SendWorkerSettings></SendWorkerSettings>");
 }
 
 void MainApp::SetFontListCallback(const std::string& fonts)
@@ -516,6 +685,18 @@ void MainApp::UpdateWindowPositionWithParent()
             MoveWindow(Data->_MainWindowHandle,0,0,ParentWidth,ParentHeight,true);
         }
     }
+}
+
+void MainApp::HighlightActionCallback(const std::string& ActionId)
+{
+    WORKER_LOG(std::string("HighlightActionCallback<<") + ActionId);
+
+    if(BrowserScenario)
+        BrowserScenario->GetMainFrame()->ExecuteJavaScript(
+                    std::string("BrowserAutomationStudio_UnfoldParents(") + ActionId + std::string(");") +
+                    std::string("BrowserAutomationStudio_FocusAction(") + ActionId + std::string(");")
+                    ,BrowserScenario->GetMainFrame()->GetURL(), 0);
+
 }
 
 void MainApp::SetWindowCallback(const std::string& Window)
@@ -841,10 +1022,13 @@ void MainApp::AfterReadyToCreateBrowser(bool Reload)
         _HandlersManager->Init2(CefBrowserHost::CreateBrowserSync(window_info, _HandlersManager->GetHandler(), NextLoadPage, browser_settings, Context));
 
         Layout->BrowserHandle = _HandlersManager->GetBrowser()->GetHost()->GetWindowHandle();
-        //ToggleDevTools();
         CreateTooboxBrowser();
         CreateScenarioBrowser();
         CreateCentralBrowser();
+        if(Settings->DebugScenario() || Settings->DebugToolbox())
+        {
+            ToggleDevTools();
+        }
     }else
     {
         WORKER_LOG("!!!OPTIMIZEDRELOAD!!!");
@@ -902,13 +1086,39 @@ void MainApp::Hide()
 
 void MainApp::ToggleDevTools()
 {
-    WORKER_LOG("ToggleDevTools");
-    if(!_HandlersManager->GetBrowser())
-        return;
     if(!Data->IsRecord)
         return;
 
-    dhandler->OpenDevTools();
+    if(Settings->DebugScenario())
+    {
+        WORKER_LOG("ToggleDevTools Scenario");
+        if(!BrowserScenario.get())
+            return;
+
+        CefWindowInfo window_info;
+        window_info.SetAsPopup(0, "");
+        CefBrowserSettings browser_settings;
+        BrowserScenario->GetHost()->ShowDevTools(window_info, dhandler, browser_settings, CefPoint(0,0));
+
+    }else if(Settings->DebugToolbox())
+    {
+        WORKER_LOG("ToggleDevTools Toolbox");
+
+        if(!BrowserToolbox.get())
+            return;
+
+        CefWindowInfo window_info;
+        window_info.SetAsPopup(0, "");
+        CefBrowserSettings browser_settings;
+        BrowserToolbox->GetHost()->ShowDevTools(window_info, dhandler, browser_settings, CefPoint(0,0));
+    }else
+    {
+        WORKER_LOG("ToggleDevTools");
+        if(!_HandlersManager->GetBrowser())
+            return;
+
+        dhandler->OpenDevTools();
+    }
 }
 
 void MainApp::InspectAt(int x, int y)
@@ -1436,6 +1646,7 @@ void MainApp::SetCodeCallback(const std::string & code,const std::string & schem
     if(code.empty())
         Code = " ";
     Variables = extract_variables(code);
+    GlobalVariables = extract_global_variables(code);
     Labels = extract_labels(code);
     Functions = extract_functions(code);
     std::string AdditionalResourcesPrev = AdditionalResources;
@@ -1554,6 +1765,7 @@ void MainApp::ElementCommandInternalCallback(const ElementCommand &Command)
                     || Command.CommandName == "set_integer"
                     || Command.CommandName == "set_random"
                     || Command.CommandName == "random_point"
+                    || Command.CommandName == "clarify"
                     || Command.CommandName == "render_base64"
                     || Command.CommandName == "focus"
                     || Command.CommandName == "render_base64";
@@ -1729,6 +1941,10 @@ void MainApp::ElementCommandInternalCallback(const ElementCommand &Command)
         {
             LastCommand.StageId = 0;
             script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");BrowserAutomationStudio_ScrollToElement(el);}");
+        }else if(Command.CommandName == "clarify")
+        {
+            LastCommand.StageId = 0;
+            script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");BrowserAutomationStudio_ScrollToElement(el);}");
         }else if(Command.CommandName == "attr")
         {
             std::string attr_escaped = picojson::value(LastCommand.CommandParam1).serialize();
@@ -1741,6 +1957,23 @@ void MainApp::ElementCommandInternalCallback(const ElementCommand &Command)
         }else if(Command.CommandName == "length")
         {
             script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;};var res = '';if(el){res = el.length;}browser_automation_studio_result(res);}");
+        }else if(Command.CommandName == "highlight")
+        {
+            ClearHighlight();
+            if(ExecuteFrameChain.empty())
+            {
+                HighlightFrameId = -1;
+                HighlightOffsetX = 0;
+                HighlightOffsetY = 0;
+            }
+            else
+            {
+                HighlightFrameId = ExecuteFrameChain.at(ExecuteFrameChain.size()-1).FrameData.frame_id;
+                HighlightOffsetX = ExecuteSearchCoordinatesX + Data->ScrollX;
+                HighlightOffsetY = ExecuteSearchCoordinatesY + Data->ScrollY;
+            }
+
+            script = std::string("{var p = ") + LastCommand.SerializePath() + std::string(";var el = BrowserAutomationStudio_FindElement(p);if(JSON.parse(p).length == 0 || !el){el = []}else if(typeof(el.length) != 'number'){el = [el];};BrowserAutomationStudio_SetHighlightElements(el);browser_automation_studio_result(el.length);}");
         }else if(Command.CommandName == "render_base64")
         {
             script = std::string("{var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");BrowserAutomationStudio_ScrollToElement(el);}");
@@ -1870,7 +2103,50 @@ void MainApp::Timer()
     }
 
     UpdateWindowPositionWithParent();
+
+    if(Data->IsRecord)
+        UpdateHighlight();
 }
+
+void MainApp::ClearHighlight()
+{
+    if(v8handler.get())
+        v8handler->ClearHighlightLast();
+    {
+        LOCK_BROWSER_DATA
+        Data->_Highlight.highlights.clear();
+    }
+
+    RECT r = Layout->GetBrowserOuterRectangle(GetData()->WidthBrowser,GetData()->HeightBrowser,GetData()->WidthAll,GetData()->HeightAll);
+    InvalidateRect(Data->_MainWindowHandle,&r,false);
+}
+
+void MainApp::UpdateHighlight()
+{
+
+    clock_t CurrentTime = clock();
+    float time_spent = float( CurrentTime - LastHighlight ) /  CLOCKS_PER_SEC;
+
+    if(time_spent < 0.2)
+        return;
+
+    LastHighlight = CurrentTime;
+
+    if(_HandlersManager->GetBrowser())
+    {
+        if(HighlightFrameId<0)
+        {
+            _HandlersManager->GetBrowser()->GetMainFrame()->ExecuteJavaScript(std::string("BrowserAutomationStudio_Highlight();"),_HandlersManager->GetBrowser()->GetMainFrame()->GetURL(), 0);
+        }else
+        {
+
+            CefRefPtr<CefFrame> Frame = _HandlersManager->GetBrowser()->GetFrame(HighlightFrameId);
+            if(Frame.get())
+                Frame->ExecuteJavaScript(std::string("BrowserAutomationStudio_Highlight();"),Frame->GetURL(), 0);
+        }
+    }
+}
+
 
 void MainApp::HandleCentralBrowserEvents()
 {
@@ -1929,6 +2205,7 @@ void MainApp::HandleScenarioBrowserEvents()
         std::string new_code = res.first.LastResultCodeDiff;
         WORKER_LOG(std::string("HandleScenarioBrowserEvents<<") + new_code);
         Variables = res.first.LastResultVariables;
+        GlobalVariables = res.first.LastResultGlobalVariables;
         Labels = res.first.LastResultLabels;
         Functions = res.first.LastResultFunctions;
         std::string AdditionalResourcesPrev = AdditionalResources;
@@ -2001,6 +2278,9 @@ void MainApp::HandleScenarioBrowserEvents()
     if(scenariov8handler->GetIsRunFunctionStart() && BrowserToolbox)
         BrowserToolbox->GetMainFrame()->ExecuteJavaScript("BrowserAutomationStudio_RunFunction()",BrowserToolbox->GetMainFrame()->GetURL(), 0);
 
+    if(scenariov8handler->GetIsRunFunctionSeveralThreadsStart() && BrowserToolbox)
+        BrowserToolbox->GetMainFrame()->ExecuteJavaScript("BrowserAutomationStudio_RunFunctionSeveralThreads()",BrowserToolbox->GetMainFrame()->GetURL(), 0);
+
     ScenarioV8Handler::RestartType res3 = scenariov8handler->GetNeedRestart();
 
     if(res3 == ScenarioV8Handler::Restart)
@@ -2012,13 +2292,51 @@ void MainApp::HandleScenarioBrowserEvents()
 
 void MainApp::HandleToolboxBrowserEvents()
 {
+    if(toolboxv8handler->GetClearHighlight())
+    {
+        LOCK_BROWSER_DATA
+        Data->_Highlight.highlights.clear();
+    }
+
+
+    std::pair<std::string,bool> InterfaceJson = toolboxv8handler->GetInterfaceState();
+    if(InterfaceJson.second)
+    {
+        try
+        {
+            std::ofstream outfile("interface.json");
+            if(outfile.is_open())
+            {
+                outfile<<InterfaceJson.first<<std::endl;
+                }
+        }catch(...)
+        {
+        }
+    }
+
+
     std::pair<ToolboxV8Handler::ResultClass,bool> res = toolboxv8handler->GetResult();
 
     if(res.second)
     {
         if(BrowserScenario)
         {
-            int id = std::rand();
+            std::string id;
+            if(!res.first.Id.empty())
+            {
+                id = res.first.Id;
+            }else
+            {
+                id += std::to_string( std::rand()%9 + 1);
+                for(int i = 0;i<8;i++)
+                {
+                    id += std::to_string( std::rand()%10 );
+                }
+            }
+
+
+
+
             std::string scriptscenario;
             if(Layout->State == MainLayout::Ready)
             {
@@ -2028,7 +2346,7 @@ void MainApp::HandleToolboxBrowserEvents()
                     std::string CodeSend;
                     if(res.first.HowToExecute != ToolboxV8Handler::OnlyAdd)
                     {
-                        CodeSend += res.first.Code;
+                        CodeSend += std::string("_sa(") + id + std::string(");") + res.first.Code;
                     }
                     CodeSend += std::string(" \n section_end()!");
                     if(BrowserToolbox)
@@ -2052,16 +2370,16 @@ void MainApp::HandleToolboxBrowserEvents()
             {
                 std::string script = "BrowserAutomationStudio_AddTask(";
                 std::string Name;
-                if(res.first.HowToExecute == ToolboxV8Handler::OnlyAdd && res.first.DisableIfAdd)
+                /*if(res.first.HowToExecute == ToolboxV8Handler::OnlyAdd && res.first.DisableIfAdd)
                 {
                     Name += "_";
-                }
+                }*/
                 Name += res.first.Name;
                 script.append(picojson::value(Name).serialize());
                 script.append(",");
                 script.append(picojson::value(res.first.Code).serialize());
                 script.append(",");
-                script.append(std::to_string(id));
+                script.append(id);
                 script.append(");");
                 WORKER_LOG(std::string("ScenarioExecuteCode<<") + script);
                 scriptscenario += script;
@@ -2069,6 +2387,20 @@ void MainApp::HandleToolboxBrowserEvents()
 
             if(!scriptscenario.empty())
                 BrowserScenario->GetMainFrame()->ExecuteJavaScript(scriptscenario,BrowserScenario->GetMainFrame()->GetURL(), 0);
+        }
+    }
+
+    {
+        std::pair<std::string, bool> res2 = toolboxv8handler->GetExecuteCode();
+        if(res2.second)
+        {
+            //Layout->UpdateState(MainLayout::Hold);
+            /*if(BrowserToolbox)
+                BrowserToolbox->GetMainFrame()->ExecuteJavaScript(std::string("BrowserAutomationStudio_ShowWaiting(") + picojson::value(res2.first).serialize() + std::string(")"),BrowserToolbox->GetMainFrame()->GetURL(), 0);*/
+            std::string CodeSend = res2.first;
+            WORKER_LOG(std::string("GetExecuteCode<<") + CodeSend);
+            xml_encode(CodeSend);
+            SendTextResponce(std::string("<WaitCode>") + CodeSend + std::string("</WaitCode>"));
         }
     }
 
@@ -2098,6 +2430,21 @@ void MainApp::HandleToolboxBrowserEvents()
         std::string script = std::string("BrowserAutomationStudio_SetVariables(") + picojson::value(Variables.data()).serialize() + std::string(")");
         BrowserToolbox->GetMainFrame()->ExecuteJavaScript(script,BrowserToolbox->GetMainFrame()->GetURL(), 0);
         Variables.clear();
+    }
+
+    if(toolboxv8handler->GetIsInitialized() && !GlobalVariables.empty())
+    {
+        std::string script = std::string("BrowserAutomationStudio_SetGlobalVariables(") + picojson::value(GlobalVariables.data()).serialize() + std::string(")");
+        BrowserToolbox->GetMainFrame()->ExecuteJavaScript(script,BrowserToolbox->GetMainFrame()->GetURL(), 0);
+        GlobalVariables.clear();
+    }
+
+    if(!IsInterfaceInitialSent && toolboxv8handler->GetIsInitialized())
+    {
+        std::string InterfaceInitial = ReadAllString("interface.json");
+        std::string script = std::string("BrowserAutomationStudio_LoadInterfaceState(") + picojson::value(InterfaceInitial).serialize() + std::string(")");
+        BrowserToolbox->GetMainFrame()->ExecuteJavaScript(script,BrowserToolbox->GetMainFrame()->GetURL(), 0);
+        IsInterfaceInitialSent = true;
     }
 
     if(toolboxv8handler->GetIsInitialized() && !Schema.empty())
@@ -2180,61 +2527,95 @@ void MainApp::HandleFrameFindEvents()
     if(RunElementCommandCallbackOnNextTimer != -1)
         return;
 
-    std::pair<InspectResult,bool> res = v8handler->GetFrameFindResult();
     bool success = true;
 
-    if(res.second && !res.first.active && !IsLastCommandNull && ExecuteFrameSearching && LastCommand.CommandName == std::string("exist"))
+    if(v8handler->GetFrameFindResultReady())
     {
-        IsLastCommandNull = true;
-        v8handler->SetResultProcessed();
-        std::string data = "0";
-        FinishedLastCommand(data);
-        return;
-    }
 
-    if(res.second && !res.first.active && !IsLastCommandNull && ExecuteFrameSearching && LastCommand.CommandName == std::string("script"))
-    {
-        IsLastCommandNull = true;
-        v8handler->SetResultProcessed();
-        std::string data = "";
-        FinishedLastCommand(data);
-        return;
-    }
+        std::pair<InspectResult,bool> res = v8handler->GetFrameFindResult();
 
-    if(res.second && !IsLastCommandNull && ExecuteFrameSearching)
-    {
-        success = false;
-        if(res.first.active)
+        if(res.second && !res.first.active && !IsLastCommandNull && ExecuteFrameSearching && LastCommand.CommandName == std::string("exist"))
         {
-            if(_HandlersManager->GetBrowser())
+            IsLastCommandNull = true;
+            v8handler->SetResultProcessed();
+            std::string data = "0";
+            FinishedLastCommand(data);
+            return;
+        }
+
+        if(res.second && !res.first.active && !IsLastCommandNull && ExecuteFrameSearching && LastCommand.CommandName == std::string("highlight"))
+        {
+            ClearHighlight();
+
+            HighlightFrameId = -1;
+            HighlightOffsetX = 0;
+            HighlightOffsetY = 0;
+
+            _HandlersManager->GetBrowser()->GetMainFrame()->ExecuteJavaScript("BrowserAutomationStudio_SetHighlightElements([])",_HandlersManager->GetBrowser()->GetMainFrame()->GetURL(),0);
+
+            if(BrowserToolbox)
+                BrowserToolbox->GetMainFrame()->ExecuteJavaScript(std::string("BrowserAutomationStudio_SetPathCount(0)"),BrowserToolbox->GetMainFrame()->GetURL(), 0);
+
+            IsLastCommandNull = true;
+            v8handler->SetResultProcessed();
+            std::string data = "";
+            FinishedLastCommand(data);
+            return;
+        }
+
+        if(res.second && !res.first.active && !IsLastCommandNull && ExecuteFrameSearching && LastCommand.CommandName == std::string("script"))
+        {
+            IsLastCommandNull = true;
+            v8handler->SetResultProcessed();
+            std::string data = "";
+            FinishedLastCommand(data);
+            return;
+        }
+
+        if(res.second && !res.first.active && !IsLastCommandNull && ExecuteFrameSearching && LastCommand.IsNoWait)
+        {
+            IsLastCommandNull = true;
+            v8handler->SetResultProcessed();
+            std::string data = "";
+            FinishedLastCommand(data);
+            return;
+        }
+
+        if(res.second && !IsLastCommandNull && ExecuteFrameSearching)
+        {
+            success = false;
+            if(res.first.active)
             {
-                //WORKER_LOG(std::to_string(res.first.FrameData.is_frame));
-                //WORKER_LOG(std::string(res.first.FrameData.frame_url));
-                //WORKER_LOG(std::string(res.first.FrameData.frame_name));
-                //WORKER_LOG(std::to_string(res.first.FrameData.frame_index));
-
-                res.first.FrameData.frame_depth = ExecuteFrameChain.size() + 1;
-                res.first.FrameData.parent_frame_id = -1;
-                if(!ExecuteFrameChain.empty())
-                    res.first.FrameData.parent_frame_id = ExecuteFrameChain.at(ExecuteFrameChain.size() - 1).FrameData.frame_id;
-
-                int64 id = _HandlersManager->FindFrameId(res.first.FrameData);
-                res.first.FrameData.frame_id = id;
-
-                //WORKER_LOG(std::string("IDDDDDDDDDDDDDDDDDD") + std::to_string(id));
-
-                if(id >= 0)
+                if(_HandlersManager->GetBrowser())
                 {
-                    ExecuteSearchCoordinatesX+=res.first.FrameData.x_with_padding;
-                    ExecuteSearchCoordinatesY+=res.first.FrameData.y_with_padding;
-                    //WORKER_LOG(std::string("ExecuteSearchCoordinatesX ") + std::to_string(ExecuteSearchCoordinatesX));
+                    //WORKER_LOG(std::to_string(res.first.FrameData.is_frame));
+                    //WORKER_LOG(std::string(res.first.FrameData.frame_url));
+                    //WORKER_LOG(std::string(res.first.FrameData.frame_name));
+                    //WORKER_LOG(std::to_string(res.first.FrameData.frame_index));
+
+                    res.first.FrameData.frame_depth = ExecuteFrameChain.size() + 1;
+                    res.first.FrameData.parent_frame_id = -1;
+                    if(!ExecuteFrameChain.empty())
+                        res.first.FrameData.parent_frame_id = ExecuteFrameChain.at(ExecuteFrameChain.size() - 1).FrameData.frame_id;
+
+                    int64 id = _HandlersManager->FindFrameId(res.first.FrameData);
+                    res.first.FrameData.frame_id = id;
+
+                    //WORKER_LOG(std::string("IDDDDDDDDDDDDDDDDDD") + std::to_string(id));
+
+                    if(id >= 0)
+                    {
+                        ExecuteSearchCoordinatesX+=res.first.FrameData.x_with_padding;
+                        ExecuteSearchCoordinatesY+=res.first.FrameData.y_with_padding;
+                        //WORKER_LOG(std::string("ExecuteSearchCoordinatesX ") + std::to_string(ExecuteSearchCoordinatesX));
 
 
-                    ExecuteFrameChain.push_back(res.first);
-                    LastCommand.Path.erase(LastCommand.Path.begin(),LastCommand.Path.begin() + ExecuteFrameSearchingLength + 1);
-                    ElementCommandInternalCallback(LastCommand);
-                    success = true;
+                        ExecuteFrameChain.push_back(res.first);
+                        LastCommand.Path.erase(LastCommand.Path.begin(),LastCommand.Path.begin() + ExecuteFrameSearchingLength + 1);
+                        ElementCommandInternalCallback(LastCommand);
+                        success = true;
 
+                    }
                 }
             }
         }
@@ -2247,431 +2628,281 @@ void MainApp::HandleFrameFindEvents()
 
 void MainApp::HandleMainBrowserEvents()
 {
-    /*{
-        std::pair<std::vector<LocalStorageDataItem>,bool> res = v8handler->GetLocalStorage();
-        if(res.second)
-        {
-            LOCK_LOCAL_STORAGE
-            for(LocalStorageDataItem Item:res.first)
-                Data->_LocalStorageData.Set(Item);
-        }
-        if(res.second)
-        {
-            for(LocalStorageDataItem Item:res.first)
-                _HandlersManager->UpdateLocalStorageItem(Item);
-        }
-    }*/
-
-    std::pair<std::string,bool> res = v8handler->GetResult();
-    if(res.second && IsLastCommandNull)
+    if(v8handler->GetResultReady())
     {
-        v8handler->SetResultProcessed();
-        WORKER_LOG(std::string("CommandNull<<") + LastCommand.CommandName + std::string("<<") + std::to_string(LastCommand.StageId));
-    }
-
-    if(res.second && !IsLastCommandNull)
-    {
-        IsLastCommandNull = true;
-
-        WORKER_LOG(std::string("Command<<") + LastCommand.CommandName + std::string("<<") + std::to_string(LastCommand.StageId) + std::string("<<") + res.first);
-
-        if(res.first == "BAS_NOT_EXISTS")
+        std::pair<std::string,bool> res = v8handler->GetResult();
+        if(res.second && IsLastCommandNull)
         {
-            RunElementCommandCallbackOnNextTimer = 100;
-        }else if(ExecuteFrameScrollingSwitch)
-        {
-            UpdateScrolls(res.first);
-
-            WORKER_LOG("Frame Scrolling Done");
             v8handler->SetResultProcessed();
-            ElementCommandInternalCallback(LastCommand);
-            //RunElementCommandCallbackOnNextTimer = 100;
+            WORKER_LOG(std::string("CommandNull<<") + LastCommand.CommandName + std::string("<<") + std::to_string(LastCommand.StageId));
+        }
 
-        }else  if(LastCommand.CommandName == std::string("_mouseclick") || LastCommand.CommandName == std::string("_mouseclickup") || LastCommand.CommandName == std::string("_mouseclickdown"))
+        if(res.second && !IsLastCommandNull)
         {
+            IsLastCommandNull = true;
 
+            WORKER_LOG(std::string("Command<<") + LastCommand.CommandName + std::string("<<") + std::to_string(LastCommand.StageId) + std::string("<<") + res.first);
 
-            UpdateScrolls(res.first);
-            std::size_t pos = res.first.find(",");
-            int x = -1, y = -1;
-            if(pos != std::string::npos)
+            if(res.first == "BAS_NOT_EXISTS" && !LastCommand.IsNoWait)
             {
-                std::string x_string = res.first.substr(0,pos);
-                std::string y_string = res.first.substr(pos + 1,res.first.length() - pos - 1);
-                x = std::stoi(x_string);
-                y = std::stoi(y_string);
-            }
-
-            if(!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser))
-            {
-                IsLastCommandNull = false;
-            }else
-            {
-                int type = 0;
-                std::string resp;
-                if(LastCommand.CommandName == std::string("_mouseclickup"))
-                {
-                    type = 1;
-                    resp = "<MouseClickUp></MouseClickUp>";
-                }else if(LastCommand.CommandName == std::string("_mouseclickdown"))
-                {
-                    type = 2;
-                    resp = "<MouseClickDown></MouseClickDown>";
-                }else
-                {
-                    type = 0;
-                    resp = "<MouseClick></MouseClick>";
-                }
-
-                v8handler->SetResultProcessed();
-                BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
-                BrowserEventsEmulator::MouseClick(_HandlersManager->GetBrowser(),x,y,GetScrollPosition(),type,Data->IsMousePress,Data->IsDrag);
-                SendTextResponce(resp);
-                WORKER_LOG(std::string("EVENTFLAG_LEFT_MOUSE_BUTTON>>"));
-            }
-        }else if(LastCommand.CommandName == std::string("_mousemove"))
-        {
-            UpdateScrolls(res.first);
-
-            std::size_t pos = res.first.find(",");
-            int x = -1, y = -1;
-            if(pos != std::string::npos)
-            {
-                std::string x_string = res.first.substr(0,pos);
-                std::string y_string = res.first.substr(pos + 1,res.first.length() - pos - 1);
-                x = std::stoi(x_string);
-                y = std::stoi(y_string);
-            }
-            MouseEndX = x - Data->ScrollX;
-            MouseEndY = y - Data->ScrollY;
-            if(!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser))
-            {
-                IsLastCommandNull = false;
-            }else
+                RunElementCommandCallbackOnNextTimer = 100;
+            }else if(res.first == "BAS_NOT_EXISTS" && LastCommand.IsNoWait)
             {
                 v8handler->SetResultProcessed();
-                BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
-                IsMouseMoveSimulation = true;
-                if(Settings->EmulateMouse())
-                {
-                    int t1,t2;
-                    BrowserEventsEmulator::MouseMove(_HandlersManager->GetBrowser(), IsMouseMoveSimulation, MouseStartX, MouseStartY, MouseEndX, MouseEndY, t1, t2, 0, 0, 0, 0, 0, 0, true, true,Data->IsMousePress,Data->IsDrag);
-                }
-            }
-        }else if(LastCommand.CommandName == std::string("_scroll"))
-        {
-            UpdateScrolls(res.first);
-
-            /*std::size_t pos = res.first.find(",");
-            int x = -1, y = -1;
-            if(pos != std::string::npos)
-            {
-                std::string x_string = res.first.substr(0,pos);
-                std::string y_string = res.first.substr(pos + 1,res.first.length() - pos - 1);
-                x = std::stoi(x_string);
-                y = std::stoi(y_string);
-            }
-
-            if(!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser))
-            {
-                IsLastCommandNull = false;
-            }else
-            {
-                v8handler->SetResultProcessed();
-                SendTextResponce("<Scroll></Scroll>");
-            }*/
-
-            v8handler->SetResultProcessed();
-            SendTextResponce("<Scroll></Scroll>");
-
-
-        }else if(LastCommand.CommandName == std::string("_render"))
-        {
-            UpdateScrolls(res.first);
-
-            std::size_t pos = res.first.find(",");
-            int x = -1, y = -1;
-            if(pos != std::string::npos)
-            {
-                std::string x_string = res.first.substr(0,pos);
-                std::string y_string = res.first.substr(pos + 1,res.first.length() - pos - 1);
-                x = std::stoi(x_string);
-                y = std::stoi(y_string);
-            }
-            x += ExecuteSearchCoordinatesX + Data->ScrollX;
-            y += ExecuteSearchCoordinatesY + Data->ScrollY;
-
-            //if(!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser))
-            if(false)
-            {
-                IsLastCommandNull = false;
-            }else
-            {
-                WORKER_LOG(std::string("Start Rendering screen>>"));
-
-                v8handler->SetResultProcessed();
-                RenderX = RenderX - Data->ScrollX;
-                RenderY = RenderY - Data->ScrollY;
-                IsElementRender = false;
-                NeedRenderNextFrame = true;
-                SkipBeforeRenderNextFrame = 10;
-                if(_HandlersManager->GetBrowser())
-                    _HandlersManager->GetBrowser()->GetHost()->Invalidate(PET_VIEW);
-            }
-
-
-        }else if(LastCommand.CommandName == std::string("random_point") && LastCommand.StageId == 0)
-        {
-            UpdateScrolls(res.first);
-
-            v8handler->SetResultProcessed();
-            LastCommand.StageId = 1;
-            //WORKER_LOG("ExecuteSearchCoordinatesY");
-            //WORKER_LOG(std::to_string(ExecuteSearchCoordinatesY));
-            //WORKER_LOG(std::to_string(Data->ScrollY));
-
-            std::string get_point;
-            if(Settings->EmulateMouse())
-            {
-                get_point = std::string("var x=0;for(var i=0;i<10;i++){x+=Math.random()*((rect.right-2-rect.left+1)/10);};x=Math.floor(x)+rect.left+1;if(x>rect.right-1)x=rect.right-1;if(x<rect.left+1)x=rect.left+1;"
-                                        "var y=0;for(var i=0;i<10;i++){y+=Math.random()*((rect.bottom-2-rect.top+1)/10);};y=Math.floor(y)+rect.top+1;if(y>rect.bottom-1)y=rect.bottom-1;if(y<rect.top+1)y=rect.top+1;");
-            }else
-            {
-                get_point = std::string("var x=Math.floor((rect.right + rect.left)/2);"
-                                        "var y=Math.floor((rect.bottom + rect.top)/2);");
-            }
-            std::string script = std::string("{"
-                                 "var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");"
-                                 "if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;}"
-                                 "var items=el.getClientRects();if(items.length == 0){browser_automation_studio_result('BAS_NOT_EXISTS');return;};"
-                                 "var rect=items[Math.floor(Math.random()*items.length)];")
-                                 + get_point +
-                                 std::string("x+=") + std::to_string(ExecuteSearchCoordinatesX + Data->ScrollX) + std::string(";"
-                                 "y+=") + std::to_string(ExecuteSearchCoordinatesY + Data->ScrollY) + std::string(";"
-                                 "var res=x+','+y;"
-                                 "browser_automation_studio_result(res);}");
-            script = std::string("(function(){") + script + std::string("})()");
-
-
-
-            //WORKER_LOG(std::string("EXEC11<<") + script);
-            CefRefPtr<CefFrame> Frame;
-            if(ExecuteFrameChain.empty())
-                Frame = _HandlersManager->GetBrowser()->GetMainFrame();
-            else
-                Frame = _HandlersManager->GetBrowser()->GetFrame(ExecuteFrameChain.at(ExecuteFrameChain.size()-1).FrameData.frame_id);
-
-            Frame->ExecuteJavaScript(script,Frame->GetURL(),1);
-
-            IsLastCommandNull = false;
-
-
-        }/*else if(LastCommand.CommandName == std::string("random_point") && LastCommand.StageId == 1)
-        {
-            std::size_t pos = res.first.find(",");
-            int x = -1, y = -1;
-            if(pos != std::string::npos)
-            {
-                std::string x_string = res.first.substr(0,pos);
-                std::string y_string = res.first.substr(pos + 1,res.first.length() - pos - 1);
-                x = std::stoi(x_string);
-                y = std::stoi(y_string);
-            }
-            WORKER_LOG(std::string("Check<<") + std::to_string(x));
-            if(!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser))
-            {
-                IsLastCommandNull = false;
-            }else
-            {
-                v8handler->SetResultProcessed();
-                std::string data = res.first;
+                std::string data;
                 xml_encode(data);
                 FinishedLastCommand(data);
                 WORKER_LOG(std::string("ElementCommandCallback>>"));
-            }
-        }*/else if(LastCommand.CommandName == std::string("system_click") || LastCommand.CommandName == std::string("check") || LastCommand.CommandName == std::string("system_click_up") || LastCommand.CommandName == std::string("system_click_down"))
-        {
-            UpdateScrolls(res.first);
+            } else if(ExecuteFrameScrollingSwitch)
+            {
+                UpdateScrolls(res.first);
 
-            std::size_t pos = res.first.find(",");
-            int x = -1, y = -1;
-            if(pos != std::string::npos)
-            {
-                std::string x_string = res.first.substr(0,pos);
-                std::string y_string = res.first.substr(pos + 1,res.first.length() - pos - 1);
-                x = std::stoi(x_string);
-                y = std::stoi(y_string);
-            }
-            x += ExecuteSearchCoordinatesX + Data->ScrollX;
-            y += ExecuteSearchCoordinatesY + Data->ScrollY;
-
-            if(!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser))
-            {
-                IsLastCommandNull = false;
-            }else
-            {
+                WORKER_LOG("Frame Scrolling Done");
                 v8handler->SetResultProcessed();
-                WORKER_LOG(std::string("system_click>>") + std::to_string(x) + std::string(">>") + std::to_string(y));
+                ElementCommandInternalCallback(LastCommand);
+                //RunElementCommandCallbackOnNextTimer = 100;
 
-                int type = 0;
-                if(LastCommand.CommandName == std::string("system_click_up"))
+            }else  if(LastCommand.CommandName == std::string("_mouseclick") || LastCommand.CommandName == std::string("_mouseclickup") || LastCommand.CommandName == std::string("_mouseclickdown"))
+            {
+
+
+                UpdateScrolls(res.first);
+                std::size_t pos = res.first.find(",");
+                int x = -1, y = -1;
+                if(pos != std::string::npos)
                 {
-                    type = 1;
-                }else if(LastCommand.CommandName == std::string("system_click_down"))
-                {
-                    type = 2;
+                    std::string x_string = res.first.substr(0,pos);
+                    std::string y_string = res.first.substr(pos + 1,res.first.length() - pos - 1);
+                    x = std::stoi(x_string);
+                    y = std::stoi(y_string);
                 }
 
-                BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
-                BrowserEventsEmulator::MouseClick(_HandlersManager->GetBrowser(),x,y,GetScrollPosition(),type,Data->IsMousePress,Data->IsDrag);
-                FinishedLastCommand("");
-            }
-        }else if(LastCommand.CommandName == std::string("render_base64"))
-        {
-            UpdateScrolls(res.first);
+                if(!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser))
+                {
+                    IsLastCommandNull = false;
+                }else
+                {
+                    int type = 0;
+                    std::string resp;
+                    if(LastCommand.CommandName == std::string("_mouseclickup"))
+                    {
+                        type = 1;
+                        resp = "<MouseClickUp></MouseClickUp>";
+                    }else if(LastCommand.CommandName == std::string("_mouseclickdown"))
+                    {
+                        type = 2;
+                        resp = "<MouseClickDown></MouseClickDown>";
+                    }else
+                    {
+                        type = 0;
+                        resp = "<MouseClick></MouseClick>";
+                    }
 
-            int left = -1, top = -1, right = -1, bottom = -1, centerx = -1, centery = -1;
-            WORKER_LOG(std::string("render_base64<<") + res.first);
-
-            std::string str = res.first;
-
-            std::size_t pos = str.find(",");
-            if(pos != std::string::npos)
+                    v8handler->SetResultProcessed();
+                    BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
+                    BrowserEventsEmulator::MouseClick(_HandlersManager->GetBrowser(),x,y,GetScrollPosition(),type,Data->IsMousePress,Data->IsDrag);
+                    SendTextResponce(resp);
+                    WORKER_LOG(std::string("EVENTFLAG_LEFT_MOUSE_BUTTON>>"));
+                }
+            }else if(LastCommand.CommandName == std::string("_mousemove"))
             {
-                std::string part = str.substr(0,pos);
-                str = str.substr(pos + 1,str.length() - pos - 1);
-                centerx = std::stoi(part);
-            }
+                UpdateScrolls(res.first);
 
-            pos = str.find(",");
-            if(pos != std::string::npos)
-            {
-                std::string part = str.substr(0,pos);
-                str = str.substr(pos + 1,str.length() - pos - 1);
-                centery = std::stoi(part);
-            }
-
-            pos = str.find(",");
-            if(pos != std::string::npos)
-            {
-                std::string part = str.substr(0,pos);
-                str = str.substr(pos + 1,str.length() - pos - 1);
-                left = std::stoi(part);
-            }
-
-            pos = str.find(",");
-            if(pos != std::string::npos)
-            {
-                std::string part = str.substr(0,pos);
-                str = str.substr(pos + 1,str.length() - pos - 1);
-                top = std::stoi(part);
-            }
-
-            pos = str.find(",");
-            if(pos != std::string::npos)
-            {
-                std::string part = str.substr(0,pos);
-                str = str.substr(pos + 1,str.length() - pos - 1);
-                right = std::stoi(part);
-            }
-
-            bottom = std::stoi(str);
-
-            left += ExecuteSearchCoordinatesX;
-            top += ExecuteSearchCoordinatesY;
-            right += ExecuteSearchCoordinatesX;
-            bottom += ExecuteSearchCoordinatesY;
-
-            /*if(!BrowserEventsEmulator::IsPointOnScreen(left + Data->ScrollX,top + Data->ScrollY,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser)
-                || !BrowserEventsEmulator::IsPointOnScreen(right + Data->ScrollX,bottom + Data->ScrollY,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser)*/
-            if(false)
-            {
-                IsLastCommandNull = false;
-            }else
-            {
-                WORKER_LOG("NeedRenderNextFrame");
-                v8handler->SetResultProcessed();
-                RenderX = left;
-                RenderY = top;
-                RenderWidth = right - left;
-                RenderHeight = bottom - top;
-                IsElementRender = true;
-                NeedRenderNextFrame = true;
-                SkipBeforeRenderNextFrame = 10;
-                if(_HandlersManager->GetBrowser())
-                    _HandlersManager->GetBrowser()->GetHost()->Invalidate(PET_VIEW);
-            }
-        }else if(LastCommand.CommandName == std::string("focus"))
-        {
-            UpdateScrolls(res.first);
-
-            WORKER_LOG(std::string("focus1111<<") + res.first);
-            v8handler->SetResultProcessed();
-            std::string data = res.first;
-            xml_encode(data);
-            FinishedLastCommand(data);
-
-        }else if(LastCommand.CommandName == std::string("move"))
-        {
-            UpdateScrolls(res.first);
-            //WORKER_LOG(res.first);
-
-            std::size_t pos = res.first.find(",");
-            int x = -1, y = -1;
-            if(pos != std::string::npos)
-            {
-                std::string x_string = res.first.substr(0,pos);
-                std::string y_string = res.first.substr(pos + 1,res.first.length() - pos - 1);
-                x = std::stoi(x_string);
-                y = std::stoi(y_string);
-            }
-            x += ExecuteSearchCoordinatesX + Data->ScrollX;
-            y += ExecuteSearchCoordinatesY + Data->ScrollY;
-
-            if(!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser))
-            {
-                //WORKER_LOG("Failed to move");
-                IsLastCommandNull = false;
-            }else
-            {
-                v8handler->SetResultProcessed();
-                WORKER_LOG(std::string("move>>") + std::to_string(x) + std::string(">>") + std::to_string(y));
-                BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
-                LastCommand.CommandName = "move";
-                LastCommand.CommandParam1 = std::to_string(x);
-                LastCommand.CommandParam2 = std::to_string(y);
-                MouseStartX = Data->CursorX;
-                MouseStartY = Data->CursorY;
+                std::size_t pos = res.first.find(",");
+                int x = -1, y = -1;
+                if(pos != std::string::npos)
+                {
+                    std::string x_string = res.first.substr(0,pos);
+                    std::string y_string = res.first.substr(pos + 1,res.first.length() - pos - 1);
+                    x = std::stoi(x_string);
+                    y = std::stoi(y_string);
+                }
                 MouseEndX = x - Data->ScrollX;
                 MouseEndY = y - Data->ScrollY;
-                IsMouseMoveSimulation = true;
+                if(!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser))
+                {
+                    IsLastCommandNull = false;
+                }else
+                {
+                    v8handler->SetResultProcessed();
+                    BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
+                    IsMouseMoveSimulation = true;
+                    if(Settings->EmulateMouse())
+                    {
+                        int t1,t2;
+                        BrowserEventsEmulator::MouseMove(_HandlersManager->GetBrowser(), IsMouseMoveSimulation, MouseStartX, MouseStartY, MouseEndX, MouseEndY, t1, t2, 0, 0, 0, 0, 0, 0, true, true,Data->IsMousePress,Data->IsDrag);
+                    }
+                }
+            }else if(LastCommand.CommandName == std::string("_scroll"))
+            {
+                UpdateScrolls(res.first);
 
-                MouseSpeed = 15.0;
-                MouseGravity = 6.0;
-                MouseDeviation = 2.5;
+                /*std::size_t pos = res.first.find(",");
+                int x = -1, y = -1;
+                if(pos != std::string::npos)
+                {
+                    std::string x_string = res.first.substr(0,pos);
+                    std::string y_string = res.first.substr(pos + 1,res.first.length() - pos - 1);
+                    x = std::stoi(x_string);
+                    y = std::stoi(y_string);
+                }
 
+                if(!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser))
+                {
+                    IsLastCommandNull = false;
+                }else
+                {
+                    v8handler->SetResultProcessed();
+                    SendTextResponce("<Scroll></Scroll>");
+                }*/
+
+                v8handler->SetResultProcessed();
+                SendTextResponce("<Scroll></Scroll>");
+
+
+            }else if(LastCommand.CommandName == std::string("_render"))
+            {
+                UpdateScrolls(res.first);
+
+                std::size_t pos = res.first.find(",");
+                int x = -1, y = -1;
+                if(pos != std::string::npos)
+                {
+                    std::string x_string = res.first.substr(0,pos);
+                    std::string y_string = res.first.substr(pos + 1,res.first.length() - pos - 1);
+                    x = std::stoi(x_string);
+                    y = std::stoi(y_string);
+                }
+                x += ExecuteSearchCoordinatesX + Data->ScrollX;
+                y += ExecuteSearchCoordinatesY + Data->ScrollY;
+
+                //if(!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser))
+                if(false)
+                {
+                    IsLastCommandNull = false;
+                }else
+                {
+                    WORKER_LOG(std::string("Start Rendering screen>>"));
+
+                    v8handler->SetResultProcessed();
+                    RenderX = RenderX - Data->ScrollX;
+                    RenderY = RenderY - Data->ScrollY;
+                    IsElementRender = false;
+                    NeedRenderNextFrame = true;
+                    SkipBeforeRenderNextFrame = 10;
+                    if(_HandlersManager->GetBrowser())
+                        _HandlersManager->GetBrowser()->GetHost()->Invalidate(PET_VIEW);
+                }
+
+
+            }else if(LastCommand.CommandName == std::string("random_point") && LastCommand.StageId == 0)
+            {
+                UpdateScrolls(res.first);
+
+                v8handler->SetResultProcessed();
+                LastCommand.StageId = 1;
+                //WORKER_LOG("ExecuteSearchCoordinatesY");
+                //WORKER_LOG(std::to_string(ExecuteSearchCoordinatesY));
+                //WORKER_LOG(std::to_string(Data->ScrollY));
+
+                std::string get_point;
                 if(Settings->EmulateMouse())
                 {
-                    int t1,t2;
-                    BrowserEventsEmulator::MouseMove(_HandlersManager->GetBrowser(), IsMouseMoveSimulation, MouseStartX, MouseStartY, MouseEndX, MouseEndY, t1, t2, 0, 0, 0, 0, 0, 0, true,true,Data->IsMousePress,Data->IsDrag);
+                    get_point = std::string("var x=0;for(var i=0;i<10;i++){x+=Math.random()*((rect.right-2-rect.left+1)/10);};x=Math.floor(x)+rect.left+1;if(x>rect.right-1)x=rect.right-1;if(x<rect.left+1)x=rect.left+1;"
+                                            "var y=0;for(var i=0;i<10;i++){y+=Math.random()*((rect.bottom-2-rect.top+1)/10);};y=Math.floor(y)+rect.top+1;if(y>rect.bottom-1)y=rect.bottom-1;if(y<rect.top+1)y=rect.top+1;");
+                }else
+                {
+                    get_point = std::string("var x=Math.floor((rect.right + rect.left)/2);"
+                                            "var y=Math.floor((rect.bottom + rect.top)/2);");
                 }
-            }
+                std::string script = std::string("{"
+                                     "var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");"
+                                     "if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;}"
+                                     "var items=el.getClientRects();if(items.length == 0){browser_automation_studio_result('BAS_NOT_EXISTS');return;};"
+                                     "var rect=items[Math.floor(Math.random()*items.length)];")
+                                     + get_point +
+                                     std::string("x+=") + std::to_string(ExecuteSearchCoordinatesX + Data->ScrollX) + std::string(";"
+                                     "y+=") + std::to_string(ExecuteSearchCoordinatesY + Data->ScrollY) + std::string(";"
+                                     "var res=x+','+y;"
+                                     "browser_automation_studio_result(res);}");
+                script = std::string("(function(){") + script + std::string("})()");
 
-        }
-        else if(LastCommand.CommandName == std::string("type") || LastCommand.CommandName == std::string("clear") || (LastCommand.CommandName == std::string("set") && LastCommand.StageId == 1 || LastCommand.CommandName == std::string("set_integer") && LastCommand.StageId == 1 || LastCommand.CommandName == std::string("set_random") && LastCommand.StageId == 1))
-        {
-            UpdateScrolls(res.first);
 
-            WORKER_LOG(std::string("StartTyping<<"));
 
-            if(res.first.length() == 0)
+                //WORKER_LOG(std::string("EXEC11<<") + script);
+                CefRefPtr<CefFrame> Frame;
+                if(ExecuteFrameChain.empty())
+                    Frame = _HandlersManager->GetBrowser()->GetMainFrame();
+                else
+                    Frame = _HandlersManager->GetBrowser()->GetFrame(ExecuteFrameChain.at(ExecuteFrameChain.size()-1).FrameData.frame_id);
+
+                Frame->ExecuteJavaScript(script,Frame->GetURL(),1);
+
+                IsLastCommandNull = false;
+
+
+            }else if(LastCommand.CommandName == std::string("clarify") && LastCommand.StageId == 0)
             {
-                //Element not found
+                UpdateScrolls(res.first);
+
                 v8handler->SetResultProcessed();
-                FinishedLastCommand("");
-            }else
+                LastCommand.StageId = 1;
+                std::string x = LastCommand.CommandParam1;
+                std::string y = LastCommand.CommandParam2;
+
+
+                std::string get_point;
+                if(Settings->EmulateMouse())
+                {
+                    get_point = std::string("var x=0;for(var i=0;i<10;i++){x+=Math.random()*((rect.right-2-rect.left+1)/10);};x=Math.floor(x)+rect.left+1;if(x>rect.right-1)x=rect.right-1;if(x<rect.left+1)x=rect.left+1;"
+                                            "var y=0;for(var i=0;i<10;i++){y+=Math.random()*((rect.bottom-2-rect.top+1)/10);};y=Math.floor(y)+rect.top+1;if(y>rect.bottom-1)y=rect.bottom-1;if(y<rect.top+1)y=rect.top+1;");
+                }else
+                {
+                    get_point = std::string("var x=Math.floor((rect.right + rect.left)/2);"
+                                            "var y=Math.floor((rect.bottom + rect.top)/2);");
+                }
+                std::string script = std::string("{"
+                                     "var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");"
+                                     "if(!el){browser_automation_studio_result('BAS_NOT_EXISTS');return;}"
+                                     "var items=el.getClientRects();if(items.length == 0){browser_automation_studio_result('BAS_NOT_EXISTS');return;};"
+                                     "var len = items.length;"
+                                     "for(var i = 0;i<len;i++)"
+                                     "{"
+                                        "var item = items[i];"
+                                        "var x = ") + x + std::string(" - ") + std::to_string(ExecuteSearchCoordinatesX + Data->ScrollX) + std::string(
+                                        ";var y = ") + y + std::string(" - ") + std::to_string(ExecuteSearchCoordinatesY + Data->ScrollY) + std::string(
+                                        ";if(y >= item.top && y <= item.bottom && x >= item.left && x <= item.right)"
+                                        "{"
+                                           "browser_automation_studio_result('');"
+                                           "return;"
+                                        "}"
+                                     "}"
+                                     "var rect=items[Math.floor(Math.random()*items.length)];")
+                                     + get_point +
+                                     std::string("x+=") + std::to_string(ExecuteSearchCoordinatesX + Data->ScrollX) + std::string(";"
+                                     "y+=") + std::to_string(ExecuteSearchCoordinatesY + Data->ScrollY) + std::string(";"
+                                     "var res=x+','+y;"
+                                     "browser_automation_studio_result(res);}");
+                script = std::string("(function(){") + script + std::string("})()");
+
+
+
+                //WORKER_LOG(std::string("EXEC11<<") + script);
+                CefRefPtr<CefFrame> Frame;
+                if(ExecuteFrameChain.empty())
+                    Frame = _HandlersManager->GetBrowser()->GetMainFrame();
+                else
+                    Frame = _HandlersManager->GetBrowser()->GetFrame(ExecuteFrameChain.at(ExecuteFrameChain.size()-1).FrameData.frame_id);
+
+                Frame->ExecuteJavaScript(script,Frame->GetURL(),1);
+
+                IsLastCommandNull = false;
+
+
+            }else if(LastCommand.CommandName == std::string("system_click") || LastCommand.CommandName == std::string("check") || LastCommand.CommandName == std::string("system_click_up") || LastCommand.CommandName == std::string("system_click_down"))
             {
-                BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
+                UpdateScrolls(res.first);
+
                 std::size_t pos = res.first.find(",");
                 int x = -1, y = -1;
                 if(pos != std::string::npos)
@@ -2690,143 +2921,350 @@ void MainApp::HandleMainBrowserEvents()
                 }else
                 {
                     v8handler->SetResultProcessed();
-                    TypeTextX = x;
-                    TypeTextY = y;
-                    TypeTextTaskIsActive = true;
-                    TypeTextIsFirstLetter = true;
-                    TypeTextState.Clear();
-                    ExecuteTypeText();
+                    WORKER_LOG(std::string("system_click>>") + std::to_string(x) + std::string(">>") + std::to_string(y));
+
+                    int type = 0;
+                    if(LastCommand.CommandName == std::string("system_click_up"))
+                    {
+                        type = 1;
+                    }else if(LastCommand.CommandName == std::string("system_click_down"))
+                    {
+                        type = 2;
+                    }
+
+                    BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
+                    BrowserEventsEmulator::MouseClick(_HandlersManager->GetBrowser(),x,y,GetScrollPosition(),type,Data->IsMousePress,Data->IsDrag);
+                    FinishedLastCommand("");
+                }
+            }else if(LastCommand.CommandName == std::string("render_base64"))
+            {
+                UpdateScrolls(res.first);
+
+                int left = -1, top = -1, right = -1, bottom = -1, centerx = -1, centery = -1;
+                WORKER_LOG(std::string("render_base64<<") + res.first);
+
+                std::string str = res.first;
+
+                std::size_t pos = str.find(",");
+                if(pos != std::string::npos)
+                {
+                    std::string part = str.substr(0,pos);
+                    str = str.substr(pos + 1,str.length() - pos - 1);
+                    centerx = std::stoi(part);
+                }
+
+                pos = str.find(",");
+                if(pos != std::string::npos)
+                {
+                    std::string part = str.substr(0,pos);
+                    str = str.substr(pos + 1,str.length() - pos - 1);
+                    centery = std::stoi(part);
+                }
+
+                pos = str.find(",");
+                if(pos != std::string::npos)
+                {
+                    std::string part = str.substr(0,pos);
+                    str = str.substr(pos + 1,str.length() - pos - 1);
+                    left = std::stoi(part);
+                }
+
+                pos = str.find(",");
+                if(pos != std::string::npos)
+                {
+                    std::string part = str.substr(0,pos);
+                    str = str.substr(pos + 1,str.length() - pos - 1);
+                    top = std::stoi(part);
+                }
+
+                pos = str.find(",");
+                if(pos != std::string::npos)
+                {
+                    std::string part = str.substr(0,pos);
+                    str = str.substr(pos + 1,str.length() - pos - 1);
+                    right = std::stoi(part);
+                }
+
+                bottom = std::stoi(str);
+
+                left += ExecuteSearchCoordinatesX;
+                top += ExecuteSearchCoordinatesY;
+                right += ExecuteSearchCoordinatesX;
+                bottom += ExecuteSearchCoordinatesY;
+
+                /*if(!BrowserEventsEmulator::IsPointOnScreen(left + Data->ScrollX,top + Data->ScrollY,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser)
+                    || !BrowserEventsEmulator::IsPointOnScreen(right + Data->ScrollX,bottom + Data->ScrollY,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser)*/
+                if(false)
+                {
+                    IsLastCommandNull = false;
+                }else
+                {
+                    WORKER_LOG("NeedRenderNextFrame");
+                    v8handler->SetResultProcessed();
+                    RenderX = left;
+                    RenderY = top;
+                    RenderWidth = right - left;
+                    RenderHeight = bottom - top;
+                    IsElementRender = true;
+                    NeedRenderNextFrame = true;
+                    SkipBeforeRenderNextFrame = 10;
+                    if(_HandlersManager->GetBrowser())
+                        _HandlersManager->GetBrowser()->GetHost()->Invalidate(PET_VIEW);
+                }
+            }else if(LastCommand.CommandName == std::string("focus"))
+            {
+                UpdateScrolls(res.first);
+
+                WORKER_LOG(std::string("focus1111<<") + res.first);
+                v8handler->SetResultProcessed();
+                std::string data = res.first;
+                xml_encode(data);
+                FinishedLastCommand(data);
+
+            }else if(LastCommand.CommandName == std::string("highlight"))
+            {
+                v8handler->SetResultProcessed();
+                std::string data = res.first;
+                if(BrowserToolbox)
+                    BrowserToolbox->GetMainFrame()->ExecuteJavaScript(std::string("BrowserAutomationStudio_SetPathCount(") + data + std::string(")"),BrowserToolbox->GetMainFrame()->GetURL(), 0);
+
+                xml_encode(data);
+                FinishedLastCommand(data);
+            }else if(LastCommand.CommandName == std::string("move"))
+            {
+                UpdateScrolls(res.first);
+                //WORKER_LOG(res.first);
+
+                std::size_t pos = res.first.find(",");
+                int x = -1, y = -1;
+                if(pos != std::string::npos)
+                {
+                    std::string x_string = res.first.substr(0,pos);
+                    std::string y_string = res.first.substr(pos + 1,res.first.length() - pos - 1);
+                    x = std::stoi(x_string);
+                    y = std::stoi(y_string);
+                }
+                x += ExecuteSearchCoordinatesX + Data->ScrollX;
+                y += ExecuteSearchCoordinatesY + Data->ScrollY;
+
+                if(!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser))
+                {
+                    //WORKER_LOG("Failed to move");
+                    IsLastCommandNull = false;
+                }else
+                {
+                    v8handler->SetResultProcessed();
+                    WORKER_LOG(std::string("move>>") + std::to_string(x) + std::string(">>") + std::to_string(y));
+                    BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
+                    LastCommand.CommandName = "move";
+                    LastCommand.CommandParam1 = std::to_string(x);
+                    LastCommand.CommandParam2 = std::to_string(y);
+                    MouseStartX = Data->CursorX;
+                    MouseStartY = Data->CursorY;
+                    MouseEndX = x - Data->ScrollX;
+                    MouseEndY = y - Data->ScrollY;
+                    IsMouseMoveSimulation = true;
+
+                    MouseSpeed = 15.0;
+                    MouseGravity = 6.0;
+                    MouseDeviation = 2.5;
+
+                    if(Settings->EmulateMouse())
+                    {
+                        int t1,t2;
+                        BrowserEventsEmulator::MouseMove(_HandlersManager->GetBrowser(), IsMouseMoveSimulation, MouseStartX, MouseStartY, MouseEndX, MouseEndY, t1, t2, 0, 0, 0, 0, 0, 0, true,true,Data->IsMousePress,Data->IsDrag);
+                    }
+                }
+
+            }
+            else if(LastCommand.CommandName == std::string("type") || LastCommand.CommandName == std::string("clear") || (LastCommand.CommandName == std::string("set") && LastCommand.StageId == 1 || LastCommand.CommandName == std::string("set_integer") && LastCommand.StageId == 1 || LastCommand.CommandName == std::string("set_random") && LastCommand.StageId == 1))
+            {
+                UpdateScrolls(res.first);
+
+                WORKER_LOG(std::string("StartTyping<<"));
+
+                if(res.first.length() == 0)
+                {
+                    //Element not found
+                    v8handler->SetResultProcessed();
+                    FinishedLastCommand("");
+                }else
+                {
+                    BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
+                    std::size_t pos = res.first.find(",");
+                    int x = -1, y = -1;
+                    if(pos != std::string::npos)
+                    {
+                        std::string x_string = res.first.substr(0,pos);
+                        std::string y_string = res.first.substr(pos + 1,res.first.length() - pos - 1);
+                        x = std::stoi(x_string);
+                        y = std::stoi(y_string);
+                    }
+                    x += ExecuteSearchCoordinatesX + Data->ScrollX;
+                    y += ExecuteSearchCoordinatesY + Data->ScrollY;
+
+                    if(!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser))
+                    {
+                        IsLastCommandNull = false;
+                    }else
+                    {
+                        v8handler->SetResultProcessed();
+                        TypeTextX = x;
+                        TypeTextY = y;
+                        TypeTextTaskIsActive = true;
+                        TypeTextIsFirstLetter = true;
+                        TypeTextState.Clear();
+                        ExecuteTypeText();
+                    }
+                }
+            }else if(LastCommand.CommandName == std::string("set") && LastCommand.StageId == 0 || LastCommand.CommandName == std::string("set_integer") && LastCommand.StageId == 0 || LastCommand.CommandName == std::string("set_random") && LastCommand.StageId == 0)
+            {
+                UpdateScrolls(res.first);
+                IsLastCommandNull = false;
+
+                v8handler->SetResultProcessed();
+                BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
+                TypeText = res.first;
+                TypeTextDelay = 30;
+                LastCommand.StageId = 1;
+                std::string script = std::string("(function(){var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");BrowserAutomationStudio_ScrollToElement(el)})()");
+                if(!script.empty())
+                {
+                    WORKER_LOG(std::string("EXEC<<") + script);
+                    CefRefPtr<CefFrame> Frame;
+                    if(ExecuteFrameChain.empty())
+                        Frame = _HandlersManager->GetBrowser()->GetMainFrame();
+                    else
+                        Frame = _HandlersManager->GetBrowser()->GetFrame(ExecuteFrameChain.at(ExecuteFrameChain.size()-1).FrameData.frame_id);
+
+                    Frame->ExecuteJavaScript(script,Frame->GetURL(),1);
                 }
             }
-        }else if(LastCommand.CommandName == std::string("set") && LastCommand.StageId == 0 || LastCommand.CommandName == std::string("set_integer") && LastCommand.StageId == 0 || LastCommand.CommandName == std::string("set_random") && LastCommand.StageId == 0)
-        {
-            UpdateScrolls(res.first);
-            IsLastCommandNull = false;
-
-            v8handler->SetResultProcessed();
-            BrowserEventsEmulator::SetFocus(_HandlersManager->GetBrowser());
-            TypeText = res.first;
-            TypeTextDelay = 30;
-            LastCommand.StageId = 1;
-            std::string script = std::string("(function(){var el = BrowserAutomationStudio_FindElement(") + LastCommand.SerializePath() + std::string(");BrowserAutomationStudio_ScrollToElement(el)})()");
-            if(!script.empty())
+            else
             {
-                WORKER_LOG(std::string("EXEC<<") + script);
-                CefRefPtr<CefFrame> Frame;
-                if(ExecuteFrameChain.empty())
-                    Frame = _HandlersManager->GetBrowser()->GetMainFrame();
-                else
-                    Frame = _HandlersManager->GetBrowser()->GetFrame(ExecuteFrameChain.at(ExecuteFrameChain.size()-1).FrameData.frame_id);
-
-                Frame->ExecuteJavaScript(script,Frame->GetURL(),1);
+                v8handler->SetResultProcessed();
+                std::string data = res.first;
+                xml_encode(data);
+                FinishedLastCommand(data);
+                WORKER_LOG(std::string("ElementCommandCallback>>"));
             }
-        }
-        else
-        {
-            v8handler->SetResultProcessed();
-            std::string data = res.first;
-            xml_encode(data);
-            FinishedLastCommand(data);
-            WORKER_LOG(std::string("ElementCommandCallback>>"));
         }
     }
 
-    std::pair<InspectResult,bool> res2 = v8handler->GetInspectResult();
-    if(res2.second)
+    if(Data->IsRecord && v8handler->GetHighlightResultReady())
     {
-        bool ShowInspectResults = false;
-        if(!res2.first.FrameData.is_frame)
+        std::pair<HighlightResult,bool> res = v8handler->GetHighlightResult();
+        if(res.second)
         {
-            WORKER_LOG(std::string("not a frame"));
-
-            //Not frame set result
-            ShowInspectResults = true;
-        }else
-        {
-            res2.first.FrameData.frame_depth = InspectFrameChain.size() + 1;
-
-            WORKER_LOG(std::string("Inspect frame. frame_index<<") + std::to_string(res2.first.FrameData.frame_index) + std::string(" frame_name<<") + std::string(res2.first.FrameData.frame_name)+ std::string(" frame_depth<<") + std::to_string(res2.first.FrameData.frame_depth)+ std::string(" frame_url<<") + std::string(res2.first.FrameData.frame_url) );
-
-            //It is Frame! Add to chain and inspect next
-            int x = res2.first.FrameData.x_with_padding;
-            int y = res2.first.FrameData.y_with_padding;
-            for(InspectResult chain:InspectFrameChain)
-            {
-                x += chain.FrameData.x_with_padding;
-                y += chain.FrameData.y_with_padding;
-            }
-
-            if(_HandlersManager->GetBrowser())
-            {
-                res2.first.FrameData.parent_frame_id = -1;
-                if(!InspectFrameChain.empty())
-                    res2.first.FrameData.parent_frame_id = InspectFrameChain.at(InspectFrameChain.size() - 1).FrameData.frame_id;
-                int64 ID = _HandlersManager->FindFrameId(res2.first.FrameData);
-                res2.first.FrameData.frame_id = ID;
-
-                //WORKER_LOG(std::string("IDDDD ") + std::to_string(ID));
-                if(ID < 0)
-                {
-                    //Frame not found
-                    ShowInspectResults = true;
-                }else
-                {
-                    InspectFrameChain.push_back(res2.first);
-
-                    //WORKER_LOG(std::string("BrowserAutomationStudio_InspectElement <<") + std::to_string(InspectX - x) + std::string(" <<") + std::to_string(InspectY - y) );
-
-                    _HandlersManager->GetBrowser()->GetFrame(ID)->ExecuteJavaScript(std::string("BrowserAutomationStudio_InspectElement(") + std::to_string(InspectX - x) + std::string(",") + std::to_string(InspectY - y) + std::string(")"),_HandlersManager->GetBrowser()->GetFrame(ID)->GetURL(), 0);
-                }
-            }
-
-        }
-
-        if(ShowInspectResults)
-        {
-
-            std::string label;
-            std::string css;
-            std::string css2;
-            std::string css3;
-            std::string match;
-            std::string xpath;
-            WORKER_LOG(std::string("End inspect ") +std::to_string(InspectFrameChain.size()) + " " + std::to_string(res2.first.active));
-
-            if(!res2.first.active && InspectFrameChain.size() > 0)
-            {
-                res2.first = InspectFrameChain[InspectFrameChain.size() - 1];
-                InspectFrameChain.pop_back();
-            }
-
-            for(InspectResult chain:InspectFrameChain)
-            {
-                res2.first.x += chain.FrameData.x_with_padding;
-                res2.first.y += chain.FrameData.y_with_padding;
-                label += chain.label + " >FRAME>";
-                css += chain.css + " >FRAME>";
-                css2 += chain.css2 + " >FRAME>";
-                css3 += chain.css3 + " >FRAME>";
-                match += chain.match + ">FRAME>";
-                xpath += chain.xpath + " >FRAME>";
-            }
-            res2.first.label = label + res2.first.label;
-            res2.first.css = css + res2.first.css;
-            res2.first.css2 = css2 + res2.first.css2;
-            res2.first.css3 = css3 + res2.first.css3;
-            res2.first.match = match + res2.first.match;
-            res2.first.xpath = xpath + res2.first.xpath;
-
             {
                 LOCK_BROWSER_DATA
-                Data->_Inspect = res2.first;
+                Data->_Highlight = res.first;
+            }
+            RECT r = Layout->GetBrowserOuterRectangle(GetData()->WidthBrowser,GetData()->HeightBrowser,GetData()->WidthAll,GetData()->HeightAll);
+            InvalidateRect(Data->_MainWindowHandle,&r,false);
+        }
+    }
+
+    if(v8handler->GetInspectResultReady())
+    {
+
+        std::pair<InspectResult,bool> res2 = v8handler->GetInspectResult();
+        if(res2.second)
+        {
+            bool ShowInspectResults = false;
+            if(!res2.first.FrameData.is_frame)
+            {
+                WORKER_LOG(std::string("not a frame"));
+
+                //Not frame set result
+                ShowInspectResults = true;
+            }else
+            {
+                res2.first.FrameData.frame_depth = InspectFrameChain.size() + 1;
+
+                WORKER_LOG(std::string("Inspect frame. frame_index<<") + std::to_string(res2.first.FrameData.frame_index) + std::string(" frame_name<<") + std::string(res2.first.FrameData.frame_name)+ std::string(" frame_depth<<") + std::to_string(res2.first.FrameData.frame_depth)+ std::string(" frame_url<<") + std::string(res2.first.FrameData.frame_url) );
+
+                //It is Frame! Add to chain and inspect next
+                int x = res2.first.FrameData.x_with_padding;
+                int y = res2.first.FrameData.y_with_padding;
+                for(InspectResult chain:InspectFrameChain)
+                {
+                    x += chain.FrameData.x_with_padding;
+                    y += chain.FrameData.y_with_padding;
+                }
+
+                if(_HandlersManager->GetBrowser())
+                {
+                    res2.first.FrameData.parent_frame_id = -1;
+                    if(!InspectFrameChain.empty())
+                        res2.first.FrameData.parent_frame_id = InspectFrameChain.at(InspectFrameChain.size() - 1).FrameData.frame_id;
+                    int64 ID = _HandlersManager->FindFrameId(res2.first.FrameData);
+                    res2.first.FrameData.frame_id = ID;
+
+                    //WORKER_LOG(std::string("IDDDD ") + std::to_string(ID));
+                    if(ID < 0)
+                    {
+                        //Frame not found
+                        ShowInspectResults = true;
+                    }else
+                    {
+                        InspectFrameChain.push_back(res2.first);
+
+                        //WORKER_LOG(std::string("BrowserAutomationStudio_InspectElement <<") + std::to_string(InspectX - x) + std::string(" <<") + std::to_string(InspectY - y) );
+
+                        _HandlersManager->GetBrowser()->GetFrame(ID)->ExecuteJavaScript(std::string("BrowserAutomationStudio_InspectElement(") + std::to_string(InspectX - x) + std::string(",") + std::to_string(InspectY - y) + std::string(")"),_HandlersManager->GetBrowser()->GetFrame(ID)->GetURL(), 0);
+                    }
+                }
+
             }
 
-            InspectFrameSearching = false;
+            if(ShowInspectResults)
+            {
+
+                std::string label;
+                std::string css;
+                std::string css2;
+                std::string css3;
+                std::string match;
+                std::string xpath;
+                WORKER_LOG(std::string("End inspect ") +std::to_string(InspectFrameChain.size()) + " " + std::to_string(res2.first.active));
+
+                if(!res2.first.active && InspectFrameChain.size() > 0)
+                {
+                    res2.first = InspectFrameChain[InspectFrameChain.size() - 1];
+                    InspectFrameChain.pop_back();
+                }
+
+                for(InspectResult chain:InspectFrameChain)
+                {
+                    res2.first.x += chain.FrameData.x_with_padding;
+                    res2.first.y += chain.FrameData.y_with_padding;
+                    label += chain.label + " >FRAME>";
+                    css += chain.css + " >FRAME>";
+                    css2 += chain.css2 + " >FRAME>";
+                    css3 += chain.css3 + " >FRAME>";
+                    match += chain.match + ">FRAME>";
+                    xpath += chain.xpath + " >FRAME>";
+                }
+                res2.first.label = label + res2.first.label;
+                res2.first.css = css + res2.first.css;
+                res2.first.css2 = css2 + res2.first.css2;
+                res2.first.css3 = css3 + res2.first.css3;
+                res2.first.match = match + res2.first.match;
+                res2.first.xpath = xpath + res2.first.xpath;
+
+                {
+                    LOCK_BROWSER_DATA
+                    Data->_Inspect = res2.first;
+                }
+
+                InspectFrameSearching = false;
+            }
+
+
+            RECT r = Layout->GetBrowserOuterRectangle(GetData()->WidthBrowser,GetData()->HeightBrowser,GetData()->WidthAll,GetData()->HeightAll);
+            InvalidateRect(Data->_MainWindowHandle,&r,false);
         }
-
-
-        RECT r = Layout->GetBrowserOuterRectangle(GetData()->WidthBrowser,GetData()->HeightBrowser,GetData()->WidthAll,GetData()->HeightAll);
-        InvalidateRect(Data->_MainWindowHandle,&r,false);
     }
 
 }
@@ -2961,7 +3399,10 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
         object->SetValue("BrowserAutomationStudio_Maximize", CefV8Value::CreateFunction("BrowserAutomationStudio_Maximize", toolboxv8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("BrowserAutomationStudio_Minimize", CefV8Value::CreateFunction("BrowserAutomationStudio_Minimize", toolboxv8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("BrowserAutomationStudio_OpenUrl", CefV8Value::CreateFunction("BrowserAutomationStudio_OpenUrl", toolboxv8handler), V8_PROPERTY_ATTRIBUTE_NONE);
+        object->SetValue("BrowserAutomationStudio_SaveInterfaceState", CefV8Value::CreateFunction("BrowserAutomationStudio_SaveInterfaceState", toolboxv8handler), V8_PROPERTY_ATTRIBUTE_NONE);
+        object->SetValue("BrowserAutomationStudio_ClearHighlight", CefV8Value::CreateFunction("BrowserAutomationStudio_ClearHighlight", toolboxv8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("BrowserAutomationStudio_Interrupt", CefV8Value::CreateFunction("BrowserAutomationStudio_Interrupt", toolboxv8handler), V8_PROPERTY_ATTRIBUTE_NONE);
+        object->SetValue("BrowserAutomationStudio_Execute", CefV8Value::CreateFunction("BrowserAutomationStudio_Execute", toolboxv8handler), V8_PROPERTY_ATTRIBUTE_NONE);
 
         object->SetValue("_K", CefV8Value::CreateString(Lang), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("_Z", CefV8Value::CreateInt(Settings->Zoom()), V8_PROPERTY_ATTRIBUTE_NONE);
@@ -2983,12 +3424,14 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
         object->SetValue("BrowserAutomationStudio_EditEnd", CefV8Value::CreateFunction("BrowserAutomationStudio_EditEnd", scenariov8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("BrowserAutomationStudio_ThreadNumberEdit", CefV8Value::CreateFunction("BrowserAutomationStudio_ThreadNumberEdit", scenariov8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("BrowserAutomationStudio_RunFunction", CefV8Value::CreateFunction("BrowserAutomationStudio_RunFunction", scenariov8handler), V8_PROPERTY_ATTRIBUTE_NONE);
+        object->SetValue("BrowserAutomationStudio_RunFunctionSeveralThreads", CefV8Value::CreateFunction("BrowserAutomationStudio_RunFunctionSeveralThreads", scenariov8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("BrowserAutomationStudio_SuccessNumberEdit", CefV8Value::CreateFunction("BrowserAutomationStudio_SuccessNumberEdit", scenariov8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("BrowserAutomationStudio_FailNumberEdit", CefV8Value::CreateFunction("BrowserAutomationStudio_FailNumberEdit", scenariov8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("BrowserAutomationStudio_SetClipboard", CefV8Value::CreateFunction("BrowserAutomationStudio_SetClipboard", scenariov8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("BrowserAutomationStudio_GetClipboard", CefV8Value::CreateFunction("BrowserAutomationStudio_GetClipboard", scenariov8handler), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("_K", CefV8Value::CreateString(Lang), V8_PROPERTY_ATTRIBUTE_NONE);
         object->SetValue("_Z", CefV8Value::CreateInt(Settings->Zoom()), V8_PROPERTY_ATTRIBUTE_NONE);
+        object->SetValue("_DoTour", CefV8Value::CreateBool(DoTour), V8_PROPERTY_ATTRIBUTE_NONE);
         return;
     }
 
@@ -3023,6 +3466,7 @@ void MainApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame
                 v8handler = new V8Handler(Data,_PostManager);
             object->SetValue("browser_automation_studio_result", CefV8Value::CreateFunction("browser_automation_studio_result", v8handler), V8_PROPERTY_ATTRIBUTE_NONE);
             object->SetValue("browser_automation_studio_inspect_result", CefV8Value::CreateFunction("browser_automation_studio_inspect_result", v8handler), V8_PROPERTY_ATTRIBUTE_NONE);
+            object->SetValue("browser_automation_studio_highlight_result", CefV8Value::CreateFunction("browser_automation_studio_highlight_result", v8handler), V8_PROPERTY_ATTRIBUTE_NONE);
             object->SetValue("browser_automation_studio_frame_find_result", CefV8Value::CreateFunction("browser_automation_studio_frame_find_result", v8handler), V8_PROPERTY_ATTRIBUTE_NONE);
             //object->SetValue("BrowserAutomationStudio_SaveLocalStorage", CefV8Value::CreateFunction("BrowserAutomationStudio_SaveLocalStorage", v8handler), V8_PROPERTY_ATTRIBUTE_NONE);
             object->SetValue("BrowserAutomationStudio_DomainDataNeedClear", CefV8Value::CreateFunction("BrowserAutomationStudio_DomainDataNeedClear", v8handler), V8_PROPERTY_ATTRIBUTE_NONE);
@@ -3203,6 +3647,26 @@ void MainApp::ScrollDown()
         BrowserEventsEmulator::Key(_HandlersManager->GetBrowser(),KeyText,TypeTextState,Data->CursorX,Data->CursorY);
     }
 }
+
+void MainApp::ScrollUpUp()
+{
+    if(_HandlersManager->GetBrowser())
+    {
+        KeyState TypeTextState;
+        std::string KeyText = "<HOME>";
+        BrowserEventsEmulator::Key(_HandlersManager->GetBrowser(),KeyText,TypeTextState,Data->CursorX,Data->CursorY);
+    }
+}
+void MainApp::ScrollDownDown()
+{
+    if(_HandlersManager->GetBrowser())
+    {
+        KeyState TypeTextState;
+        std::string KeyText = "<END>";
+
+        BrowserEventsEmulator::Key(_HandlersManager->GetBrowser(),KeyText,TypeTextState,Data->CursorX,Data->CursorY);
+    }
+}
 void MainApp::ScrollLeft()
 {
     if(_HandlersManager->GetBrowser())
@@ -3212,6 +3676,17 @@ void MainApp::ScrollRight()
 {
     if(_HandlersManager->GetBrowser())
         _HandlersManager->GetBrowser()->GetMainFrame()->ExecuteJavaScript("BrowserAutomationStudio_ScrollRight()",_HandlersManager->GetBrowser()->GetMainFrame()->GetURL(), 0);
+}
+
+void MainApp::ScrollLeftLeft()
+{
+    if(_HandlersManager->GetBrowser())
+        _HandlersManager->GetBrowser()->GetMainFrame()->ExecuteJavaScript("BrowserAutomationStudio_ScrollLeftLeft()",_HandlersManager->GetBrowser()->GetMainFrame()->GetURL(), 0);
+}
+void MainApp::ScrollRightRight()
+{
+    if(_HandlersManager->GetBrowser())
+        _HandlersManager->GetBrowser()->GetMainFrame()->ExecuteJavaScript("BrowserAutomationStudio_ScrollRightRight()",_HandlersManager->GetBrowser()->GetMainFrame()->GetURL(), 0);
 }
 
 void MainApp::EmulateClick(int x, int y)

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BrowserAutomationStudioProject>
+     <Script>section(1,1,1,0,function(){
+    section_start(&quot;Initialize&quot;, 0)!
+    section_end()!
+})!
+</Script>
+     <ScriptName></ScriptName>
+     <ScriptVersion></ScriptVersion>
+     <AvailableLanguages>en</AvailableLanguages>
+     <EngineVersion>17.2.0</EngineVersion>
+     <OutputTitle1 en=""/>
+     <OutputTitle2 en=""/>
+     <OutputTitle3 en=""/>
+     <OutputTitle4 en=""/>
+     <OutputTitle5 en=""/>
+     <OutputTitle6 en=""/>
+     <OutputTitle7 en=""/>
+     <OutputTitle8 en=""/>
+     <OutputTitle9 en=""/>
+     <OutputVisible1>0</OutputVisible1>
+     <OutputVisible2>1</OutputVisible2>
+     <OutputVisible3>1</OutputVisible3>
+     <OutputVisible4>0</OutputVisible4>
+     <OutputVisible5>0</OutputVisible5>
+     <OutputVisible6>0</OutputVisible6>
+     <OutputVisible7>0</OutputVisible7>
+     <OutputVisible8>0</OutputVisible8>
+     <OutputVisible9>0</OutputVisible9>
+     <ModelList/>
+</BrowserAutomationStudioProject>

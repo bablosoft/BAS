@@ -1,0 +1,1 @@
+<%= variable %> = native("imageprocessing", "create", (<%= width %>) + "," + (<%= height %>) + "," + (<%= r %>) + "," + (<%= g %>) + "," + (<%= b %>) + "," + (<%= a %>))

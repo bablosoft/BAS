@@ -83,6 +83,7 @@ namespace BrowserAutomationStudioFramework
             Area->setWidget(CheckArea);
             QVBoxLayout *L = new QVBoxLayout(CheckArea);
             L->setSizeConstraint(QLayout::SetMinAndMaxSize);
+            L->setAlignment(Qt::AlignVCenter);
             CheckArea->setLayout(L);
             Area->setWidgetResizable(true);
             CheckArea->setMinimumHeight(0);

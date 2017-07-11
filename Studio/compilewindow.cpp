@@ -33,6 +33,16 @@ void CompileWindow::GuiUpdate()
     ui->Password->setVisible(Visible);
     ui->label_7->setVisible(Visible);
     ui->label_8->setVisible(Visible);
+    if(ui->NoProtection->isChecked())
+    {
+        ui->HideBrowsers->setEnabled(false);
+        ui->HideBrowsers->setChecked(false);
+        ui->HideBrowsers->setStyleSheet("*{color:gray}");
+    }else
+    {
+        ui->HideBrowsers->setEnabled(true);
+        ui->HideBrowsers->setStyleSheet("*{color:white}");
+    }
     QTimer::singleShot(0,this,SLOT(Resize()));
 
 }
@@ -57,6 +67,7 @@ void CompileWindow::Accepted()
         compiler->SetType(Compiler::PrivateScriptUserEnterPass);
     }
     compiler->SetName(ui->lineEdit->text());
+    compiler->SetHideBrowsers(ui->HideBrowsers->isChecked());
     compiler->SetVersion(QString::number(ui->spinBox->value()) + "." + QString::number(ui->spinBox_2->value()) + "."+ QString::number(ui->spinBox_3->value()));
     compiler->SetOs("Windows");
 }

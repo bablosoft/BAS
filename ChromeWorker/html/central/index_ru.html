@@ -6,66 +6,159 @@
 <link rel="stylesheet" href="bootstrap.min.css">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="font-awesome.min.css">
+<link rel="stylesheet" href="tabs.css">
 
-<div style="position:absolute;top:5px;right:30px">
-	<a href="#" data-is-close="true" class="text-danger"><i class="fa fa-times-circle-o" aria-hidden="true" style="font-size: 150%;"></i></a>
+
+
+<div class="container-fluid">
+    <div class="row">
+		<div class="col-md-12">
+
+			<div class="tabbable-panel">
+				<div class="tabbable-line">
+					<ul class="nav nav-tabs ">
+						<li class="active">
+							<a href="#tab_default_1" data-toggle="tab">
+							<img src="premium.png" /> Премиум </a>
+						</li>
+						<li>
+							<a href="#tab_default_2" data-toggle="tab">
+							<img src="services.png" /> Сервисы </a>
+						</li>
+						<li>
+							<a href="#tab_default_3" data-toggle="tab">
+							<img src="learn.png" /> Помощь </a>
+						</li>
+						<li>
+							<a href="#tab_default_4" data-toggle="tab">
+							<img src="earn.png" /> Заработок </a>
+						</li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="tab_default_1">
+							<p>
+								<div><a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://bablosoft.com/shop/BASPremium')" class="btn btn-danger btn-sm" role="button">Обновление до премиум.</a></div>
+
+							</p>
+							<p>
+								<div><img src="lock.png" /><strong> Защита скрипта от копирования.</strong></div>
+								<div class="desc">Что делать, если необходимо, спрятать исходный код или запретить неавторизованный доступ?</div>
+								<div class="desc">Премиум разработчики могут создавать персональные лицензии или лицензии защищенные паролем.</div>
+							</p>
+							<p>
+								<div><img src="support.png" /><strong> Премиум поддержка.</strong></div>
+								<div class="desc">Премиум пользователи могут использовать skype или электронную почту, чтобы получить поддержку от разработчика.</div>
+								<div class="desc">Гарантированный ответ в течение двух рабочих дней.</div>
+								<div class="desc">(Вы получите инструкции в личном кабинете).</div>
+							</p>
+							<p>
+								<div><img src="users.png" /><strong> Управление пользователями через веб интерфейс.</strong></div>
+								<div class="desc">Премиум-пользователи могут создавать пользователей и обновлять их лицензии через веб-интерфейс.</div>
+								<div class="desc">Лицензия на скрипт может быть ограничена по времени. Премиум разработчик может приостановить лицензию или продлить ее определенному пользователю.</div>
+								<div class="desc">Каждая лицензия может быть использована только на определенном количестве машин. Это сделано чтобы защитить от скрипты от копирования. Премиум пользователи могут изменять количество машин для каждой лицензии.</div>
+							</p>
+							<p>
+								<div><img src="update.png" /><strong> Обновление скриптов.</strong></div>
+								<div class="desc">Премиум пользователи могут мгновенно обновлять скрипт на всех компьютерах клиентов через веб интерфейс.</div>
+							</p>
+							
+							<p>
+								<div><img src="source.png" /><strong> Доступ к приватному репозиторию исходного кода.</strong></div>
+								<div class="desc">Полезно, если вы хотите изменить BAS и получить актуальный исходный код.</div>
+							</p>
+
+						</div>
+						<div class="tab-pane" id="tab_default_2">
+							<p>
+								<div><img src="shop.png" /><strong> Магазин.</strong></div>
+								<div class="desc">В магазине BAS много скриптов. Может быть, скрипт, который вы пытаетесь реализовать, уже находится в магазине?</div>
+								<div style="margin-top:5px"><a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://bablosoft.com')" class="btn btn-danger btn-sm" role="button">Посетить магазин.</a></div>								
+							</p>
+							<p style="margin-top:20px">
+								<div><img src="fingerprint.png" /><strong> FingerprintSwitcher.</strong></div>
+								<div class="desc">Современные методы определения пользователя могут идентифицировать его только по набору свойств браузера. Допустим, среди миллиона пользователей у десятка тысяч может быть определенное разрешение, но только у нескольких тысяч определенное разрешение и определенный набор плагинов. Набор таких свойств составляет отпечаток браузера. Добавляя новые факторы, сайт может точно определить, что именно вы его посещаете, даже если вы будете менять прокси при каждом входе. Эту проблему также решает сервис FingerprintSwitcher, поскольку предоставляет каждый раз новый набор свойств. Фактически FingerprintSwitcher можно назвать аналогом прокси сервиса для отпечатков.</div>
+								<div style="margin-top:5px"><a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://fingerprints.bablosoft.com')" class="btn btn-danger btn-sm" role="button">Подробнее о FingerprintSwitcher.</a></div>								
+							</p>
+							
+						</div>
+						<div class="tab-pane" id="tab_default_3">
+							
+								<p>
+									<strong>Вот список ссылок для обучения BAS:</strong>
+									<hr/>
+								</p>
+								<div class="margin">
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-question-circle" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://wiki.bablosoft.com/doku.php?id=ru:start')">Руководство.</a></div>								
+										Описание BAS и решение типичных задач.
+									</p>
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-globe" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://community.bablosoft.com')">Сообщество.</a></div>								
+										Сообщество BAS. <a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://bablosoft.com/shop/BASPremium')" class="text-danger">Обновитесь до премиум версии, чтобы получить качественную и быструю поддержку от разработчика.</a>
+									</p>
+								</div>
+								<p>
+									<strong>Руководства:</strong>
+									<hr/>
+								</p>
+								<div class="margin">
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-graduation-cap" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://wiki.bablosoft.com/doku.php?id=ru:tutorial1')">Руководство №1. Создание постера для твиттера.</a></div>								
+										Как создать автономный многопоточный скрипт, который создает посты в твиттере.
+									</p>
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-graduation-cap" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://wiki.bablosoft.com/doku.php?id=ru:tutorial2')">Руководство №2. Создание парсера выдачи гугл.</a></div>								
+										Как создать автономный скрипт, который разбирает выдачу гугл.
+									</p>
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-graduation-cap" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://wiki.bablosoft.com/doku.php?id=ru:tutorial3')">Руководство №3. Создание менеджера аккаунтов.</a></div>								
+										Как хранить ваши учетные записи в базе данных.
+									</p>
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-graduation-cap" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://wiki.bablosoft.com/doku.php?id=ru:tutorial4')">Руководство №4. Создание парсера в несколько стадий.</a></div>
+										Как создать парсер с переменным числом потоков.
+									</p>
+								</div>
+								<p>
+									<strong>Примеры скриптов:</strong>
+									<hr/>
+								</p>
+								<div class="margin">
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-rocket" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('file://examples/SiteVisitor.xml')">SiteVisitor.</a></div>
+										Скрипт посещает сайт и нажмает на произвольные ссылки.
+									</p>
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-rocket" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('file://examples/QIPRegger.xml')">QIPRegger.</a></div>
+										Регистрация аккаунтов в qip.ru.
+									</p>
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-rocket" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('file://examples/ProxyBlacklistChecker.xml')">ProxyBlacklistChecker.</a></div>
+										Прокси чеккер через http клиент.
+									</p>
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-rocket" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('file://examples/HidemeParser.xml')">HidemeParser.</a> (Спасибо <a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://community.bablosoft.com/user/turutur')">Turutur</a>)</div>
+										Парсер прокси.
+									</p>
+								</div>
+
+
+							
+						</div>
+						<div class="tab-pane" id="tab_default_4">
+							<p>
+								<div><a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://wiki.bablosoft.com/doku.php?id=ru:how_to_sell_your_script_in_shop')" class="btn btn-danger btn-sm" role="button">Начните продавать.</a></div>
+
+							</p>
+							<p>
+								<div><img src="sell.png" /><strong> Продать свой скрипт в магазине.</strong></div>
+								<div class="desc">У вас есть скрипт, который вы хотите продать? Вы можете начать делать это без начальных вложений. Просто добавьте его в магазин, и другие пользователи увидят его. Следуйте инструкциям выше, чтобы начать продавать.</div>
+								
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
-
-
-
-<h3><p class="text-center"> Добро пожаловать в БАС! </p></h3>
-<hr>
-<p class="text-center">
-	Для начала работы используйте действие "Загрузить":
-</p>
-
-<p class="text-center">
-	<img src="LoadActionRu.png" />
-</p>
-
-<p class="text-center" style="margin-top:20px">
-	<a href="#" data-link="https://wiki.bablosoft.com/doku.php?id=ru:how_to_sell_your_script_in_shop" class="text-danger" style="margin-right:25px;white-space: nowrap;"><i class="fa fa-usd" aria-hidden="true"></i> Продажа скрипта.</a>
-	<a href="#" data-link="https://wiki.bablosoft.com/doku.php?id=ru:how_to_protect_your_script" class="text-danger" style="margin-right:25px;white-space: nowrap;"><i class="fa fa-lock" aria-hidden="true"></i> Защита скрипта.</a>
-	<a href="#" data-link="https://bablosoft.com" class="text-danger" style="margin-right:25px;white-space: nowrap;"><i class="fa fa-shopping-bag" aria-hidden="true"></i> Магазин.</a>
-	<a href="#" data-link="https://fingerprints.bablosoft.com" class="text-danger" style="white-space: nowrap;"><i class="fa fa-id-card-o" aria-hidden="true"></i> Смена отпечатка.</a>
-</p>
-
-<p class="text-center" style="margin-top:20px">
-	Если вы впервые используете БАС, пожалуйста, посмотрите эти руководства:
-</p>
-<p class="text-center">
-	<a href="#" data-link="http://wiki.bablosoft.com/doku.php?id=ru:tutorial1" style="margin-right:25px;white-space: nowrap;"><i class="fa fa-graduation-cap" aria-hidden="true"></i>Руководство №1. Создание постера.</a>
-	<a href="#" data-link="http://wiki.bablosoft.com/doku.php?id=ru:tutorial2" style="white-space: nowrap;"><i class="fa fa-graduation-cap" aria-hidden="true"></i>Руководство №2. Создание парсера.</a>
-</p>	
-
-<p class="text-center" style="margin-top:30px">
-	Примеры скриптов:
-</p>
-<p class="text-center">
-	<a href="#" data-link="file://examples/SiteVisitor.xml" style="margin-right:25px;white-space: nowrap;">Посещение сайта.</a>
-	<a href="#" data-link="file://examples/QIPRegger.xml"  style="margin-right:25px;white-space: nowrap;">Регистратор QIP.</a>
-	<a href="#" data-link="file://examples/ProxyBlacklistChecker.xml"  style="white-space: nowrap;margin-right:25px;">Проверка прокси на наличие в черных списках.</a>
-	<span style="white-space: nowrap;"><a href="#" data-link="file://examples/HidemeParser.xml" >Hideme Парсер</a> (Спасибо <a href="#" data-link="https://community.bablosoft.com/user/turutur">Turutur</a>).</span>
-</p>	
-
-<p class="text-center" style="margin-top:30px">
-	Эти ссылки также могут быть полезными:
-</p>
-<p class="text-center">
-	<a href="#" data-link="https://wiki.bablosoft.com" style="margin-right:25px;white-space: nowrap;"><i class="fa fa-question-circle" aria-hidden="true"></i> Руководство</a>
-	<a href="#" data-link="https://community.bablosoft.com" style="margin-right:25px;white-space: nowrap;"><i class="fa fa-globe" aria-hidden="true"></i> Форум</a>
-	<a href="#" data-link="https://github.com/bablosoft/BAS" style="white-space: nowrap;"><i class="fa fa-code" aria-hidden="true"></i> Исходники</a>
-</p>
-<hr>	
-
-<script>
-	$( document ).ready(function() {
-    	$("a").click(function(event){
-    		event.preventDefault();
-    		if($(this).attr("data-is-close") == "true")
-				BrowserAutomationStudio_Close();
-    		else
-    			BrowserAutomationStudio_OpenUrl($(this).attr("data-link"));
-    	})
-	});
-</script>

@@ -8,6 +8,7 @@
 #include <QScriptEngine>
 #include <QTimer>
 #include <QHash>
+#include "substagemanager.h"
 
 
 
@@ -16,6 +17,8 @@ namespace BrowserAutomationStudioFramework
     class ENGINESHARED_EXPORT ScriptMultiWorker : public IMultiWorker
     {
         Q_OBJECT
+
+        SubstageManager Substages;
         QTimer *StageTimeoutTimer;
         IBrowserFactory *BrowserFactory;
         ILogger *Logger;
@@ -43,6 +46,8 @@ namespace BrowserAutomationStudioFramework
         IHelper* Helper;
         ICsvHelper *CsvHelper;
         IModuleManager *ModuleManager;
+        IStringBuilder *StringBuilder;
+        IWorkerSettings *WorkerSettings;
 
         IHtmlParserFactory* HtmlParserFactory;
         IProperties* Properties;
@@ -70,7 +75,7 @@ namespace BrowserAutomationStudioFramework
         qint64 FailLeft;
         qint64 FailNumber;
         bool DieOnFailHandler;
-        void CreateWorker(int index);
+        void CreateWorker(int index, int ThreadIndex, const QString& StartingFunction, int StageId, QList<IWorker *>* WorkersList, QList<IBrowser *>* BrowsersList);
         IScriptMultiWorkerReportData *ReportData;
         QHash<QString,QObject*> ModulesMultiWorker;
         QHash<QString,QObject*> ModulesScriptWorker;
@@ -87,6 +92,9 @@ namespace BrowserAutomationStudioFramework
         QString WorkerScript;
 
         explicit ScriptMultiWorker(QObject *parent);
+
+        virtual void SetStringBuilder(IStringBuilder *StringBuilder);
+        virtual IStringBuilder * GetStringBuilder();
 
         virtual void SetProjectPath(const QString& ProjectPath);
         virtual QString GetProjectPath();
@@ -180,6 +188,9 @@ namespace BrowserAutomationStudioFramework
         virtual void SetProperties(IProperties* Properties);
         virtual IProperties* GetProperties();
 
+        virtual void SetWorkerSettings(IWorkerSettings* WorkerSettings);
+        virtual IWorkerSettings* GetWorkerSettings();
+
         virtual void SetDoTrace(bool DoTrace);
         virtual bool GetDoTrace();
 
@@ -193,8 +204,10 @@ namespace BrowserAutomationStudioFramework
         virtual IModuleManager* GetModuleManager();
     signals:
         void InterruptActionSignal();
+        void SubstageFinished(int);
     public slots:
         void RunStage(qint64 ThreadsNumber, qint64 MaximumSuccess, qint64 MaximumFailure, qint64 MaxRunTime,const QString& WorkerFunction, const QString& callback);
+        void RunSubstage(const QString& FunctionName, qint64 ThreadsNumber,qint64 MaximumSuccess, qint64 MaximumFailure, int StageId);
         virtual void Run();
         virtual void RunSubScript();
         virtual void Abort();
@@ -225,6 +238,9 @@ namespace BrowserAutomationStudioFramework
         void ProgressValueSlot(int);
         void ProgressMaximumSlot(int);
         QString DatabaseAddGroup(const QString& GroupName,const QString& GroupDescription, int TableId);
+
+
+
     private slots:
         void HandlerWaitFinishedSuccess();
         void HandlerWaitFinishedFailed();

@@ -48,7 +48,7 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="181"/>
-        <location filename="../mainwindow.cpp" line="114"/>
+        <location filename="../mainwindow.cpp" line="118"/>
         <source>Stop</source>
         <translation>Остановить</translation>
     </message>
@@ -88,28 +88,42 @@
         <translation>База</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="111"/>
+        <location filename="../mainwindow.cpp" line="115"/>
         <source>Stop instant</source>
         <translation>Остановить мгновенно</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="111"/>
+        <location filename="../mainwindow.cpp" line="115"/>
         <source>Wait each thread</source>
         <translation>Ждать каждый поток</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="114"/>
+        <location filename="../mainwindow.cpp" line="118"/>
         <source>Stop type</source>
         <translation>Тип остановки</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1199"/>
+        <source>Captcha (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1223"/>
+        <source>All log</source>
+        <translation>Весь лог</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1224"/>
+        <source>Clear log</source>
+        <translation>Очистить лог</translation>
     </message>
     <message>
         <source>Database Error</source>
         <translation type="vanished">Ошибка базы</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="220"/>
         <source>Show all log</source>
-        <translation>Весь лог</translation>
+        <translation type="vanished">Весь лог</translation>
     </message>
     <message>
         <source>Error loading script</source>
@@ -120,12 +134,12 @@
         <translation type="vanished">Лицензия действительна до </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1062"/>
+        <location filename="../mainwindow.cpp" line="1099"/>
         <source>Application is still running</source>
         <translation>Приложение еще работает</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1062"/>
+        <location filename="../mainwindow.cpp" line="1099"/>
         <source>Use exit menu item to shut it down</source>
         <translation>Используйте кнопку выход, чтобы закрыть его</translation>
     </message>

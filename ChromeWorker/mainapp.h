@@ -23,10 +23,12 @@
 #include "settings.h"
 #include "handlersmanager.h"
 #include "postmanager.h"
+#include "imagefinder.h"
 
 
 class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderProcessHandler
 {
+
     std::shared_ptr<HandlersManager> _HandlersManager;
 
     CefRefPtr<ToolboxHandler> thandler;
@@ -44,12 +46,15 @@ class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderP
     ElementCommand LastCommand;
     ElementCommand LastCommandCopy;
 
+
     bool IsLastCommandNull;
     BrowserData *Data;
     PostManager *_PostManager;
     settings* Settings;
     int ScrollX;
     int ScrollY;
+
+    bool DoTour;
 
     //MouseMove
     bool IsMouseMoveSimulation;
@@ -65,6 +70,12 @@ class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderP
 
     //MouseTrack
     clock_t LastMouseTrack;
+
+    //Highlight
+    clock_t LastHighlight;
+    int HighlightFrameId;
+    int HighlightOffsetX;
+    int HighlightOffsetY;
 
 
     //TypeTextTask
@@ -115,12 +126,14 @@ class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderP
 
     void InitBrowser();
     std::string NextLoadPage;
+    ImageFinder _ImageFinder;
     std::vector<char> ImageData;
     int ImageWidth;
     int ImageHeight;
     MainLayout *Layout;
 
-    std::string Code, Schema, Resources, AdditionalResources, Variables, Functions, Labels;
+    std::string Code, Schema, Resources, AdditionalResources, Variables, GlobalVariables, Functions, Labels;
+    bool IsInterfaceInitialSent;
     bool ResourcesChanged;
     void UpdateScrolls(std::string& data);
     void HandleMainBrowserEvents();
@@ -129,13 +142,17 @@ class MainApp: public CefApp, public CefBrowserProcessHandler, public CefRenderP
     void HandleScenarioBrowserEvents();
     void HandleCentralBrowserEvents();
 
-
+    void ReadDoTour();
     std::string Lang;
 
     int RunElementCommandCallbackOnNextTimer;
 
 public:
     MainApp();
+    int GetHighlightOffsetX();
+    int GetHighlightOffsetY();
+    int GetHighlightFrameId();
+
     void ForceUpdateWindowPositionWithParent();
     void UpdateWindowPositionWithParent();
     void SetData(BrowserData *Data);
@@ -157,6 +174,7 @@ public:
 
     //EventCallbacks
     void LoadCallback(const std::string& page);
+    void LoadNoDataCallback();
     void ResetCallback();
     void ResetCallbackFinalize();
 
@@ -172,6 +190,8 @@ public:
     void SetUserAgentCallback(const std::string& value);
     void SetOpenFileNameCallback(const std::string& value);
     void SetStartupScriptCallback(const std::string& value,const std::string& target,const std::string& script_id);
+    void SetWorkerSettingsCallback(bool EncodeUtf8, bool RefreshConnections, int SkipFrames);
+
     void SetFontListCallback(const std::string& fonts);
     void SetPromptResultCallback(const std::string& value);
     void SetHttpAuthResultCallback(const std::string& login,const std::string& password);
@@ -180,6 +200,10 @@ public:
     void RestoreLocalStorageCallback(const std::string& value);
     void RestoreCookiesCallback(const std::string& value);
     void IsChangedCallback();
+
+    void ClearImageDataCallback();
+    void SetImageDataCallback(const std::string& base64);
+    void FindImageCallback();
 
     void CrushCallback();
     void AddCacheMaskAllowCallback(const std::string& value);
@@ -225,10 +249,14 @@ public:
     void LoadSuccessCallback();
     void ResizeCallback(int width, int height);
     void SetWindowCallback(const std::string& Window);
+    void HighlightActionCallback(const std::string& ActionId);
+
 
     void UrlLoaded(const std::string&, int);
     void AfterReadyToCreateBrowser(bool Reload);
     void Timer();
+    void UpdateHighlight();
+    void ClearHighlight();
     void CefMessageLoop();
     void ExecuteTypeText();
     void ExecuteMouseMove();
@@ -236,6 +264,7 @@ public:
     void Paint(char * data, int width, int height);
     void OldestRequestTimeChanged(int64 OldestTime);
     char* GetImageData();
+    std::string GetSubImageDataBase64(int x1, int y1, int x2, int y2);
     std::pair<int,int> GetImageSize();
     void CreateTooboxBrowser();
     void CreateScenarioBrowser();
@@ -264,6 +293,11 @@ public:
     void ScrollDown();
     void ScrollLeft();
     void ScrollRight();
+
+    void ScrollUpUp();
+    void ScrollDownDown();
+    void ScrollLeftLeft();
+    void ScrollRightRight();
 
     void InspectAt(int x, int y);
 

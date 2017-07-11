@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BrowserAutomationStudioProject>
+     <Script>section(10 /*10*/,30 /*30*/,30 /*30*/,0,function(){
+   section_start(&quot;Initialize&quot;, 0)!
+
+   section_end()!
+
+   section_start(&quot;&quot;, 809826747)!
+   /*Dat:eyJzIjoic2xlZXAiLCJlIjoiZXhlY3V0ZWFuZGFkZCIsInYiOjEsInV3IjoiMCIsInV0IjoiMCIsInV0byI6IjAiLCJkIjpbeyJpZCI6InNsZWVwZnJvbSIsInR5cGUiOiJjb25zdHIiLCJkYXRhIjoiMTAwMCIsImNsYXNzIjoiaW50In0seyJpZCI6InNsZWVwdG8iLCJ0eXBlIjoiY29uc3RyIiwiZGF0YSI6IjEwMDAiLCJjbGFzcyI6ImludCJ9LHsiaWQiOiJzbGVlcGZyb210byIsInR5cGUiOiJjb25zdHIiLCJkYXRhIjoiMTAwMDAiLCJjbGFzcyI6ImludCJ9LHsiaWQiOiJzbGVlcHJhbmRvbSIsInR5cGUiOiJjaGVjayIsImRhdGEiOmZhbHNlfV19*/
+   sleep(10000)!
+   section_end()!
+
+})!</Script>
+     <ScriptName>Script Name</ScriptName>
+     <ScriptVersion>1.0.0</ScriptVersion>
+     <AvailableLanguages>ru</AvailableLanguages>
+     <EngineVersion>17.4.0</EngineVersion>
+     <SettingsWorker>EnableFlash=false
+ProxiesReconnect=false
+ForceUtf8=true
+SkipFrames=1
+ToolboxHeight=250
+ScenarioWidth=500
+Zoom=100
+IsMaximized=false
+Restart=false
+UseHumanLikeMouseMoves=true
+</SettingsWorker>
+     <ModulesMetaJson>{
+    &quot;AjaxReCaptcha2&quot;: true,
+    &quot;DomainDataClear&quot;: false,
+    &quot;FileSystem&quot;: true,
+    &quot;FingerprintSwitcher&quot;: true,
+    &quot;FormDataFake&quot;: true,
+    &quot;IdleEmulation&quot;: true,
+    &quot;List&quot;: true,
+    &quot;NotificationFake&quot;: true,
+    &quot;Processes&quot;: true,
+    &quot;ReCaptcha2&quot;: true,
+    &quot;RegularExpression&quot;: true,
+    &quot;Resources&quot;: true,
+    &quot;ScriptStats&quot;: true,
+    &quot;SmsReceive&quot;: true,
+    &quot;Timezones&quot;: true,
+    &quot;WindowOpenWait&quot;: true,
+    &quot;Xpath&quot;: true
+}
+</ModulesMetaJson>
+     <OutputTitle1 en="First Results" ru="First Results"/>
+     <OutputTitle2 en="Second Results" ru="Second Results"/>
+     <OutputTitle3 en="Third Results" ru="Third Results"/>
+     <OutputTitle4 en="Fourth Results" ru="Fourth Results"/>
+     <OutputTitle5 en="Fifth Results" ru="Fifth Results"/>
+     <OutputTitle6 en="Sixth Results" ru="Sixth Results"/>
+     <OutputTitle7 en="Seventh Results" ru="Seventh Results"/>
+     <OutputTitle8 en="Eighth Results" ru="Eighth Results"/>
+     <OutputTitle9 en="Ninth Results" ru="Ninth Results"/>
+     <OutputVisible1>1</OutputVisible1>
+     <OutputVisible2>1</OutputVisible2>
+     <OutputVisible3>1</OutputVisible3>
+     <OutputVisible4>0</OutputVisible4>
+     <OutputVisible5>0</OutputVisible5>
+     <OutputVisible6>0</OutputVisible6>
+     <OutputVisible7>0</OutputVisible7>
+     <OutputVisible8>0</OutputVisible8>
+     <OutputVisible9>0</OutputVisible9>
+     <ModelList/>
+</BrowserAutomationStudioProject>

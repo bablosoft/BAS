@@ -34,6 +34,11 @@ namespace BrowserAutomationStudioFramework
         bool IsBusy;
         QString ConnectionLog;
         QString DatabaseId;
+        bool ConnectionIsRemote;
+        QString ConnectionServer;
+        QString ConnectionPort;
+        QString ConnectionLogin;
+        QString ConnectionPassword;
 
 
         enum ColumnType{String,Int,Bool,Date};
@@ -54,6 +59,7 @@ namespace BrowserAutomationStudioFramework
 
     public:
         explicit MongoDatabaseConnector(QObject *parent);
+        ~MongoDatabaseConnector();
         virtual bool HasDatabase();
         virtual QStringList SelectFormatted(DatabaseSelector Selector,QString Format);
 
@@ -87,7 +93,7 @@ namespace BrowserAutomationStudioFramework
         virtual QList<DatabaseTable> GetTables();
         virtual QList<DatabaseColumn> GetColumns(int TableId);
         void Init(const QString &Lang);
-        bool Start(const QString& SchemaText,const QString& DatabaseId);
+        bool Start(const QString& SchemaText,const QString& DatabaseId, bool IsRemote, const QString& ConnectionServer, const QString& ConnectionPort, const QString& ConnectionLogin, const QString& ConnectionPassword);
         QString GetDatabaseBaseLocation();
         QString GetDatabaseLocation();
 
@@ -111,6 +117,7 @@ namespace BrowserAutomationStudioFramework
         virtual DatabaseFilters ParseFilter(const QString& JsonFilters);
 
     signals:
+        //void TerminateProcess();
 
     private slots:
         void BackupRestoreFinishedSlot(int res);
@@ -127,6 +134,12 @@ namespace BrowserAutomationStudioFramework
         void UserCancel();
         void DatabaseConnectionOk();
         void ShowLog();
+
+        void GetPort();
+        void ChangePort();
+        void ClosePort();
+        void SaveMongoPid();
+        void MongoProcessTerminate();
 
     };
 }

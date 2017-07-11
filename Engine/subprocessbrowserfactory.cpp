@@ -17,28 +17,47 @@ namespace BrowserAutomationStudioFramework
         return Widget;
     }
 
-    void SubprocessBrowserFactory::Clear()
+    void SubprocessBrowserFactory::ClearAll()
     {
         foreach(IBrowser* b,BrowserList)
             b->deleteLater();
 
         BrowserList.clear();
+        BrowserListUnused.clear();
         Widget->Clear();
     }
 
+    void SubprocessBrowserFactory::Clear(QList<IBrowser*>* Browsers)
+    {
+        for(IBrowser *Browser:*Browsers)
+        {
+            if(!BrowserListUnused.contains(Browser))
+                BrowserListUnused.append(Browser);
+        }
+    }
+
+
     QList<IBrowser*> SubprocessBrowserFactory::Create(int size)
     {
-        Clear();
+        QList<IBrowser*> res;
+
         for(int i = 0;i<size;i++)
         {
+            if(!BrowserListUnused.empty())
+            {
+                res.append(BrowserListUnused.first());
+                BrowserListUnused.removeFirst();
+                continue;
+            }
             SubprocessBrowser * o = new SubprocessBrowser(this);
             o->SetLanguage(Language);
             connect(o,SIGNAL(ProcessCreated(IProcessComunicator*)), this, SLOT(ProcessCreated(IProcessComunicator*)));
             o->SetNetworkAccessManagerFactory(NetworkAccessManagerFactory);
             o->SetProcessComunicatorFactory(ProcessComunicatorFactory);
             BrowserList.append(o);
+            res.append(o);
         }
-        return BrowserList;
+        return res;
     }
 
     void SubprocessBrowserFactory::SetLanguage(const QString & Language)

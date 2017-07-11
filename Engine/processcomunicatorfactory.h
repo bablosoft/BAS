@@ -14,7 +14,6 @@ namespace BrowserAutomationStudioFramework
     class ENGINESHARED_EXPORT ProcessComunicatorFactory : public IProcessComunicatorFactory
     {
         Q_OBJECT
-        QString ProcessName;
         QStringList Params;
         QLocalServer *Server;
         SnappyStringCompress *Compress;
@@ -31,7 +30,6 @@ namespace BrowserAutomationStudioFramework
 
     public:
         explicit ProcessComunicatorFactory(QObject *parent = 0);
-        void SetProcessName(const QString& ProcessName);
         //Should contain %keyin% %keyout% %pid%
         void SetCommandLineParams(const QStringList& Params);
         virtual IProcessComunicator * CreateProcessComunicator();

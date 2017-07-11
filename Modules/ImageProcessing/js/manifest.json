@@ -1,0 +1,273 @@
+{
+	
+	"name":"ImageProcessing",
+	"info":{"en": "Module for image processing and image search.", "ru": "Модуль для обработки изображений и поиска картинок."},
+	"icon":"imageprocessing.png",
+	"description":"Manipulate images",
+	"description_small":{"en": "Image processing", "ru": "Обработка изображений"},
+	"major_version": 1,
+	"minor_version": 0,
+	"developer_name": "bablosoft", 
+	"developer_email": "mail.to.twaego@gmail.com", 
+	"developer_site": "https://bablosoft.com",
+	"api_version": 1,
+	"actions":
+	[
+		{
+			"name":"imageprocessingload",
+			"description":{"en": "Start working with image","ru": "Начать работу с изображением"},
+			"template": "{{Data}} -> {{Save}}",
+			"is_element": false,
+			"interface": "imageprocessingload_interface.js",
+			"select": "imageprocessingload_select.js",
+			"code": [{"file":"imageprocessingload_code.js", "name": "imageprocessingload_code"}]
+		},
+		{
+			"name":"imageprocessingdelete",
+			"description":{"en": "Stop working with image","ru": "Закончить работу с изображением"},
+			"template": "{{Id}}",
+			"is_element": false,
+			"interface": "imageprocessingdelete_interface.js",
+			"select": "imageprocessingdelete_select.js",
+			"code": [{"file":"imageprocessingdelete_code.js", "name": "imageprocessingdelete_code"}]
+		},
+		{
+			"name":"imageprocessinggetdata",
+			"description":{"en": "Get image data","ru": "Получить данные изображения"},
+			"template": "{{Id}} -> {{Save}}",
+			"is_element": false,
+			"interface": "imageprocessinggetdata_interface.js",
+			"select": "imageprocessinggetdata_select.js",
+			"code": [{"file":"imageprocessinggetdata_code.js", "name": "imageprocessinggetdata_code"}]
+		},
+		{
+			"name":"imageprocessingcreate",
+			"description":{"en": "Create empty image","ru": "Создать пустое изображение"},
+			"template": "{{Width}},{{Height}} -> {{Save}}",
+			"is_element": false,
+			"interface": "imageprocessingcreate_interface.js",
+			"select": "imageprocessingcreate_select.js",
+			"code": [{"file":"imageprocessingcreate_code.js", "name": "imageprocessingcreate_code"}]
+		},
+		{
+			"name":"imageprocessinggetsize",
+			"description":{"en": "Get size","ru": "Получить размер"},
+			"template": "{{Id}} -> {{Width}}, {{Height}}",
+			"is_element": false,
+			"interface": "imageprocessinggetsize_interface.js",
+			"select": "imageprocessinggetsize_select.js",
+			"code": [{"file":"imageprocessinggetsize_code.js", "name": "imageprocessinggetsize_code"}]
+		},
+
+
+
+
+		{
+			"name":"imageprocessinggetpixel",
+			"description":{"en": "Get pixel color","ru": "Получить цвет пикселя"},
+			"template": "{{X}},{{Y}}",
+			"is_element": false,
+			"interface": "imageprocessinggetpixel_interface.js",
+			"select": "imageprocessinggetpixel_select.js",
+			"code": [{"file":"imageprocessinggetpixel_code.js", "name": "imageprocessinggetpixel_code"}]
+		},
+		{
+			"name":"imageprocessingsetpixel",
+			"description":{"en": "Set pixel color","ru": "Установить цвет пикселя"},
+			"template": "{{X}},{{Y}}",
+			"is_element": false,
+			"interface": "imageprocessingsetpixel_interface.js",
+			"select": "imageprocessingsetpixel_select.js",
+			"code": [{"file":"imageprocessingsetpixel_code.js", "name": "imageprocessingsetpixel_code"}]
+		},
+
+
+		{
+			"name":"imageprocessingconvert",
+			"description":{"en": "Change image format","ru": "Изменить формат изображения"},
+			"template": "{{Id}} -> {{Format}}",
+			"is_element": false,
+			"interface": "imageprocessingconvert_interface.js",
+			"select": "imageprocessingconvert_select.js",
+			"code": [{"file":"imageprocessingconvert_code.js", "name": "imageprocessingconvert_code"}]
+		},
+		{
+			"name":"imageprocessingresize",
+			"description":{"en": "Resize","ru": "Изменить размер"},
+			"template": "{{Id}} -> {{Width}},{{Height}}",
+			"is_element": false,
+			"interface": "imageprocessingresize_interface.js",
+			"select": "imageprocessingresize_select.js",
+			"code": [{"file":"imageprocessingresize_code.js", "name": "imageprocessingresize_code"}]
+		},
+		{
+			"name":"imageprocessinginsert",
+			"description":{"en": "Insert one image into another","ru": "Вставить одно изображение в другое"},
+			"template": "{{Id2}} -> {{Id1}}",
+			"is_element": false,
+			"interface": "imageprocessinginsert_interface.js",
+			"select": "imageprocessinginsert_select.js",
+			"code": [{"file":"imageprocessinginsert_code.js", "name": "imageprocessinginsert_code"}]
+		},
+		{
+			"name":"imageprocessingfill",
+			"description":{"en": "Fill rectangle with color","ru": "Заполнить прямоугольник цветом"},
+			"template": "{{Id}}",
+			"is_element": false,
+			"interface": "imageprocessingfill_interface.js",
+			"select": "imageprocessingfill_select.js",
+			"code": [{"file":"imageprocessingfill_code.js", "name": "imageprocessingfill_code"}]
+		},
+		{
+			"name":"imageprocessingsub",
+			"description":{"en": "Get image part","ru": "Получить часть изображения"},
+			"template": "{{Id}} -> {{Save}}",
+			"is_element": false,
+			"interface": "imageprocessingsub_interface.js",
+			"select": "imageprocessingsub_select.js",
+			"code": [{"file":"imageprocessingsub_code.js", "name": "imageprocessingsub_code"}]
+		},
+		{
+			"name":"imageprocessingtext",
+			"description":{"en": "Add text","ru": "Добавить текст"},
+			"template": "{{Text}} -> {{Id}}",
+			"is_element": false,
+			"interface": "imageprocessingtext_interface.js",
+			"select": "imageprocessingtext_select.js",
+			"code": [{"file":"imageprocessingtext_code.js", "name": "imageprocessingtext_code"}]
+		},
+		{
+			"name":"imageprocessingfind",
+			"description":{"en": "Find one image in another","ru": "Поиск одного изображения в другом"},
+			"template": "{{Id1}}",
+			"is_element": false,
+			"interface": "imageprocessingfind_interface.js",
+			"select": "imageprocessingfind_select.js",
+			"code": [{"file":"imageprocessingfind_code.js", "name": "imageprocessingfind_code"}]
+		}
+	],
+	"localize": 
+	{
+		"Image data as base64": {"ru":"Данные в формате base64"},
+		"Variable to save image id": {"ru":"Переменная, в которую сохранить ид изображения"},
+		"Image id": {"ru":"Ид изображения"},
+		"Variable to save width": {"ru":"Переменная, в которую сохранить ширину"},
+		"Variable to save height": {"ru":"Переменная, в которую сохранить высоту"},
+		"Variable to save image data": {"ru":"Переменная, в которую сохранить данные изображения"},
+		"Color Red": {"ru":"Цвет красный"},
+		"Color Green": {"ru":"Цвет зеленый"},
+		"Color Blue": {"ru":"Цвет синий"},
+		"Color Transparency": {"ru":"Цвет прозрачный"},
+		"Font Color Red": {"ru":"Цвет шрифта красный"},
+		"Font Color Green": {"ru":"Цвет шрифта зеленый"},
+		"Font Color Blue": {"ru":"Цвет шрифта синий"},
+		"Font Color Transparency": {"ru":"Цвет шрифта прозрачный"},
+		"Image format": {"ru":"Формат изображения"},
+		"Image target id": {"ru":"Ид целевого изображения"},
+		"Image source id": {"ru":"Ид изображения источника"},
+		"Font family":{"ru":"Семейство шрифтов"},
+		"Font size":{"ru":"Размер шрифта"},
+		"Text":{"ru":"Текст"},
+		"How well the image fits. 100 - exactly fits, 0 - does not fit at all.":{"ru":"Насколько хорошо подходит изображение. 100 - точно подходит, 0 - не подходит совсем."},
+		"Found x coordinate in target image":{"ru":"Найденая координата x в целевом изображении"},
+		"Found y coordinate in target image":{"ru":"Найденая координата y в целевом изображении"}
+
+	},
+	"engine": [],
+	"browser": [],
+	"depends": [],
+	"dll": [
+			{
+				"name": "imageprocessing", 
+				"filename32": "imageprocessing32.dll", 
+				"filename64": "imageprocessing64.dll", 
+				"startdllfunction": "StartDll", 
+				"enddllfunction": "EndDll", 
+				"startthreadfunction": "StartThread", 
+				"endthreadfunction": "EndThread", 
+				"exportlist":[
+					{
+						"name": "find",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "ImageProcessingFind"
+					},
+					{	
+						"name": "text",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "ImageProcessingText"
+					},
+					{
+						"name": "sub",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "ImageProcessingSub"
+					},
+					{
+						"name": "fill",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "ImageProcessingFill"
+					},
+					{
+						"name": "resize",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "ImageProcessingResize"
+					},
+					{
+						"name": "setpixel",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "ImageProcessingSetPixel"
+					},
+					{
+						"name": "getpixel",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "ImageProcessingGetPixel"
+					},
+					{
+						"name": "convert",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "ImageProcessingConvert"
+					},
+					{
+						"name": "create",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "ImageProcessingCreate"
+					},
+					{
+						"name": "load",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "ImageProcessingLoad"
+					},{
+						"name": "delete",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "ImageProcessingDelete"
+					},{
+						"name": "getsize",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "ImageProcessingGetSize"
+					},{
+						"name": "getdata",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "ImageProcessingGetData"
+					},{
+						"name": "insert",
+						"isasync": false,
+						"waitinfinite": false,
+						"workfunction": "ImageProcessingInsert"
+					}
+
+				]
+			}
+		  ]
+}

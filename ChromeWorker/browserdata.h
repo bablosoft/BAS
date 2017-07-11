@@ -7,6 +7,7 @@
 #include "proxydata.h"
 #include "include/cef_base.h"
 #include "inspectresult.h"
+#include "highlightresult.h"
 #include <atomic>
 #include "modulesdata.h"
 #include "configurableitem.h"
@@ -42,6 +43,7 @@ public:
     std::atomic_bool AllowPopups;
     std::atomic_bool AllowDownloads;
     InspectResult _Inspect;
+    HighlightResult _Highlight;
     ModulesDataList _ModulesData;
 
     //Dialogs

@@ -91,6 +91,24 @@ ModulesDataList LoadModulesData(const std::string& Locale)
                     DataItem->Name = ManifestObject["name"].get<std::string>();
                     WORKER_LOG(std::string("Name ") + DataItem->Name);
 
+
+                    if(ManifestObject.find("icon") != ManifestObject.end())
+                    {
+                        DataItem->Icon = ManifestObject["icon"].get<std::string>();
+                    }
+
+                    if(ManifestObject.find("info") != ManifestObject.end())
+                    {
+                        picojson::value::object InfoObject = ManifestObject["info"].get<picojson::value::object>();
+                        if((InfoObject).find(Locale) != InfoObject.end())
+                        {
+                            DataItem->Info = InfoObject[Locale].get<std::string>();
+                        }else if((InfoObject).find("en") != InfoObject.end())
+                        {
+                            DataItem->Info = InfoObject["en"].get<std::string>();
+                        }
+                    }
+
                     if(std::find(std::begin(DisabledModules), std::end(DisabledModules), DataItem->Name) != std::end(DisabledModules))
                     {
                         WORKER_LOG(std::string("Skip because module is disabled"));
@@ -205,6 +223,20 @@ ModulesDataList LoadModulesData(const std::string& Locale)
                         }else if((ActionDescriptionObject).find("en") != ActionDescriptionObject.end())
                         {
                             ActionItem->Description = ActionDescriptionObject["en"].get<std::string>();
+                        }
+
+                        if(ActionObject.find("suggestion") != ActionObject.end())
+                        {
+                            picojson::value::object SuggestionObject = ActionObject["suggestion"].get<picojson::value::object>();
+
+                            if((SuggestionObject).find("en") != SuggestionObject.end())
+                            {
+                                ActionItem->SuggestionEn = SuggestionObject["en"].get<std::string>();
+                            }
+                            if((SuggestionObject).find("ru") != SuggestionObject.end())
+                            {
+                                ActionItem->SuggestionRu = SuggestionObject["ru"].get<std::string>();
+                            }
                         }
 
 

@@ -135,6 +135,7 @@
 	}
 
 	$( document ).ready(function() {
+		$('*').on('dragstart', function(event) { event.preventDefault(); });
 		tr()
 		var json_string = getParameterByName("d")
 		var json = JSON.parse(json_string)
@@ -154,7 +155,7 @@
 
 		$("#defaults").click(function(event){
     		event.preventDefault();
-    		$("#TopPanelHeight").val("250")
+    		$("#TopPanelHeight").val("300")
 			$("#LeftPanelWidth").val("500")
 			$("#Zoom").val("100")
 			$("#EnableFlash").prop("checked",false)

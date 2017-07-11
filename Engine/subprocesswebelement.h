@@ -13,6 +13,7 @@ namespace BrowserAutomationStudioFramework
         Q_OBJECT
         QString CreateXmlElement(const QString& ElementName,const QString& Text1 = QString(),const QString& Text2 = QString());
         QList<QPair<QString,QString> > Selector;
+        bool IsNoWait;
         IWorker *Worker;
         QString ID;
         QString GetSelectorString();
@@ -22,6 +23,8 @@ namespace BrowserAutomationStudioFramework
         virtual void SetWorker(IWorker* Worker);
         virtual IWorker* GetWorker();
         void AddSelector(const QString& key,const QString& value);
+        void SetNoWait();
+
 
     signals:
         void xml();
@@ -41,6 +44,7 @@ namespace BrowserAutomationStudioFramework
         void set_random();
         void attr();
         void length();
+        void highlight();
         void set_attr();
         void render_file();
         void render_base64();
@@ -49,6 +53,7 @@ namespace BrowserAutomationStudioFramework
         void system_click_down();
         void random_point();
         void move();
+        void clarify();
 
     public slots:
         virtual void GetInternalList(QList<IWebElement*>& List);
@@ -78,8 +83,10 @@ namespace BrowserAutomationStudioFramework
         virtual void attr(const QString& text,const QString& callback);
         virtual void set_attr(const QString& val,const QString& text,const QString& callback);
         virtual void length(const QString& callback);
+        virtual void highlight(const QString& callback);
+        virtual void clarify(int x, int y, const QString& callback);
         virtual IWebElement* at(int index);
-
+        virtual IWebElement* nowait();
         virtual IWebElement* css(const QString& css);
         virtual IWebElement* frame(const QString& name);
         virtual IWebElement* frame_css(const QString& name);

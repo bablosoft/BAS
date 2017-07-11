@@ -15,6 +15,8 @@ namespace BrowserAutomationStudioFramework
         int NumberOfLines;
         QStringList Tail;
         QString Color;
+        bool ReplaceActionIdWithLink;
+        bool ReplaceActionIdWithColor;
         void WriteInternal(const QString& line,const QString& suffix,const QString& prefix, bool escape);
     public:
         explicit PlainTextLogger(QObject *parent = 0);
@@ -26,10 +28,13 @@ namespace BrowserAutomationStudioFramework
 
     public slots:
         virtual QString GetFileName();
+        virtual void Clear();
         virtual void Write(const QString& line);
         virtual void WriteHtml(const QString& line_html, const QString& line_raw);
         virtual void WriteFail(const QString& line);
         virtual void WriteSuccess(const QString& line);
+        virtual void SetReplaceActionIdWithLink();
+        virtual void SetReplaceActionIdWithColor();
     };
 }
 

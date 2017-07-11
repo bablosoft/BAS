@@ -57,6 +57,7 @@ namespace BrowserAutomationStudioFramework
         {
             ContentData DataSoftId;
             DataSoftId.DataString = soft;
+
             post["soft_id"] = DataSoftId;
         }
 
@@ -95,6 +96,8 @@ namespace BrowserAutomationStudioFramework
             emit PostedToAntigate(res,id,false);
             return;
         }
+
+
         QString r = res.remove(0,3);
         emit PostedToAntigate(r,id,true);
     }

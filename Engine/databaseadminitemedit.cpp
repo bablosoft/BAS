@@ -24,7 +24,7 @@ void DatabaseAdminItemEdit::SetColumns(QList<DatabaseColumn> Columns)
         QWidget *DataItem;
         switch(Column.Type)
         {
-            case DatabaseColumn::String: DataItem = new QLineEdit(this); break;
+            case DatabaseColumn::String: {QLineEdit* e = new QLineEdit(this);e->setMaxLength(2147483647); DataItem = e;} break;
             case DatabaseColumn::Int: {QSpinBox * w = new QSpinBox(this);w->setMinimum(-1000000);w->setMaximum(1000000);DataItem = w;} break;
             case DatabaseColumn::Bool: DataItem = new QCheckBox(this); break;
             case DatabaseColumn::Date: DataItem = new QDateTimeEdit(this); break;

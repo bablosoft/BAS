@@ -1,6 +1,9 @@
 {
 	
 	"name":"Resources",
+	"info":{"en": "Use this module to insert element to resource or cast resource to list. To get element from resource use dropdown menu on any field.", "ru": "Используйте этот модуль, чтобы вставить элемент в ресурс или читать ресурс в список. Чтобы получить элемент из ресурса, используйте выпадающее меню на любом поле."},
+
+	"icon":"Resources.png",
 	"description":"Advanced way to manipulate resources",
 	"description_small":{"en": "Resources", "ru": "Ресурсы"},
 	"major_version": 1,

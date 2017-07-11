@@ -66,13 +66,18 @@ SOURCES += main.cpp \
     snappy/snappy-sinksource.cc \
     snappy/snappy-stubs-internal.cc \
     extract_labels.cpp \
-    postmanager.cpp
+    postmanager.cpp \
+    highlightresult.cpp \
+    imagefinder.cpp \
+    writefile.cpp
 
 INCLUDEPATH += $(BAS_PATH_WORKER)/include
 
 
 LIBS += -L$(BAS_PATH_WORKER)/lib -llibiconv -llibcef -llibcef_dll_wrapper -lAdvapi32 -luser32 -lPsapi -lshell32 -lDbgHelp -lgdi32 -llibcurl -llibeay32 -lssleay32 -lnetwork-uri
 win32:LIBS += -lminhook
+win32:LIBS += -lMsimg32
+
 
 QMAKE_CXXFLAGS_RELEASE += /MT
 
@@ -143,11 +148,16 @@ HEADERS += \
     snappy/snappy-stubs-internal.h \
     snappy/snappy-stubs-public.h \
     extract_labels.h \
-    postmanager.h
+    postmanager.h \
+    highlightresult.h \
+    imagefinder.h \
+    writefile.h
 
 INCLUDEPATH += xml json png snappy
 
 win32:RC_FILE = main.rc
+
+win32:LIBS += -lopencv_core320 -lopencv_imgproc320 -lzlib
 
 DISTFILES += \
     main.rc

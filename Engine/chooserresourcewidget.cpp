@@ -133,6 +133,8 @@ ChooserResourceWidget::ChooserResourceWidget(QWidget *parent) :
     Pos->SetMarginTop(MarginTop);
     Pos->Start();
 
+    LastVisibleAdvanced = true;
+
 }
 
 void ChooserResourceWidget::SetDatabaseState(IDatabaseState * DatabaseState)
@@ -192,6 +194,68 @@ void ChooserResourceWidget::DatabaseIndexesChanged(QList<int> Previous,QList<int
 
 void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
 {
+
+    LastVisibleAdvanced = Visible;
+    if(ui->stackedWidget->findChild<QWidget*>("page"))
+    {
+        if(!Visible)
+        {
+            ui->FixedStringValue->setMaximumWidth(100000);
+            ui->FixedStringValue->setMinimumWidth(0);
+        }else
+        {
+            ui->FixedStringValue->setMaximumWidth(175);
+            ui->FixedStringValue->setMinimumWidth(175);
+        }
+        ui->label_4->setVisible(Visible);
+    }
+
+    if(ui->stackedWidget->findChild<QWidget*>("page_2"))
+    {
+        if(!Visible)
+        {
+            ui->FixedIntegerValue->setMaximumWidth(100000);
+            ui->FixedIntegerValue->setMinimumWidth(0);
+        }else
+        {
+            ui->FixedIntegerValue->setMaximumWidth(175);
+            ui->FixedIntegerValue->setMinimumWidth(175);
+        }
+        ui->label_5->setVisible(Visible);
+    }
+
+    if(ui->stackedWidget->findChild<QWidget*>("page_4"))
+    {
+        if(!Visible)
+        {
+            ui->RandomStringValue->setMaximumWidth(100000);
+            ui->RandomStringValue->setMinimumWidth(0);
+        }else
+        {
+            ui->RandomStringValue->setMaximumWidth(150);
+            ui->RandomStringValue->setMinimumWidth(150);
+        }
+        ui->label_8->setVisible(Visible);
+    }
+
+    if(ui->stackedWidget->findChild<QWidget*>("page_5"))
+    {
+        if(!Visible)
+        {
+            ui->RIMaximumValue->setMaximumWidth(100000);
+            ui->RIMaximumValue->setMinimumWidth(0);
+            ui->RIMinimumValue->setMaximumWidth(100000);
+            ui->RIMinimumValue->setMinimumWidth(0);
+        }else
+        {
+            ui->RIMaximumValue->setMaximumWidth(150);
+            ui->RIMaximumValue->setMinimumWidth(150);
+            ui->RIMinimumValue->setMaximumWidth(150);
+            ui->RIMinimumValue->setMinimumWidth(150);
+        }
+
+    }
+
     if(ui->stackedWidget->findChild<QWidget*>("page_3"))
     {
         if(!Visible)
@@ -222,6 +286,9 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
             ui->formLayout_8->removeWidget(ui->label_7);
             ui->formLayout_8->removeWidget(ui->label_37);
             ui->formLayout_8->removeWidget(ui->label_38);
+            ui->FileFilename->setMaximumWidth(100000);
+            ui->FileFilename->setMinimumWidth(0);
+
 
         }else
         {
@@ -238,7 +305,13 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
             ui->formLayout_8->addRow(ui->label_37,ui->FileRenew);
             ui->formLayout_8->addRow(ui->label_38,ui->FileRenewInterval);
 
+            ui->FileFilename->setMaximumWidth(100);
+            ui->FileFilename->setMinimumWidth(100);
+
+
+
         }
+        ui->label_10->setVisible(Visible);
         ui->label->setVisible(Visible);
         ui->label_3->setVisible(Visible);
         ui->FileMix->setVisible(Visible);
@@ -302,6 +375,11 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
             ui->formLayout->removeWidget(ui->label_48);
             ui->formLayout->removeWidget(ui->label_49);
 
+            ui->horizontalSpacer->changeSize(0,0, QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+            MultiWidget->setMaximumWidth(100000);
+            MultiWidget->setMinimumWidth(0);
+
         }else
         {
             ui->formLayout->insertRow(1,ui->label_39,ui->DatabaseClear);
@@ -316,7 +394,15 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
             ui->formLayout->addRow(ui->label_48,ui->DatabaseRenew);
             ui->formLayout->addRow(ui->label_49,ui->DatabaseRenewInterval);
 
+            ui->horizontalSpacer->changeSize(1,1, QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+            MultiWidget->setMaximumWidth(250);
+            MultiWidget->setMinimumWidth(250);
+
+
         }
+        ui->widget_2->setVisible(Visible);
+
         ui->label_39->setVisible(Visible);
         ui->label_40->setVisible(Visible);
         ui->label_46->setVisible(Visible);
@@ -375,6 +461,8 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
             ui->formLayout_9->removeWidget(ui->label_31);
             ui->formLayout_9->removeWidget(ui->label_35);
             ui->formLayout_9->removeWidget(ui->label_36);
+            ui->UrlUrl->setMaximumWidth(100000);
+            ui->UrlUrl->setMinimumWidth(0);
         }else
         {
             ui->formLayout_9->insertRow(2,ui->label_13,ui->UrlMix);
@@ -388,7 +476,12 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
             ui->formLayout_9->addRow(ui->label_35,ui->UrlRenew);
             ui->formLayout_9->addRow(ui->label_36,ui->UrlRenewInterval);
 
+            ui->UrlUrl->setMaximumWidth(120);
+            ui->UrlUrl->setMinimumWidth(120);
+
         }
+        ui->label_11->setVisible(Visible);
+
         ui->label_13->setVisible(Visible);
         ui->UrlMix->setVisible(Visible);
         ui->label_28->setVisible(Visible);
@@ -448,6 +541,8 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
             ui->formLayout_10->removeWidget(ui->label_32);
             ui->formLayout_10->removeWidget(ui->label_33);
             ui->formLayout_10->removeWidget(ui->label_34);
+            ui->DirectoryDirectory->setMaximumWidth(100000);
+            ui->DirectoryDirectory->setMinimumWidth(0);
         }else
         {
             ui->formLayout_10->insertRow(1,ui->label_16,ui->DirectoryWildcard);
@@ -462,8 +557,11 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
             ui->formLayout_10->insertRow(10,ui->label_30,ui->DirectoryReloadInterval);
             ui->formLayout_10->addRow(ui->label_33,ui->DirectoryRenew);
             ui->formLayout_10->addRow(ui->label_34,ui->DirectoryRenewInterval);
+            ui->DirectoryDirectory->setMaximumWidth(100);
+            ui->DirectoryDirectory->setMinimumWidth(100);
         }
 
+        ui->label_12->setVisible(Visible);
         ui->label_16->setVisible(Visible);
         ui->DirectoryWildcard->setVisible(Visible);
         ui->label_14->setVisible(Visible);
@@ -497,8 +595,6 @@ void ChooserResourceWidget::SetVisibleAdvanced(bool Visible)
             on_DirectoryReload_toggled(ui->DirectoryReload->isChecked());
         }
     }
-
-
 
 
 }
@@ -708,10 +804,10 @@ void ChooserResourceWidget::setCurrentIndex(int index)
     ui->stackedWidget->addWidget(Widget);
     ui->stackedWidget->setCurrentIndex(0);
 
-    Widget->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
-    Widget->adjustSize();
-    ui->stackedWidget->adjustSize();
-
+    //Widget->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
+    //Widget->adjustSize();
+    //ui->stackedWidget->adjustSize();
+    SetVisibleAdvanced(LastVisibleAdvanced);
 }
 
 ChooserResourceWidget::~ChooserResourceWidget()

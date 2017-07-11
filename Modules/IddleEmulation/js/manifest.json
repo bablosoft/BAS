@@ -1,6 +1,8 @@
 {
 	
 	"name":"IdleEmulation",
+	"info":{"en": "Simulates random user activity: moves mouse, scrolls page.", "ru": "Имитирует случайную активность пользователя: перемещает мышь, прокручивает страницу."},
+	"icon":"idleemulation.png",
 	"description":"Idle emulation",
 	"description_small":{"en": "Idle emulation", "ru": "Эмуляция бездействия"},
 	"major_version": 1,

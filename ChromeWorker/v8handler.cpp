@@ -1,15 +1,23 @@
 #include "v8handler.h"
 #include "log.h"
 #include <thread>
+#include "split.h"
+
 V8Handler::V8Handler(BrowserData* Data, PostManager* _PostManager)
 {
     Changed = false;
     ChangedInspect = false;
+    ChangedHighlight = false;
     ChangedLocalStorage = false;
     ChangedFrameFind = false;
     NewLocalStorage.clear();
     this->Data = Data;
     this->_PostManager = _PostManager;
+}
+
+bool V8Handler::GetResultReady()
+{
+    return Changed;
 }
 
 std::pair<std::string,bool> V8Handler::GetResult()
@@ -41,6 +49,11 @@ void V8Handler::SetResultProcessed()
     Changed = false;
 }
 
+bool V8Handler::GetInspectResultReady()
+{
+    return ChangedInspect;
+}
+
 std::pair<InspectResult,bool> V8Handler::GetInspectResult()
 {
     std::lock_guard<std::mutex> lock(mut_inspect);
@@ -55,6 +68,30 @@ std::pair<InspectResult,bool> V8Handler::GetInspectResult()
     return r;
 }
 
+bool V8Handler::GetHighlightResultReady()
+{
+    return ChangedHighlight;
+}
+
+
+std::pair<HighlightResult,bool> V8Handler::GetHighlightResult()
+{
+    std::lock_guard<std::mutex> lock(mut_highlight);
+
+    std::pair<HighlightResult,bool> r;
+    r.first = _HighlightResult;
+    r.second = ChangedHighlight;
+    _HighlightResult.highlights.clear();
+    ChangedHighlight = false;
+    return r;
+}
+
+bool V8Handler::GetFrameFindResultReady()
+{
+    return ChangedFrameFind;
+}
+
+
 std::pair<InspectResult,bool> V8Handler::GetFrameFindResult()
 {
     std::lock_guard<std::mutex> lock(mut_frame_find);
@@ -67,6 +104,12 @@ std::pair<InspectResult,bool> V8Handler::GetFrameFindResult()
     _FrameFindResult.label.clear();
     ChangedFrameFind = false;
     return r;
+}
+
+void V8Handler::ClearHighlightLast()
+{
+    std::lock_guard<std::mutex> lock(mut_highlight_last);
+    HighlightLast.clear();
 }
 
 
@@ -139,6 +182,44 @@ bool V8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> object, con
         _InspectResult.FrameData.y_with_padding = arguments[19]->GetIntValue();
 
         ChangedInspect = true;
+    }else if(name == std::string("browser_automation_studio_highlight_result"))
+    {
+        bool DoUpdate = false;
+        std::string HighlightNow = arguments[0]->GetStringValue().ToString();
+
+        {
+            std::lock_guard<std::mutex> lock(mut_highlight_last);
+
+            if(HighlightLast != HighlightNow)
+            {
+                HighlightLast = HighlightNow;
+                DoUpdate = true;
+            }
+        }
+
+        if(DoUpdate)
+        {
+            std::lock_guard<std::mutex> lock(mut_highlight);
+
+            _HighlightResult.highlights.clear();
+
+            std::vector<std::string> s = split(HighlightNow,';');
+
+            HighlightResult::rect r;
+
+            for(int i = 0;i<s.size();i++)
+            {
+                switch(i%4)
+                {
+                    case 0: r.x = std::stoi(s[i]);r.y = 0;r.height = -1;r.width = -1; break;
+                    case 1: r.y = std::stoi(s[i]); break;
+                    case 2: r.width = std::stoi(s[i]); break;
+                    case 3: r.height = std::stoi(s[i]); _HighlightResult.highlights.push_back(r);  break;
+                }
+            }
+
+            ChangedHighlight = true;
+        }
     }/*else if(name == std::string("BrowserAutomationStudio_SaveLocalStorage"))
     {
         if (arguments.size() == 6 && arguments[0]->IsString()&& arguments[1]->IsString()&& arguments[2]->IsString()&& arguments[3]->IsString()&& arguments[4]->IsInt()&& arguments[5]->IsString())

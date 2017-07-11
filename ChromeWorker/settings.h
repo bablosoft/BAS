@@ -2,6 +2,7 @@
 #define SETTINGS_H
 
 #include <string>
+#include <vector>
 
 class settings
 {
@@ -16,7 +17,8 @@ class settings
     bool restart;
     bool emulate_mouse;
     bool proxies_reconnect;
-    void SaveToFile();
+    bool debug_toolbox;
+    bool debug_scenario;
 public:
     settings();
     bool UseFlash();
@@ -24,14 +26,28 @@ public:
     bool ProxiesReconnect();
     bool ForceUtf8();
     bool Maximized();
+    bool DebugToolbox();
+    bool DebugScenario();
     bool EmulateMouse();
     void SetMaximized(bool Maximized);
     int SkipFrames();
     int ToolboxHeight();
     int ScenarioWidth();
     int Zoom();
+
+    void SetToolboxHeight(int height);
+    void SetScenarioWidth(int width);
+
+    void SetProxiesReconnect(bool proxies_reconnect);
+    void SetForceUtf8(bool force_utf8);
+    void SetSkipFrames(int skip_frames);
+
+
+    void SaveToFile();
     std::string Serialize();
     void Deserialize(const std::string & Data);
+    void ParseCommandLine(std::vector<std::wstring>& Params);
+    void Init();
 };
 
 #endif // SETTINGS_H

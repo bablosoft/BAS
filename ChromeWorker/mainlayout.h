@@ -3,17 +3,19 @@
 
 #include <windows.h>
 #include <vector>
+#include <functional>
+
 
 class MainLayout
 {
-    int DevToolsRectWidth;
-    int ToolBoxRectHeight;
     void MoveDevTools();
     void CalculateAllSize(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight, RECT& DevToolsRectangle, RECT& ToolboxRectangle, RECT& BrowserRectangle);
     bool DevToolsTab;
 
     long long LastTimeChangedHoldPicture;
     int HoldAnimation;
+    bool IsRenderEmpty;
+
 
 public:
 
@@ -22,6 +24,10 @@ public:
     bool IsRecord;
     bool IsCentralShown;
     bool IsSettingsShown;
+    bool IsNoDataShown;
+
+    int DevToolsRectWidth;
+    int ToolBoxRectHeight;
 
     //Minimize/Maximize
     bool IsMinimized;
@@ -34,9 +40,12 @@ public:
 
     //Buttons
     HWND HButtonUp,HButtonDown,HButtonLeft,HButtonRight;
+    HWND HButtonUpUp,HButtonDownDown,HButtonLeftLeft,HButtonRightRight;
     HWND HButtonDevTools,HButtonScenario;
     HWND HButtonSettings;
 
+    //Cursors
+    HCURSOR hcSizeNS, hcSizeEW, hcArrow;
 
     //Browsers
     HWND BrowserHandle;
@@ -62,10 +71,13 @@ public:
 
     void Update(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
     void CustomDraw(HDC hdc,int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
+    bool DrawImageSelect(HDC hdc);
     void UpdateTabs(bool DevToolsTab);
     bool IsDevToolsTab();
     void UpdateTabs();
     void UpdateState(StateClass State);
+    void SetIsRenderEmpty(bool IsRenderEmpty);
+    bool GetIsRenderEmpty();
     void MaximizeToolbox(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
     void MinimizeToolbox(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
     void ShowCentralBrowser(bool IsSettings);
@@ -85,6 +97,35 @@ public:
 
     void Timer(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
     HBITMAP GetHoldAnimationButton();
+
+    //Splitter
+    int DevToolsRectWidthStart;
+    int ToolBoxRectHeightStart;
+    bool IsInsideScrollVertical;
+    bool IsInsideScrollHorizontal;
+    bool IsMoveScrollVertical;
+    bool IsMoveScrollHorizontal;
+    int SplitterX;
+    int SplitterY;
+    bool OnMouseMove(int x, int y, int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
+    bool OnMouseUp();
+    bool OnMouseLeave();
+    bool OnMouseDown(int x, int y, int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight);
+    void SplitterSetCursor();
+    void SplitterHideInterface();
+    void SplitterShowInterface();
+    bool SplitterIsChangingSize();
+
+    //Image select
+    bool GetIsImageSelect();
+    bool IsImageSelect;
+    int ImageSelectStartX;
+    int ImageSelectStartY;
+    int ImageSelectEndX;
+    int ImageSelectEndY;
+
+    std::vector<std::function<void()> > EventLoadNoDataPage;
+
 
 
 };

@@ -58,9 +58,40 @@ var JSONTree = (function() {
 
   var _jsObj = function(object, depth, indent) {
     var id = _id();
-    var content = Object.keys(object).sort().map(function(property) {
+    var content = Object.keys(object).sort(function(a,b){
+      var a = a.toUpperCase()
+      var b = b.toUpperCase()
+      if(a.indexOf("GLOBAL:") == 0 && b.indexOf("GLOBAL:") == 0 || a.indexOf("GLOBAL:") < 0 && b.indexOf("GLOBAL:") < 0)
+      {
+        if (a > b) {
+          return 1;
+        }
+        if (a < b) {
+          return -1;
+        }
+        return 0
+      }
+
+      if(a.indexOf("GLOBAL:") == 0 && b.indexOf("GLOBAL:") < 0)
+      {
+        return true
+      }
+
+      if(a.indexOf("GLOBAL:") < 0 && b.indexOf("GLOBAL:") == 0)
+      {
+        return false
+      }
+
+      return true;
+
+    })
+
+    content = content.map(function(property) {
       return _property(property, object[property], depth + 1, true);
     }).join(_comma());
+
+    
+
     var body = [
       _openBracket('{', indent ? depth : 0, id),
       _span(content, {id: id, dataopen: "true"}),

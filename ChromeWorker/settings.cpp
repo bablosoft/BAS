@@ -9,23 +9,38 @@
 
 settings::settings()
 {
+    Init();
+}
+
+void settings::Init()
+{
     use_flash = false;
     force_utf8 = true;
     skip_frames = 1;
     is_safe = true;
-    toolbox_height = 250;
+    toolbox_height = 300;
     scenario_width = 500;
     zoom = 100;
     maximized = false;
     restart = false;
     emulate_mouse = true;
     proxies_reconnect = false;
+    debug_toolbox = false;
+    debug_scenario = false;
     std::ifstream fin("settings_worker.ini");
     if(fin.is_open())
     {
         std::string line;
         while(std::getline(fin, line))
         {
+            if(line.find("DebugToolbox=true") != std::string::npos)
+            {
+                debug_toolbox = true;
+            }
+            if(line.find("DebugScenario=true") != std::string::npos)
+            {
+                debug_scenario = true;
+            }
             if(line.find("ForceUtf8=false") != std::string::npos)
             {
                 force_utf8 = false;
@@ -85,6 +100,93 @@ settings::settings()
     fin.close();
 }
 
+void settings::ParseCommandLine(std::vector<std::wstring>& Params)
+{
+    std::vector<std::wstring> res;
+
+
+    bool NextIsSafe = false;
+    bool NextUseFlash = false;
+    bool NextSkipFrames = false;
+    bool NextRefreshConnections = false;
+    bool NextEncodeUtf8 = false;
+    for(std::wstring& param: Params)
+    {
+        if(NextIsSafe)
+        {
+            is_safe = param == L"1";
+            NextIsSafe = false;
+            NextUseFlash = false;
+            NextSkipFrames = false;
+            NextRefreshConnections = false;
+            NextEncodeUtf8 = false;
+            continue;
+        }else if(NextUseFlash)
+        {
+            use_flash = param == L"1";
+            NextIsSafe = false;
+            NextUseFlash = false;
+            NextSkipFrames = false;
+            NextRefreshConnections = false;
+            NextEncodeUtf8 = false;
+            continue;
+        }else if(NextSkipFrames)
+        {
+            skip_frames = std::stoi(param);
+            NextIsSafe = false;
+            NextUseFlash = false;
+            NextSkipFrames = false;
+            NextRefreshConnections = false;
+            NextEncodeUtf8 = false;
+            continue;
+        }else if(NextRefreshConnections)
+        {
+            proxies_reconnect = param == L"1";
+            NextIsSafe = false;
+            NextUseFlash = false;
+            NextSkipFrames = false;
+            NextRefreshConnections = false;
+            NextEncodeUtf8 = false;
+            continue;
+        }else if(NextEncodeUtf8)
+        {
+            force_utf8 = param == L"1";
+            NextIsSafe = false;
+            NextUseFlash = false;
+            NextSkipFrames = false;
+            NextRefreshConnections = false;
+            NextEncodeUtf8 = false;
+            continue;
+        }
+
+        if(param == L"--IsSafe")
+        {
+            NextIsSafe = true;
+            continue;
+        }else if(param == L"--UseFlash")
+        {
+            NextUseFlash = true;
+            continue;
+        }else if(param == L"--SkipFrames")
+        {
+            NextSkipFrames = true;
+            continue;
+        }else if(param == L"--RefreshConnections")
+        {
+            NextRefreshConnections = true;
+            continue;
+        }else if(param == L"--EncodeUtf8")
+        {
+            NextEncodeUtf8 = true;
+            continue;
+        }
+
+        res.push_back(param);
+    }
+
+    Params = res;
+}
+
 bool settings::EmulateMouse()
 {
     return emulate_mouse;
@@ -115,6 +217,21 @@ int settings::SkipFrames()
     return skip_frames + 1;
 }
 
+void settings::SetProxiesReconnect(bool proxies_reconnect)
+{
+    this->proxies_reconnect = proxies_reconnect;
+}
+void settings::SetForceUtf8(bool force_utf8)
+{
+    this->force_utf8 = force_utf8;
+}
+void settings::SetSkipFrames(int skip_frames)
+{
+    if(skip_frames < 1)
+        skip_frames = 1;
+    this->skip_frames = skip_frames;
+}
+
 int settings::ToolboxHeight()
 {
     return toolbox_height;
@@ -125,6 +242,16 @@ int settings::ScenarioWidth()
     return scenario_width;
 }
 
+void settings::SetToolboxHeight(int height)
+{
+    this->toolbox_height = height;
+}
+
+void settings::SetScenarioWidth(int width)
+{
+    this->scenario_width = width;
+}
+
 int settings::Zoom()
 {
     return zoom;
@@ -133,6 +260,16 @@ int settings::Zoom()
 bool settings::Maximized()
 {
     return maximized;
+}
+
+bool settings::DebugToolbox()
+{
+    return debug_toolbox;
+}
+
+bool settings::DebugScenario()
+{
+    return debug_scenario;
 }
 
 void settings::SetMaximized(bool Maximized)
@@ -159,6 +296,8 @@ void settings::SaveToFile()
             outfile<<"IsMaximized="<<((maximized) ? "true" : "false")<<std::endl;
             outfile<<"Restart="<<((restart) ? "true" : "false")<<std::endl;
             outfile<<"UseHumanLikeMouseMoves="<<((emulate_mouse) ? "true" : "false")<<std::endl;
+            outfile<<"DebugToolbox="<<((debug_toolbox) ? "true" : "false")<<std::endl;
+            outfile<<"DebugScenario="<<((debug_scenario) ? "true" : "false")<<std::endl;
 
         }
     }catch(...)
@@ -180,6 +319,8 @@ std::string settings::Serialize()
     res["zoom"] = picojson::value((double)zoom);
     res["restart"] = picojson::value(restart);
     res["emulatemouse"] = picojson::value(emulate_mouse);
+    /*res["debug_toolbox"] = picojson::value(debug_toolbox);
+    res["debug_scenario"] = picojson::value(debug_scenario);*/
     return picojson::value(res).serialize();
 }
 
@@ -201,6 +342,8 @@ void settings::Deserialize(const std::string & Data)
         zoom = o["zoom"].get<double>();
         restart = o["restart"].get<bool>();
         emulate_mouse = o["emulatemouse"].get<bool>();
+        /*debug_scenario = o["debug_scenario"].get<bool>();
+        debug_toolbox = o["debug_toolbox"].get<bool>();*/
 
         if(toolbox_height < 100)
             toolbox_height = 100;

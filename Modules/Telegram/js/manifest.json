@@ -1,0 +1,43 @@
+{
+	
+	"name":"Telegram",
+	"info":{"en": "The module allows you to send messages to your bot in telegram", "ru": "Модуль позволяет отправлять сообщения своему боту в телеграм"},
+	"icon": "message.png",
+	"description":"Send message in telegram",
+	"description_small":{"en": "Telegram", "ru": "Телеграм"},
+	"major_version": 1,
+	"minor_version": 0,
+	"developer_name": "santilo", 
+	"developer_email": "mail.to.ivanc860@gmail.com", 
+	"developer_site": "http://community.bablosoft.com/",
+	"api_version": 1,
+	"actions":
+	[
+
+		{
+			"name":"SendMessage",
+			"description":{"en": "Send Message","ru": "Отправить Сообщение"},
+			"template": "{{Message}}",
+			"is_element": false,
+			"interface": "send_message_interface.js",
+			"select": "send_message_select.js",
+			"code": [{"file":"send_message_code.js", "name": "send_message_code"}]
+		}
+		
+	],
+	"localize": 
+	{
+		"Token Bot": {"ru":"Token бота"},
+		"Id chat": {"ru":"Id чата"},
+		"Message text": {"ru":"Текст сообщения"},
+		"Add thread number to the beginning of the message": {"ru":"Добавить в начало сообщения номер потока"},
+		"Add time to the beginning of the message [hh:mm:ss]": {"ru":"Добавить в начало сообщения время [hh:mm:ss]"},
+
+		"How to <a href=\"#\" onclick=\"BrowserAutomationStudio_OpenUrl('https://core.telegram.org/bots#3-how-do-i-create-a-bot')\">create bot</a> token and <a href=\"#\" onclick=\"BrowserAutomationStudio_OpenUrl('http://stackoverflow.com/questions/32423837/telegram-bot-how-to-get-a-group-chat-id-ruby-gem-telegram-bot')\">get chat id</a>" : 
+		{"ru" : "<a href=\"#\" onclick=\"BrowserAutomationStudio_OpenUrl('https://habrahabr.ru/post/306222/')\">Как создать бота и получить chat id</a>"}
+	},
+	"engine": [],
+	"browser": [],
+	"depends": []	
+}
+

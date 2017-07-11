@@ -1,6 +1,9 @@
 {
 	
 	"name":"UserNotification",
+	"info":{"en": "Play sound or ask user to input value.", "ru": "Воспроизвести звук или попросить пользователя ввести данные."},
+
+	"icon":"usernotification.png",
 	"description":"User Notification",
 	"description_small":{"en": "User interaction", "ru": "Взаимодействие с пользователем"},
 	"major_version": 1,

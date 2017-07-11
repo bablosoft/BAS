@@ -517,6 +517,8 @@ namespace BrowserAutomationStudioFramework
             QString RawString = str;
             RawString = RawString.replace("base64://","");
             Data.DataRaw = QByteArray::fromBase64(RawString.toUtf8());
+            Data.FileName = "file.jpg";
+            Data.ContentType = "image/jpeg";
         }else if(str.startsWith("filebase64://"))
         {
             QString RawString = str;

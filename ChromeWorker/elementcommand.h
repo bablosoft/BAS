@@ -8,6 +8,7 @@ struct ElementCommand
     std::string CommandId;
     std::string CommandParam1;
     std::string CommandParam2;
+    bool IsNoWait = false;
     int StageId;
     std::string FrameUrl;
 

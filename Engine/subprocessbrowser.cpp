@@ -13,6 +13,16 @@ namespace BrowserAutomationStudioFramework
     {
     }
 
+    void SubprocessBrowser::SetWorkerSettings(IWorkerSettings *WorkerSettings)
+    {
+        this->WorkerSettings = WorkerSettings;
+    }
+
+    IWorkerSettings * SubprocessBrowser::GetWorkerSettings()
+    {
+        return WorkerSettings;
+    }
+
     void SubprocessBrowser::MouseClickInstant(int x, int y)
     {
 
@@ -27,7 +37,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("MouseClick"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(MouseClick()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::MouseClickUp(int x, int y, const QString& callback)
@@ -39,7 +50,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("MouseClickUp"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(MouseClickUp()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::MouseClickDown(int x, int y, const QString& callback)
@@ -51,7 +63,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("MouseClickDown"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(MouseClickDown()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::Timezone(int offset, const QString& callback)
@@ -63,7 +76,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("Timezone"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Timezone()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::Geolocation(float latitude, float longitude, const QString& callback)
@@ -75,7 +89,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("Geolocation"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Geolocation()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::PopupClose(int index, const QString& callback)
@@ -87,7 +102,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("PopupClose"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(PopupClose()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::PopupSelect(int index, const QString& callback)
@@ -99,7 +115,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("PopupSelect"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(PopupSelect()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::MouseMove(int x, int y, const QString& params, const QString& callback)
@@ -114,7 +131,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("MouseMove"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(MouseMove()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::Scroll(int x, int y, const QString& callback)
@@ -126,7 +144,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("scroll"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Scroll()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::Render(int x, int y, int width, int height, const QString& callback)
@@ -138,7 +157,47 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("render"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Render()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
+    void SubprocessBrowser::ClearImageData(const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("ClearImageData","");
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("ClearImageData"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(ClearImageData()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
+    void SubprocessBrowser::SetImageData(const QString& base64, const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("SetImageData",base64);
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("SetImageData"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SetImageData()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
+    void SubprocessBrowser::FindImage(const QString& callback)
+    {
+        QString WriteString;
+        QXmlStreamWriter xmlWriter(&WriteString);
+        xmlWriter.writeTextElement("FindImage","");
+
+        Worker->SetScript(callback);
+        Worker->SetFailMessage(tr("Timeout during ") + QString("FindImage"));
+        Worker->GetWaiter()->WaitForSignal(this,SIGNAL(FindImage()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::WaitCode(const QString& callback)
@@ -185,7 +244,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("LoadPage ") + url);
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Loaded()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
 
     }
 
@@ -198,7 +258,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("LoadPageInstant ") + url);
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(LoadedInstant()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
 
     }
 
@@ -211,7 +272,58 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("DebugVariablesResult"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(DebugVariablesResult()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
+    }
+
+    void SubprocessBrowser::SendWorkerSettings(const QString& json, const QString& callback)
+    {
+        bool NeedRestart;
+        bool NeedSend;
+        WorkerSettings->Change(json, NeedRestart, NeedSend);
+
+        Worker->GetProcessComunicator()->SetLocation(WorkerSettings->GetWorkerPath());
+
+        Worker->SetAsyncResult(false);
+        if(NeedRestart)
+        {
+            if(Worker->GetProcessComunicator()->HasProcess())
+            {
+                Worker->SetAsyncResult(true);
+                CreateNewBrowser(true,callback);
+            }else
+            {
+                Worker->SetScript(callback);
+                Worker->RunSubScript();
+            }
+        }else if(NeedSend)
+        {
+            if(Worker->GetProcessComunicator()->HasProcess())
+            {
+                QString WriteString;
+                QXmlStreamWriter xmlWriter(&WriteString);
+                xmlWriter.writeStartElement("SendWorkerSettings");
+                    xmlWriter.writeAttribute("EncodeUtf8", QString::number(WorkerSettings->GetEncodeUtf8()));
+                    xmlWriter.writeAttribute("SkipFrames", QString::number(WorkerSettings->GetSkipFrames()));
+                    xmlWriter.writeAttribute("RefreshConnections", QString::number(WorkerSettings->GetRefreshConnections()));
+                xmlWriter.writeEndElement();
+
+                Worker->SetScript(callback);
+                Worker->SetFailMessage(tr("Timeout during ") + QString("WorkerSettings"));
+                Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SendWorkerSettings()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
+                qDebug()<<"SendWorkerSettings"<<WriteString;
+                if(Worker->GetProcessComunicator())
+                    Worker->GetProcessComunicator()->Send(WriteString);
+            }else
+            {
+                Worker->SetScript(callback);
+                Worker->RunSubScript();
+            }
+        }else
+        {
+            Worker->SetScript(callback);
+            Worker->RunSubScript();
+        }
     }
 
     void SubprocessBrowser::SetOpenFileName(const QString & OpenFileName, const QString& callback)
@@ -223,7 +335,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("OpenFileName ") + OpenFileName);
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SetOpenFileName()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::SetStartupScript(const QString& script,const QString& script_id,const QString& target, const QString& callback)
@@ -239,7 +352,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("SetStartupScript"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SetStartupScript()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::SetFontList(const QString& fonts, const QString& callback)
@@ -251,7 +365,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("SetFontList"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SetFontList()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
 
@@ -264,7 +379,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("SetPromptResult ") + Text);
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SetPromptResult()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::SetHttpAuthResult(const QString & Login, const QString & Password, const QString& callback)
@@ -276,7 +392,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("SetHttpAuthResult ") + Login);
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SetHttpAuthResult()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::SetUserAgent(const QString& agent, const QString& callback)
@@ -288,7 +405,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("SetUserAgent"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SetUserAgent()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::Resize(int x, int y, const QString& callback)
@@ -300,7 +418,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("Resize"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Resize()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::Reset(const QString& callback)
@@ -312,7 +431,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("Reset"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Reset()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::Jquery(const QString& callback)
@@ -324,7 +444,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("Jquery"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Jquery()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::OptimizeMemory(const QString& callback)
@@ -336,7 +457,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("OptimizeMemory"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(OptimizeMemory()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::GetCookiesForUrl(const QString& url, const QString& callback)
@@ -348,7 +470,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("GetCookiesForUrl ") + url);
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(GetCookiesForUrl()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::SaveCookies(const QString& callback)
@@ -360,7 +483,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("SaveCookies"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(SaveCookies()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::RestoreCookies(const QString& cookies, const QString& callback)
@@ -372,7 +496,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("RestoreCookies"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(RestoreCookies()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::RestoreLocalStorage(const QString& localstorage, const QString& callback)
@@ -384,7 +509,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("RestoreLocalStorage"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(RestoreLocalStorage()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
 
@@ -403,7 +529,8 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("GetUrl"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(GetUrl()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 
     void SubprocessBrowser::Received(const QString& value)
@@ -506,10 +633,27 @@ namespace BrowserAutomationStudioFramework
             }else if(xmlReader.name() == "DebugVariablesResult" && token == QXmlStreamReader::StartElement)
             {
                 emit DebugVariablesResult();
+            }else if(xmlReader.name() == "SendWorkerSettings" && token == QXmlStreamReader::StartElement)
+            {
+                emit SendWorkerSettings();
             }
             else if(xmlReader.name() == "OptimizeMemory" && token == QXmlStreamReader::StartElement)
             {
                 emit OptimizeMemory();
+            }
+            else if(xmlReader.name() == "ClearImageData" && token == QXmlStreamReader::StartElement)
+            {
+                emit OptimizeMemory();
+            }
+            else if(xmlReader.name() == "SetImageData" && token == QXmlStreamReader::StartElement)
+            {
+                emit SetImageData();
+            }
+            else if(xmlReader.name() == "FindImage" && token == QXmlStreamReader::StartElement)
+            {
+                xmlReader.readNext();
+                Worker->SetAsyncResult(QScriptValue(xmlReader.text().toString()));
+                emit FindImage();
             }
             else if(xmlReader.name() == "PopupClose" && token == QXmlStreamReader::StartElement)
             {
@@ -596,7 +740,8 @@ namespace BrowserAutomationStudioFramework
         QXmlStreamWriter xmlWriter(&WriteString);
         xmlWriter.writeTextElement("CloseBrowser","");
         Worker->GetProcessComunicator()->Abort();
-        Worker->GetProcessComunicator()->setProperty("empty",true);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->setProperty("empty",true);
     }
 
 
@@ -652,6 +797,8 @@ namespace BrowserAutomationStudioFramework
             Worker->SetProcessComunicator(ProcessComunicatorFactory->CreateProcessComunicator());
             ProcessComunicator = Worker->GetProcessComunicator();
             Worker->GetProcessComunicator()->setParent(this);
+            Worker->GetProcessComunicator()->SetLocation(WorkerSettings->GetWorkerPath());
+
 
             NetworkAccessManager = NetworkAccessManagerFactory->CreateNetworkAccessManager();
             connect(Worker->GetProcessComunicator(),SIGNAL(Received(QString)),NetworkAccessManager,SLOT(Received(QString)));
@@ -664,7 +811,10 @@ namespace BrowserAutomationStudioFramework
             Worker->SetFailMessage(QString("Timeout during creating new process"));
             Worker->GetWaiter()->WaitForSignal(Worker->GetProcessComunicator(),SIGNAL(ProcessStarted()),Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
             Worker->SetScript(callback);
-            Worker->GetProcessComunicator()->CreateProcess(QStringList()<<Language);
+            QStringList arg;
+            arg.append(Language);
+            arg += WorkerSettings->GetCommandLineParameters();
+            Worker->GetProcessComunicator()->CreateProcess(arg);
             if(!NextAction.isEmpty())
             {
                 Worker->GetProcessComunicator()->Send(QString("<SetNextAction>") + NextAction + QString("</SetNextAction>"));
@@ -727,6 +877,7 @@ namespace BrowserAutomationStudioFramework
         Worker->SetScript(callback);
         Worker->SetFailMessage(tr("Timeout during ") + QString("Crush"));
         Worker->GetWaiter()->WaitForSignal(this,SIGNAL(Crush()), Worker,SLOT(RunSubScript()), Worker, SLOT(FailBecauseOfTimeout()));
-        Worker->GetProcessComunicator()->Send(WriteString);
+        if(Worker->GetProcessComunicator())
+            Worker->GetProcessComunicator()->Send(WriteString);
     }
 }

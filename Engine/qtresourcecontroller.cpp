@@ -4,7 +4,6 @@
 #include <QLineEdit>
 #include <QSpinBox>
 #include <QCheckBox>
-#include <QDebug>
 
 #include <QCheckBox>
 #include <QPlainTextEdit>
@@ -30,14 +29,26 @@
 namespace BrowserAutomationStudioFramework
 {
     QtResourceController::QtResourceController(QObject *parent) :
-        IResourceController(parent), TabWidget(0), Layout(0), UseAccordion(false)
+        IResourceController(parent), TabWidget(0), Layout(0), UseAccordion(false), UseUIConstructor(false)
     {
         AllValidator = new GeneralValidator(this);
+        WidgetUIConstructor = 0;
+        ConstructResource = 0;
+    }
+
+    void QtResourceController::SetConstructResource(IConstructResource *ConstructResource)
+    {
+        this->ConstructResource = ConstructResource;
     }
 
     void QtResourceController::SetUseAccordion()
     {
         UseAccordion = true;
+    }
+
+    void QtResourceController::SetUseUIConstructor()
+    {
+        UseUIConstructor = true;
     }
 
     void QtResourceController::SetLanguage(const QString& Language)
@@ -402,18 +413,129 @@ namespace BrowserAutomationStudioFramework
 
     }
 
+    void QtResourceController::CreateUIConstructorWidgetIfNeeded()
+    {
+        if(!WidgetUIConstructor)
+        {
+            UIConstructor *a = new UIConstructor(Widget);
+            QLabel *lab = new QLabel(Widget);
+            lab->setText(tr("This is how user interface will look like:"));
+            QWidget *b = new QWidget(Widget);
+            QVBoxLayout *l = new QVBoxLayout(Widget);
+            lab->setWordWrap(true);
+            lab->setAlignment(Qt::AlignHCenter);
+            lab->setMargin(5);
+            l->setAlignment(Qt::AlignTop);
+            l->addWidget(lab);
+            l->addWidget(a);
+            l->addWidget(b);
+            Widget->setLayout(l);
+            WidgetUIConstructor = a;
+            Widget = b;
+            Widget->setVisible(false);
+
+        }else
+        {
+            //Clear old widgets
+            UIConstructor *w = new UIConstructor(WidgetUIConstructor->parentWidget());
+            ((QVBoxLayout *)WidgetUIConstructor->parentWidget()->layout())->insertWidget(1,w);
+            WidgetUIConstructor->deleteLater();
+            WidgetUIConstructor = w;
+        }
+        WidgetUIConstructor->SetLanguage(Language);
+
+        connect(WidgetUIConstructor,SIGNAL(RemoveWidget(QWidget*)),this,SLOT(DeleteUnit(QWidget*)));
+        connect(WidgetUIConstructor,SIGNAL(MoveUnitInsideTab(QWidget*,QWidget*,bool)),this,SLOT(MoveUnit(QWidget*,QWidget*,bool)));
+        connect(WidgetUIConstructor,SIGNAL(UpdateClearState()),this,SLOT(UpdateClearState()));
+        connect(WidgetUIConstructor,SIGNAL(ChangeTab(QWidget*,MultiLanguageString&)),this,SLOT(ChangeUnitTab(QWidget*,MultiLanguageString&)));
+    }
+
+    void QtResourceController::UpdateClearState()
+    {
+        if(WidgetUIConstructor && WidgetUIConstructor->IsClear())
+            emit WidgetsEmpty();
+    }
+
+    void QtResourceController::DeleteUnit(QWidget* From)
+    {
+        From->deleteLater();
+        UpdateClearState();
+    }
+
+    void QtResourceController::MoveUnit(QWidget* From, QWidget* To,bool After)
+    {
+        QVBoxLayout *layout =  dynamic_cast<QVBoxLayout *>(From->parentWidget()->layout());
+        int index = -1;
+        if(From == To)
+        {
+            index = layout->indexOf(To);
+        }
+        layout->removeWidget(From);
+
+        if(!To)
+        {
+            index = 0;
+        }else
+        {
+            if(index<0)
+                index = layout->indexOf(To);
+
+            if(After)
+            {
+                index++;
+            }
+            else
+            {
+                //index--;
+            }
+        }
+
+        layout->insertWidget(index,From);
+
+    }
+
+    void QtResourceController::ChangeUnitTab(QWidget* From,MultiLanguageString& TabName)
+    {
+        foreach(QObject * i,From->children())
+        {
+            IResourceWidget* w = qobject_cast<IResourceWidget*>(i);
+
+            if(w)
+            {
+                w->SetSectionName(TabName);
+            }
+        }
+    }
+
     void QtResourceController::FromViewToModel(IResources * resources, bool Clear)
     {
         if(Clear)
             DeleteAllModel(resources);
 
-        QList<QWidget *> list = Widget->findChildren<QWidget *>();
+        QList<QWidget *> list;
+        int size = Widget->layout()->count();
+        for(int i = 0;i<size;i++)
+        {
+            QLayoutItem * item = Widget->layout()->itemAt(i);
+            if(!item)
+                continue;
+            QWidget *widget = item->widget();
+            if(!widget)
+                continue;
+            list.append(widget->findChildren<QWidget *>());
+            list.append(widget);
+        }
+
+        //QList<QWidget *> list = Widget->findChildren<QWidget *>();
         list.append(Widget);
-        QList<QWidget *> listsearch;
 
 
-        bool AccordionFound = false;
-        foreach(QWidget * widget,list)
+        //list.append(Widget);
+        //QList<QWidget *> listsearch;
+
+
+        //bool AccordionFound = false;
+        /*foreach(QWidget * widget,list)
         {
             QAccordion* accordion = qobject_cast<QAccordion*>(widget);
             if(accordion)
@@ -426,14 +548,14 @@ namespace BrowserAutomationStudioFramework
                 AccordionFound = true;
                 break;
             }
-        }
+        }*/
 
-        if(!AccordionFound)
+        /*if(!AccordionFound)
         {
             listsearch = list;
-        }
+        }*/
 
-        foreach(QWidget * widget,listsearch)
+        foreach(QWidget * widget,list)
         {
             foreach(QObject * i,widget->children())
             {
@@ -472,7 +594,17 @@ namespace BrowserAutomationStudioFramework
         {
             if(!TabWidget)
             {
-                QVBoxLayout *LayoutSection = new QVBoxLayout(Widget);
+                QLayout *LayoutSection;
+                if(UseAccordion)
+                {
+                    LayoutSection = new FlowLayout(Widget);
+                }else
+                {
+                    LayoutSection = new QVBoxLayout(Widget);
+                }
+                LayoutSection->setContentsMargins(0,0,0,0);
+                LayoutSection->setSpacing(0);
+                LayoutSection->setAlignment(Qt::AlignTop);
                 Widget->setLayout(LayoutSection);
                 TabWidget = new ExtendedTabWidget();
                 Validator = new ExtendedTabWidgetValidator(TabWidget);
@@ -484,14 +616,23 @@ namespace BrowserAutomationStudioFramework
         {
             if(!Layout)
             {
-                Layout = new FlowLayout(Widget);
+                if(UseAccordion)
+                {
+                    Layout = new FlowLayout(Widget);
+                }else
+                {
+                    Layout = new QVBoxLayout(Widget);
+                }
+                Layout->setContentsMargins(0,0,0,0);
+                Layout->setSpacing(0);
+                Layout->setAlignment(Qt::AlignTop);
                 Widget->setLayout(Layout);
             }
         }
 
     }
 
-    FlowLayout * QtResourceController::GetLayoutForSection(const QString& SectionName)
+    QLayout * QtResourceController::GetLayoutForSection(const QString& SectionName)
     {
         GetTabWiget();
         if(GetIncludeSections())
@@ -501,7 +642,18 @@ namespace BrowserAutomationStudioFramework
             if(index<0)
             {
                 QWidget *widget = new QWidget(TabWidget);
-                FlowLayout * layout = new FlowLayout(widget);
+                QLayout * layout;
+                if(UseAccordion)
+                {
+                    layout = new FlowLayout(widget);
+                }else
+                {
+                    layout = new QVBoxLayout(widget);
+                }
+                layout->setContentsMargins(0,0,0,0);
+                layout->setSpacing(0);
+                layout->setAlignment(Qt::AlignTop);
+
 
                 widget->setLayout(layout);
                 TabWidget->addTab(widget,SectionName);
@@ -509,7 +661,7 @@ namespace BrowserAutomationStudioFramework
             }else
             {
                 QWidget *widget = TabWidget->widget(index);
-                return dynamic_cast<FlowLayout *>(widget->layout());
+                return dynamic_cast<QLayout *>(widget->layout());
             }
 
         }else
@@ -528,6 +680,12 @@ namespace BrowserAutomationStudioFramework
             {
                 w->deleteLater();
             }
+        }
+        emit WidgetsEmpty();
+        if(UseUIConstructor)
+        {
+            CreateUIConstructorWidgetIfNeeded();
+            //Widget->setVisible(false);
         }
 
     }
@@ -550,16 +708,58 @@ namespace BrowserAutomationStudioFramework
         w->SetLanguage(Language);
         w->SetLanguageModel(LanguageModel);
 
-        w->SetVariableName("place_variable_name");
-        MultiLanguageString str;
-        str.SetTranslation("en","PLEASE FILL DESCRIPTION");
-        str.SetTranslation("ru",QString::fromStdWString(std::wstring(L"\x0412\x0412\x0415\x0414\x0418\x0422\x0415\x0020\x041E\x041F\x0418\x0421\x0410\x041D\x0418\x0415")));
-        w->SetDescription(str);
         w->SetTypeId("FixedStringValue");
+
+        if(ConstructResource)
+        {
+            QStringList groups;
+            QHash<QString,QString> VariablesAndValues;
+
+            QList<QGroupBox*> Widgets = Widget->findChildren<QGroupBox*>("DesignResourceWidget");
+
+            for(QGroupBox* group:Widgets)
+            {
+                foreach(QObject * i,group->children())
+                {
+                    IResourceWidget* w = qobject_cast<IResourceWidget*>(i);
+
+                    if(w)
+                    {
+                        groups.append(w->GetSectionName().GetTranslation("en") + QString("|") + w->GetSectionName().GetTranslation("ru"));
+                        if(w->GetTypeId() == "Select")
+                        {
+                            QPlainTextEdit * SelectValuesEdit = w->GetTemplateWidgetByType(false,w->GetTypeId())->findChild<QPlainTextEdit *>("SelectValuesEdit");
+                            if(SelectValuesEdit)
+                            {
+                                VariablesAndValues.insert(w->GetVariableName(), SelectValuesEdit->toPlainText());
+                            }
+                        }
+                    }
+                }
+            }
+            groups.removeDuplicates();
+
+            ConstructResource->SetGroups(groups);
+            ConstructResource->SetSelectsVariablesAndValues(VariablesAndValues);
+            if(!ConstructResource->ConstructResource(w))
+            {
+                w->deleteLater();
+                return;
+            }
+        }
+        if(w->GetVariableName().isEmpty())
+        {
+            w->SetVariableName("place_variable_name");
+            MultiLanguageString str;
+            str.SetTranslation("en","PLEASE FILL DESCRIPTION");
+            str.SetTranslation("ru",QString::fromStdWString(std::wstring(L"\x0412\x0412\x0415\x0414\x0418\x0422\x0415\x0020\x041E\x041F\x0418\x0421\x0410\x041D\x0418\x0415")));
+            w->SetDescription(str);
+        }
+
 
         if(UseAccordion)
         {
-            FlowLayout * Layout = GetLayoutForSection("");
+            QLayout * Layout = GetLayoutForSection("");
             QAccordion *accordion = 0;
 
             /* Find accordion */
@@ -584,7 +784,7 @@ namespace BrowserAutomationStudioFramework
                 Layout->addWidget(accordion);
             }
 
-            if (accordion->insertContentPane(0,QString::number(qrand() % 100000) + ":place_variable_name"))
+            if (accordion->insertContentPane(0,QString::number(qrand() % 100000) + QString(":") + w->GetVariableName()))
             {
                 QFrame *contentFrame = accordion->getContentPane(0)->getContentFrame();
                 accordion->getContentPane(0)->setMaximumHeight(3000);
@@ -597,6 +797,9 @@ namespace BrowserAutomationStudioFramework
                 connect(w,SIGNAL(VariableNameChanged(QString)),accordion->getContentPane(0),SLOT(setHeader(QString)));
                 connect(w,SIGNAL(ResourceDestroyed()),accordion->getContentPane(0),SLOT(selfRemove()));
                 connect(w,SIGNAL(ResourceDestroyed()),accordion->getContentPane(0),SLOT(deleteLater()));
+                if(UseAccordion || UseUIConstructor)
+                    connect(w,SIGNAL(ResourceDestroyed()),this,SLOT(ResourceDestroyed()));
+
                 connect(w,SIGNAL(Up(int)),accordion->getContentPane(0),SLOT(selfUp()));
                 connect(w,SIGNAL(Down(int)),accordion->getContentPane(0),SLOT(selfDown()));
             }
@@ -606,8 +809,37 @@ namespace BrowserAutomationStudioFramework
         else
         {
             GetLayoutForSection("")->addWidget(w->GetMainWidget());
-            connect(w,SIGNAL(Up(int)),GetLayoutForSection(""),SLOT(moveItemUp(int)));
-            connect(w,SIGNAL(Down(int)),GetLayoutForSection(""),SLOT(moveItemDown(int)));
+            //connect(w,SIGNAL(Up(int)),GetLayoutForSection(""),SLOT(moveItemUp(int)));
+            //connect(w,SIGNAL(Down(int)),GetLayoutForSection(""),SLOT(moveItemDown(int)));
+        }
+        if(WidgetUIConstructor)
+        {
+            WidgetUIConstructor->AddUnitToCurrentTab(w->GetVariableName(),w->GetMainWidget());
+        }
+        emit WidgetsNotEmpty();
+    }
+
+    void QtResourceController::ResourceDestroyed()
+    {
+        if(!Widget)
+        {
+            emit WidgetsEmpty();
+            return;
+        }
+        QAccordion* accordion = Widget->findChild<QAccordion *>();
+        if(accordion)
+        {
+            int size = accordion->numberOfContentPanes();
+            if(size>0)
+            {
+                emit WidgetsNotEmpty();
+            }else
+            {
+                emit WidgetsEmpty();
+            }
+        }else
+        {
+            emit WidgetsEmpty();
         }
     }
 
@@ -875,6 +1107,13 @@ namespace BrowserAutomationStudioFramework
         if(Clear)
             DeleteAllView();
         int size = resources->GetModelList()->size();
+        if(size > 0)
+        {
+            emit WidgetsNotEmpty();
+        }else
+        {
+            emit WidgetsEmpty();
+        }
         CheckIfAllSectionsAreEmpty(resources);
         GetTabWiget();
 
@@ -927,7 +1166,7 @@ namespace BrowserAutomationStudioFramework
             w->SetVisibleToUser(res->GetVisibleByUser());
             w->SetEnabledToUser(res->GetEnabledByUser());
             QString SectionName = res->GetSectionName().GetTranslation(Language);
-            FlowLayout *FLayout = GetLayoutForSection(SectionName);
+            QLayout *FLayout = GetLayoutForSection(SectionName);
             if(UseAccordion)
             {
                 if(!accordion)
@@ -948,6 +1187,8 @@ namespace BrowserAutomationStudioFramework
                     connect(w,SIGNAL(VariableNameChanged(QString)),accordion->getContentPane(Pane),SLOT(setHeader(QString)));
                     connect(w,SIGNAL(ResourceDestroyed()),accordion->getContentPane(Pane),SLOT(selfRemove()));
                     connect(w,SIGNAL(ResourceDestroyed()),accordion->getContentPane(Pane),SLOT(deleteLater()));
+                    if(UseAccordion || UseUIConstructor)
+                        connect(w,SIGNAL(ResourceDestroyed()),this,SLOT(ResourceDestroyed()));
 
                     connect(w,SIGNAL(Up(int)),accordion->getContentPane(Pane),SLOT(selfUp()));
                     connect(w,SIGNAL(Down(int)),accordion->getContentPane(Pane),SLOT(selfDown()));
@@ -956,8 +1197,13 @@ namespace BrowserAutomationStudioFramework
             }else
             {
                 FLayout->addWidget(w->GetMainWidget());
-                connect(w,SIGNAL(Up(int)),FLayout,SLOT(moveItemUp(int)));
-                connect(w,SIGNAL(Down(int)),FLayout,SLOT(moveItemDown(int)));
+                //connect(w,SIGNAL(Up(int)),FLayout,SLOT(moveItemUp(int)));
+                //connect(w,SIGNAL(Down(int)),FLayout,SLOT(moveItemDown(int)));
+            }
+
+            if(UseUIConstructor)
+            {
+                WidgetUIConstructor->AddUnit(res->GetName(),w->GetSectionName(),w->GetMainWidget());
             }
 
 
@@ -1021,13 +1267,13 @@ namespace BrowserAutomationStudioFramework
             }
         }
 
-
-
         if(TabWidget)
         {
             TabWidget->HideEmptyTabsAndShowVisibleTabs();
             Validator->SetTabWidget(TabWidget);
         }
+
+
         emit WidgetGenerationDone();
 
     }

@@ -22,14 +22,14 @@
     #include "CrashHandler.h"
 #endif
 
-
 int pid = -1;
 CefRefPtr<MainApp> app;
 PipesClient *Client;
 CommandParser *Parser;
 HWND MousePositionMouseHandle,hwnd,HButtonUp,HButtonDown,HButtonLeft,HButtonRight,HButtonDevTools,HButtonScenario,HTextHold,HTextFinished;
-enum{IDButtonTerminate = 1000,IDButtonQuit,IDButtonUp,IDButtonDown,IDButtonLeft,IDButtonRight,IDButtonMinimizeMaximize,IDButtonDevTools,IDButtonScenario,IDButtonSettings,IDTextHold,IDTextFinished,IDClick,IDMove,IDMoveAndClick,IDDrag,IDDrop,IDDragElement,IDDropElement,IDInspect,IDXml,IDText,IDScript,IDClickElement,IDMoveElement,IDMoveAndClickElement,IDClear,IDType,IDExists,IDStyle,IDCheck,IDFocus,IDSet,IDSetInteger,IDSetRandom,IDGetAttr,IDSetAttr,IDCaptcha,IDLength,IDWaitElement,
-    IDLoop,IDXmlLoop,IDTextLoop,IDScriptLoop,IDClickElementLoop,IDMoveElementLoop,IDMoveAndClickElementLoop,IDClearLoop,IDTypeLoop,IDExistsLoop,IDStyleLoop,IDCheckLoop,IDFocusLoop,IDSetLoop,IDSetIntegerLoop,IDSetRandomLoop,IDGetAttrLoop,IDSetAttrLoop,IDCaptchaLoop,IDCustom = 30000,IDCustomForeach = 40000,IDCustomPopups = 50000};
+HWND HButtonUpUp,HButtonDownDown,HButtonLeftLeft,HButtonRightRight;
+enum{IDButtonTerminate = 1000,IDButtonQuit,IDButtonUp,IDButtonDown,IDButtonLeft,IDButtonRight,IDButtonUpUp,IDButtonDownDown,IDButtonLeftLeft,IDButtonRightRight,IDButtonMinimizeMaximize,IDButtonDevTools,IDButtonScenario,IDButtonSettings,IDTextHold,IDTextFinished,IDClick,IDMove,IDNone,IDMoveAndClick,IDDrag,IDDrop,IDDragElement,IDDropElement,IDInspect,IDXml,IDText,IDScript,IDClickElement,IDMoveElement,IDMoveAndClickElement,IDClear,IDType,IDExists,IDStyle,IDCheck,IDScreenshot,IDCoordinates,IDFocus,IDSet,IDSetInteger,IDSetRandom,IDGetAttr,IDSetAttr,IDCaptcha,IDLength,IDWaitElement,
+    IDLoop,IDXmlLoop,IDTextLoop,IDScriptLoop,IDClickElementLoop,IDMoveElementLoop,IDMoveAndClickElementLoop,IDClearLoop,IDTypeLoop,IDExistsLoop,IDStyleLoop,IDCheckLoop,IDScreenshotLoop,IDCoordinatesLoop,IDFocusLoop,IDSetLoop,IDSetIntegerLoop,IDSetRandomLoop,IDGetAttrLoop,IDSetAttrLoop,IDCaptchaLoop,IDCustom = 30000,IDCustomForeach = 40000,IDCustomPopups = 50000};
 HBITMAP BReady,BFinished;
 HCURSOR HCursor;
 using namespace std::placeholders;
@@ -44,7 +44,6 @@ int InspectLastY = -1;
 std::string LastLabel;
 settings Settings;
 int TimerLoop = 0;
-int SkipFrames = 1;
 
 void check_pid()
 {
@@ -68,12 +67,28 @@ void RepositionInterface(int x, int y)
     Layout->Update(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
 }
 
+void RestoreOriginalStage()
+{
+    Layout->DevToolsRectWidth = 500;
+    Layout->ToolBoxRectHeight = 300;
+    Layout->Update(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
+    InvalidateRect(Layout->MainWindowHandle,NULL,true);
+
+    Settings.SetToolboxHeight(Layout->ToolBoxRectHeight);
+    Settings.SetScenarioWidth(Layout->DevToolsRectWidth);
+    Settings.SaveToFile();
+}
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch(msg)
     {
         case WM_CREATE:
         {
+            Layout->hcSizeNS = LoadCursor(NULL, IDC_SIZENS);
+            Layout->hcSizeEW = LoadCursor(NULL, IDC_SIZEWE);
+            Layout->hcArrow = LoadCursor(NULL, IDC_ARROW);
+
             HICON hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_LOGO));
             SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
 
@@ -105,6 +120,33 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 HBITMAP bitmap = (HBITMAP)LoadImage(hInst, MAKEINTRESOURCEW(IDB_RIGHT), IMAGE_BITMAP, 0, 0, 0);
                 SendMessage(HButtonRight, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
             }
+
+            HButtonUpUp = CreateWindow(L"BUTTON", NULL, BS_BITMAP|WS_TABSTOP|WS_VISIBLE|WS_CHILD|BS_PUSHBUTTON, 0, 0, 20, 20, hwnd, (HMENU)IDButtonUpUp, hInst, NULL);
+            Layout->HButtonUpUp = HButtonUpUp;
+            {
+                HBITMAP bitmap = (HBITMAP)LoadImage(hInst, MAKEINTRESOURCEW(IDB_UPUP), IMAGE_BITMAP, 0, 0, 0);
+                SendMessage(HButtonUpUp, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
+            }
+            HButtonDownDown = CreateWindow(L"BUTTON", NULL, BS_BITMAP|WS_TABSTOP|WS_VISIBLE|WS_CHILD|BS_PUSHBUTTON, 0,0 , 20, 20, hwnd, (HMENU)IDButtonDownDown, hInst, NULL);
+            Layout->HButtonDownDown = HButtonDownDown;
+            {
+                HBITMAP bitmap = (HBITMAP)LoadImage(hInst, MAKEINTRESOURCEW(IDB_DOWNDOWN), IMAGE_BITMAP, 0, 0, 0);
+                SendMessage(HButtonDownDown, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
+            }
+            HButtonLeftLeft = CreateWindow(L"BUTTON", NULL, BS_BITMAP|WS_TABSTOP|WS_VISIBLE|WS_CHILD|BS_PUSHBUTTON, 0,0 , 20, 20, hwnd, (HMENU)IDButtonLeftLeft, hInst, NULL);
+            Layout->HButtonLeftLeft = HButtonLeftLeft;
+            {
+                HBITMAP bitmap = (HBITMAP)LoadImage(hInst, MAKEINTRESOURCEW(IDB_LEFTLEFT), IMAGE_BITMAP, 0, 0, 0);
+                SendMessage(HButtonLeftLeft, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
+            }
+            HButtonRightRight = CreateWindow(L"BUTTON", NULL, BS_BITMAP|WS_TABSTOP|WS_VISIBLE|WS_CHILD|BS_PUSHBUTTON, 0,0 , 20, 20, hwnd, (HMENU)IDButtonRightRight, hInst, NULL);
+            Layout->HButtonRightRight = HButtonRightRight;
+            {
+                HBITMAP bitmap = (HBITMAP)LoadImage(hInst, MAKEINTRESOURCEW(IDB_RIGHTRIGHT), IMAGE_BITMAP, 0, 0, 0);
+                SendMessage(HButtonRightRight, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
+            }
+
+
             HButtonDevTools = CreateWindow(L"BUTTON", NULL, BS_BITMAP|WS_TABSTOP|WS_VISIBLE|WS_CHILD|BS_PUSHBUTTON, 0,0, 20, 20, hwnd, (HMENU)IDButtonDevTools, hInst, NULL);
             Layout->HButtonDevTools = HButtonDevTools;
             {
@@ -145,28 +187,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             SetBkColor(hdcStatic, RGB(255,255,255));
         }
         break;
-        case WM_MOUSEMOVE:
+        case WM_LBUTTONUP:
         {
-            if(!Layout->IsToolboxMaximized && !Layout->IsCentralShown)
+            bool IsImageSelect = Layout->GetIsImageSelect();
+            std::string imagedata;
+            if(IsImageSelect)
             {
-                int xPos = LOWORD(lParam);
-                int yPos = HIWORD(lParam);
                 RECT r = Layout->GetBrowserRectangle(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
 
-                if(xPos >= r.left && xPos <= r.right && yPos >= r.top && yPos <= r.bottom && !hPopupMenu && Layout->State == MainLayout::Ready )
-                {
-                    int MousePositionX = (float)(xPos - r.left) * (float)(app->GetData()->WidthBrowser) / (float)(r.right - r.left),MousePositionY = (float)(yPos - r.top) * (float)(app->GetData()->HeightBrowser) / (float)(r.bottom - r.top);
-
-                    app->MouseMoveAt(MousePositionX,MousePositionY);
-                }else
-                {
-                    app->MouseLeave();
-                }
+                float kx = (float)(app->GetData()->WidthBrowser) / (float)(r.right - r.left);
+                float ky = (float)(app->GetData()->HeightBrowser) / (float)(r.bottom - r.top);
+                imagedata = app->GetSubImageDataBase64(Layout->ImageSelectStartX * kx,Layout->ImageSelectStartY*ky,Layout->ImageSelectEndX * kx,Layout->ImageSelectEndY*ky);
             }
-        }
-        break;
-        case WM_LBUTTONDOWN:
-        {
+
+
+
+            if(Layout->OnMouseUp())
+            {
+                Layout->Update(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
+                Settings.SetToolboxHeight(Layout->ToolBoxRectHeight);
+                Settings.SetScenarioWidth(Layout->DevToolsRectWidth);
+                Settings.SaveToFile();
+            }
+
             if(!Layout->IsToolboxMaximized && !Layout->IsCentralShown)
             {
                 int xPos = LOWORD(lParam);
@@ -191,10 +234,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
                 if(xPos >= r.left && xPos <= r.right && yPos >= r.top && yPos <= r.bottom && Layout->State == MainLayout::Ready)
                 {
+                    {
+                        LOCK_BROWSER_DATA
+                        app->GetData()->_Inspect.isimage = IsImageSelect;
+                        app->GetData()->_Inspect.imagedata = imagedata;
+                    }
+
                     POINT p;
                     GetCursorPos(&p);
+
                     hPopupMenu = CreatePopupMenu();
-                    hForEachMenu = CreatePopupMenu();
+                    if(!IsImageSelect)
+                        hForEachMenu = CreatePopupMenu();
                     hTabsMenu = CreatePopupMenu();
                     MouseMenuPositionX = (float)(xPos - r.left) * (float)(app->GetData()->WidthBrowser) / (float)(r.right - r.left),MouseMenuPositionY = (float)(yPos - r.top) * (float)(app->GetData()->HeightBrowser) / (float)(r.bottom - r.top);
                     InspectLastX = MouseMenuPositionX + app->GetData()->ScrollX;
@@ -208,15 +259,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     std::wstring Drag = Translate::Tr(L"Drag") + s2ws(std::string(" ") + Position);
                     std::wstring Drop = Translate::Tr(L"Drop") + s2ws(std::string(" ") + Position);
                     std::wstring MoveAndClick = Translate::Tr(L"Move And Click") + s2ws(std::string(" ") + Position);
-                    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, IDMoveAndClick, MoveAndClick.c_str());
-                    InsertMenu(hPopupMenu, 1, MF_BYPOSITION | MF_STRING, IDClick, Click.c_str());
-                    InsertMenu(hPopupMenu, 2, MF_BYPOSITION | MF_STRING, IDMove, Move.c_str());
-                    InsertMenu(hPopupMenu, 3, MF_BYPOSITION | MF_STRING, IDDrag, Drag.c_str());
-                    InsertMenu(hPopupMenu, 4, MF_BYPOSITION | MF_STRING, IDDrop, Drop.c_str());
-                    InsertMenu(hPopupMenu, 5, MF_SEPARATOR, 0, NULL);
-                    InsertMenu(hPopupMenu, 6, MF_BYPOSITION | MF_STRING, IDInspect, Translate::Tr(L"Inspect").c_str());
-                    InsertMenu(hPopupMenu, 7, MF_SEPARATOR, 0, NULL);
-                    InsertMenu(hPopupMenu, 8, MF_POPUP | MF_STRING, (UINT_PTR)hTabsMenu, Translate::Tr(L"Tabs").c_str());
+                    if(!IsImageSelect)
+                        InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING | MF_DISABLED, IDNone, Translate::Tr(L"Use drag to find by image").c_str());
+                    else
+                        InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING | MF_DISABLED, IDNone, Translate::Tr(L"Use click to find by selector").c_str());
+
+                    if(!IsImageSelect)
+                    {
+                        InsertMenu(hPopupMenu, 1, MF_BYPOSITION | MF_STRING, IDMoveAndClick, MoveAndClick.c_str());
+                        InsertMenu(hPopupMenu, 2, MF_BYPOSITION | MF_STRING, IDClick, Click.c_str());
+                        InsertMenu(hPopupMenu, 3, MF_BYPOSITION | MF_STRING, IDMove, Move.c_str());
+                        InsertMenu(hPopupMenu, 4, MF_BYPOSITION | MF_STRING, IDDrag, Drag.c_str());
+                        InsertMenu(hPopupMenu, 5, MF_BYPOSITION | MF_STRING, IDDrop, Drop.c_str());
+                        InsertMenu(hPopupMenu, 6, MF_SEPARATOR, 0, NULL);
+                        InsertMenu(hPopupMenu, 7, MF_BYPOSITION | MF_STRING, IDInspect, Translate::Tr(L"Inspect").c_str());
+                    }
+
+                    InsertMenu(hPopupMenu, 8, MF_SEPARATOR, 0, NULL);
+                    InsertMenu(hPopupMenu, 9, MF_POPUP | MF_STRING, (UINT_PTR)hTabsMenu, Translate::Tr(L"Tabs").c_str());
                     {
                         int iterator = 0;
                         int IdIterator = IDCustomPopups;
@@ -239,87 +299,154 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                         }
                     }
 
-                    InsertMenu(hPopupMenu, 9, MF_SEPARATOR, 0, NULL);
-                    InsertMenu(hPopupMenu, 10, MF_BYPOSITION | MF_STRING, IDXml, Translate::Tr(L"Get Element Content").c_str());
-                    InsertMenu(hPopupMenu, 11, MF_BYPOSITION | MF_STRING, IDText, Translate::Tr(L"Get Element Text").c_str());
-                    InsertMenu(hPopupMenu, 12, MF_BYPOSITION | MF_STRING, IDScript, Translate::Tr(L"Execute Javascript On Element").c_str());
-                    InsertMenu(hPopupMenu, 13, MF_BYPOSITION | MF_STRING, IDClickElement, Translate::Tr(L"Click On Element").c_str());
-                    InsertMenu(hPopupMenu, 14, MF_BYPOSITION | MF_STRING, IDMoveElement, Translate::Tr(L"Move On Element").c_str());
-                    InsertMenu(hPopupMenu, 15, MF_BYPOSITION | MF_STRING, IDMoveAndClickElement, Translate::Tr(L"Move And Click On Element").c_str());
-                    InsertMenu(hPopupMenu, 16, MF_BYPOSITION | MF_STRING, IDDragElement, Translate::Tr(L"Drag On Element").c_str());
-                    InsertMenu(hPopupMenu, 17, MF_BYPOSITION | MF_STRING, IDDropElement, Translate::Tr(L"Drop On Element").c_str());
-                    InsertMenu(hPopupMenu, 18, MF_BYPOSITION | MF_STRING, IDClear, Translate::Tr(L"Clear Edit").c_str());
-                    InsertMenu(hPopupMenu, 19, MF_BYPOSITION | MF_STRING, IDType, Translate::Tr(L"Type Text").c_str());
-                    InsertMenu(hPopupMenu, 20, MF_BYPOSITION | MF_STRING, IDExists, Translate::Tr(L"Is Element Exists").c_str());
-                    InsertMenu(hPopupMenu, 21, MF_BYPOSITION | MF_STRING, IDStyle, Translate::Tr(L"Get Element Style").c_str());
-                    InsertMenu(hPopupMenu, 22, MF_BYPOSITION | MF_STRING, IDWaitElement, Translate::Tr(L"Wait While Element Exists").c_str());
-                    InsertMenu(hPopupMenu, 23, MF_BYPOSITION | MF_STRING, IDCheck, Translate::Tr(L"Set Checkbox").c_str());
-                    InsertMenu(hPopupMenu, 24, MF_BYPOSITION | MF_STRING, IDFocus, Translate::Tr(L"Scroll To Element").c_str());
-                    InsertMenu(hPopupMenu, 25, MF_BYPOSITION | MF_STRING, IDSet, Translate::Tr(L"Set Combobox Value").c_str());
-                    InsertMenu(hPopupMenu, 26, MF_BYPOSITION | MF_STRING, IDSetInteger, Translate::Tr(L"Set Combobox Index").c_str());
-                    InsertMenu(hPopupMenu, 27, MF_BYPOSITION | MF_STRING, IDSetRandom, Translate::Tr(L"Set Combobox To Random").c_str());
-                    InsertMenu(hPopupMenu, 28, MF_BYPOSITION | MF_STRING, IDGetAttr, Translate::Tr(L"Get Element Attribute").c_str());
-                    InsertMenu(hPopupMenu, 28, MF_BYPOSITION | MF_STRING, IDSetAttr, Translate::Tr(L"Set Element Attribute").c_str());
-                    InsertMenu(hPopupMenu, 29, MF_BYPOSITION | MF_STRING, IDCaptcha, Translate::Tr(L"Solve Captcha").c_str());
-                    InsertMenu(hPopupMenu, 30, MF_BYPOSITION | MF_STRING, IDLength, Translate::Tr(L"Get Element Count").c_str());
-
-                    int iterator = 31;
-                    int IdIterator = IDCustom;
-                    for(ModulesData Module:app->GetData()->_ModulesData)
+                    InsertMenu(hPopupMenu, 10, MF_SEPARATOR, 0, NULL);
+                    if(!IsImageSelect)
                     {
-                        for(ActionData Action:Module->Actions)
+                        InsertMenu(hPopupMenu, 11, MF_BYPOSITION | MF_STRING, IDXml, Translate::Tr(L"Get Element Content").c_str());
+                        InsertMenu(hPopupMenu, 12, MF_BYPOSITION | MF_STRING, IDText, Translate::Tr(L"Get Element Text").c_str());
+                        InsertMenu(hPopupMenu, 13, MF_BYPOSITION | MF_STRING, IDScript, Translate::Tr(L"Execute Javascript On Element").c_str());
+                    }
+                    InsertMenu(hPopupMenu, 14, MF_BYPOSITION | MF_STRING, IDClickElement, Translate::Tr(L"Click On Element").c_str());
+                    InsertMenu(hPopupMenu, 15, MF_BYPOSITION | MF_STRING, IDMoveElement, Translate::Tr(L"Move On Element").c_str());
+                    InsertMenu(hPopupMenu, 16, MF_BYPOSITION | MF_STRING, IDMoveAndClickElement, Translate::Tr(L"Move And Click On Element").c_str());
+                    InsertMenu(hPopupMenu, 17, MF_BYPOSITION | MF_STRING, IDDragElement, Translate::Tr(L"Drag On Element").c_str());
+                    InsertMenu(hPopupMenu, 18, MF_BYPOSITION | MF_STRING, IDDropElement, Translate::Tr(L"Drop On Element").c_str());
+                    InsertMenu(hPopupMenu, 19, MF_BYPOSITION | MF_STRING, IDClear, Translate::Tr(L"Clear Edit").c_str());
+                    InsertMenu(hPopupMenu, 20, MF_BYPOSITION | MF_STRING, IDType, Translate::Tr(L"Type Text").c_str());
+                    InsertMenu(hPopupMenu, 21, MF_BYPOSITION | MF_STRING, IDExists, Translate::Tr(L"Is Element Exists").c_str());
+                    if(!IsImageSelect)
+                    {
+                        InsertMenu(hPopupMenu, 22, MF_BYPOSITION | MF_STRING, IDStyle, Translate::Tr(L"Get Element Style").c_str());
+                    }
+                    InsertMenu(hPopupMenu, 23, MF_BYPOSITION | MF_STRING, IDWaitElement, Translate::Tr(L"Wait While Element Exists").c_str());
+                    if(!IsImageSelect)
+                    {
+                        InsertMenu(hPopupMenu, 24, MF_BYPOSITION | MF_STRING, IDScreenshot, Translate::Tr(L"Screenshot").c_str());
+                        InsertMenu(hPopupMenu, 25, MF_BYPOSITION | MF_STRING, IDFocus, Translate::Tr(L"Scroll To Element").c_str());
+                    }
+                    InsertMenu(hPopupMenu, 26, MF_BYPOSITION | MF_STRING, IDCoordinates, Translate::Tr(L"Get Coordinates").c_str());
+                    if(!IsImageSelect)
+                    {
+                        InsertMenu(hPopupMenu, 27, MF_BYPOSITION | MF_STRING, IDSet, Translate::Tr(L"Set Combobox Value").c_str());
+                        InsertMenu(hPopupMenu, 28, MF_BYPOSITION | MF_STRING, IDSetInteger, Translate::Tr(L"Set Combobox Index").c_str());
+                        InsertMenu(hPopupMenu, 29, MF_BYPOSITION | MF_STRING, IDSetRandom, Translate::Tr(L"Set Combobox To Random").c_str());
+                        InsertMenu(hPopupMenu, 30, MF_BYPOSITION | MF_STRING, IDGetAttr, Translate::Tr(L"Get Element Attribute").c_str());
+                        InsertMenu(hPopupMenu, 31, MF_BYPOSITION | MF_STRING, IDSetAttr, Translate::Tr(L"Set Element Attribute").c_str());
+                        InsertMenu(hPopupMenu, 32, MF_BYPOSITION | MF_STRING, IDCaptcha, Translate::Tr(L"Solve Captcha").c_str());
+                        InsertMenu(hPopupMenu, 33, MF_BYPOSITION | MF_STRING, IDLength, Translate::Tr(L"Get Element Count").c_str());
+
+                        int iterator = 34;
+                        int IdIterator = IDCustom;
+                        for(ModulesData Module:app->GetData()->_ModulesData)
                         {
-                            if(Action->IsElement)
+                            for(ActionData Action:Module->Actions)
                             {
-                                IdIterator++;
-                                InsertMenu(hPopupMenu, iterator++, MF_BYPOSITION | MF_STRING, IdIterator, s2ws(Action->Description).c_str());
+                                if(Action->IsElement)
+                                {
+                                    IdIterator++;
+                                    InsertMenu(hPopupMenu, iterator++, MF_BYPOSITION | MF_STRING, IdIterator, s2ws(Action->Description).c_str());
+                                }
                             }
                         }
-                    }
 
-                    InsertMenu(hPopupMenu, iterator, MF_POPUP | MF_STRING, (UINT_PTR)hForEachMenu, Translate::Tr(L"For Each Element").c_str());
+                        InsertMenu(hPopupMenu, iterator, MF_POPUP | MF_STRING, (UINT_PTR)hForEachMenu, Translate::Tr(L"For Each Element").c_str());
 
 
-                    InsertMenu(hForEachMenu, 25, MF_BYPOSITION | MF_STRING, IDLoop, Translate::Tr(L"Start Loop").c_str());
-                    InsertMenu(hForEachMenu, 26, MF_SEPARATOR, 0, NULL);
-                    InsertMenu(hForEachMenu, 27, MF_BYPOSITION | MF_STRING, IDXmlLoop, Translate::Tr(L"Get Element Content").c_str());
-                    InsertMenu(hForEachMenu, 28, MF_BYPOSITION | MF_STRING, IDTextLoop, Translate::Tr(L"Get Element Text").c_str());
-                    InsertMenu(hForEachMenu, 29, MF_BYPOSITION | MF_STRING, IDScriptLoop, Translate::Tr(L"Execute Javascript On Element").c_str());
-                    InsertMenu(hForEachMenu, 30, MF_BYPOSITION | MF_STRING, IDClickElementLoop, Translate::Tr(L"Click On Element").c_str());
-                    InsertMenu(hForEachMenu, 31, MF_BYPOSITION | MF_STRING, IDMoveElementLoop, Translate::Tr(L"Move On Element").c_str());
-                    InsertMenu(hForEachMenu, 32, MF_BYPOSITION | MF_STRING, IDMoveAndClickElementLoop, Translate::Tr(L"Move And Click On Element").c_str());
-                    InsertMenu(hForEachMenu, 33, MF_BYPOSITION | MF_STRING, IDClearLoop, Translate::Tr(L"Clear Edit").c_str());
-                    InsertMenu(hForEachMenu, 34, MF_BYPOSITION | MF_STRING, IDTypeLoop, Translate::Tr(L"Type Text").c_str());
-                    InsertMenu(hForEachMenu, 35, MF_BYPOSITION | MF_STRING, IDExistsLoop, Translate::Tr(L"Is Element Exists").c_str());
-                    InsertMenu(hForEachMenu, 36, MF_BYPOSITION | MF_STRING, IDStyleLoop, Translate::Tr(L"Get Element Style").c_str());
-                    InsertMenu(hForEachMenu, 38, MF_BYPOSITION | MF_STRING, IDCheckLoop, Translate::Tr(L"Set Checkbox").c_str());
-                    InsertMenu(hForEachMenu, 39, MF_BYPOSITION | MF_STRING, IDFocusLoop, Translate::Tr(L"Scroll To Element").c_str());
-                    InsertMenu(hForEachMenu, 40, MF_BYPOSITION | MF_STRING, IDSetLoop, Translate::Tr(L"Set Combobox Value").c_str());
-                    InsertMenu(hForEachMenu, 41, MF_BYPOSITION | MF_STRING, IDSetIntegerLoop, Translate::Tr(L"Set Combobox Index").c_str());
-                    InsertMenu(hForEachMenu, 42, MF_BYPOSITION | MF_STRING, IDSetRandomLoop, Translate::Tr(L"Set Combobox To Random").c_str());
-                    InsertMenu(hForEachMenu, 43, MF_BYPOSITION | MF_STRING, IDGetAttrLoop, Translate::Tr(L"Get Element Attribute").c_str());
-                    InsertMenu(hForEachMenu, 44, MF_BYPOSITION | MF_STRING, IDSetAttrLoop, Translate::Tr(L"Set Element Attribute").c_str());
-                    InsertMenu(hForEachMenu, 45, MF_BYPOSITION | MF_STRING, IDCaptchaLoop, Translate::Tr(L"Solve Captcha").c_str());
+                        InsertMenu(hForEachMenu, 25, MF_BYPOSITION | MF_STRING, IDLoop, Translate::Tr(L"Start Loop").c_str());
+                        InsertMenu(hForEachMenu, 26, MF_SEPARATOR, 0, NULL);
+                        InsertMenu(hForEachMenu, 27, MF_BYPOSITION | MF_STRING, IDXmlLoop, Translate::Tr(L"Get Element Content").c_str());
+                        InsertMenu(hForEachMenu, 28, MF_BYPOSITION | MF_STRING, IDTextLoop, Translate::Tr(L"Get Element Text").c_str());
+                        InsertMenu(hForEachMenu, 29, MF_BYPOSITION | MF_STRING, IDScriptLoop, Translate::Tr(L"Execute Javascript On Element").c_str());
+                        InsertMenu(hForEachMenu, 30, MF_BYPOSITION | MF_STRING, IDClickElementLoop, Translate::Tr(L"Click On Element").c_str());
+                        InsertMenu(hForEachMenu, 31, MF_BYPOSITION | MF_STRING, IDMoveElementLoop, Translate::Tr(L"Move On Element").c_str());
+                        InsertMenu(hForEachMenu, 32, MF_BYPOSITION | MF_STRING, IDMoveAndClickElementLoop, Translate::Tr(L"Move And Click On Element").c_str());
+                        InsertMenu(hForEachMenu, 33, MF_BYPOSITION | MF_STRING, IDClearLoop, Translate::Tr(L"Clear Edit").c_str());
+                        InsertMenu(hForEachMenu, 34, MF_BYPOSITION | MF_STRING, IDTypeLoop, Translate::Tr(L"Type Text").c_str());
+                        InsertMenu(hForEachMenu, 35, MF_BYPOSITION | MF_STRING, IDExistsLoop, Translate::Tr(L"Is Element Exists").c_str());
+                        InsertMenu(hForEachMenu, 36, MF_BYPOSITION | MF_STRING, IDStyleLoop, Translate::Tr(L"Get Element Style").c_str());
+                        InsertMenu(hForEachMenu, 38, MF_BYPOSITION | MF_STRING, IDScreenshotLoop, Translate::Tr(L"Screenshot").c_str());
+                        InsertMenu(hForEachMenu, 39, MF_BYPOSITION | MF_STRING, IDFocusLoop, Translate::Tr(L"Scroll To Element").c_str());
+                        InsertMenu(hForEachMenu, 40, MF_BYPOSITION | MF_STRING, IDCoordinatesLoop, Translate::Tr(L"Get Coordinates").c_str());
 
-                    iterator = 46;
-                    IdIterator = IDCustomForeach;
-                    for(ModulesData Module:app->GetData()->_ModulesData)
-                    {
-                        for(ActionData Action:Module->Actions)
+                        InsertMenu(hForEachMenu, 41, MF_BYPOSITION | MF_STRING, IDSetLoop, Translate::Tr(L"Set Combobox Value").c_str());
+                        InsertMenu(hForEachMenu, 42, MF_BYPOSITION | MF_STRING, IDSetIntegerLoop, Translate::Tr(L"Set Combobox Index").c_str());
+                        InsertMenu(hForEachMenu, 43, MF_BYPOSITION | MF_STRING, IDSetRandomLoop, Translate::Tr(L"Set Combobox To Random").c_str());
+                        InsertMenu(hForEachMenu, 44, MF_BYPOSITION | MF_STRING, IDGetAttrLoop, Translate::Tr(L"Get Element Attribute").c_str());
+                        InsertMenu(hForEachMenu, 45, MF_BYPOSITION | MF_STRING, IDSetAttrLoop, Translate::Tr(L"Set Element Attribute").c_str());
+                        InsertMenu(hForEachMenu, 46, MF_BYPOSITION | MF_STRING, IDCaptchaLoop, Translate::Tr(L"Solve Captcha").c_str());
+
+                        iterator = 46;
+                        IdIterator = IDCustomForeach;
+                        for(ModulesData Module:app->GetData()->_ModulesData)
                         {
-                            if(Action->IsElement)
+                            for(ActionData Action:Module->Actions)
                             {
-                                IdIterator++;
-                                InsertMenu(hForEachMenu, iterator++, MF_BYPOSITION | MF_STRING, IdIterator, s2ws(Action->Description).c_str());
+                                if(Action->IsElement)
+                                {
+                                    IdIterator++;
+                                    InsertMenu(hForEachMenu, iterator++, MF_BYPOSITION | MF_STRING, IdIterator, s2ws(Action->Description).c_str());
+                                }
                             }
                         }
                     }
 
                     TrackPopupMenu(hPopupMenu, TPM_TOPALIGN | TPM_LEFTALIGN, p.x, p.y, 0, hwnd, NULL);
                     hPopupMenu = 0;
+
                     app->MouseLeave();
                 }
             }
+        }
+        break;
+
+        case WM_MOUSEMOVE:
+        {
+            int xPos = LOWORD(lParam);
+            int yPos = HIWORD(lParam);
+
+            if(Layout->OnMouseMove(xPos,yPos,app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll))
+            {
+                Layout->Update(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
+                InvalidateRect(Layout->MainWindowHandle,NULL,true);
+                Settings.SetToolboxHeight(Layout->ToolBoxRectHeight);
+                Settings.SetScenarioWidth(Layout->DevToolsRectWidth);
+                Settings.SaveToFile();
+            }
+
+            if(!Layout->IsToolboxMaximized && !Layout->IsCentralShown)
+            {
+                RECT r = Layout->GetBrowserRectangle(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
+
+                if(xPos >= r.left && xPos <= r.right && yPos >= r.top && yPos <= r.bottom && !hPopupMenu && Layout->State == MainLayout::Ready )
+                {
+                    int MousePositionX = (float)(xPos - r.left) * (float)(app->GetData()->WidthBrowser) / (float)(r.right - r.left),MousePositionY = (float)(yPos - r.top) * (float)(app->GetData()->HeightBrowser) / (float)(r.bottom - r.top);
+
+                    app->MouseMoveAt(MousePositionX,MousePositionY);
+                }else
+                {
+                    app->MouseLeave();
+                }
+            }
+        }
+        break;
+        /*case WM_SETFOCUS:
+        if(app->GetData()->IsRecord)
+        {
+            Client->Write("<MaximizeWindow></MaximizeWindow>");
+        }
+        break;*/
+        case WM_LBUTTONDOWN:
+        {
+            int xPos = LOWORD(lParam);
+            int yPos = HIWORD(lParam);
+            if(Layout->OnMouseDown(xPos,yPos,app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll))
+            {
+                Layout->Update(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
+                Settings.SetToolboxHeight(Layout->ToolBoxRectHeight);
+                Settings.SetScenarioWidth(Layout->DevToolsRectWidth);
+                Settings.SaveToFile();
+            }
+
         }
         break;
         case WM_CLOSE:
@@ -411,6 +538,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     break;
                     case IDButtonLeft:
                         app->ScrollLeft();
+                    break;
+                    case IDButtonUpUp:
+                        app->ScrollUpUp();
+                    break;
+                    case IDButtonDownDown:
+                        app->ScrollDownDown();
+                    break;
+                    case IDButtonRightRight:
+                        app->ScrollRightRight();
+                    break;
+                    case IDButtonLeftLeft:
+                        app->ScrollLeftLeft();
                     break;
                     case IDButtonMinimizeMaximize:
                         Layout->MinimizeOrMaximize(hwnd,app->GetData()->_ParentWindowHandle);
@@ -552,6 +691,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                         if(Layout->State == MainLayout::Ready)
                         {
                             app->ExecuteElementFunction("Check");
+                        }
+                    break;
+                    case IDScreenshot:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("Screenshot");
+                        }
+                    break;
+                    case IDCoordinates:
+                        if(Layout->State == MainLayout::Ready)
+                        {
+                            app->ExecuteElementFunction("GetCoordinates");
                         }
                     break;
                     case IDFocus:
@@ -723,6 +874,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                         app->ExecuteElementLoopFunction("Captcha");
                     }
                 break;
+                case IDScreenshotLoop:
+                    if(Layout->State == MainLayout::Ready)
+                    {
+                        app->ExecuteElementLoopFunction("Screenshot");
+                    }
+                break;
+                case IDCoordinatesLoop:
+                    if(Layout->State == MainLayout::Ready)
+                    {
+                        app->ExecuteElementLoopFunction("GetCoordinates");
+                    }
+                break;
 
 
 
@@ -736,7 +899,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 if(!app->GetData()->IsRecord)
                 {
                     TimerLoop++;
-                    TimerLoop %= SkipFrames;
+                    TimerLoop %= Settings.SkipFrames();
                     if(TimerLoop == 0)
                     {
                         CefDoMessageLoopWork();
@@ -765,93 +928,124 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             }
         break;
         case WM_PAINT:
+
             {
                 if(!Layout->IsToolboxMaximized)
                 {
-                    HDC hdc;
                     PAINTSTRUCT ps;
-                    hdc = BeginPaint(hwnd, &ps);
+                    HDC hdc = BeginPaint(hwnd, &ps);
 
                     RECT br = Layout->GetBrowserRectangle(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
 
                     Layout->CustomDraw(hdc,app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
-
-                    std::pair<int, int> size = app->GetImageSize();
-
-                    if(size.first > 0 && size.second > 0 && !Layout->IsCentralShown)
+                    if(!Layout->SplitterIsChangingSize())
                     {
-                        char * data = app->GetImageData();
 
-                        BITMAPINFO info;
-                        ZeroMemory(&info, sizeof(BITMAPINFO));
-                        info.bmiHeader.biBitCount = 32;
-                        info.bmiHeader.biWidth = size.first;
-                        info.bmiHeader.biHeight = size.second;
-                        info.bmiHeader.biPlanes = 1;
-                        info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-                        info.bmiHeader.biSizeImage = size.first * size.second * 4;
-                        info.bmiHeader.biCompression = BI_RGB;
+                        std::pair<int, int> size = app->GetImageSize();
 
-                        if(br.right > br.left && br.bottom > br.top)
+                        if(size.first > 0 && size.second > 0 && !Layout->IsCentralShown)
                         {
-                            /*if(app->GetData()->IsRecord)
-                                SetStretchBltMode(hdc, STRETCH_HALFTONE);*/
-                            StretchDIBits(hdc, br.left, br.bottom, br.right - br.left, br.top - br.bottom, 0, 0, size.first, size.second, data, &info, DIB_RGB_COLORS, SRCCOPY);
-                        }
-                    }
+                            char * data = app->GetImageData();
 
-                    if(app->GetData()->IsRecord)
-                    {
-                        RECT r = Layout->GetStateIndicatorRectangle(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
-                        BITMAP bitmap;
-                        HBITMAP b;
-                        switch(Layout->State)
+                            BITMAPINFO info;
+                            ZeroMemory(&info, sizeof(BITMAPINFO));
+                            info.bmiHeader.biBitCount = 32;
+                            info.bmiHeader.biWidth = size.first;
+                            info.bmiHeader.biHeight = size.second;
+                            info.bmiHeader.biPlanes = 1;
+                            info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+                            info.bmiHeader.biSizeImage = size.first * size.second * 4;
+                            info.bmiHeader.biCompression = BI_RGB;
+
+                            if(br.right > br.left && br.bottom > br.top)
+                            {
+                                if(!app->GetData()->IsRecord)
+                                {
+                                    StretchDIBits(hdc, br.left, br.bottom, br.right - br.left, br.top - br.bottom, 0, 0, size.first, size.second, data, &info, DIB_RGB_COLORS, SRCCOPY);
+                                }else
+                                {
+
+                                    HDC hdcTemp = CreateCompatibleDC(hdc);
+                                    HBITMAP hbmMem = CreateCompatibleBitmap(hdc, br.right - br.left, br.bottom - br.top);
+                                    HANDLE hOld   = SelectObject(hdcTemp, hbmMem);
+
+                                    StretchDIBits(hdcTemp, 0, br.bottom - br.top, br.right - br.left, br.top - br.bottom, 0, 0, size.first, size.second, data, &info, DIB_RGB_COLORS, SRCCOPY);
+
+                                    {
+                                        LOCK_BROWSER_DATA
+                                        app->GetData()->_Highlight.Paint(hdcTemp,app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,br.right - br.left,br.bottom - br.top,app->GetData()->ScrollX,app->GetData()->ScrollY,0,0,app->GetHighlightOffsetX(),app->GetHighlightOffsetY(),app->GetHighlightFrameId() >= 0);
+                                    }
+
+                                    bool ImageSelect = Layout->DrawImageSelect(hdcTemp);
+
+                                    if(!hPopupMenu && !ImageSelect)
+                                    {
+                                        LOCK_BROWSER_DATA
+                                        app->GetData()->_Inspect.Paint(hdcTemp,app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,br.right - br.left,br.bottom - br.top,app->GetData()->ScrollX,app->GetData()->ScrollY,0,0);
+                                    }
+
+                                    BitBlt(hdc, br.left, br.top, br.right - br.left, br.bottom - br.top, hdcTemp, 0, 0, SRCCOPY);
+
+                                    SelectObject(hdcTemp, hOld);
+                                    DeleteObject(hbmMem);
+                                    DeleteDC(hdcTemp);
+
+                                }
+
+
+                            }
+                        }
+
+                        if(app->GetData()->IsRecord)
                         {
-                            case MainLayout::Ready: b = BReady; break;
-                            case MainLayout::Hold: b = Layout->GetHoldAnimationButton(); break;
-                            case MainLayout::Finished: b = BFinished; break;
+                            RECT r = Layout->GetStateIndicatorRectangle(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
+                            BITMAP bitmap;
+                            HBITMAP b;
+                            switch(Layout->State)
+                            {
+                                case MainLayout::Ready: b = BReady; break;
+                                case MainLayout::Hold: b = Layout->GetHoldAnimationButton(); break;
+                                case MainLayout::Finished: b = BFinished; break;
+                            }
+                            HDC hdcMem = CreateCompatibleDC(hdc);
+                            HGDIOBJ oldBitmap = SelectObject(hdcMem, b);
+                            GetObject(b, sizeof(bitmap), &bitmap);
+                            BitBlt(hdc, r.left, r.top, bitmap.bmWidth, bitmap.bmHeight, hdcMem, 0, 0, SRCCOPY);
+                            SelectObject(hdcMem, oldBitmap);
+                            DeleteDC(hdcMem);
                         }
-                        HDC hdcMem = CreateCompatibleDC(hdc);
-                        HGDIOBJ oldBitmap = SelectObject(hdcMem, b);
-                        GetObject(b, sizeof(bitmap), &bitmap);
-                        BitBlt(hdc, r.left, r.top, bitmap.bmWidth, bitmap.bmHeight, hdcMem, 0, 0, SRCCOPY);
-                        SelectObject(hdcMem, oldBitmap);
-                        DeleteDC(hdcMem);
-                    }
 
-                    if(!Layout->IsCentralShown)
-                    {
-                        LOCK_BROWSER_DATA
-                        BrowserData * d = app->GetData();
-                        if(d->CursorX >= 0 && d->CursorX <= d->WidthBrowser && d->CursorY >= 0 && d->CursorY <= d->HeightBrowser)
-                            DrawIcon(hdc, br.left + (float)(d->CursorX) * (float)(br.right - br.left) / (float)(d->WidthBrowser) , br.top + (float)(d->CursorY) * (float)(br.bottom - br.top) / (float)(d->HeightBrowser), HCursor);
-                    }
-
-                    if(!Layout->IsCentralShown)
-                    {
-                        std::string label;
+                        if(!Layout->IsCentralShown)
                         {
                             LOCK_BROWSER_DATA
-                            label = app->GetData()->_Inspect.label;
+                            BrowserData * d = app->GetData();
+                            if(d->CursorX >= 0 && d->CursorX <= d->WidthBrowser && d->CursorY >= 0 && d->CursorY <= d->HeightBrowser)
+                                DrawIcon(hdc, br.left + (float)(d->CursorX) * (float)(br.right - br.left) / (float)(d->WidthBrowser) , br.top + (float)(d->CursorY) * (float)(br.bottom - br.top) / (float)(d->HeightBrowser), HCursor);
                         }
 
-
-                        if(LastLabel != label)
+                        if(!Layout->IsCentralShown)
                         {
-                            RECT r = Layout->GetLabelRectangle(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
-                            std::string NewLabel = label;
-                            std::wstring txt = s2ws(NewLabel);
-                            FillRect(hdc,&r,(HBRUSH) (COLOR_WINDOW+1));
-                            DrawText(hdc,txt.c_str(),txt.length(),&r,DT_VCENTER | DT_SINGLELINE);
-                            LastLabel = NewLabel;
+                            std::string label;
+                            {
+                                LOCK_BROWSER_DATA
+                                label = app->GetData()->_Inspect.label;
+                            }
+
+
+                            if(LastLabel != label)
+                            {
+                                RECT r = Layout->GetLabelRectangle(app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,app->GetData()->WidthAll,app->GetData()->HeightAll);
+                                std::string NewLabel = label;
+                                std::wstring txt = s2ws(NewLabel);
+                                FillRect(hdc,&r,(HBRUSH) (COLOR_WINDOW+1));
+                                DrawText(hdc,txt.c_str(),txt.length(),&r,DT_VCENTER | DT_SINGLELINE);
+                                LastLabel = NewLabel;
+                            }
                         }
+
                     }
 
-                    if(!hPopupMenu)
-                    {
-                        LOCK_BROWSER_DATA
-                        app->GetData()->_Inspect.Paint(hdc,app->GetData()->WidthBrowser,app->GetData()->HeightBrowser,br.right - br.left,br.bottom - br.top,app->GetData()->ScrollX,app->GetData()->ScrollY,br.left,br.top);
-                    }
+
 
                     EndPaint(hwnd, &ps);
                 }
@@ -878,7 +1072,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     #endif
 
     std::srand(std::time(0));
-    SkipFrames = Settings.SkipFrames();
+
+    //Parse command line
+    std::vector<std::wstring> Arguments;
+    {
+        int NumberArgs;
+        LPWSTR *Arglist;
+        Arglist = CommandLineToArgvW(GetCommandLineW(), &NumberArgs);
+        for(int i = 0;i<NumberArgs;i++)
+        {
+            Arguments.push_back(Arglist[i]);
+        }
+        LocalFree(Arglist);
+    }
+
+    Settings.ParseCommandLine(Arguments);
+
+
     Layout = new MainLayout(Settings.ToolboxHeight(),Settings.ScenarioWidth());
     hInst = hInstance;
 
@@ -890,11 +1100,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     PostManager * _PostManager = new PostManager();
 
     {
-        LPWSTR *szArgList;
-        int argCount;
-        szArgList = CommandLineToArgvW(GetCommandLine(), &argCount);
-        LocalFree(szArgList);
-        Data->IsRecord = argCount == 6;
+        Data->IsRecord = Arguments.size() == 6;
         Layout->IsRecord = Data->IsRecord;
         worker_log_init(Data->IsRecord);
     }
@@ -948,26 +1154,26 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Client = new PipesClient();
     Parser = new CommandParser();
     int NumberArgs;
-    LPWSTR *Arglist;
-    Arglist = CommandLineToArgvW(GetCommandLineW(), &NumberArgs);
-
-    std::string Lang = ws2s(Arglist[1]);
+    std::string Lang = ws2s(Arguments[1]);
 
     Translate::SetLanguage(Lang);
     app->GetData()->_ModulesData = LoadModulesData(Lang);
     app->SetInitialStateCallback(Lang);
 
-    std::string Key = ws2s(Arglist[2]);
+    std::string Key = ws2s(Arguments[2]);
     std::string Pid;
     if(NumberArgs>4)
     {
-        Pid = ws2s(Arglist[4]);
+        Pid = ws2s(Arguments[4]);
         WORKER_LOG(std::string("Pid : ") + Pid);
         pid = std::stoi(Pid);
         new std::thread(check_pid);
     }
     WORKER_LOG(Key);
+    Arguments.clear();
+
     Client->Start(Key,Pid);
+    Layout->EventLoadNoDataPage.push_back(std::bind(&MainApp::LoadNoDataCallback,app.get()));
     Parser->EventLoad.push_back(std::bind(&MainApp::LoadCallback,app.get(),_1));
     Parser->EventVisible.push_back(std::bind(&MainApp::VisibleCallback,app.get(),_1));
     Parser->EventSetProxy.push_back(std::bind(&MainApp::SetProxyCallback,app.get(),_1,_2,_3,_4,_5,_6));
@@ -981,6 +1187,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Parser->EventTimezone.push_back(std::bind(&MainApp::TimezoneCallback,app.get(),_1));
     Parser->EventGeolocation.push_back(std::bind(&MainApp::GeolocationCallback,app.get(),_1,_2));
     Parser->EventSetWindow.push_back(std::bind(&MainApp::SetWindowCallback,app.get(),_1));
+    Parser->EventHighlightAction.push_back(std::bind(&MainApp::HighlightActionCallback,app.get(),_1));
     Parser->EventMouseClick.push_back(std::bind(&MainApp::MouseClickCallback,app.get(),_1,_2));
     Parser->EventMouseClickUp.push_back(std::bind(&MainApp::MouseClickUpCallback,app.get(),_1,_2));
     Parser->EventMouseClickDown.push_back(std::bind(&MainApp::MouseClickDownCallback,app.get(),_1,_2));
@@ -991,6 +1198,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Parser->EventRender.push_back(std::bind(&MainApp::RenderCallback,app.get(),_1,_2,_3,_4));
     Parser->EventSetOpenFileName.push_back(std::bind(&MainApp::SetOpenFileNameCallback,app.get(),_1));
     Parser->EventSetStartupScript.push_back(std::bind(&MainApp::SetStartupScriptCallback,app.get(),_1,_2,_3));
+    Parser->EventSendWorkerSettings.push_back(std::bind(&MainApp::SetWorkerSettingsCallback,app.get(),_1,_2,_3));
+
     Parser->EventSetPromptResult.push_back(std::bind(&MainApp::SetPromptResultCallback,app.get(),_1));
     Parser->EventSetHttpAuthResult.push_back(std::bind(&MainApp::SetHttpAuthResultCallback,app.get(),_1,_2));
     Parser->EventGetCookiesForUrl.push_back(std::bind(&MainApp::GetCookiesForUrlCallback,app.get(),_1));
@@ -1031,7 +1240,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     Parser->EventGetLoadStats.push_back(std::bind(&MainApp::GetLoadStatsCallback,app.get()));
     Parser->EventElementCommand.push_back(std::bind(&MainApp::ElementCommandCallback,app.get(),_1));
     Parser->EventDebugVariablesResult.push_back(std::bind(&MainApp::DebugVariablesResultCallback,app.get(),_1));
+    Parser->EventRestoreOriginalStage.push_back(RestoreOriginalStage);
 
+    Parser->EventClearImageData.push_back(std::bind(&MainApp::ClearImageDataCallback,app.get()));
+    Parser->EventSetImageData.push_back(std::bind(&MainApp::SetImageDataCallback,app.get(),_1));
+    Parser->EventFindImage.push_back(std::bind(&MainApp::FindImageCallback,app.get()));
 
     app->EventSendTextResponce.push_back(std::bind(&PipesClient::Write,Client,_1));
 

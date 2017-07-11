@@ -28,7 +28,7 @@ namespace BrowserAutomationStudioFramework
     public:
         explicit SharedMemoryProcessComunicator(QObject *parent = 0);
         ~SharedMemoryProcessComunicator();
-        void SetLocation(const QString& Location);
+        virtual void SetLocation(const QString& Location);
         virtual void CreateProcess(const QStringList& arguments);
         virtual void ConnectToProcess(const QString& key_in, const QString& key_out);
 

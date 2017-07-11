@@ -7,7 +7,7 @@ var Table = $("#Table").val();
 
 var filters = _Filter.GetFilters()
 var Filters = " [ " 
-filters.forEach(function(filter){
+filters.forEach(function(filter, item_index_all){
 	Filters += " [ " 
 	filter.forEach(function(item, item_index){
 		if(item_index == 0)
@@ -23,7 +23,11 @@ filters.forEach(function(filter){
 		if(item_index != filter.length - 1)
 			Filters += ","
 	})
+	
 	Filters += " ] " 
+
+	if(item_index_all != filters.length - 1)
+		Filters += ","	
 })
 
 Filters += " ]" 

@@ -78,12 +78,18 @@ protected:
     MainWindowTabBlink *_TabBlink;
     QString Schema;
     QString DatabaseId;
+    bool ConnectionIsRemote;
+    QString ConnectionServer;
+    QString ConnectionPort;
+    QString ConnectionLogin;
+    QString ConnectionPassword;
     bool IsDatabaseDirty;
 
     QList<IRecordProcessCommunication::ResourceDescription> LastResourceList;
 
     CsvHelper *_CsvHelper;
     void closeEvent(QCloseEvent *event);
+    bool nativeEvent(const QByteArray &eventType, void *message, long *result);
 
     Compiler *compiler;
     IHttpClientFactory * _HttpClientFactory;
@@ -93,7 +99,7 @@ protected:
     IHelperFactory *_HelperFactory;
     QMovie *movie;
     ISystemTrayNotifier *TrayNotifier;
-    QPushButton * LabelAllLog;
+    QPushButton * LogMenuButton;
     QString LogLocation;
 
 
@@ -142,13 +148,18 @@ private slots:
     void Compile();
     void New();
     void Open();
+    void Show();
     bool SavePrevious();
     void Close();
     void CloseNoSave();
     void ResourcesReport();
     QString OpenFromFile(const QString& fileName);
     void OpenFromFileOrDisplayMessageBox(const QString& fileName);
+    void ResourcesNotEmpty();
+    void ResourcesEmpty();
+    void HighlightAction(QUrl url);
 
+    void SetIsDirty(bool IsDirty);
     void OpenDefault();
     void LoadSchema();
     void Save();
@@ -163,6 +174,7 @@ private slots:
     void StartAction(const QString& ActionName);
     void StopAction();
     void UpdateCaptchaSize(int size);
+    void ClearState();
     void RestoreState();
     void ResourcesReportStateChanged(bool IsEmpty);
     void RestoreMaxHeight();
@@ -171,7 +183,7 @@ private slots:
     void SetModified();
     void SetNotModified();
 
-    void LabelAllLog_Click();
+    void LogMenu_Click();
     void SetDefault();
     void ShowData();
     void ShowDataBaseDialogNoAsk();

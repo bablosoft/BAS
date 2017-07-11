@@ -7,7 +7,20 @@
 Compiler::Compiler(QObject *parent) :
     QObject(parent)
 {
+    HideBrowsers = false;
 }
+
+void Compiler::SetHideBrowsers(bool HideBrowsers)
+{
+    this->HideBrowsers = HideBrowsers;
+}
+
+bool Compiler::GetHideBrowsers()
+{
+    return HideBrowsers;
+}
+
+
 void Compiler::SetName(const QString & Name)
 {
     this->Name = Name;

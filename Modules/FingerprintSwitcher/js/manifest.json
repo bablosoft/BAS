@@ -1,7 +1,9 @@
 {
 	
 	"name":"FingerprintSwitcher",
+	"info":{"en": "FingerprintSwitcher is like user agent switcher on steroids. It changes not only user agent, but a lot of browser internals to make BAS actually look like firefox, chrome, safari, on desktop or on mobile.", "ru": "FingerprintSwitcher - это более продвинутая версия смены юзер агента. Сервис меняет не только юзер агент, но и множество внутренних методов и переменных браузера, так, что он выглядел абсолютно идентично хрому, файерфоксу, сафари, настольному или мобильному браузеру."},
 	"description":"Fingerprint switcher",
+	"icon":"fingerprintswitcher.png",
 	"description_small":{"en": "Fingerprint switcher", "ru": "Смена отпечатка браузера"},
 	"major_version": 1,
 	"minor_version": 0,
@@ -29,6 +31,15 @@
 			"interface": "apply_fingerprint_interface.js",
 			"select": "apply_fingerprint_select.js",
 			"code": [{"file":"apply_fingerprint_code.js", "name": "apply_fingerprint_code"}]
+		},
+		{
+			"name":"FingerprintSwitcher_SynchronizeFlash",
+			"description":{"en": "Synchronize Flash","ru": "Синхронизировать Флеш"},
+			"template": "{{Fingerprint}}",
+			"is_element": false,
+			"interface": "synchronize_flash_interface.js",
+			"select": "synchronize_flash_select.js",
+			"code": [{"file":"synchronize_flash_code.js", "name": "synchronize_flash_code"}]
 		}
 	],
 	"localize": 
@@ -36,7 +47,9 @@
 		"Tags. Can use several values separated by commas": {"ru":"Теги. Можно использовать несколько значений, разделенных запятыми"},
 		"Service key. Can be empty": {"ru":"Ключ сервиса. Может быть пустым"},
 		"Fingerprint": {"ru":"Отпечаток"},
-		"Fingerprint switcher service": {"ru":"Смена отпечатка"}
+		"Fingerprint switcher service": {"ru":"Смена отпечатка"},
+		"Synchronize flash state. May restart browser.": {"ru":"Синхронизировать наличие флеш с отпечатком. Может перезапустить браузер."},
+		"This action will restart browser process and thereby reset all settings(proxies, headers, etc), so the best place to use this action is thread start.": {"ru":"Это действие перезапустит браузер и таким образом обнулит остальные настройки(прокси, заголовки, и т.д.), так что лучшее место для этого действия - начало работы потока."}
 	},
 	"engine": ["engine.js"],
 	"browser": [],

@@ -1,6 +1,9 @@
 {
 	
 	"name":"SmsReceive",
+	"info":{"en": "Get temporary phone number and receive sms.", "ru": "Получить временный номер телефона и принять смс."},
+
+	"icon":"SmsReceive.png",
 	"description":"Receive sms",
 	"description_small":{"en": "Receive sms", "ru": "Получить смс"},
 	"major_version": 1,

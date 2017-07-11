@@ -34,6 +34,7 @@ namespace BrowserAutomationStudioFramework
         virtual void type(const QString& text, int interval, const QString& callback) = 0;
         virtual void type(const QString& text, const QString& callback) = 0;
 
+
         virtual void fill(const QString& text, const QString& callback) = 0;
         virtual void exist(const QString& callback) = 0;
         virtual void submit(const QString& callback) = 0;
@@ -46,6 +47,7 @@ namespace BrowserAutomationStudioFramework
         virtual void attr(const QString& text,const QString& callback) = 0;
         virtual void set_attr(const QString& val,const QString& text,const QString& callback) = 0;
         virtual void length(const QString& callback) = 0;
+        virtual void highlight(const QString& callback) = 0;
         virtual IWebElement* at(int index) = 0;
         virtual IWebElement* css(const QString& css) = 0;
         virtual IWebElement* frame(const QString& name) = 0;
@@ -53,6 +55,7 @@ namespace BrowserAutomationStudioFramework
         virtual IWebElement* frame_match(const QString& name) = 0;
         virtual IWebElement* frame_element() = 0;
         virtual IWebElement* position(int x, int y) = 0;
+        virtual IWebElement* nowait() = 0;
 
         virtual IWebElement* all(const QString& css) = 0;
         virtual void render_file(const QString& path,const QString& callback) = 0;

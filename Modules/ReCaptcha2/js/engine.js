@@ -128,6 +128,86 @@ function NumbersParseRecaptcha2(resp,IS33,IS44,IS42,TOP_PIC,LEFT_PIC,BOTTOM_PIC,
 	return CLICKS
 }
 
+BAS_CAPMONSTER_IMAGE_ID = 0
+
+function BAS_CapmonsterUpdateImage()
+{
+	_if(BAS_SolveRecaptcha_Method == "capmonsterimage", function(){
+   		cache_get_base64("recaptcha/api2/payload")!		
+
+   		var image_id = native("imageprocessing","load",_result())
+   		var image_size = native("imageprocessing","getsize",image_id)
+		var image_w = parseInt(image_size.split(",")[0])
+		var image_h = parseInt(image_size.split(",")[1])
+
+		if(image_h == 0)
+			fail("Recaptcha 2 image cache is empty, use Cache Mask Allow action before page with captcha load.")
+
+   		if(image_h > 200)
+   		{
+   			if(BAS_CAPMONSTER_IMAGE_ID != 0)
+   				native("imageprocessing","delete",BAS_CAPMONSTER_IMAGE_ID)
+   			BAS_CAPMONSTER_IMAGE_ID = image_id
+
+   		}else
+   		{
+   			var image_size = native("imageprocessing","getsize",BAS_CAPMONSTER_IMAGE_ID)
+			var image_w = parseInt(image_size.split(",")[0])
+			var image_h = parseInt(image_size.split(",")[1])
+   			
+
+   			var x = 0;
+   			var y = 0;
+   			var wx = 1;
+   			var wy = 1;
+
+   			var resp = RECAPTCHA2_RESULT
+
+   			if(/^\d+$/.test(resp))
+			{
+				resp = resp.split("")
+			}else
+			{
+				resp = resp.split(/[\s,]+/)
+			}
+
+   			var index = parseInt(resp[BAS_CAPMONSTER_SOLVE_INDEX-1]) - 1
+
+   			if(IS33)
+   			{
+   				wx = 3;
+   				wy = 3;
+   			}
+   			if(IS44)
+   			{
+   				wx = 4;
+   				wy = 4;
+   			}
+   			if(IS42)
+   			{
+   				wx = 2;
+   				wy = 4;
+   			}
+   			
+   			x = index % wx
+   			y = Math.floor(index / wx)
+
+   			x = Math.floor(image_w/wx) * x
+   			y = Math.floor(image_h/wy) * y
+
+
+   			native("imageprocessing","insert",BAS_CAPMONSTER_IMAGE_ID + "," + image_id + "," + x + "," + y)
+			native("imageprocessing","delete",image_id)
+
+   			
+   		}
+   		
+	})!
+ 
+
+
+}
+
 function BAS_SolveRecaptcha()
 {
 
@@ -169,7 +249,6 @@ function BAS_SolveRecaptcha()
 	  solver_property("capmonster","serverurl",BAS_SolveRecaptcha_Serverurl)
 	  capmonster(BAS_SolveRecaptcha_Rucaptcha)
 	}
-    cache_data_clear()!
 	_if(BAS_SolveRecaptcha_Method == "capmonsterimage" || BAS_SolveRecaptcha_Method == "capmonsteraudio"  || BAS_SolveRecaptcha_Method == "capmonster", function(){
 	  cache_allow("recaptcha/api2/payload")!
 	})!
@@ -178,6 +257,10 @@ function BAS_SolveRecaptcha()
 
 	BAS_SolveRecaptcha_Path().script("document.getElementById('rc-imageselect') != null")!
 	RECAPTCHA_IS_INVISIBLE = _result() == "true"
+	_if(!RECAPTCHA_IS_INVISIBLE, function(){
+		cache_data_clear()!
+	})!
+
 
 	
 	RECAPTCHA_PREFIX = (BAS_SolveRecaptcha_Query)
@@ -205,6 +288,9 @@ function BAS_SolveRecaptcha()
 	RECAPTCHA2_SOLVED = false
 
 	_call(BAS_SolveRecaptcha_Waiter,null)!
+	BAS_SolveRecaptcha_Path().exist()!
+	if(_result() != "1")
+		_break()
 
 	_if_else(BAS_SolveRecaptcha_Method == "2captcha-newapi" || BAS_SolveRecaptcha_Method == "rucaptcha-newapi" || BAS_SolveRecaptcha_Method == "antigate-newapi", function(){
 	    get_element_selector(RECAPTCHA_PREFIX_FIRST_FRAME).attr("src")!
@@ -300,7 +386,6 @@ function BAS_SolveRecaptcha()
 	  BAS_SolveRecaptcha_Path().move()!
 	  cache_data_clear()!
 	  BAS_SolveRecaptcha_Path().system_click()!
-
 	  _do(function(){
 	       if(_iterator() > 60)
 	          fail("Recaptcha frame load timeout")
@@ -343,7 +428,10 @@ function BAS_SolveRecaptcha()
 	      _do(function(){
 
 	      	if(RECAPTCHA2_SOLVED)
+	      	{
+	      		native("imageprocessing","delete",BAS_CAPMONSTER_IMAGE_ID)
 	        	_break()
+	        }
 
 
 	        _do(function(){
@@ -371,7 +459,10 @@ function BAS_SolveRecaptcha()
 	        
 
 	      if(RECAPTCHA2_SOLVED)
+	      {
+	      	native("imageprocessing","delete",BAS_CAPMONSTER_IMAGE_ID)
 	        _break()
+	      }
 
 	      if(_iterator() > BAS_SolveRecaptcha_TimeToSolve)
 	        fail("Too many fails solve recaptcha 2")
@@ -498,7 +589,10 @@ function BAS_SolveRecaptcha()
 
 
 	      if(RECAPTCHA2_SOLVED)
+	      {
+	      	native("imageprocessing","delete",BAS_CAPMONSTER_IMAGE_ID)
 	        _break()
+	      }
 	      
 	      _do(function(){
 	         if(_iterator() > 60)
@@ -524,7 +618,10 @@ function BAS_SolveRecaptcha()
 	      })!
 
 	      if(RECAPTCHA2_SOLVED)
+	      {
+	      	native("imageprocessing","delete",BAS_CAPMONSTER_IMAGE_ID)
 	        _break()
+	      }
 
 	      _do(function(){
 	         if(_iterator() > 60)
@@ -553,6 +650,7 @@ function BAS_SolveRecaptcha()
 	      _if(RECAPTCHA2_FIRST_TIME, function(){
 	        RECAPTCHA2_FIRST_TIME = false
 	        wait_load("recaptcha/api2/payload")!
+
 	      })!
 
 	      sleep(3000)!
@@ -574,7 +672,11 @@ function BAS_SolveRecaptcha()
 	        get_element_selector(RECAPTCHA_PREFIX_SECOND_FRAME).script("document.getElementsByClassName('rc-imageselect-tileselected').length")!
 	        RECAPTCHA2_TOTAL_SELECTED = parseInt(_result())
 
-	        if(!(RECAPTCHA2_TOTAL_SELECTED>0 || IS44 && (BAS_SolveRecaptcha_Method == "capmonsterimage" || BAS_SolveRecaptcha_Method == "capmonster") || (!IS33 && !IS44 && !IS42)))
+	        get_element_selector(RECAPTCHA_PREFIX_SECOND_FRAME).script("document.getElementsByClassName('rc-imageselect-error-select-more')[0].getAttribute('style') == null")!
+	        RECAPTCHA2_SELECT_MORE = _result() == "true"
+	        
+
+	        if(!(RECAPTCHA2_TOTAL_SELECTED>0 || RECAPTCHA2_SELECT_MORE || /*IS44 && (BAS_SolveRecaptcha_Method == "capmonsterimage" || BAS_SolveRecaptcha_Method == "capmonster") ||*/ (!IS33 && !IS44 && !IS42)))
 	          _break()
 
 	        if(_iterator() > 10)
@@ -597,6 +699,7 @@ function BAS_SolveRecaptcha()
 	        mouse(LEFT + LEFT_RECAPTCHA_RELOAD_BUTTON + 12, TOP + TOP_RECAPTCHA_RELOAD_BUTTON + 12)!
 
 	        wait_load("recaptcha/api2/payload")!
+
 	        
 	        sleep(3000)!
 
@@ -626,9 +729,18 @@ function BAS_SolveRecaptcha()
 	        get_element_selector(RECAPTCHA_PREFIX_SECOND_FRAME).script("(function(){var tmp = document.createElement('DIV');tmp.innerHTML = document.getElementsByClassName('rc-imageselect-desc-wrapper')[0].innerHTML.split('<br>')[0];return tmp.textContent})()")!
 	        solver_property("capmonster","Task",_result())
 	        solver_property("capmonster","CapMonsterModule","ZennoLab.ReCaptcha2")
-	        cache_get_base64("recaptcha/api2/payload")!
-	        solve_base64("capmonster", _result())!
-	        RECAPTCHA2_RESULT = _result()
+	        _call(BAS_CapmonsterUpdateImage,null)!
+	        solve_base64_no_fail("capmonster", native("imageprocessing","getdata",BAS_CAPMONSTER_IMAGE_ID))!
+	        if(_result().indexOf("ERROR_CAPTCHA_UNSOLVABLE") >= 0)
+	        {
+	          RECAPTCHA2_RESULT = ""
+	        }else if(_result().indexOf("CAPTCHA_FAIL") >= 0)
+	        {
+	          fail(_result())
+	        }else
+	        {
+	          RECAPTCHA2_RESULT = _result()
+	        }
 	      },function(){
 	        get_element_selector(RECAPTCHA_PREFIX_SECOND_FRAME_ELEMENT).render_base64()!
 
@@ -686,6 +798,9 @@ function BAS_SolveRecaptcha()
 	        if(_iterator() > CLICKS.length)
 	          _break(1)
 
+	      	BAS_CAPMONSTER_SOLVE_INDEX = _iterator()
+
+
 	        cache_data_clear()!
 
 	        get_element_selector(RECAPTCHA_PREFIX_SECOND_FRAME).script("document.getElementsByClassName('rc-imageselect-tileselected').length")!
@@ -708,12 +823,12 @@ function BAS_SolveRecaptcha()
 	              _break()
 
 	            is_load("recaptcha/api2/payload")!
-	            if(_result())
-	            {
-	              CAPTCHA_TYPE_DYNAMIC = true
-	              _break()
-	            }
-
+	            _if(_result(), function(){
+				  CAPTCHA_TYPE_DYNAMIC = true
+	              _call(BAS_CapmonsterUpdateImage,null)!
+	              _break(2)
+	            })!
+	            
 	            sleep(1000)!
 	        })!
 

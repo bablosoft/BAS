@@ -172,7 +172,6 @@ namespace BrowserAutomationStudioFramework
         connect(this,SIGNAL(KeyStart(QString)),res,SLOT(ProcessStartedAll(QString)));
         connect(this,SIGNAL(SocketStoped(QString)),res,SLOT(ProcessStoppedAll(QString)));
 
-        res->SetLocation(ProcessName);
         res->SetCommandLineParams(Params);
         emit ProcessComunicatorCreated(res);
         return res;
@@ -183,8 +182,4 @@ namespace BrowserAutomationStudioFramework
         this->Params = Params;
     }
 
-    void ProcessComunicatorFactory::SetProcessName(const QString& ProcessName)
-    {
-        this->ProcessName = ProcessName;
-    }
 }

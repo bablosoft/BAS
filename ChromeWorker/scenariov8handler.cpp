@@ -16,6 +16,7 @@ ScenarioV8Handler::ScenarioV8Handler()
     IsClipboardGetRequest = false;
     IsClipboardSetRequest = false;
     IsRunFunctionStart = false;
+    IsRunFunctionSeveralThreadsStart = false;
 }
 
 
@@ -31,6 +32,7 @@ std::pair<ScenarioV8Handler::LastResultStruct, bool> ScenarioV8Handler::GetResul
 
     LastResult.LastResultCodeDiff.clear();
     LastResult.LastResultVariables.clear();
+    LastResult.LastResultGlobalVariables.clear();
     LastResult.LastResultFunctions.clear();
     LastResult.LastResultResources.clear();
 
@@ -97,14 +99,15 @@ bool ScenarioV8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> obj
 {
     if(name == std::string("BrowserAutomationStudio_SendCode"))
     {
-        if (arguments.size() == 5 && arguments[0]->IsString() && arguments[1]->IsString() && arguments[2]->IsString() && arguments[3]->IsString()&& arguments[4]->IsString())
+        if (arguments.size() == 6 && arguments[0]->IsString() && arguments[1]->IsString() && arguments[2]->IsString() && arguments[3]->IsString()&& arguments[4]->IsString()&& arguments[5]->IsString())
         {
             std::lock_guard<std::mutex> lock(mut);
             LastResult.LastResultCodeDiff = arguments[0]->GetStringValue().ToString();
             LastResult.LastResultFunctions = arguments[1]->GetStringValue().ToString();
             LastResult.LastResultResources = arguments[2]->GetStringValue().ToString();
             LastResult.LastResultVariables = arguments[3]->GetStringValue().ToString();
-            LastResult.LastResultLabels = arguments[4]->GetStringValue().ToString();
+            LastResult.LastResultGlobalVariables = arguments[4]->GetStringValue().ToString();
+            LastResult.LastResultLabels = arguments[5]->GetStringValue().ToString();
             Changed = true;
         }
     }else if(name == std::string("BrowserAutomationStudio_Initialized"))
@@ -166,6 +169,10 @@ bool ScenarioV8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> obj
     {
         std::lock_guard<std::mutex> lock(mut_runfunction);
         IsRunFunctionStart = true;
+    }else if(name == std::string("BrowserAutomationStudio_RunFunctionSeveralThreads"))
+    {
+        std::lock_guard<std::mutex> lock(mut_runfunctionseveralthreads);
+        IsRunFunctionSeveralThreadsStart = true;
     }else if(name == std::string("BrowserAutomationStudio_SetClipboard"))
     {
         if (arguments.size() == 1)
@@ -222,6 +229,14 @@ bool ScenarioV8Handler::GetIsRunFunctionStart()
     std::lock_guard<std::mutex> lock(mut_runfunction);
     bool res = IsRunFunctionStart;
     IsRunFunctionStart = false;
+    return res;
+}
+
+bool ScenarioV8Handler::GetIsRunFunctionSeveralThreadsStart()
+{
+    std::lock_guard<std::mutex> lock(mut_runfunctionseveralthreads);
+    bool res = IsRunFunctionSeveralThreadsStart;
+    IsRunFunctionSeveralThreadsStart = false;
     return res;
 }
 

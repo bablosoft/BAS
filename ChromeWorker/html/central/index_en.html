@@ -3,66 +3,159 @@
 <link rel="stylesheet" href="bootstrap.min.css">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="font-awesome.min.css">
+<link rel="stylesheet" href="tabs.css">
 
 
-<div style="position:absolute;top:5px;right:30px">
-	<a href="#" data-is-close="true" class="text-danger"><i class="fa fa-times-circle-o" aria-hidden="true" style="font-size: 150%;"></i></a>
+
+<div class="container-fluid">
+    <div class="row">
+		<div class="col-md-12">
+
+			<div class="tabbable-panel">
+				<div class="tabbable-line">
+					<ul class="nav nav-tabs ">
+						<li class="active">
+							<a href="#tab_default_1" data-toggle="tab">
+							<img src="premium.png" /> Premium </a>
+						</li>
+						<li>
+							<a href="#tab_default_2" data-toggle="tab">
+							<img src="services.png" /> Services </a>
+						</li>
+						<li>
+							<a href="#tab_default_3" data-toggle="tab">
+							<img src="learn.png" /> Learn </a>
+						</li>
+						<li>
+							<a href="#tab_default_4" data-toggle="tab">
+							<img src="earn.png" /> Earn </a>
+						</li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="tab_default_1">
+							<p>
+								<div><a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://bablosoft.com/shop/BASPremium')" class="btn btn-danger btn-sm" role="button">Upgrade to premium.</a></div>
+
+							</p>
+							<p>
+								<div><img src="lock.png" /><strong> Protect your scripts from unlicensed copying.</strong></div>
+								<div class="desc">What if you need to hide source of script or restrict unauthorized access? Premium developers can create personal license and license protected by password.</div>
+								<div class="desc">Premium users also can hide browser content in compiled scripts.</div>
+							</p>
+							<p>
+								<div><img src="support.png" /><strong> Premium support.</strong></div>
+								<div class="desc">Premium users can use skype or email to get support from developer.</div>
+								<div class="desc">Guaranteed response within two working days.</div>
+								<div class="desc">(You will get instructions in personal cabinet).</div>
+							</p>
+							<p>
+								<div><img src="users.png" /><strong> Manage users through web interface.</strong></div>
+								<div class="desc">Premium users can create users and update their licenses through web interface.</div>
+								<div class="desc">Licenses for BAS scripts may be limited in time. Premium developer can stop user license manually or prolong it for specific user.</div>
+								<div class="desc">Each license can be used only on limited machine number. This is done in order to protect script from unlicensed copying. Premium users can change machines number individually for each license.</div>
+							</p>
+							<p>
+								<div><img src="update.png" /><strong> Script delivery.</strong></div>
+								<div class="desc">Premium users update script instantly on all customers machines through web interface.</div>
+							</p>
+							
+							<p>
+								<div><img src="source.png" /><strong> Access to source code private repository.</strong></div>
+								<div class="desc">Useful if you want change BAS and get actual source code.</div>
+							</p>
+
+						</div>
+						<div class="tab-pane" id="tab_default_2">
+							<p>
+								<div><img src="shop.png" /><strong> Shop.</strong></div>
+								<div class="desc">BAS shop contains a lot of scripts. Maybe script that you trying to implement is already in store?</div>
+								<div style="margin-top:5px"><a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://bablosoft.com')" class="btn btn-danger btn-sm" role="button">Visit shop.</a></div>								
+							</p>
+							<p style="margin-top:20px">
+								<div><img src="fingerprint.png" /><strong> FingerprintSwitcher.</strong></div>
+								<div class="desc">Modern methods of user identification can identify him only by a set of browser properties. Let's say that among a million users, tens of thousands can have a certain resolution, but only a few thousand have a certain resolution and a certain set of plug-ins. A set of such properties forms browser fingerprint. By adding new factors, the site can determine exactly what user visits it, even if he uses proxy. This problem can be solved with FingerprintSwitcher service, since it provides a new set of properties each time. In fact, FingerprintSwitcher can be called a proxy service analog for fingerprints.</div>
+								<div style="margin-top:5px"><a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://fingerprints.bablosoft.com')" class="btn btn-danger btn-sm" role="button">More info about FingerprintSwitcher.</a></div>								
+							</p>
+							
+						</div>
+						<div class="tab-pane" id="tab_default_3">
+							
+								<p>
+									<strong>Here is a list of links to start learning BAS:</strong>
+									<hr/>
+								</p>
+								<div class="margin">
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-question-circle" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://wiki.bablosoft.com')">Manual.</a></div>								
+										Description Of BAS functionality and typical use cases.
+									</p>
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-globe" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://community.bablosoft.com')">Community.</a></div>								
+										BAS community. <a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://bablosoft.com/shop/BASPremium')" class="text-danger">Upgrade to premium to get quality and fast support from developer.</a>
+									</p>
+								</div>
+								<p>
+									<strong>Tutorials:</strong>
+									<hr/>
+								</p>
+								<div class="margin">
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-graduation-cap" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://wiki.bablosoft.com/doku.php?id=tutorial1')">Tutorial #1. Poster.</a></div>								
+										This tutorial describes how to create standalone multithreaded network script, which post to twitter.
+									</p>
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-graduation-cap" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://wiki.bablosoft.com/doku.php?id=tutorial2')">Tutorial #2. Parser.</a></div>								
+										This tutorial describes how to create standalone network script, which parses google output.
+									</p>
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-graduation-cap" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://wiki.bablosoft.com/doku.php?id=tutorial3')">Tutorial #3. Account manager.</a></div>								
+										This tutorial describes how to store your accounts in database.
+									</p>
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-graduation-cap" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://wiki.bablosoft.com/doku.php?id=tutorial4')">Tutorial #4. Creating parser with several stages.</a></div>
+										This tutorial describes how to create a parser with a variable number of threads.
+									</p>
+								</div>
+								<p>
+									<strong>Script examples:</strong>
+									<hr/>
+								</p>
+								<div class="margin">
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-rocket" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('file://examples/SiteVisitor.xml')">SiteVisitor.</a></div>
+										Scipt with visits site and clicks random links.
+									</p>
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-rocket" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('file://examples/QIPRegger.xml')">QIPRegger.</a></div>
+										Account registration for site qip.ru.
+									</p>
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-rocket" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('file://examples/ProxyBlacklistChecker.xml')">ProxyBlacklistChecker.</a></div>
+										Proxy checker with http client.
+									</p>
+									<p>
+										<div style="margin-top:5px"><i class="fa fa-rocket" aria-hidden="true"></i> <a href="#" onclick="BrowserAutomationStudio_OpenUrl('file://examples/HidemeParser.xml')">HidemeParser.</a> (Thanks to <a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://community.bablosoft.com/user/turutur')">Turutur</a>)</div>
+										Proxy parser.
+									</p>
+								</div>
+
+
+							
+						</div>
+						<div class="tab-pane" id="tab_default_4">
+							<p>
+								<div><a href="#" onclick="BrowserAutomationStudio_OpenUrl('https://wiki.bablosoft.com/doku.php?id=how_to_sell_your_script_in_shop')" class="btn btn-danger btn-sm" role="button">Start selling.</a></div>
+
+							</p>
+							<p>
+								<div><img src="sell.png" /><strong> Sell your script in shop.</strong></div>
+								<div class="desc">Do you have a script that you want to sell? You can start doing it with zero investment. Just add it to the shop and other users will see it. Follow instructions above to start selling.</div>
+								
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
-
-
-<h3><p class="text-center"> Welcome to BAS! </p></h3>
-<hr>
-<p class="text-center">
-	Start loading page by using "Load" action:
-</p>
-
-<p class="text-center">
-	<img src="LoadActionEn.png" />
-</p>
-
-<p class="text-center" style="margin-top:20px">
-	<a href="#" data-link="https://wiki.bablosoft.com/doku.php?id=how_to_sell_your_script_in_shop" class="text-danger" style="margin-right:25px;white-space: nowrap;"><i class="fa fa-usd" aria-hidden="true"></i> Sell script.</a>
-	<a href="#" data-link="https://wiki.bablosoft.com/doku.php?id=how_to_protect_your_script" class="text-danger" style="margin-right:25px;white-space: nowrap;"><i class="fa fa-lock" aria-hidden="true"></i> Protect script.</a>
-	<a href="#" data-link="https://bablosoft.com" class="text-danger" style="white-space: nowrap;margin-right:25px;"><i class="fa fa-shopping-bag" aria-hidden="true"></i> Shop.</a>
-	<a href="#" data-link="https://fingerprints.bablosoft.com" class="text-danger" style="white-space: nowrap;"><i class="fa fa-id-card-o" aria-hidden="true"></i> Change fingerprint.</a>
-</p>
-
-<p class="text-center" style="margin-top:20px">
-	If you are new to BAS, please check out this tutorials:
-</p>
-<p class="text-center">
-	<a href="#" data-link="http://wiki.bablosoft.com/doku.php?id=tutorial1" style="margin-right:25px;white-space: nowrap;"><i class="fa fa-graduation-cap" aria-hidden="true"></i>Tutorial #1. Poster.</a>
-	<a href="#" data-link="http://wiki.bablosoft.com/doku.php?id=tutorial2" style="white-space: nowrap;"><i class="fa fa-graduation-cap" aria-hidden="true"></i>Tutorial #2. Parser.</a>
-</p>	
-
-<p class="text-center" style="margin-top:30px">
-	See scripts examples:
-</p>
-<p class="text-center">
-	<a href="#" data-link="file://examples/SiteVisitor.xml" style="margin-right:25px;white-space: nowrap;">Site Visitor.</a>
-	<a href="#" data-link="file://examples/QIPRegger.xml"  style="margin-right:25px;white-space: nowrap;">QIP Regger.</a>
-	<a href="#" data-link="file://examples/ProxyBlacklistChecker.xml"  style="white-space: nowrap;margin-right:25px;">Proxy blacklist checker.</a>
-	<span style="white-space: nowrap;"><a href="#" data-link="file://examples/HidemeParser.xml">Hideme Parser</a> (Thanks to <a href="#" data-link="https://community.bablosoft.com/user/turutur">Turutur</a>).</span>
-</p>	
-
-<p class="text-center" style="margin-top:30px">
-	These links may also be useful:
-</p>
-<p class="text-center">
-	<a href="#" data-link="https://wiki.bablosoft.com" style="margin-right:25px;white-space: nowrap;"><i class="fa fa-question-circle" aria-hidden="true"></i> Manual</a>
-	<a href="#" data-link="https://community.bablosoft.com" style="margin-right:25px;white-space: nowrap;"><i class="fa fa-globe" aria-hidden="true"></i> Community</a>
-	<a href="#" data-link="https://github.com/bablosoft/BAS" style="white-space: nowrap;"><i class="fa fa-code" aria-hidden="true"></i> Source</a>
-</p>
-<hr>	
-
-<script>
-	$( document ).ready(function() {
-    	$("a").click(function(event){
-    		event.preventDefault();
-    		if($(this).attr("data-is-close") == "true")
-				BrowserAutomationStudio_Close();
-    		else
-    			BrowserAutomationStudio_OpenUrl($(this).attr("data-link"));
-    	})
-	});
-</script>

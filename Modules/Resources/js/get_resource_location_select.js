@@ -1,5 +1,5 @@
 var ResourceName = $("#ResourceName").val();
-var Save = $("#Save").val();
+var Save = $("#Save").val().toUpperCase();
 
 if(ResourceName.length == 0)
 {

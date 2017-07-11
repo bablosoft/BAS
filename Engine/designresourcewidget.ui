@@ -51,10 +51,10 @@ QGroupBox::indicator:unchecked {
    <bool>true</bool>
   </property>
   <property name="checkable">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <property name="checked">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <property name="spacing">
@@ -297,28 +297,6 @@ QGroupBox::indicator:unchecked {
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="ButtonUp">
-       <property name="text">
-        <string>Move Up</string>
-       </property>
-       <property name="icon">
-        <iconset resource="engine.qrc">
-         <normaloff>:/engine/images/up.png</normaloff>:/engine/images/up.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="ButtonDown">
-       <property name="text">
-        <string>Move Down</string>
-       </property>
-       <property name="icon">
-        <iconset resource="engine.qrc">
-         <normaloff>:/engine/images/down.png</normaloff>:/engine/images/down.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="ButtonMore">
        <property name="text">
         <string>Show more</string>
@@ -366,16 +344,6 @@ QGroupBox::indicator:unchecked {
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <item>
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>Section Name</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
      <item>
       <layout class="QVBoxLayout" name="sectionNameLayout">
        <property name="spacing">
@@ -589,8 +557,6 @@ QGroupBox::indicator:unchecked {
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="engine.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

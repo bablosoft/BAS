@@ -1,0 +1,1 @@
+native("imageprocessing", "delete", <%= id %>)

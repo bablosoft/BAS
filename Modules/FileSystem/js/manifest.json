@@ -1,7 +1,9 @@
 {
 	
 	"name":"FileSystem",
+	"info":{"en": "Filesystem access: read, write and search for files.", "ru": "Доступ к файловой системе: чтение, запись и поиск файлов."},
 	"description":"Interact with filesystem",
+	"icon":"filesystem.png",
 	"description_small":{"en": "Filesystem", "ru": "Файловая система"},
 	"major_version": 1,
 	"minor_version": 2,

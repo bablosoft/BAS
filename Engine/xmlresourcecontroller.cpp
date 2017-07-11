@@ -19,6 +19,8 @@ namespace BrowserAutomationStudioFramework
     XmlResourceController::XmlResourceController(QObject *parent) :
         IResourceController(parent)
     {
+        ConnectionIsRemote = false;
+        HideBrowsers = false;
     }
 
     void XmlResourceController::SetAvailableLanguages(const QString & AvailableLanguages)
@@ -108,6 +110,17 @@ namespace BrowserAutomationStudioFramework
     {
         this->ScriptName = Name;
     }
+
+    void XmlResourceController::SetHideBrowsers(bool HideBrowsers)
+    {
+        this->HideBrowsers = HideBrowsers;
+    }
+
+    bool XmlResourceController::GetHideBrowsers()
+    {
+        return HideBrowsers;
+    }
+
     MultiLanguageString XmlResourceController::GetOutputTitle1()
     {
         return OutputTitle1;
@@ -213,6 +226,28 @@ namespace BrowserAutomationStudioFramework
 
     }
 
+    void XmlResourceController::SetConnectionIsRemote(bool ConnectionIsRemote)
+    {
+        this->ConnectionIsRemote = ConnectionIsRemote;
+    }
+    void XmlResourceController::SetConnectionServer(const QString & ConnectionServer)
+    {
+        this->ConnectionServer = ConnectionServer;
+    }
+    void XmlResourceController::SetConnectionPort(const QString & ConnectionPort)
+    {
+        this->ConnectionPort = ConnectionPort;
+    }
+    void XmlResourceController::SetConnectionLogin(const QString & ConnectionLogin)
+    {
+        this->ConnectionLogin = ConnectionLogin;
+    }
+    void XmlResourceController::SetConnectionPassword(const QString & ConnectionPassword)
+    {
+        this->ConnectionPassword = ConnectionPassword;
+
+    }
+
     void XmlResourceController::SetFileName(const QString & FileName)
     {
         this->FileName = FileName;
@@ -276,6 +311,27 @@ namespace BrowserAutomationStudioFramework
     QString XmlResourceController::GetSchema()
     {
         return Schema;
+    }
+    bool XmlResourceController::GetConnectionIsRemote()
+    {
+        return ConnectionIsRemote;
+    }
+    QString XmlResourceController::GetConnectionServer()
+    {
+        return ConnectionServer;
+    }
+
+    QString XmlResourceController::GetConnectionPort()
+    {
+        return ConnectionPort;
+    }
+    QString XmlResourceController::GetConnectionLogin()
+    {
+        return ConnectionLogin;
+    }
+    QString XmlResourceController::GetConnectionPassword()
+    {
+        return ConnectionPassword;
     }
 
     QString XmlResourceController::GetFileName()
@@ -555,10 +611,34 @@ namespace BrowserAutomationStudioFramework
             {
                 xmlReader.readNext();
                 Schema = xmlReader.text().toString();
+            }else if(xmlReader.name() == "ConnectionIsRemote" && token == QXmlStreamReader::StartElement)
+            {
+                xmlReader.readNext();
+                ConnectionIsRemote = xmlReader.text().toString() == "true";
+            }else if(xmlReader.name() == "ConnectionServer" && token == QXmlStreamReader::StartElement)
+            {
+                xmlReader.readNext();
+                ConnectionServer = xmlReader.text().toString();
+            }else if(xmlReader.name() == "ConnectionPort" && token == QXmlStreamReader::StartElement)
+            {
+                xmlReader.readNext();
+                ConnectionPort = xmlReader.text().toString();
+            }else if(xmlReader.name() == "ConnectionLogin" && token == QXmlStreamReader::StartElement)
+            {
+                xmlReader.readNext();
+                ConnectionLogin = xmlReader.text().toString();
+            }else if(xmlReader.name() == "ConnectionPassword" && token == QXmlStreamReader::StartElement)
+            {
+                xmlReader.readNext();
+                ConnectionPassword = xmlReader.text().toString();
             }else if(xmlReader.name() == "ScriptName" && token == QXmlStreamReader::StartElement)
             {
                 xmlReader.readNext();
                 ScriptName = xmlReader.text().toString();
+            }else if(xmlReader.name() == "HideBrowsers" && token == QXmlStreamReader::StartElement)
+            {
+                xmlReader.readNext();
+                HideBrowsers = xmlReader.text().toString() == "true";
             }else if(xmlReader.name() == "ScriptVersion" && token == QXmlStreamReader::StartElement)
             {
                 xmlReader.readNext();
@@ -898,7 +978,15 @@ namespace BrowserAutomationStudioFramework
         xmlWriter.writeTextElement("Script",Script);
         xmlWriter.writeTextElement("DatabaseId",DatabaseId);
         xmlWriter.writeTextElement("Schema",Schema);
+
+        xmlWriter.writeTextElement("ConnectionIsRemote",(ConnectionIsRemote) ? "true" : "false");
+        xmlWriter.writeTextElement("ConnectionServer",ConnectionServer);
+        xmlWriter.writeTextElement("ConnectionPort",ConnectionPort);
+        xmlWriter.writeTextElement("ConnectionLogin",ConnectionLogin);
+        xmlWriter.writeTextElement("ConnectionPassword",ConnectionPassword);
+
         xmlWriter.writeTextElement("ScriptName",ScriptName);
+        xmlWriter.writeTextElement("HideBrowsers",(HideBrowsers) ? "true" : "false");
         xmlWriter.writeTextElement("ScriptVersion",ScriptVersion);
         xmlWriter.writeTextElement("AvailableLanguages",AvailableLanguages);
 

@@ -11,6 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     DEFINES += HAVE_QT5
 }
 
+DEFINES += NO_BAS_DEBUG
+
 #DEFINES += MEMORY_DEBUG
 #SOURCES += debug_memory/debug_new.cpp
 TARGET = BrowserAutomationStudio
@@ -73,6 +75,8 @@ unix{
 LIBS += -lqscintilla2
 
 win32:LIBS += -llibcurl
+
+win32:LIBS += -lUser32
 
 win32:LIBS += -llibeay32 -lssleay32
 

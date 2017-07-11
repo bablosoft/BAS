@@ -22,7 +22,7 @@ namespace BrowserAutomationStudioFramework
 
     public:
         explicit PipesProcessComunicator(QObject *parent = 0);
-        void SetLocation(const QString& Location);
+        virtual void SetLocation(const QString& Location);
         void SetCommandLineParams(const QStringList& Params);
 
         virtual void CreateProcess(const QStringList& arguments);
@@ -32,6 +32,8 @@ namespace BrowserAutomationStudioFramework
         virtual void AbortByUser();
         virtual bool IsError();
         virtual QString ErrorString();
+        virtual bool HasProcess();
+
 
 
     public slots:

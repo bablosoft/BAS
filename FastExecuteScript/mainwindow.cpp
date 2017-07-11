@@ -54,6 +54,7 @@
 #include "properties.h"
 #include "databaseconnectionwindow.h"
 #include <QDirIterator>
+#include "workersettings.h"
 #include "noneencryptor.h"
 
 using namespace BrowserAutomationStudioFramework;
@@ -200,16 +201,22 @@ void MainWindow::Start()
     qDebug()<<"Start 035";
     if(Language.isEmpty())
     {
-        ScriptLanguageChooserDialog LangDialog;
-        LangDialog.SetLanguageModel(LangModel);
-        if(!LangDialog.exec())
+        if(!IsSilent)
         {
-            QTimer::singleShot(50,this,SLOT(Close()));
-            return;
-        }
-        Language = LangDialog.GetLang();
+            ScriptLanguageChooserDialog LangDialog;
+            LangDialog.SetLanguageModel(LangModel);
+            if(!LangDialog.exec())
+            {
+                QTimer::singleShot(50,this,SLOT(Close()));
+                return;
+            }
+            Language = LangDialog.GetLang();
 
-        Settings->setValue("DefaultLanguageScript",Language);
+            Settings->setValue("DefaultLanguageScript",Language);
+        }else
+        {
+            Language = "en";
+        }
     }
     LangModel->SetInterfaceLanguage(Language);
     qDebug()<<"Start 036";
@@ -220,12 +227,18 @@ void MainWindow::Start()
     LangModel->SetScriptAvailableLanguagesString(Language);
     qDebug()<<"Start 048";
 
-    LabelAllLog = new QPushButton(tr("Show all log"),ui->tab_2);
+    LogMenuButton = new QPushButton(ui->tab_2);
+    LogMenuButton->setIcon(QIcon(":/images/menu2.png"));
+    LogMenuButton->setMaximumWidth(30);
+
     TopRightPositioner * AllButtonPositioner = new TopRightPositioner(this);
-    AllButtonPositioner->SetChild(LabelAllLog);
+    AllButtonPositioner->SetChild(LogMenuButton);
     AllButtonPositioner->SetParent(ui->tab_2);
+    AllButtonPositioner->SetMarginRight(30);
+    AllButtonPositioner->SetMarginTop(20);
     AllButtonPositioner->Start();
-    connect(LabelAllLog,SIGNAL(clicked()),this,SLOT(LabelAllLog_Click()));
+    connect(LogMenuButton,SIGNAL(clicked()),this,SLOT(LogMenu_Click()));
+
     qDebug()<<"Start 049";
 
     movie = new QMovie(":/fastexecutescript/images/loading.gif");
@@ -312,7 +325,7 @@ void MainWindow::Start()
     {
         qDebug()<<"Start 037";
         _DataBaseConnector->Init(Language);
-        if(!_DataBaseConnector->Start(loader.GetSchema(), loader.GetDatabaseId()))
+        if(!_DataBaseConnector->Start(loader.GetSchema(), loader.GetDatabaseId(), loader.GetConnectionIsRemote(), loader.GetConnectionServer(), loader.GetConnectionPort(), loader.GetConnectionLogin(), loader.GetConnectionPassword()))
         {
             QEventLoop loop;
             connect(_DataBaseConnector, SIGNAL(Started()), &loop, SLOT(quit()));
@@ -330,7 +343,7 @@ void MainWindow::Start()
             }
             qDebug()<<"Start 040";
 
-            if(!_DataBaseConnector2->Start(loader.GetSchema(), loader.GetDatabaseId()))
+            if(!_DataBaseConnector2->Start(loader.GetSchema(), loader.GetDatabaseId(), loader.GetConnectionIsRemote(), loader.GetConnectionServer(), loader.GetConnectionPort(), loader.GetConnectionLogin(), loader.GetConnectionPassword()))
             {
                 QEventLoop loop;
                 connect(_DataBaseConnector2, SIGNAL(Started()), &loop, SLOT(quit()));
@@ -345,7 +358,7 @@ void MainWindow::Start()
             }
             qDebug()<<"Start 042";
 
-            if(!_DataBaseConnector3->Start(loader.GetSchema(), loader.GetDatabaseId()))
+            if(!_DataBaseConnector3->Start(loader.GetSchema(), loader.GetDatabaseId(), loader.GetConnectionIsRemote(), loader.GetConnectionServer(), loader.GetConnectionPort(), loader.GetConnectionLogin(), loader.GetConnectionPassword()))
             {
                 QEventLoop loop;
                 connect(_DataBaseConnector3, SIGNAL(Started()), &loop, SLOT(quit()));
@@ -401,7 +414,7 @@ void MainWindow::Start()
     if(true/*Res->NeedToFillByUser()*/)
     {
         //Create dialog
-        AskUserForResourcesDialog ask;
+        AskUserForResourcesDialog ask(Settings->value("AskUserForResourcesWidth", 900).toInt(),Settings->value("AskUserForResourcesHeight", 600).toInt());
         Ask = &ask;
 
 
@@ -448,12 +461,21 @@ void MainWindow::Start()
         }
 
         //Ask user for input
-        if(!IsSilent && !ask.exec())
+        if(!IsSilent)
         {
-            QTimer::singleShot(50,this,SLOT(Close()));
-            delete UserWidgetControllerPointer;
-            UserWidgetControllerPointer = 0;
-            return;
+            bool ask_exec_res = ask.exec();
+
+            Settings->setValue("AskUserForResourcesWidth", ask.width());
+            Settings->setValue("AskUserForResourcesHeight", ask.height());
+            Settings->sync();
+
+            if(!ask_exec_res)
+            {
+                QTimer::singleShot(50,this,SLOT(Close()));
+                delete UserWidgetControllerPointer;
+                UserWidgetControllerPointer = 0;
+                return;
+            }
         }
 
         //Save defaults
@@ -492,8 +514,18 @@ void MainWindow::Start()
 
     //Prepare Worker
     ScriptMultiWorker* worker = new ScriptMultiWorker(this);
+    WorkerSettings *_WorkerSettings = new WorkerSettings(worker);
+    _WorkerSettings->SetWorkerPathSafe(Settings->value("Worker5Safe",QVariant("./Worker/Worker.exe")).toString());
+    _WorkerSettings->SetWorkerPathNotSafe(Settings->value("Worker5NotSafe",QVariant("./WorkerNotSafe/Worker.exe")).toString());
+    {
+        QSettings SettingsWorker("settings_worker.ini",QSettings::IniFormat);
+        _WorkerSettings->ParseFromSettings(SettingsWorker);
+    }
+    worker->SetWorkerSettings(_WorkerSettings);
+
     worker->SetProjectPath(QDir::current().absoluteFilePath("project.xml"));
     worker->SetModuleManager(_ModuleManager);
+    worker->SetStringBuilder(StringBuild);
     worker->SetAdditionEngineScripts(_ModuleManager->GetModuleEngineCode());
     worker->SetPreprocessor(_Preprocessor);
 
@@ -685,6 +717,8 @@ void MainWindow::Start()
     FileLoggerLog->SetFileName(LogFileName);
     PlainTextLogger * PlainTextLoggerLog = new PlainTextLogger(ComplexLoggerLog);
     PlainTextLoggerLog->SetPlainTextElement(ui->Results);
+    PlainTextLoggerLog->SetReplaceActionIdWithColor();
+
     ComplexLoggerLog->AddLogger(FileLoggerLog);
     ComplexLoggerLog->AddLogger(PlainTextLoggerLog);
 
@@ -1102,17 +1136,6 @@ void MainWindow::InitBrowserList(const QString& WrokerType)
         connect(sf,SIGNAL(OnBrowserCreated()),this,SLOT(ShowBrowserPanel()));
         sf->SetLanguage(Language);
         ProcessComunicatorFactory *cf = new ProcessComunicatorFactory(sf);
-        if(WrokerType == "MultiProcessQt4")
-            cf->SetProcessName(Settings->value("Worker4",QVariant("../worker/Worker.exe")).toString());
-        else if (WrokerType == "MultiProcessQt5")
-        {
-            QSettings SettingsWorker("settings_worker.ini",QSettings::IniFormat);
-            bool IsSafe = SettingsWorker.value("IsSafe",true).toBool();
-            QString WorkerPath = (IsSafe) ? "Worker" : "WorkerNotSafe";
-
-            cf->SetProcessName(Settings->value("Worker5",QVariant("./" + WorkerPath + "/Worker.exe")).toString());
-        }
-
         cf->SetCommandLineParams(QStringList()<<"%keyin%"<<"%keyout%"<<"%pid%");
 
         sf->SetProcessComunicatorFactory(cf);
@@ -1191,10 +1214,27 @@ MainWindow::~MainWindow()
 
 
 
-void MainWindow::LabelAllLog_Click()
+void MainWindow::LogMenu_Click()
 {
-    QFileInfo info(LogFileName);
-    QDesktopServices::openUrl(QUrl::fromLocalFile(info.absoluteFilePath()));
+    QPoint globalPos = LogMenuButton->mapToGlobal(QPoint(0,LogMenuButton->height()));
+
+    QMenu myMenu;
+    myMenu.setStyleSheet("QMenu{background-color:#353535} QMenu::item:selected{color:black;background-color:#c663ff} ");
+    QAction * AllLogAction = myMenu.addAction(QString(tr("All log")));
+    QAction * ClearLogAction = myMenu.addAction(QString(tr("Clear log")));
+
+    QAction *res = myMenu.exec(globalPos);
+    if(AllLogAction == res)
+    {
+        QFileInfo info(LogFileName);
+        QDesktopServices::openUrl(QUrl::fromLocalFile(info.absoluteFilePath()));
+    }
+    if(ClearLogAction == res)
+    {
+        if(Worker)
+            Worker->GetLogger()->Clear();
+        ui->Results->setHtml("");
+    }
 }
 
 void MainWindow::changeEvent(QEvent *e)

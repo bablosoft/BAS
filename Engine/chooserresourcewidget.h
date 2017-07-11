@@ -24,6 +24,7 @@ class ENGINESHARED_EXPORT ChooserResourceWidget : public QWidget
     bool DatabaseIndexesChangedInAction;
     IDatabaseState * DatabaseState;
     int LastTableId;
+    bool LastVisibleAdvanced;
 signals:
     void ValidationStateChanged();
 public:

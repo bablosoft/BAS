@@ -85,8 +85,13 @@
         <file>images/column.png</file>
         <file>images/menu.png</file>
         <file>images/redball.png</file>
+        <file>images/databasewarning.png</file>
+        <file>scripts/engine/worker/images.js</file>
     </qresource>
     <qresource prefix="/">
         <file>images/grayball.png</file>
+        <file>themes/dark/style.qss</file>
+        <file>themes/dark/rc/undock.png</file>
+        <file>images/menu2.png</file>
     </qresource>
 </RCC>

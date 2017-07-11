@@ -14,6 +14,11 @@ function _simulate_crush(callback)
     Browser.SimulateCrush(_get_function_body(callback));
 }
 
+function _settings(json, callback)
+{
+    Browser.SendWorkerSettings(JSON.stringify(json), "if(_result())ScriptWorker.AttachNetworkAccessManager();" + _get_function_body(callback))
+}
+
 function new_browser(callback)
 {
     Browser.CreateNewBrowser(true, "ScriptWorker.AttachNetworkAccessManager();" + _get_function_body(callback))
@@ -128,6 +133,21 @@ function move()
         y = arguments[1]
         params = {}
         callback = arguments[2]
+    }else if(length == 2)
+    {
+        X = parseInt(_result().split(",")[0])
+        Y = parseInt(_result().split(",")[1])
+        x = X
+        y = Y
+        params = arguments[0]
+        callback = arguments[1]
+    }else if(length == 1)
+    {
+        X = parseInt(_result().split(",")[0])
+        Y = parseInt(_result().split(",")[1])
+        x = X
+        y = Y
+        callback = arguments[0]
     }else
     {
         fail("move, wrong number of arguments")
@@ -139,6 +159,18 @@ function move()
     }
     _ensure_browser_created();
     Browser.MouseMove(x,y,JSON.stringify(params),_get_function_body(callback))
+}
+
+function _clarify()
+{
+    _MOUSE_SETTINGS = _arguments()
+    _if(_result().length > 0, function(){
+        X = parseInt(_result().split(",")[0])
+        Y = parseInt(_result().split(",")[1])
+        move(X,Y, _MOUSE_SETTINGS, function(){
+            delete _MOUSE_SETTINGS
+        })
+    }, function(){delete _MOUSE_SETTINGS})
 }
 
 function wait_code(callback)
@@ -252,6 +284,11 @@ function page()
 {
     _ensure_browser_created();
     return ScriptWorker.GetRootElement();
+}
+
+function clear_log()
+{
+    Logger.Clear();
 }
 
 function log(text)
@@ -713,6 +750,14 @@ function _db_add_group(group_name, group_description, table_id)
 
 function _on_start()
 {
+    if(ScriptWorker.SubstageGetParentId() > 0)
+    {
+        _call(eval(ScriptWorker.SubstageGetStartingFunction()), null, function(){
+            success("")
+        })
+        return
+    }
+
     if(typeof(OnApplicationStart) == "undefined")
     {
         _break(1)

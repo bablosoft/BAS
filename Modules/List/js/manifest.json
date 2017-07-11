@@ -1,6 +1,8 @@
 {
 	
 	"name":"List",
+	"info":{"en": "Work with lists. Lists are only available in one thread, to work with data in multithreaded mode, use resources. Use foreach action to iterate over elements.", "ru": "Работа со списками. Списки доступны только в одном потоке, чтобы работать с данными в многопоточном режиме, используйте ресурсы. Используйте действие foreach, чтобы перебрать элементы списка."},
+	"icon":"list.png",
 	"description":"Improved list support",
 	"description_small":{"en": "List", "ru": "Список"},
 	"major_version": 1,

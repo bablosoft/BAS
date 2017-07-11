@@ -47,7 +47,6 @@ namespace BrowserAutomationStudioFramework
         res.append(GetFromRes(":/engine/scripts/engine/common/cycles.js"));
         res.append(GetFromRes(":/engine/scripts/engine/common/memory.js"));
         res.append(GetFromRes(":/engine/scripts/engine/common/html_parser.js"));
-        res.append(GetFromRes(":/engine/scripts/engine/common/rss_parser.js"));
         res.append(GetFromRes(":/engine/scripts/engine/common/helpers.js"));
         res.append(GetFromRes(":/engine/scripts/engine/common/translit.js"));
         res.append(GetFromRes(":/engine/scripts/engine/worker/flow.js"));
@@ -60,6 +59,7 @@ namespace BrowserAutomationStudioFramework
         res.append(GetFromRes(":/engine/scripts/engine/worker/worker.js"));
         res.append(GetFromRes(":/engine/scripts/engine/worker/cache.js"));
         res.append(GetFromRes(":/engine/scripts/engine/worker/record.js"));
+        res.append(GetFromRes(":/engine/scripts/engine/worker/images.js"));
         return res;
     }
 
@@ -69,7 +69,6 @@ namespace BrowserAutomationStudioFramework
         res.append(GetFromRes(":/engine/scripts/engine/common/cycles.js"));
         res.append(GetFromRes(":/engine/scripts/engine/common/memory.js"));
         res.append(GetFromRes(":/engine/scripts/engine/common/html_parser.js"));
-        res.append(GetFromRes(":/engine/scripts/engine/common/rss_parser.js"));
         res.append(GetFromRes(":/engine/scripts/engine/common/helpers.js"));
         res.append(GetFromRes(":/engine/scripts/engine/common/translit.js"));
         res.append(GetFromRes(":/engine/scripts/engine/multiworker/flow.js"));

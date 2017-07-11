@@ -1,7 +1,9 @@
 {
 	
 	"name":"Database",
+	"info":{"en": "Manual database access. Select, update, delete and insert records. Better use resources to manipulate database.", "ru": "Доступ к базе данных в ручном режиме. Получение, обновление, удаление и добавление записей. Лучше использовать ресурсы для управления базой данных."},
 	"description":"Database",
+	"icon":"database.png",
 	"description_small":{"en": "Database", "ru": "База данных"},
 	"major_version": 1,
 	"minor_version": 0,

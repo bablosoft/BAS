@@ -1,4 +1,5 @@
 #include "databasestringboxloader.h"
+#include <QTimer>
 #include "every_cpp.h"
 
 namespace BrowserAutomationStudioFramework
@@ -6,6 +7,7 @@ namespace BrowserAutomationStudioFramework
     DatabaseStringBoxLoader::DatabaseStringBoxLoader(QObject *parent) :
         IStringBoxLoader(parent)
     {
+        IsWaitingForLoadRetry = false;
     }
 
     void DatabaseStringBoxLoader::SetDatabaseConnector(IDatabaseConnector *DatabaseConnector)
@@ -20,6 +22,15 @@ namespace BrowserAutomationStudioFramework
 
     void DatabaseStringBoxLoader::Load()
     {
+        if(IsWaitingForLoadRetry)
+            return;
+        LoadRetries = 5;
+        LoadInternal();
+    }
+
+    void DatabaseStringBoxLoader::LoadInternal()
+    {
+        IsWaitingForLoadRetry = false;
         DatabaseSelector Selector;
         Selector.TableId = TableId;
         DatabaseGroups DbGroups;
@@ -30,7 +41,17 @@ namespace BrowserAutomationStudioFramework
         QStringList res;
         if(Connector->WasError())
         {
-            emit DataLoadedCompletely();
+            if(LoadRetries<0)
+            {
+                emit DataLoadedCompletely();
+                return;
+            }else
+            {
+                LoadRetries--;
+                QTimer::singleShot(50,this,SLOT(LoadInternal()));
+                IsWaitingForLoadRetry = true;
+                return;
+            }
         }
 
         foreach(DatabaseItem item, ResData)

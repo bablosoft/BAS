@@ -7,7 +7,7 @@ namespace BrowserAutomationStudioFramework
 {
 
     UserResourceWidget::UserResourceWidget(QWidget *parent) :
-        QGroupBox(parent),
+        QWidget(parent),
         ui(new Ui::UserResourceWidget)
     {
         IsAdvanced = false;
@@ -19,6 +19,9 @@ namespace BrowserAutomationStudioFramework
         Icons.AddIconsToCombobox(ui->comboBox);
         ui->widget->SetShowValidation(true);
         connect(ui->widget,SIGNAL(ValidationStateChanged()),this,SIGNAL(ValidationStateChanged()));
+
+        //ui->Advanced->setVisible(true);
+        //ui->widget->layout()->setAlignment(Qt::AlignLeft);
     }
 
     QList<int> UserResourceWidget::GetColumnIds()
@@ -53,6 +56,7 @@ namespace BrowserAutomationStudioFramework
     void UserResourceWidget::SetVisibleAdvanced(bool Visible)
     {
         ui->widget->SetVisibleAdvanced(Visible);
+        this->adjustSize();
     }
 
     bool UserResourceWidget::IsValid()
@@ -99,19 +103,8 @@ namespace BrowserAutomationStudioFramework
     {
         Descrition = text;
         QString str = Descrition.GetTranslation(Language);
+        ui->label_2->setText(str);
 
-        if(str.length()>30)
-        {
-            this->setTitle(str.left(30) + QString("..."));
-            ui->label_2->setVisible(true);
-            ui->Spacer->setVisible(true);
-            ui->label_2->setText(str);
-        }else
-        {
-            ui->Spacer->setVisible(false);
-            ui->label_2->setVisible(false);
-            this->setTitle(str);
-        }
     }
 
     void UserResourceWidget::SetVisibleToUser(bool visible)
@@ -146,7 +139,6 @@ namespace BrowserAutomationStudioFramework
         ui->NoChoiceLabel->setVisible(false);
         ui->NoChoiceIcon->setVisible(false);
         ui->comboBox->setVisible(true);
-        ui->label->setVisible(true);
 
         bool FixedString = text.contains("FixedString");
         bool FixedInteger = text.contains("FixedInteger");
@@ -313,8 +305,8 @@ namespace BrowserAutomationStudioFramework
             int w = icon.availableSizes().at(0).width();
             int h = icon.availableSizes().at(0).height();
             ui->NoChoiceIcon->setPixmap(icon.pixmap(QSize(w,h)));
-            ui->NoChoiceLabel->setVisible(true);
-            ui->NoChoiceIcon->setVisible(true);
+            ui->NoChoiceLabel->setVisible(false);
+            ui->NoChoiceIcon->setVisible(false);
             ui->NoChoiceLabel->setText(ui->comboBox->currentText());
             //ui->label->setVisible(false);
 

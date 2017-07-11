@@ -23,7 +23,9 @@
 #include "iproperties.h"
 #include "icsvhelper.h"
 #include "idatabaseconnector.h"
+#include "istringbuilder.h"
 #include "modulemanager.h"
+#include "iworkersettings.h"
 
 namespace BrowserAutomationStudioFramework
 {
@@ -36,6 +38,9 @@ namespace BrowserAutomationStudioFramework
 
     public:
         explicit IWorker(QObject *parent = 0);
+
+        virtual void SetStringBuilder(IStringBuilder *StringBuilder) = 0;
+        virtual IStringBuilder * GetStringBuilder() = 0;
 
         virtual void SetProcessComunicator(IProcessComunicator *ProcessComunicator) = 0;
         virtual IProcessComunicator * GetProcessComunicator() = 0;
@@ -152,6 +157,7 @@ namespace BrowserAutomationStudioFramework
         void ProgressMaximum(int);
         void FailedButRescued(const QString& message);
         void SuccessedButRescued(const QString& message);
+        void SubstageBeginSignal(const QString& FunctionName, qint64 Threads, qint64 MaximumSuccess, qint64 MaximumFailure, int StageId);
     public slots:
 
         virtual void Run() = 0;
@@ -173,10 +179,21 @@ namespace BrowserAutomationStudioFramework
 
         virtual QString GetResultMessage() = 0;
         virtual QString GetResultMessageRaw() = 0;
+        virtual QString GetResultMessageRawWithId() = 0;
         virtual WorkerStatus GetResultStatus() = 0;
 
         virtual bool IsDieInstant() = 0;
         virtual bool IsDontCreateMore() = 0;
+
+        virtual void SubstageSetStartingFunction(const QString& StartingFunction) = 0;
+        virtual QString SubstageGetStartingFunction() = 0;
+        virtual int SubstageGetId() = 0;
+        virtual void SubstageSetId(int Id) = 0;
+        virtual int SubstageGetParentId() = 0;
+        virtual void SubstageSetParentId(int Id) = 0;
+        virtual void SubstageFinished(int Id) = 0;
+
+
 
     };
 }

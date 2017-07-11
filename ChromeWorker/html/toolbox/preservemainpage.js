@@ -2,7 +2,8 @@ function PreserveMainPosition()
 {
 	this.url = "main";
 	this.scroll = 0
-	this.search = ""
+	this.group = ""
+	this.tab = ""
 
 	this.BeforUrlChanged = function(url)
 	{
@@ -25,7 +26,8 @@ function PreserveMainPosition()
 	this.SaveState = function()
 	{
 		this.scroll = $(".actions").scrollTop();
-		this.search =  $("#searchinput").val();
+		this.group = CurrentGroup 
+		this.tab = CurrentTab 
 	}
 
 	this.RestoreState = function()
@@ -33,10 +35,36 @@ function PreserveMainPosition()
 		$("body").hide()
 		var self = this
 		setTimeout(function(){
-			$("#searchinput").val(self.search);
-			_MainView.searchinput()
+			
+			try
+			{
+				if(self.group.length == 0)
+	        	{
+	        		BrowserAutomationStudio_ReturnToMainFunction();
+	        	}else
+	        	{
+	        		BrowserAutomationStudio_GotoGroup(self.group);
+	        	}
+			}catch(e)
+			{
+				
+			}
+			
+			
+
+        	CurrentTab = ""
+
+        	if(self.tab == "history")
+        	{
+        		BrowserAutomationStudio_ShowHideHistory();
+        	}else if (self.tab == "bookmarks")
+        	{
+        		BrowserAutomationStudio_RenderBookmarks();
+        	}
+
         	$('.actions').scrollTop(self.scroll);
         	$("body").show()
+        	
           }, 1)
 	}
 

@@ -7,6 +7,7 @@
 #include "multilanguagestring.h"
 
 #include <QWidget>
+#include <QLineEdit>
 
 namespace Ui {
 class MultiLanguageTextBox;
@@ -27,6 +28,7 @@ namespace BrowserAutomationStudioFramework
         MultiLanguageString GetText();
         QString GetCurrentText();
         void SetText(const MultiLanguageString& text);
+        QLineEdit * GetEdit();
     private:
         Ui::MultiLanguageTextBox *ui;
         void changeEvent(QEvent *e);

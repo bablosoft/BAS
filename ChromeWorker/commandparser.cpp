@@ -168,6 +168,40 @@ void CommandParser::Parse(const std::string& Xml)
 
         }
 
+        CommandNode = MessagesNode->first_node("SendWorkerSettings");
+        if(CommandNode)
+        {
+            std::string value = CommandNode->value();
+            WORKER_LOG("EventSendWorkerSettings");
+            bool EncodeUtf8 = true;
+            bool RefreshConnections = false;
+            int SkipFrames = 1;
+
+            for (rapidxml::xml_attribute<> *attr = CommandNode->first_attribute(); attr; attr = attr->next_attribute())
+            {
+                if(std::string(attr->name()) == std::string("EncodeUtf8"))
+                {
+                    EncodeUtf8 = std::stoi(attr->value());
+                }
+
+                if(std::string(attr->name()) == std::string("RefreshConnections"))
+                {
+                    RefreshConnections = std::stoi(attr->value());
+                }
+
+                if(std::string(attr->name()) == std::string("SkipFrames"))
+                {
+                    SkipFrames = std::stoi(attr->value());
+                }
+            }
+
+            for(auto f:EventSendWorkerSettings)
+            {
+                f(EncodeUtf8, RefreshConnections, SkipFrames);
+            }
+
+        }
+
         CommandNode = MessagesNode->first_node("SetPromptResult");
         if(CommandNode)
         {
@@ -192,6 +226,7 @@ void CommandParser::Parse(const std::string& Xml)
             }
         }
 
+
         CommandNode = MessagesNode->first_node("GetCookiesForUrl");
         if(CommandNode)
         {
@@ -206,6 +241,31 @@ void CommandParser::Parse(const std::string& Xml)
         {
             WORKER_LOG("EventSaveCookies");
             for(auto f:EventSaveCookies)
+                f();
+        }
+
+        CommandNode = MessagesNode->first_node("ClearImageData");
+        if(CommandNode)
+        {
+            WORKER_LOG("EventClearImageData");
+            for(auto f:EventClearImageData)
+                f();
+        }
+
+        CommandNode = MessagesNode->first_node("SetImageData");
+        if(CommandNode)
+        {
+            std::string value = CommandNode->value();
+            WORKER_LOG("EventSetImageData");
+            for(auto f:EventSetImageData)
+                f(value);
+        }
+
+        CommandNode = MessagesNode->first_node("FindImage");
+        if(CommandNode)
+        {
+            WORKER_LOG("EventFindImage");
+            for(auto f:EventFindImage)
                 f();
         }
 
@@ -312,6 +372,16 @@ void CommandParser::Parse(const std::string& Xml)
                 f(value);
         }
 
+        CommandNode = MessagesNode->first_node("HighlightAction");
+        if(CommandNode)
+        {
+            std::string value = CommandNode->value();
+            WORKER_LOG("EventHighlightAction");
+
+            for(auto f:EventHighlightAction)
+                f(value);
+        }
+
         CommandNode = MessagesNode->first_node("MouseClick");
         if(CommandNode)
         {
@@ -327,6 +397,17 @@ void CommandParser::Parse(const std::string& Xml)
 
             }
         }
+
+
+        CommandNode = MessagesNode->first_node("RestoreOriginalStage");
+        if(CommandNode)
+        {
+            WORKER_LOG("RestoreOriginalStage");
+            for(auto f:EventRestoreOriginalStage)
+                f();
+        }
+
+
 
         CommandNode = MessagesNode->first_node("Timezone");
         if(CommandNode)
@@ -738,6 +819,11 @@ void CommandParser::Parse(const std::string& Xml)
                 {
                     send.CommandId = attr->value();
                     WORKER_LOG(std::string("id : ") + send.CommandId);
+                }
+                if(std::string(attr->name()) == std::string("NoWait"))
+                {
+                    send.IsNoWait = std::stoi(attr->value());
+                    WORKER_LOG(std::string("nowait : ") + std::to_string(send.IsNoWait));
                 }
             }
             rapidxml::xml_node<> *A = CommandNode->first_node("A");

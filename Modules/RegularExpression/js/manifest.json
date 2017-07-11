@@ -1,6 +1,9 @@
 {
 	
 	"name":"RegularExpression",
+	"info":{"en": "Execute regular expressions to obtain one or several results.", "ru": "Выполните регулярное выражения, чтобы получить один или несколько результатов."},
+
+	"icon":"RegularExpression.png",
 	"description":"Regular Expession",
 	"description_small":{"en": "Regular expressions", "ru": "Регулярные выражения"},
 	"major_version": 1,

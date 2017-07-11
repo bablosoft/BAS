@@ -53,6 +53,16 @@ namespace BrowserAutomationStudioFramework
         return CsvHelper;
     }
 
+    void ScriptMultiWorker::SetStringBuilder(IStringBuilder *StringBuilder)
+    {
+        this->StringBuilder = StringBuilder;
+    }
+
+    IStringBuilder * ScriptMultiWorker::GetStringBuilder()
+    {
+        return StringBuilder;
+    }
+
     void ScriptMultiWorker::SetHelperFactory(IHelperFactory* HelperFactory)
     {
         this->HelperFactory = HelperFactory;
@@ -80,6 +90,16 @@ namespace BrowserAutomationStudioFramework
     IProperties* ScriptMultiWorker::GetProperties()
     {
         return Properties;
+    }
+
+    void ScriptMultiWorker::SetWorkerSettings(IWorkerSettings* WorkerSettings)
+    {
+        this->WorkerSettings = WorkerSettings;
+    }
+
+    IWorkerSettings* ScriptMultiWorker::GetWorkerSettings()
+    {
+        return WorkerSettings;
     }
 
     void ScriptMultiWorker::SetReportData(IScriptMultiWorkerReportData *ReportData)
@@ -483,6 +503,7 @@ namespace BrowserAutomationStudioFramework
                 engine->evaluate("_set_result(MultiScriptWorker.GetAsyncResult())");
                 NeedToSetAsyncResult = false;
             }
+            //qDebug()<<"engine->evaluate(Script)"<<Script;
             engine->evaluate(Script);
             if(engine->hasUncaughtException())
             {
@@ -604,14 +625,60 @@ namespace BrowserAutomationStudioFramework
 
         }
 
+        foreach(IWorker *w,Substages.GetAllWorkers())
+        {
+            if(w)
+            {
+                if(NotSignalResourceHandlers)
+                {
+                    w->Abort(IsRecord);
+                }else
+                {
+                    w->Abort(true);
+                }
+            }
+
+        }
+
+
         foreach(IBrowser *b,Browsers)
+        {
+            b->SetWorker(0);
+        }
+
+        foreach(IBrowser *b,Substages.GetAllBrowsers())
         {
             b->SetWorker(0);
         }
     }
 
+    void ScriptMultiWorker::RunSubstage(const QString& FunctionName, qint64 ThreadsNumber, qint64 MaximumSuccess, qint64 MaximumFailure, int StageId)
+    {
+        if(IsRecord)
+        {
+            ThreadsNumber = 1;
+            MaximumSuccess = 1;
+            MaximumFailure = 1;
+        }
+        int total = Substages.TotalWorkers();
+        {
+            QList<IBrowser*> BrowserLists = BrowserFactory->Create(ThreadsNumber);
+            Substages.AddSubstage(StageId,MaximumSuccess,MaximumFailure,ThreadsNumber,BrowserLists);
+        }
+        QList<IWorker *> * WorkersList = Substages.GetWorkers(StageId);
+        QList<IBrowser *> * BrowserLists = Substages.GetBrowsers(StageId);
+
+        for(int i = 0;i<ThreadsNumber;i++)
+        {
+            CreateWorker(i,Workers.length() + total + i + 1,FunctionName,StageId,WorkersList,BrowserLists);
+        }
+    }
+
+
     void ScriptMultiWorker::RunStage(qint64 ThreadsNumber, qint64 MaximumSuccess, qint64 MaximumFailure, qint64 MaxRunTime, const QString& WorkerFunction, const QString& callback)
     {
+        Substages.Clear();
+
         if(IsRecord)
         {
             CurrentThreadNumber = 1;
@@ -631,13 +698,14 @@ namespace BrowserAutomationStudioFramework
         FailLeft = MaximumFailure;
         WorkerScript = WorkerFunction;
         NoNeedToCreateWorkersMore = false;
+        BrowserFactory->ClearAll();
         Browsers = BrowserFactory->Create(ThreadsNumber);
         WorkerRunning = ThreadsNumber;
         CurrentThreadNumber = ThreadsNumber;
         Waiter->WaitForStageFinished(this,SIGNAL(StageFinished()),this,SLOT(RunSubScript()));
         for(int i = 0;i<ThreadsNumber;i++)
         {
-            CreateWorker(i);
+            CreateWorker(i,i+1,"", 0, &Workers, &Browsers);
         }
         if(MaxRunTime>10)
         {
@@ -681,6 +749,63 @@ namespace BrowserAutomationStudioFramework
     void ScriptMultiWorker::WorkerFinishedWithArgument(IWorker * w)
     {
         ModuleManager->StopThread(w->GetThreadNumber());
+
+        if(w->SubstageGetParentId() > 0)
+        {
+            QList<IWorker *> * WorkersList = Substages.GetWorkers(w->SubstageGetParentId());
+            if(!WorkersList)
+                return;
+
+            QList<IBrowser *> * BrowsersList = Substages.GetBrowsers(w->SubstageGetParentId());
+            if(!BrowsersList)
+                return;
+
+
+            int index = WorkersList->indexOf(w);
+            if(index < 0)
+                return;
+
+            WorkersList->replace(index,0);
+
+            switch(w->GetResultStatus())
+            {
+                case IWorker::SuccessStatus:
+                {
+                    Substages.Success(w->SubstageGetParentId());
+                }break;
+                case IWorker::FailStatus:
+                {
+                    Substages.Failure(w->SubstageGetParentId());
+                }break;
+                case IWorker::DieStatus:
+                {
+                    Substages.Die(w->SubstageGetParentId());
+                }break;
+            }
+
+            w->GetWaiter()->Abort();
+            w->disconnect();
+            w->deleteLater();
+
+            if(NoNeedToCreateWorkersMore)
+            {
+                Substages.EndThread(w->SubstageGetParentId());
+            }else if(Substages.CreateThread(w->SubstageGetParentId()))
+                CreateWorker(index,w->GetThreadNumber(), w->SubstageGetStartingFunction(), w->SubstageGetParentId(), WorkersList, BrowsersList);
+
+            if(Substages.NeedToFinishStage(w->SubstageGetParentId()))
+            {
+                QList<IBrowser *> * Browsers = Substages.GetBrowsers(w->SubstageGetParentId());
+                if(Browsers)
+                    BrowserFactory->Clear(Browsers);
+                Substages.RemoveStage(w->SubstageGetParentId());
+                emit SubstageFinished(w->SubstageGetParentId());
+            }
+
+
+            return;
+        }
+
         int SuspendedCount = ScriptSuspender->Count();
         bool DontCreateNewWaitForSuspended = false;
         bool IsSuspended = false;
@@ -739,7 +864,7 @@ namespace BrowserAutomationStudioFramework
                 Logger->WriteFail(w->GetResultMessage());
                 if(!LastDieInstant)
                 {
-                    ReportData->Fail(w->GetResultMessageRaw());
+                    ReportData->Fail(w->GetResultMessageRawWithId());
                     FailNumber ++;
                     emit Failed();
                 }
@@ -823,7 +948,7 @@ namespace BrowserAutomationStudioFramework
             if(!DontCreateMore)
             {
                 WorkerRunning ++;
-                CreateWorker(index);
+                CreateWorker(index,index+1, "", 0, &Workers, &Browsers);
             }
         }
     }
@@ -850,13 +975,18 @@ namespace BrowserAutomationStudioFramework
 
     }
 
-    void ScriptMultiWorker::CreateWorker(int index)
+    void ScriptMultiWorker::CreateWorker(int index, int ThreadIndex, const QString& StartingFunction, int StageId, QList<IWorker *>* WorkersList, QList<IBrowser *>* BrowsersList)
     {
         if(TakeWorkerFromSuspended(index))
             return;
 
+
         IWorker *worker = WorkerFactory->CreateWorker();
+
+        worker->SubstageSetStartingFunction(StartingFunction);
+        worker->SubstageSetParentId(StageId);
         worker->SetModuleManager(ModuleManager);
+        worker->SetStringBuilder(StringBuilder);
         worker->SetAdditionEngineScripts(&AdditionalScripts);
         worker->SetIsRecord(IsRecord);
         connect(this,SIGNAL(InterruptActionSignal()),worker,SLOT(InterruptAction()));
@@ -864,6 +994,8 @@ namespace BrowserAutomationStudioFramework
         connect(worker,SIGNAL(FailedButRescued(QString)),ReportData,SLOT(FailAndRescued(QString)));
         connect(worker,SIGNAL(ProgressMaximum(int)),this,SLOT(ProgressMaximumSlot(int)));
         connect(worker,SIGNAL(ProgressValue(int)),this,SLOT(ProgressValueSlot(int)));
+        connect(worker,SIGNAL(SubstageBeginSignal(QString,qint64,qint64,qint64,int)),this,SLOT(RunSubstage(QString,qint64,qint64,qint64,int)));
+        connect(this,SIGNAL(SubstageFinished(int)),worker,SLOT(SubstageFinished(int)));
 
         QHash<QString,QObject*>::iterator i = ModulesScriptWorker.begin();
         while (i != ModulesScriptWorker.end())
@@ -874,7 +1006,7 @@ namespace BrowserAutomationStudioFramework
 
         worker->SetDatabaseConnector(DatabaseConnector);
         worker->SetPreprocessor(Preprocessor);
-        worker->SetThreadNumber(index + 1);
+        worker->SetThreadNumber(ThreadIndex);
         worker->SetSuccessNumber(&SuccessNumber);
         worker->SetFailNumber(&FailNumber);
         worker->SetProjectPath(GetProjectPath());
@@ -890,7 +1022,12 @@ namespace BrowserAutomationStudioFramework
         worker->setParent(this);
         worker->SetDoTrace(GetDoTrace());
 
-        worker->SetBrowser(Browsers.at(index));
+        IWorkerSettings *NewWorkerSettings = WorkerSettings->Clone();
+        IBrowser * BrowserAtIndex = BrowsersList->at(index);
+        NewWorkerSettings->setParent(BrowserAtIndex);
+        BrowserAtIndex->SetWorkerSettings(NewWorkerSettings);
+
+        worker->SetBrowser(BrowserAtIndex);
 
         worker->SetLogger(Logger);
 
@@ -923,13 +1060,12 @@ namespace BrowserAutomationStudioFramework
 
         worker->SetEngineResources(EngineRes);
 
-
-        if(index < Workers.size())
+        if(index < WorkersList->size())
         {
-            Workers.replace(index,worker);
+            WorkersList->replace(index,worker);
         }else
         {
-            Workers.append(worker);
+            WorkersList->append(worker);
         }
 
         connect(worker,SIGNAL(Finished()),this,SLOT(WorkerFinished()));

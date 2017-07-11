@@ -66,7 +66,7 @@ class MainWindow : public QMainWindow
     IHelperFactory *_HelperFactory;
     QMovie *movie;
     ISystemTrayNotifier *TrayNotifier;
-    QPushButton *LabelAllLog;
+    QPushButton *LogMenuButton;
     Translator TranslateEngine;
     Translator TranslateFastExecuteScript;
     QString LastLoaderResult;
@@ -130,7 +130,7 @@ private slots:
     void Restart();
 
     void Finished();
-    void LabelAllLog_Click();
+    void LogMenu_Click();
     void SetDefault();
     void ShowData();
     void SaveActual(const QString& filename);

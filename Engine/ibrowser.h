@@ -7,6 +7,7 @@
 #include "iwebelement.h"
 #include "inetworkaccessmanager.h"
 #include "inetworkaccessmanagerfactory.h"
+#include "iworkersettings.h"
 
 namespace BrowserAutomationStudioFramework
 {
@@ -41,6 +42,8 @@ namespace BrowserAutomationStudioFramework
         virtual IScriptResources* GetScriptResources() = 0;
         virtual void SetWorker(IWorker* Worker) = 0;
         virtual IWorker* GetWorker() = 0;
+        virtual void SetWorkerSettings(IWorkerSettings *WorkerSettings) = 0;
+        virtual IWorkerSettings * GetWorkerSettings() = 0;
         virtual void SetOpenFileName(const QString & OpenFileName, const QString& callback) = 0;
         virtual void SetStartupScript(const QString& script,const QString& script_id, const QString& target, const QString& callback) = 0;
         virtual void SetFontList(const QString& fonts, const QString& callback) = 0;
@@ -59,6 +62,12 @@ namespace BrowserAutomationStudioFramework
         virtual void Scroll(int x, int y, const QString& callback) = 0;
         virtual void Render(int x, int y, int width, int height, const QString& callback) = 0;
         virtual void DebugVariablesResult(const QString& data, const QString& callback) = 0;
+        virtual void SendWorkerSettings(const QString& json, const QString& callback) = 0;
+
+
+        virtual void ClearImageData(const QString& callback) = 0;
+        virtual void SetImageData(const QString& base64, const QString& callback) = 0;
+        virtual void FindImage(const QString& callback) = 0;
 
         virtual void Resize(int x, int y, const QString& callback) = 0;
         virtual void Reset(const QString& callback) = 0;
@@ -69,6 +78,8 @@ namespace BrowserAutomationStudioFramework
 
         virtual void OnSupend() = 0;
         virtual void SimulateCrush(const QString& callback) = 0;
+
+
     };
 
 }

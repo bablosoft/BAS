@@ -15,8 +15,11 @@ class DatabaseStateDialog : public QDialog
     bool IsDirty = false;
     bool NeedRestart = false;
     bool IsValid = true;
+
     QString Schema;
     QString DatabaseBaseLocation;
+    bool eventFilter(QObject *obj, QEvent *event);
+
 public:
     explicit DatabaseStateDialog(QWidget *parent = 0);
     ~DatabaseStateDialog();
@@ -28,6 +31,23 @@ public:
     QString GetSchema();
     void SetDatabaseId(const QString& DatabaseId);
     QString GetDatabaseId();
+    void SetIsRemote(bool IsRemote);
+    bool GetIsRemote();
+
+    void SetConnectionServer(const QString& ConnectionServer);
+    QString GetConnectionServer();
+
+    void SetConnectionPort(const QString& ConnectionPort);
+    QString GetConnectionPort();
+
+    void SetConnectionLogin(const QString& ConnectionLogin);
+    QString GetConnectionLogin();
+
+    void SetConnectionPassword(const QString& ConnectionPassword);
+    QString GetConnectionPassword();
+
+
+
     bool GetIsSuccess();
     void SetDatabaseBaseLocation(const QString& DatabaseBaseLocation);
 
@@ -50,6 +70,16 @@ private slots:
     void UpdateDatabaseLocation();
 
     void on_CopyDatabaseLocation_clicked();
+
+    void on_ConnectionType_currentIndexChanged(int index);
+
+    void on_ConnectionServer_textEdited(const QString &arg1);
+
+    void on_ConnectionPort_textEdited(const QString &arg1);
+
+    void on_ConnectionLogin_textEdited(const QString &arg1);
+
+    void on_ConnectionPassword_textEdited(const QString &arg1);
 
 private:
     Ui::DatabaseStateDialog *ui;

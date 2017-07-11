@@ -117,20 +117,29 @@ var context = context || (function () {
 			} else if (typeof options.above == 'string' && options.above == 'auto') {
 				$dd.removeClass('dropdown-context-up');
 				var autoH = (_Z / 100.0) * ($dd.height() + 12);
+				var left = (100.0 / _Z) * (e.pageX - 13)
+				if((e.pageX - 13) + (_Z / 100.0) * $dd.width() > window.innerWidth - 25)
+				{
+					left = (100.0 / _Z) * (window.innerWidth - 25 - $dd.width() * (_Z / 100))
+				}
+
 				
 				if (e.pageY - window.scrollY  + autoH > window.innerHeight) {
 					$dd.addClass('dropdown-context-up').css({
-						top: (100.0 / _Z) * (e.pageY - 10 - autoH),
-						left: (100.0 / _Z) * (e.pageX - 13)
+						top: (_Z / 100.0) * (e.pageY - 10 - autoH),
+						left: left
 					}).fadeIn(options.fadeSpeed);
 				} else {
 					
 					$dd.css({
 						top: (100.0 / _Z) * (e.pageY + 10),
-						left: (100.0 / _Z) * (e.pageX - 13)
+						left: left
 					}).fadeIn(options.fadeSpeed);
 				}
 			}
+
+			
+			
 		});
 	}
 	

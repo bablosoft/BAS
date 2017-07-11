@@ -7,7 +7,30 @@
   <!-- ========= -->
   <!--   HTML    -->
   <!-- ========= -->
+  <div id="draganddrop" style="position:absolute;top:-1000px;left:-1000px"></div>
+  <div id="multiselect" style="display:none"></div>
+
+  <div class="findtoolbox">
+    <div class="input-group input-group-sm findcontrol">
+      <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input type="text" id="findinput" class="form-control" aria-label="Amount (to the nearest dollar)">
+      <span class="input-group-btn">
+        <button class="btn btn-secondary tr" id="findprev" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
+        <button class="btn btn-secondary tr" id="findnext" type="button"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
+        <button class="btn btn-secondary tr" type="button" id="findhide"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+      </span>
+    </div>
+  </div>
+  <div id="findbuttoncontainer">
+    <button type="button" class="btn btn-default btn-xs" id="findbutton"><i class="fa fa-search" aria-hidden="true"></i></button>
+  </div>
+  <div id="debugbuttoncontainer">
+    <button type="button" class="btn btn-default btn-xs" id="debugbutton" onclick="_MainView.ToggleVariableInspector()"><i class="fa fa-bug" aria-hidden="true"></i></button>
+  </div>
+
+
   <div id="container">
+
    <div id="containerdata" ></div>
    <div class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" id="editmodal">
       <div class="modal-dialog" role="document">
@@ -19,18 +42,32 @@
           <div class="modal-body">
             <div class="form-group">
 
-              <input class="form-control" type="text" id="TaskName" placeholder="Task Name">
+              <textarea class="form-control" type="text" id="TaskName" placeholder="Task Description"> </textarea>
             </div>
             <div class="form-group">
-              <input type="hidden" id="TaskData">
-              <textarea class="form-control" rows="5" id="TaskCode" style="display:none"></textarea>
+              
+            </div>
+            <div class="form-group">
+              Id: <span id="TaskId" style="color:gray;font-size:smaller"></span>
+            </div>
+            <div class="form-group">
+              <span class="tr">Color</span>: 
+              <span style="-webkit-user-select: none;">
+                <span class="color-select color-select-active" color-id="" style="background-color:#f3f3f3">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span class="color-select action-color-1" color-id="1">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span class="color-select action-color-2" color-id="2">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span class="color-select action-color-3" color-id="3">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span class="color-select action-color-4" color-id="4">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span class="color-select action-color-5" color-id="5">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+              </span>
+              
             </div>
             <div class="form-group">
               <input type="checkbox" id="TaskDontRunWhenRecording"/> <label for="TaskDontRunWhenRecording" class="tr">Don't run when recording</label>
             </div>
           </div>
           <div class="modal-footer">
-            <span class="tr" style="color:gray;margin-right:10px">(This button will only change task name)</span><button type="button" class="btn btn-primary resok standartbutton tr" data-dismiss="modal">Ok</button>
+            <span class="tr" style="color:gray;margin-right:10px">(This button will only change task description)</span><button type="button" class="btn btn-primary resok standartbutton tr" data-dismiss="modal">Ok</button>
             <button type="button" class="btn btn-default standartbutton tr" data-dismiss="modal">Cancel</button>
           </div>
         </div>
@@ -65,138 +102,186 @@
   <!-- ========= -->
   <!-- TEMPLATES -->
   <!-- ========= -->
-  <script type="text/template" id="isscriptexecuting">
-    <i class="fa fa-play-circle-o action-button text-success <%= (isscriptexecuting || execute_next_id == 1) ? "actionbuttongray" : "" %>" id="play"></i>
-    <i class="fa fa-step-forward action-button text-warning <%= (isscriptexecuting || execute_next_id == 1) ? "actionbuttongray2" : "" %>" id="stepnext"></i>
-    <i class="fa fa-pause-circle-o action-button text-info <%= (isscriptexecuting) ? "" : ((isscriptexecuting || execute_next_id == 1) ? "actionbuttongray" : "actionbuttongray2") %>" id="pause"></i>
+  <script type="text/template" id="isscriptexecuting" >
+    
+    <img draggable="false" src="play.png" class="action-button <%= (isscriptexecuting || execute_next_id == 1) ? "actionbuttongray" : "" %>" id="play" />
+    <img draggable="false" src="next.png" class="action-button <%= (isscriptexecuting || execute_next_id == 1) ? "actionbuttongray2" : "" %>" id="stepnext" />
+    <img draggable="false" src="pause.png" class="action-button <%= (isscriptexecuting) ? "" : ((isscriptexecuting || execute_next_id == 1) ? "actionbuttongray" : "actionbuttongray2") %>" id="pause" />
   </script>
 
   <script type="text/template" id="selectiontemplate">
     <% _TotalSelected = TotalSelected(); %>
-    <div style="width:50%;float:left;text-align:center">
-      <img src="undo.png" class="action-button2 <%= (_UndoManager.CanUndo()) ? "" : "disabled" %>" title="Undo (Ctrl-Z)" id="action-undo" />
-      <img src="redo.png" class="action-button2 <%= (_UndoManager.CanRedo()) ? "" : "disabled" %>" title="Redo (Ctrl-Y)" id="action-redo" />
+    <div style="float:left;text-align:center;white-space: nowrap" class="halfscreenorall">
+      <img draggable="false" src="undo.png" class="action-button2 <%= (_UndoManager.CanUndo()) ? "" : "disabled" %>" title="Undo (Ctrl-Z)" id="action-undo" />
+      <img draggable="false" src="redo.png" class="action-button2 <%= (_UndoManager.CanRedo()) ? "" : "disabled" %>" title="Redo (Ctrl-Y)" id="action-redo" />
 
-      <img src="copy.png" class="action-button2 <%= (_TotalSelected > 0) ? "" : "disabled" %>" title="Copy (Ctrl-C)" id="action-copy" />
-      <img src="cut.png" class="action-button2 <%= (_TotalSelected > 0) ? "" : "disabled" %>" title="Cut (Ctrl-X)" id="action-cut" />
-      <img src="paste.png" class="action-button2" title="Paste (Ctrl-V)" id="action-paste" />
-      <img src="checkall.png" class="action-button2" title="Check All" id="action-checkall" />
-      <img src="uncheckall.png" class="action-button2 <%= (_TotalSelected > 0) ? "" : "disabled" %>"  title="Clear Selection" id="action-uncheckall" />      
+      <img draggable="false" src="copy.png" class="action-button2 <%= (_TotalSelected > 0) ? "" : "disabled" %>" title="Copy (Ctrl-C)" id="action-copy" />
+      <img draggable="false" src="cut.png" class="action-button2 <%= (_TotalSelected > 0) ? "" : "disabled" %>" title="Cut (Ctrl-X)" id="action-cut" />
+      <img draggable="false" src="paste.png" class="action-button2" title="Paste (Ctrl-V)" id="action-paste" />
+      <img draggable="false" src="checkall.png" class="action-button2" title="Check All" id="action-checkall" />
+      <img draggable="false" src="uncheckall.png" class="action-button2 <%= (_TotalSelected > 0) ? "" : "disabled" %>"  title="Clear Selection" id="action-uncheckall" />      
     </div>
-    <div style="width:50%;float:left">
-      <span class="tr small">Selected</span>: <strong><%= TotalSelected() %></strong>
+    <div style="float:left" class="halfscreenorall">
+      <div class="centeredonlyifsmall">
+        <span class="tr small">Selected</span>: <strong><%= TotalSelected() %></strong>
+      </div>
     </div>
     
   </script>
 
   <script type="text/template" id="main">
     <div class="threads" >
-      <div class="text-center toolbox" style="width:50%; float:left">
+      <div class="text-center toolbox halfscreenorall" style="float:left">
         <span id="isscriptexecutingcontainer">
           
         </span>
-        <i class="fa fa-stop-circle-o  action-button text-danger" id="stop"></i>
-        <i class="fa fa-repeat action-button text-info" id="restart"></i>
+        <img draggable="false" src="stop.png" class="action-button" id="stop" />
+        <img draggable="false" src="restart.png" class="action-button" id="restart" />
 
       </div>
-      <div style="width:50%;float:left">
-        <div class="nowrap"><a href="#" id="thread-number-edit"><i class="fa fa-pencil" aria-hidden="true"></i></a> <span class="tr small">Thread Number</span>: <strong><%= global["threadnumber"] %></strong></div>
-        <div class="nowrap"><a href="#" id="success-number-edit"><i class="fa fa-pencil" aria-hidden="true"></i></a> <span style="white-space: nowrap;"><span class="tr small">Success Number</span>: <strong><%= global["successnumber"] %></strong></span></div>
-        <div class="nowrap"><a href="#" id="fail-number-edit"><i class="fa fa-pencil" aria-hidden="true"></i></a> <span style="white-space: nowrap;"><span class="tr small">Fail Number</span>: <strong><%= global["failnumber"] %></strong></span></div>
+      <div style="float:left" class="halfscreenorall" >
+        <div class="centeredonlyifsmall" id="runproperties">
+          <div class="nowrap"><a href="#" id="thread-number-edit"><i class="fa fa-pencil" aria-hidden="true"></i></a> <span class="tr small">Thread Number</span>: <strong><%= global["threadnumber"] %></strong></div>
+          <div class="nowrap"><a href="#" id="success-number-edit"><i class="fa fa-pencil" aria-hidden="true"></i></a> <span style="white-space: nowrap;"><span class="tr small">Success Number</span>: <strong><%= global["successnumber"] %></strong></span></div>
+          <div class="nowrap" ><a href="#" id="fail-number-edit"><i class="fa fa-pencil" aria-hidden="true"></i></a> <span style="white-space: nowrap;"><span class="tr small">Fail Number</span>: <strong><%= global["failnumber"] %></strong></span></div>
+        </div>
       </div>
       <div class="maintoolbox">
+
         <span id="selectiontemplatecontainer">
         
         </span>
       </div>
+      
     </div>
     <div class="bottompannel" >
       <div class="container-fluid" id="variableinspector" style="<%= (global["show_variable_inspector"]) ? "" : "display:none" %>">
         <div style="position:absolute;top:5px;right:30px">
           <a href="#" id="closevariableinspector" class="text-danger"><i class="fa fa-times-circle-o" aria-hidden="true" style="font-size: 150%;"></i></a>
         </div>
-          <div style="<%= (global["show_variable_inspector_pending"]) ? "" : "display:none" %>" class="tr">Variables will be loaded on next script pause</div>
-          <div style="<%= (global["show_variable_inspector_pending"]) ? "display:none" : "" %>" class="tr"><%= JSONTree.create(JSON.parse(global["variable_inspector_data"])) %></div>
+          <div id="pendingnotice" style="<%= (global["show_variable_inspector_pending"]) ? "" : "display:none" %>" class="tr">Variables will be loaded on next script pause</div>
+          <div id="variablelistpending" style="<%= (global["show_variable_inspector_pending"]) ? "display:none" : "" %>" class="tr"><%= JSONTree.create(JSON.parse(global["variable_inspector_data"])) %></div>
       </div>
-      <div class="container-fluid" id="functions">
-        <div class="col-xs-2 function-label text-left">
-          <span class="tr">Function</span>:
-        </div>
-        <div class="col-xs-6">
-          <select class="form-control input-sm" id="FunctionName" placeholder="Function Name">
-            <% _.each(GetFunctionList(), function(func, index) { %>
-              <option value="<%= func["name"] %>" <%= (func["name"] == global.function_name) ? "selected" : "" %> ><%= func["name"] %></option>
-            <% }) %>
-          </select>
-        </div>
-        <div class="col-xs-4">
-          <i class="fa fa-plus text-success function-action-button" id="addfunction"></i>
-          <% if(global.function_name != "Main") { %>
-            <i class="fa fa-minus text-danger function-action-button" id="removefunction"></i>
-            <i class="fa fa-pencil text-warning function-action-button" id="editfunction"></i>
-          <% } %>
-          <i class="fa fa-bolt text-primary function-action-button" id="runfunction"></i>
-        </div>
-      </div>
+      <table style="width:100%" id="functions">
+        <tr>
+          <td class="function-label invisibleifsmall" align="center">
+            <div class="marginifbig">
+              <span class="tr">Function</span>:
+            </div>
+          </td>
+          <td align="center" style="width: 100%;">
+            <div class="marginifbig">
+              <select class="input-sm" style="width:100%" id="FunctionName" placeholder="Function Name">
+                <% _.each(jsort(GetFunctionList()), function(func, index) { %>
+                  <option value="<%= func["name"] %>" <%= (func["name"] == global.function_name) ? "selected" : "" %> ><%= func["name"] %></option>
+                <% }) %>
+              </select>
+            </div>
+          </td>
+          <td style="white-space:nowrap" align="center" >
+            <div class="marginifbig">
+              <i class="fa fa-plus text-success function-action-button" id="addfunction"></i>
+              <% if(global.function_name != "Main") { %>
+                <i class="fa fa-minus text-danger function-action-button" id="removefunction"></i>
+                <i class="fa fa-pencil text-warning function-action-button" id="editfunction"></i>
+              <% } %>
+              <i class="fa fa-bolt text-primary function-action-button" id="runfunction"></i>
+              <i class="fa fa-cubes text-danger function-action-button" id="runfunctionseveralthreads"></i>
+            </div>
+          </td>
+        </tr>
+      </table>
     </div>
 
     <div class="container-fluid main" style="padding-bottom:<%= (global["show_variable_inspector"]) ? "250px" : "50px" %>" >
-      <% _.each(data, function(task, index) { %>
-          <% var CanDisplay = global.function_name == GetFunctionData( parseInt(task.id) )["name"] && !IsFunctionNode(parseInt(task.id)) %>
+      <div id="paddinfind"> </div>
+      <% for(var index = 0;index<data.length;index++){ var task = data.at(index); %>
+          <% var CanDisplay = global.function_name == GetFunctionData( parseInt(task.get("id")) )["name"] && !IsFunctionNode(parseInt(task.get("id"))) %>
           <% if(CanDisplay) {%>
 
-            <% var len = GetTaskDepth(task.id); %>
-            <% if(GetFunctionData(task.id)["id"] != 0) len--; %>
+            <% var len = GetTaskDepth(task.get("id")); %>
+            <% if(GetFunctionData(task.get("id"))["id"] != 0) len--; %>
 
-            <% for(var i = 0;i<len;i+=1){ %>
-              <div class="tab"></div>
-            <% } %>
+            <div class="tool-margin <%= (prepare_folding(task.get("parentid"), parseInt(task.get("id")), len)) ? "" : "folded" %>" style="<%= prepare_margins(task.get("parentid"), len, "compute") %>"  task-id=<%= task.get("id") %> parent-id="<%= task.get("parentid") %>" data-margin="<%= len %>" >
+              <div class="tool-div">
+                <% if(NeedToShowUpperInsert(index)){ %>
+                  <div class="toolinsertdata" data-insert-index="-<%= index %>" data-insert-parent="<%= task.get("parentid") %>" data-insert-id="<%= task.get("id") %>" >
+                    <div class="toolinsert <%= (global.insert_index == -index && global.insert_parent == task.get("parentid") || global.insert_index == 0 && (parseInt(task.get("id")) == parseInt(GetFirstNotFunctionId())) ) ? "toolselected":"" %>"></div>
+                  </div>
+                <% } %>
+                <div class=" <%= (task.get("donotexecuteduringrecord"))? "notactive" : "" %> <%= (task.get("color").length > 0) ? ("action-color-" + task.get("color")) : "" %> tool <%= (index==0)? "toolmenufirst" : (AllowToExecuteOnce(task.get("id")) ? "toolmenuextended" : "toolmenu") %> <%= ((parseInt(task.get("id")) == parseInt(GetFirstNotFunctionId()) && global.execute_next_id == 0 || global.execute_next_id == task.get("id") ) && index != 0)? "toolexecutecurrent" : "toolnotexecute" %> taskcontainer" task-id="<%= task.get("id") %>" data-index="<%= index %>" <%= (parseInt(task.get("id")) == 0) ? "" : "draggable=\"true\"" %> >
 
-            <div class="tool-div">
-              <% if(NeedToShowUpperInsert(index)){ %>
-                <div class="toolinsert toolinsertdata <%= (global.insert_index == -index && global.insert_parent == task.parentid || global.insert_index == 0 && (parseInt(task["id"]) == parseInt(GetFirstNotFunctionId())) ) ? "toolselected":"" %>" data-insert-index="-<%= index %>" data-insert-parent="<%= task.parentid %>"></div>
-              <% } %>
-              <div class=" <%= (task.donotexecuteduringrecord)? "notactive" : "" %> tool <%= (index==0)? "toolmenufirst" : (AllowToExecuteOnce(task["id"]) ? "toolmenuextended" : "toolmenu") %> <%= ((parseInt(task["id"]) == parseInt(GetFirstNotFunctionId()) && global.execute_next_id == 0 || global.execute_next_id == task.id) && index != 0)? "toolexecutecurrent" : "toolnotexecute" %> taskcontainer" task-id="<%= task["id"] %>" data-index="<%= index %>">
-                <div class="tooltitle <%= prepare_styles(task.code,task.name) %>"><%= prepare_title(task.code,task.name) %></div>
 
-                <div class="titlebody">
-                  <% if(task["id"]!=0){ %>
-                    <span class="executing"><i class="fa fa-share"></i></span>
+                  <div class="tooltitle <%= prepare_styles(task.dat(),task.get("name") ) %>"> <%= prepare_group(task.dat(),task.get("name")) %> <%= prepare_title(task.dat(),task.get("name")) %> <span class="disablenotice" task-id="<%= task.get("id") %>"><%= (task.get("donotexecuteduringrecord"))? " (" + tr("disabled") + ")" : "" %></span>
+
+                    <img class="selected" src="selected.png" style="<%= (!task.get("is_selected")) ? "visibility:hidden" : "" %>"></img>
+                  </div>
+
+                  <div class="titlebody " style="position:relative">
+
+                    <% if(task.get("id")!=0){ %>
+                      <span class="executing"><i class="fa fa-share"></i></span>
+                    <% } %>
+                      
+                    <%= prepare_body(task.dat(),task.get("name")) %>
+
+                    <% if(task.get("id")!=0 && task.get("code").indexOf("section_insert") >= 0 && task.get("name") != "Else"){ %>
+                      
+                      <span class="folding-unfolded" <%= task.get("is_fold") ? "style='display:none'" : "" %> task-id="<%= task.get("id") %>" ><i class="fa fa-arrow-circle-down"></i></span>
+                    
+                      <span class="folding-folded" <%= task.get("is_fold") ? "" : "style='display:none'" %> task-id="<%= task.get("id") %>" ><i class="fa fa-arrow-circle-left"></i></span>
+                    <% } %>
+
+
+                  </div>
+
+                  <% var description = prepare_description(task.dat(),task.get("name"));if(description.length > 0){ %>
+                    <div class="titledescription">
+                      <%= description %>
+                    </div>  
                   <% } %>
-                    <i class="fa fa-check-square-o selected" style="<%= (!task.is_selected) ? "display:none" : "" %>"></i>
-                  <%= prepare_body(task.code,task.name) %>
+
+                  <div class="titleid">
+                    Id: <%= task.get("id") %>
+                  </div>  
                 </div>
+
+                <% if(NeedToShowLowerInsert(index)){ %>
+                  <div class="toolinsertdata" data-insert-index="<%= index %>" data-insert-parent="<%= task.get("parentid") %>">
+                    <div class="toolinsert <%= (global.insert_index == index && global.insert_parent == task.get("parentid")) ? "toolselected":"" %>" ></div>
+                  </div>
+                <% } %>
+
               </div>
-
-              <% if(NeedToShowLowerInsert(index)){ %>
-                <div class="toolinsert toolinsertdata <%= (global.insert_index == index && global.insert_parent == task.parentid) ? "toolselected":"" %>" data-insert-index="<%= index %>" data-insert-parent="<%= task.parentid %>"></div>
-              <% } %>
-
             </div>
             <% } %>
-            <% if(CanDisplay || IsEmptyFunctionNode(parseInt(task.id)) && GetFunctionDataOfThisNode(parseInt(task.id))["name"] == global.function_name ){ %>
+            <% if(CanDisplay || IsEmptyFunctionNode(parseInt(task.get("id"))) && GetFunctionDataOfThisNode(parseInt(task.get("id")))["name"] == global.function_name ){ %>
               <% _.each(GetGroupsEndings(index), function(ending) { %>
 
               <% var endinglevel = ending["level"] %>
-              <% if(GetFunctionData(task.id)["id"] != 0) endinglevel--; %>
+              <% if(GetFunctionData(task.get("id"))["id"] != 0) endinglevel--; %>
                <% if(endinglevel>=0){ %>
-                 <% for(var i = 0;i<endinglevel;i+=1){ %>
-                  <div class="tab"></div>
-                 <% } %>
-                 <div class="tool-div">
-                  <div class="toolinsert toolinsertdata toolinsertright <%= (global.insert_index == index && global.insert_parent == ending["parentid"]) ? "toolselected":"" %>" data-insert-index="<%= index %>" data-insert-parent="<%= ending["parentid"] %>"></div>
+                 <div class="tool-margin <%= (prepare_folding(ending["parentid"], 0, endinglevel)) ? "" : "folded" %>" style="<%= prepare_margins(ending["parentid"], endinglevel, "compute") %>" parent-id="<%= ending["parentid"] %>" data-margin="<%= endinglevel %>">
+
+                   <div class="tool-div">
+                    <div class="toolinsertdata" data-insert-index="<%= index %>" data-insert-parent="<%= ending["parentid"] %>">
+                      <div class="toolinsert toolinsertright <%= (global.insert_index == index && global.insert_parent == ending["parentid"]) ? "toolselected":"" %>" ></div>
+                    </div>
+                   </div>
+                   <div class="clearfix"></div>
                  </div>
-                 <div class="clearfix"></div>
                <% } %>
 
               <% }); %>
 
             <% } %>
 
-      <% }); %>
+      <% }; %>
       <%if(GetFirstNotFunctionId() == 0 && global["function_name"] == "Main"){%>
         <div class="tool-div">
-        <div class="toolinsert toolinsertdata toolinsertright <%= (global.insert_index == 0 && GetFirstNotFunctionId() == 0) ? "toolselected":"" %>" data-insert-index="0" data-insert-parent="0"></div>
+          <div class="toolinsertdata" data-insert-index="0" data-insert-parent="0">
+            <div class="toolinsert toolinsertright <%= (global.insert_index == 0 && GetFirstNotFunctionId() == 0) ? "toolselected":"" %>"></div>
+          </div>
         </div>
       <% } %>
     </div>
@@ -234,6 +319,13 @@
   <script src="undo.js"></script>
   <script src="jsontree.js"></script>
   <script src="diff_match_patch.js"></script>
+  <script src="actionfinder.js"></script>
+  <script src="mark.js"></script>
+  <script src="multiselect.js"></script>
+  <script src="draganddrop.js"></script>
+  <script src="updategotos.js"></script>
+  <script src="bootstrap-tour.min.js"></script>
+  <script src="tour.js"></script>
 
   <script type="text/javascript"> _L = $.extend(_L, _AL)</script>
   <script type="text/javascript"> _MACRO_INSERT_LOCALIZE_ </script>
@@ -249,6 +341,7 @@
   <link rel="stylesheet" href="context.standalone.css">
   <link rel="stylesheet" href="font-awesome.min.css">
   <link rel="stylesheet" href="jsontree.css">
+  <link rel="stylesheet" href="bootstrap-tour.min.css">
 
 
   <!-- =============== -->
@@ -260,11 +353,82 @@
         defaults: {
             name: "",
             code: "",
+
+            dat_precomputed: null,
+            search_precomputed: null,
+            
             parentid: 0,
             id: 0,
             donotexecuteduringrecord:false,
-            is_selected:false
+            is_selected:false,
+            color:"",
+            is_fold: false
+        },
+        initialize: function ()
+        {
+            this.on('change', function(){
+              this.attributes['dat_precomputed'] = null
+              this.attributes['search_precomputed'] = null
+            }, this);
+        },
+        dat: function()
+        {
+          if(this.attributes['dat_precomputed'] === -1)
+            return null
+
+          if(this.attributes['dat_precomputed'] !== null)
+            return this.attributes['dat_precomputed']
+          
+          var match = this.get("code").match("Dat:([^\*]+)")
+          if(!match)
+          {
+            this.attributes['dat_precomputed'] = -1
+            return null
+          }
+
+          var dat = JSON.parse(b64_to_utf8(match[1]))
+          this.attributes['dat_precomputed'] = dat
+
+          return dat
+        },
+        search: function()
+        {
+          if(this.attributes['search_precomputed'] === -1)
+            return []
+
+          if(this.attributes['search_precomputed'] !== null)
+            return this.attributes['search_precomputed']
+
+          var res = []
+
+          /* id */
+          res.push("Id: " + this.get("id"))
+
+          /* description */
+          if(this.get("name").length > 0)
+            res.push(this.get("name"))
+
+          var dat = this.dat()
+
+          if(dat === null)
+            return res
+
+          /* name */
+          res.push(tr(_A[dat["s"]]["name"]))
+
+          /* body */
+          var body = BrowserAutomationStudio_GenerateActionText("", dat, 999999, true)
+          if(body.length > 0)
+            res.push(body)
+
+
+          this.attributes['search_precomputed'] = res
+
+
+          return res
+
         }
+
     });
     var GobalModel = Backbone.Model.extend({
         defaults: {
@@ -291,6 +455,9 @@
         model: TaskModel
     });
 
+    var _ActionFinder = new ActionFinder()
+    _ActionFinder.Initialize();
+
     var MainView = Backbone.View.extend({
       el: '#container',
       currentTargetId: 0,
@@ -299,7 +466,9 @@
 
       events: {
         "click .executing": "moveexecutionpointfast",
-        "mousedown .tool": "mousedowntool",
+        "click .folding-unfolded": "fold",
+        "click .folding-folded": "unfold",
+        "mouseup .tool": "mousedowntool",
         "click .resok": "taskedit",
         "hidden.bs.modal #editmodal": "taskcancel",
         "click .toolinsertdata": "toolinsertdata",
@@ -323,10 +492,53 @@
         "click .onapplicationstart": "onapplicationstart",
         "click #thread-number-edit": "threadnumberedit",
         "click #runfunction": "runfunction",
+        "click #runfunctionseveralthreads": "runfunctionseveralthreads",
 
         "click #success-number-edit": "successnumberedit",
         "click #fail-number-edit": "failnumberedit",
         "click #closevariableinspector": "closevariableinspector",
+        "click .color-select": "selectcolor"
+      },
+
+      fold: function(event)
+      {
+        var task = this.collection.at(parseInt($(event.target).closest("*[data-index]").attr("data-index")));
+
+        if(task)
+        {
+          task.attributes["is_fold"] = true
+          $(".folding-unfolded[task-id='" + task.get("id") + "']").hide()
+          $(".folding-folded[task-id='" + task.get("id") + "']").show()
+          this.RecalculateFolding($(".tool-margin"))
+        }
+        BrowserAutomationStudio_SaveToUndoManager();
+        this.send()
+        event.preventDefault();
+      },
+
+      unfold: function(event)
+      {
+        var task = this.collection.at(parseInt($(event.target).closest("*[data-index]").attr("data-index")));
+
+        if(task)
+        {
+          task.attributes["is_fold"] = false
+          $(".folding-unfolded[task-id='" + task.get("id") + "']").show()
+          $(".folding-folded[task-id='" + task.get("id") + "']").hide()
+          this.RecalculateFolding($(".tool-margin"))
+        }
+        BrowserAutomationStudio_SaveToUndoManager();
+        this.send()
+        event.preventDefault();
+      },
+
+      selectcolor: function(event)
+      {
+        $(".color-select").removeClass("color-select-active")
+        var el = $(event.target)
+        el.addClass("color-select-active")
+        event.preventDefault();
+
       },
 
       moveexecutionpointfast: function(event)
@@ -340,7 +552,7 @@
         {
           var second_line = "section_start(\"test\", " + task.get("id") + ")!"
           var code = "_kill_call_stack()" + "\n" + second_line
-
+          NextModeIsClear = false;
           BrowserAutomationStudio_Execute(code)
         }
 
@@ -351,6 +563,11 @@
       runfunction: function(event)
       {
         BrowserAutomationStudio_RunFunction();
+        event.preventDefault();
+      },
+      runfunctionseveralthreads: function(event)
+      {
+        BrowserAutomationStudio_RunFunctionSeveralThreads();
         event.preventDefault();
       },
       threadnumberedit: function(event)
@@ -369,6 +586,31 @@
         event.preventDefault();
       },
 
+      RecalculateMargins: function(elements, default_value)
+      {
+        var len = elements.length
+        for(var i = 0;i<len;i++)
+        {
+          var el = $(elements[i])
+          var style = prepare_margins(parseInt(el.attr("parent-id")), parseInt(el.attr("data-margin")), default_value)
+          el.attr("style",style)
+        }
+      },
+
+      RecalculateFolding: function(elements)
+      {
+        var len = elements.length
+        for(var i = 0;i<len;i++)
+        {
+          var el = $(elements[i])
+          var res = prepare_folding(parseInt(el.attr("parent-id")), parseInt(el.attr("task-id")), parseInt(el.attr("data-margin")))
+          if(res)
+            el.removeClass("folded")  
+          else
+            el.removeClass("folded").addClass("folded")  
+        }
+      },
+
       CheckAll: function()
       {
           this.ClearSelection()
@@ -379,13 +621,14 @@
               try{
                 var id = Number(task.get("id"))
                 if(id !== 0 && GetFunctionData(id)["name"] == _GobalModel.get("function_name") && !IsFunctionNode(id))
-                  task.set("is_selected",true)
+                  task.attributes["is_selected"] = true
               }catch(e){}
              return true 
             })
 
-           $(".taskcontainer .selected").show()
-           $(".taskcontainer[data-index=0] .selected").hide()
+           $(".taskcontainer .selected").css("visibility","visible")
+           $(".taskcontainer[data-index=0] .selected").css("visibility","hidden")
+           this.RecalculateMargins($(".tool-margin"),"set")
 
          this.model.set("dontsend",false)
          BrowserAutomationStudio_SaveToUndoManager()
@@ -418,6 +661,34 @@
           return
         }
 
+        var f = name.charCodeAt(0)
+        if(f >= 48 && f <= 57)
+        {
+          e.preventDefault();
+          $("#validation").html("Function name starts from digit")
+          $("#editfunctionmodal").modal({})
+          return
+        }
+
+        if(name.indexOf("VAR_") == 0)
+        {
+          e.preventDefault();
+          $("#validation").html("Function name starts from VAR_")
+          $("#editfunctionmodal").modal({})
+          return
+        }
+
+        var no_allowed = "print,gc,version,Helper,CsvHelper,HtmlParser,Browser,ScriptWorker,Results1,Results2,Results3,Results4,Results5,Results6,Results7,Results8,Results9,Logger,FactorySolver,EngineRes,ResourceHandlers,Properties,_K,MemoryInfo,ResourceLoader,_template,tr,_L,Cycle,Cycles,_next,_next_or_section,_kill_call_stack,_break,_iterator,_arguments,_do,_repeat,_if,_if_else,_call,_call_section,_result,_set_result,_return,_set_label,_rewind,_goto,_fast_goto,VAR_CYCLE_INDEX,VAR_FOREACH_DATA,LINK_REGEXP,VAR_FOR_EACH_CSS,VAR_FOR_EACH_MATCH,VAR_FOR_EACH_XPATH,IF_ELSE_EXPRESSION,CYCLES,memory_virtual_total,memory_virtual_available,memory_physical_total,memory_physical_available,html_parser_xpath_parse,html_parser_xpath_xml,html_parser_xpath_count,html_parser_xpath_exist,html_parser_xpath_text,html_parser_xpath_xml_list,html_parser_xpath_text_list,_get_function_body,rand,_spintax,proxy_parse,proxy_pack,parse_json,md5,base64_encode,base64_decode,file_read,file_read_base64,file_write,file_write_base64,file_append,file_append_base64,directory_of,directory_create,filename_of,combine_path,encode_string,image_get_dimension,image_central_crop,oauth1_header,csv_parse,csv_generate,date_format,date_format_now,db_date_now,translit,_stop_subscript_execution,fail,die,success,debug_variables,_get_actual_http_client,_switch_http_client_main,_switch_http_client_internal,_switch_http_client,_ensure_http_client,on_http_client_loaded,new_http_client,http_client_set_fail_on_error,http_client_was_error,http_client_error_string,http_client_get,http_client_get2,http_client_download,http_client_solve,http_client_post,http_client_get_no_redirect,http_client_get_no_redirect2,http_client_post_no_redirect,http_client_url,http_client_content,http_client_content_base64,http_client_header,http_client_status,http_client_set_header,http_client_clear_header,http_client_proxy,http_client_set_proxy,http_client_get_cookies,http_client_save_cookies,http_client_restore_cookies,http_client_xpath_parse,http_client_xpath_xml,http_client_xpath_text,http_client_xpath_xml_list,http_client_xpath_text_list,http_client_xpath_count,http_client_xpath_exist,HttpClientIndex,_ensure_pop3_client,new_pop3_client,pop3_client_set_config,pop3_client_proxy,pop3_client_was_error,pop3_client_error_string,pop3_client_set_proxy,pop3_client_pull_messages_length,pop3_client_pull_message,pop3_client_messages_length,pop3_client_body,pop3_client_subject,pop3_client_sender,_ensure_imap_client,new_imap_client,imap_client_set_config,imap_client_set_proxy,imap_client_proxy,imap_client_was_error,imap_client_error_string,imap_client_pull_messages_length,imap_client_messages_length,imap_client_search,imap_client_custom_search,imap_client_search_result,imap_client_pull_message,imap_client_message,imap_custom_query,imap_custom_query_result,imap_custom_query_log,waiter_timeout_next,waiter_nofail_next,wait_url,wait_load,wait_memory,waiter_prepare_frames,waiter_create_css_path,waiter_create_match_path,wait_content_visible,wait_css_visible,wait_content,wait_css,wait_async_load,wait,get_element_selector,wait_element,wait_element_visible,BROWSERAUTOMATIONSTUDIO_WAIT_TIMEOUT,BROWSERAUTOMATIONSTUDIO_FULL_LOAD_TIMEOUT,BROWSERAUTOMATIONSTUDIO_WAIT_TIMEOUT_NEXT,BROWSERAUTOMATIONSTUDIO_WAIT_NOFAIL_NEXT,_get_last_record_id,RS,R,RSafe,Refuse,RIsRefused,Reload,RInsert,RSync,RCreate,RTake,RSuccessAll,RFailAll,RDieAll,RInfo,RPick,RPickRandom,RMap,_R,_RKEY,P,PSet,PClear,_ensure_browser_created,_simulate_crush,_settings,new_browser,_mbr,_mar,browser,close_browser,mouse,mouse_up,mouse_down,timezone,geolocation,popupclose,popupselect,render,scroll,_default_move_params,move,_clarify,wait_code,section_end,load,load_instant,open_file_dialog,prompt_result,http_auth_result,screenshot,url,get_cookies,resize,reset,jquery,optimize,save_cookies,restore_cookies,restore_localstorage,page,clear_log,log,log_html,log_success,log_fail,ResultResolve,result,result_html,result_file,css,frame,frame_css,xpath,xpath_all,frame_match,position,match,match_all,all,thread_number,success_number,project_path,fail_number,sleep,script,font_list,onloadjavascript,onloadjavascriptinternal,agent,antigate,rucaptcha,twocaptcha,capmonster,solver_properties_clear,solver_property,dbc,_solver_properties_list,solve,solve_base64,solve_base64_no_fail,solver_failed,progress,progress_value,progress_maximum,suspend,on_fail,clear_on_fail,on_success,clear_on_success,_on_fail,_on_fail_exceed,_on_success_exceed,_finnaly,_clear_on_fail,_on_success,_clear_on_success,_set_max_fail,_set_max_success,DEC,_db_add_record,_db_select_records,_db_delete_records,_db_update_record,_db_add_group,_on_start,native,native_async,general_timeout_next,general_timeout,async_load_timeout,solver_timeout_next,solver_timeout,_preprocess,VAR_WAS_ERROR,VAR_LAST_ERROR,_BAS_SOLVER_PROPERTIES,open_browser,_DEFAULT_MOVE_PARAMS,_set_target,_get_target,_get_network_access_manager,header,header_order,clear_header,proxy,set_proxy,cache_allow,cache_deny,request_allow,request_deny,cache_get_base64,cache_get_string,cache_get_status,cache_clear,cache_data_clear,cache_masks_clear,is_load,get_load_stats,_restrict_popups,_allow_popups,_restrict_downloads,_allow_downloads,_BROWSERAUTOMATIONSTUDIO_TARGET,section_start,_sa,section_insert,_clear_image_data,_set_image_data,_find_image,_image,_wait_image,IMAGE_FINDER,BrowserAutomationStudio_ApplyFingerprint,NumbersParseRecaptcha2,BAS_CapmonsterUpdateImage,BAS_SolveRecaptcha,BAS_CAPMONSTER_IMAGE_ID,_BAS_GETSMSSITECODE,_BAS_PARSEJSONFROMHTTPCLIENT,_sms_ban_thread,_sms_ban_service,_sms_before_request,_BAS_SMSREGAPIREQUEST,_BAS_SMSACTIVATEPIREQUEST,_BAS_SMSPVAREQUEST,_BAS_SMSCONFIRMDATA,_SMS_BAN_THREAD,_SMS_DEBUG,NetworkAccessManager"
+
+        if(no_allowed.split(",").indexOf(name) >= 0)
+        {
+          e.preventDefault();
+          $("#validation").html("Function name not allowed")
+          $("#editfunctionmodal").modal({})
+          return
+        }
+
+
         if(this.currentFuncName.length == 0)
         {
           if(_.find(GetFunctionList(), function(el){ return el["name"] == name; }))
@@ -432,6 +703,7 @@
           var task = { name: name, code: code, id: id, donotexecuteduringrecord: false, parentid: 0}
           _TaskCollection.add(task,{at: 1})
           this.model.set("function_name",name)
+          this.ClearSelection()
           this.SetDefaultInsert()
         }else
         {
@@ -464,6 +736,7 @@
             task.set("code",Normalize(_.template($('#function_code').html())({name:name})))
           }
           this.model.set("function_name",name)
+          //this.ClearSelectionFast()
           this.SetDefaultInsert()
           this.model.set("dontsend",false)
           BrowserAutomationStudio_SaveToUndoManager()
@@ -504,6 +777,7 @@
               self.currentTargetId = IndexOf(parseInt(task.get("id")))
               self.Delete()
               self.model.set("function_name","Main")
+              self.ClearSelectionFast()
               self.SetDefaultInsert()
             }
             self.model.set("dontsend",false)
@@ -534,9 +808,11 @@
 
       setfunctionname: function(e)
       {
+        _ActionFinder.ResetSearch()
         this.model.set("dontsend",true)
 
         this.model.set("function_name",$(e.target).val())
+        this.ClearSelectionFast();
         this.SetDefaultInsert()
 
         this.model.set("dontsend",false)
@@ -546,29 +822,36 @@
 
       key: function(e)
       {
-        if (e.keyCode == 90 && e.ctrlKey)
+        if($('.modal.in').length == 0)
         {
-          this.Undo();
-        }
-        if (e.keyCode == 89 && e.ctrlKey)
-        {
-          this.Redo();
-        }
-        if (e.keyCode == 67 && e.ctrlKey && window.getSelection().toString().length == 0)
-        {
-          this.Copy();
-        }
-        if (e.keyCode == 86 && e.ctrlKey)
-        {
-          this.Paste();
-        }
-        if (e.keyCode == 88 && e.ctrlKey)
-        {
-          this.Cut();
-        }
-        if (e.keyCode == 46)
-        {
-          this.DeleteSelected();
+          if (e.keyCode == 70 && e.ctrlKey)
+          {
+            _ActionFinder.Show()
+          }
+          if (e.keyCode == 90 && e.ctrlKey)
+          {
+            this.Undo();
+          }
+          if (e.keyCode == 89 && e.ctrlKey)
+          {
+            this.Redo();
+          }
+          if (e.keyCode == 67 && e.ctrlKey && window.getSelection().toString().length == 0)
+          {
+            this.Copy();
+          }
+          if (e.keyCode == 86 && e.ctrlKey)
+          {
+            this.Paste();
+          }
+          if (e.keyCode == 88 && e.ctrlKey)
+          {
+            this.Cut();
+          }
+          if (e.keyCode == 46)
+          {
+            this.DeleteSelected();
+          }
         }
       },
 
@@ -612,45 +895,122 @@
         }
       },
 
+      UpdateInsertDataInterface: function()
+      {
+        $(".toolinsert").removeClass("toolselected")
+
+        if(parseInt(_GobalModel.get("insert_index")) == 0)
+        {
+          $(".toolinsertdata[data-insert-id='" + GetFirstNotFunctionId() + "'] .toolinsert").addClass("toolselected")
+        }else
+        {
+          $(".toolinsertdata[data-insert-index='" + _GobalModel.get("insert_index") + "'][data-insert-parent='" + _GobalModel.get("insert_parent") + "'] .toolinsert").addClass("toolselected")
+        }
+        
+      },
+
       toolinsertdata: function(e)
       {
-        var index = parseInt($(e.target).attr("data-insert-index"))
-        var parentid = parseInt($(e.target).attr("data-insert-parent"))
-        this.model.set("insert_index",index)
-        this.model.set("insert_parent",parentid)
+        var index = parseInt($(e.target).closest(".toolinsertdata").attr("data-insert-index"))
+        var parentid = parseInt($(e.target).closest(".toolinsertdata").attr("data-insert-parent"))
+        
+        this.model.attributes["insert_index"] = index
+        this.model.attributes["insert_parent"] = parentid
+        this.UpdateInsertDataInterface()
+
+        
+        //var params = {"insert_index" : index, "insert_parent": parentid}
+        //this.model.set(params)
+        /*this.model.set("insert_index",index)
+        this.model.set("insert_parent",parentid)*/
 
       },
 
       taskedit: function()
       {
         this.model.set("dontsend",true)
-        this.collection.at(this.currentTargetId).set("name",$("#TaskName").val())
-        this.collection.at(this.currentTargetId).set("code",$("#TaskData").val() + "\n" + $("#TaskCode").val())
-        this.collection.at(this.currentTargetId).set("donotexecuteduringrecord",true == $("#TaskDontRunWhenRecording").prop('checked'))
-        //console.log("Set " + this.collection.at(this.currentTargetId).get("donotexecuteduringrecord"))
+        var Task = this.collection.at(this.currentTargetId)
+        Task.set("name",$("#TaskName").val())
+        var color = $(".color-select-active").attr("color-id")
+
+        //this.collection.at(this.currentTargetId).set("code",$("#TaskData").val() + "\n" + $("#TaskCode").val())
+        var dat = Task.dat()
+        if(dat["role"])
+        {
+          var task = null
+          if(dat["role"] == "master") 
+          {
+            task = FindTaskById(dat["slave"])
+          }else if(dat["role"] == "slave") 
+          {
+            task = FindTaskById(dat["master"])
+          }
+          if(task)
+          {
+            task.set("donotexecuteduringrecord",true == $("#TaskDontRunWhenRecording").prop('checked'))   
+
+            task.attributes["color"] = color
+
+            var el = $(".tool[task-id='" + task.get("id") + "']").removeClass("action-color-1").removeClass("action-color-2").removeClass("action-color-3").removeClass("action-color-4").removeClass("action-color-5")
+            if(color.length > 0)
+            {
+              el.addClass("action-color-" + color)
+            }
+          }
+        }
+        Task.set("donotexecuteduringrecord",true == $("#TaskDontRunWhenRecording").prop('checked'))
+
+        Task.attributes["color"] = color
+        var el = $(".tool[task-id='" + Task.get("id") + "']").removeClass("action-color-1").removeClass("action-color-2").removeClass("action-color-3").removeClass("action-color-4").removeClass("action-color-5")
+        if(color.length > 0)
+        {
+          el.addClass("action-color-" + color)
+        }
+
+
         this.model.set("dontsend",false)
         BrowserAutomationStudio_SaveToUndoManager()
         BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
 
         this.render()
         this.send()
+
+
+        //BrowserAutomationStudio_FocusActionFast(parseInt(this.collection.at(this.currentTargetId).get("id")))
+
+
       },
 
       taskeditcustom: function(name,code,dontexecute)
       {
         this.model.set("dontsend",true)
-        this.collection.at(this.currentTargetId).set("name",name)
-        this.collection.at(this.currentTargetId).set("code",code)
-        this.collection.at(this.currentTargetId).set("donotexecuteduringrecord",dontexecute)
+        //this.collection.at(this.currentTargetId).set("name",name)
+        var task = this.collection.at(this.currentTargetId)
+        //var id = parseInt(this.collection.at(this.currentTargetId).get("id"))
+        UpdateIfMasterSlave(task, code)
+        task.set("code",code)
+        //this.collection.at(this.currentTargetId).set("donotexecuteduringrecord",dontexecute)
         this.model.set("dontsend",false)
         BrowserAutomationStudio_SaveToUndoManager()
         BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
         this.render()
         this.send()
+
+        /*console.log("!!!!!")
+        console.log(id)
+        BrowserAutomationStudio_FocusActionFast(id)*/
       },
 
       mousedowntool: function(e){
         if(!!$('.executing').filter(function() { return $(this).is(":hover"); }).length)
+        {
+          return
+        }
+        if(!!$('.folding-folded').filter(function() { return $(this).is(":hover"); }).length)
+        {
+          return
+        }
+        if(!!$('.folding-unfolded').filter(function() { return $(this).is(":hover"); }).length)
         {
           return
         }
@@ -692,7 +1052,7 @@
         BrowserAutomationStudio_RestoreFromUndoManager(_UndoManager.Redo())
       },
 
-      Copy: function()
+      CopyToString: function(Ids)
       {
         var _CopyBuffer = new TaskCollection([]);
         var id_map = {}
@@ -700,7 +1060,17 @@
         var IdsDoNotSetParentToZero = []
 
         _.each(this.collection.models, function(task){
-          if(task.get("is_selected"))
+          var is_selected;
+          
+          if(Ids)
+          {
+            is_selected = Ids.indexOf(parseInt(task.get("id"))) >= 0
+          }else
+          {
+            is_selected = task.get("is_selected")
+          }
+
+          if(is_selected)
           {
             ids.push(parseInt(task.get("id")))
           }
@@ -714,9 +1084,18 @@
           if (index > -1)
             checkids.splice(index, 1);
 
-          var IsAnsectorOfOtherSelected = this.IsAnsectorOfAny(checkids,currentid) && task.get("is_selected")
+          var is_selected;
+          if(Ids)
+          {
+            is_selected = Ids.indexOf(parseInt(task.get("id"))) >= 0
+          }else
+          {
+            is_selected = task.get("is_selected")
+          }
 
-          if(task.get("is_selected") || this.IsAnsectorOfAny(ids,currentid))
+          var IsAnsectorOfOtherSelected = this.IsAnsectorOfAny(checkids,currentid) && is_selected
+          
+          if(is_selected || this.IsAnsectorOfAny(ids,currentid))
           {
             var id;
             if(parseInt(task.get("id")) in id_map)
@@ -725,6 +1104,8 @@
             }else
             {
               id = Math.floor(Math.random() * (1000000000 - 100)) + 100
+              if(Ids && Ids.indexOf(parseInt(task.get("id"))) >= 0)
+                Ids.push(id)
               id_map[parseInt(task.get("id"))] = id
             }
             var new_task = new TaskModel(task.toJSON())
@@ -738,9 +1119,48 @@
         })
 
         _.each(_CopyBuffer.models, function(task){
+
+          var code = task.get("code")
+          try
+          {
+            var match = code.match("Dat:([^\*]+)")
+            if(match)
+            {
+              var dat = JSON.parse(b64_to_utf8(match[1]))
+
+              /* Replace master and slave */
+
+              if(dat["role"])
+              {
+                dat["master"] = id_map[parseInt(dat["master"])]
+                dat["slave"] = id_map[parseInt(dat["slave"])]
+                
+                code = code.replace(new RegExp("Dat:([^\*]+)"), "Dat:" + utf8_to_b64(JSON.stringify(dat)))
+                task.set("code",code)
+              }
+            }
+
+          }catch(e){}
+
+
           var currentid = parseInt(task.get("id"))
 
-          if(task.get("is_selected") && IdsDoNotSetParentToZero.indexOf(currentid)<0)
+          var is_selected = "NNNN";
+          
+          if(Ids)
+          {
+            is_selected = Ids.indexOf(parseInt(task.get("id"))) >= 0
+          }else
+          {
+            is_selected = task.get("is_selected")
+          }
+
+          /*console.log("is_selected")
+          console.log(task.get("id"))
+          console.log(is_selected)*/
+
+
+          if(is_selected && IdsDoNotSetParentToZero.indexOf(currentid)<0)
           {
             task.set("parentid", 0)
           }
@@ -748,16 +1168,131 @@
           {
             task.set("parentid", id_map[task.get("parentid")])
           }
-          task.set("is_selected",false)
-
+          task.attributes["is_selected"] = false
         })
 
-        BrowserAutomationStudio_SetClipboard(JSON.stringify(_CopyBuffer.toJSON()))
-        //this.render()
+        return JSON.stringify(_CopyBuffer.toJSON())
+      },
+
+      GetSelectedTasks: function()
+      {
+        var ids = []
+        var res = []
+        
+        _.each(this.collection.models, function(task){
+          if(task.get("is_selected"))
+          {
+            ids.push(parseInt(task.get("id")))
+            res.push(task)
+          }
+        })
+
         /*_.each(this.collection.models, function(task){
-          task.set("is_selected",false)
+          var currentid = parseInt(task.get("id"))
+
+          var checkids = ids.slice();
+          var index = checkids.indexOf(currentid);
+          if (index > -1)
+            checkids.splice(index, 1);
+
+          var is_selected = task.get("is_selected")
+          
+          if(this.IsAnsectorOfAny(checkids,currentid) && res.indexOf(currentid) < 0)
+          {
+            res.push(task)
+          }
+          
         })*/
 
+        return res
+      },
+
+      EnableSelected: function()
+      {
+        var tasks = this.GetSelectedTasks()
+
+        if(tasks.length == 0)
+          return;
+
+
+        this.model.set("dontsend",true)
+
+
+        tasks.forEach(function(task){
+            task.attributes["donotexecuteduringrecord"] = false
+            $(".taskcontainer[task-id='" + task.get("id") + "']").removeClass("notactive")
+            $(".disablenotice[task-id='" + task.get("id") + "']").hide()
+            
+        })
+        
+        this.model.set("dontsend",false)
+        BrowserAutomationStudio_SaveToUndoManager()
+        BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
+        this.send()
+        this.render()
+
+        this.ClearSelection()
+      },
+
+      DisableSelected: function()
+      {
+        var tasks = this.GetSelectedTasks()
+
+        if(tasks.length == 0)
+          return;
+
+        this.model.set("dontsend",true)
+
+
+        tasks.forEach(function(task){
+            task.attributes["donotexecuteduringrecord"] = true
+            $(".taskcontainer[task-id='" + task.get("id") + "']").addClass("notactive")
+            $(".disablenotice[task-id='" + task.get("id") + "']").show()
+        })
+        
+        this.model.set("dontsend",false)
+        BrowserAutomationStudio_SaveToUndoManager()
+        BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
+        this.send()
+        this.render()
+
+        this.ClearSelection()
+
+      },
+
+      SetSelectedColor: function(color)
+      {
+        var tasks = this.GetSelectedTasks()
+
+        if(tasks.length == 0)
+          return;
+
+        this.model.set("dontsend",true)
+
+
+        tasks.forEach(function(task){
+            task.attributes["color"] = color
+            var el = $(".tool[task-id='" + task.get("id") + "']").removeClass("action-color-1").removeClass("action-color-2").removeClass("action-color-3").removeClass("action-color-4").removeClass("action-color-5")
+            if(color.length > 0)
+            {
+              el.addClass("action-color-" + color)
+            }
+            
+        })
+        
+        this.model.set("dontsend",false)
+        BrowserAutomationStudio_SaveToUndoManager()
+        BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
+        this.send()
+        this.render()
+
+        this.ClearSelection()
+
+      },
+
+      Copy: function()
+      {
+        BrowserAutomationStudio_SetClipboard(this.CopyToString())
       },
 
       Paste: function()
@@ -765,7 +1300,7 @@
           BrowserAutomationStudio_GetClipboard();
       },
 
-      PasteFinal: function(data)
+      PasteFinal: function(data, dontsetbuffer)
       {
 
         try
@@ -773,11 +1308,11 @@
           var j = JSON.parse(data)
         }catch(e)
         {
-          return
+          return []
         }
 
         if(typeof(j) != "object")
-          return
+          return []
 
 
         var _CopyBuffer = new TaskCollection(j);
@@ -802,10 +1337,45 @@
           newbuffer.push(new_task)
         })
 
+        /* replace master and slave */
+        var newbuffer2 = []
+
+        _.each(newbuffer, function(task){
+          var code = task.get("code")
+          try
+          {
+            var match = code.match("Dat:([^\*]+)")
+            if(match)
+            {
+
+              var dat = JSON.parse(b64_to_utf8(match[1]))
+
+              if(dat["role"])
+              {
+                dat["master"] = id_map[parseInt(dat["master"])]
+                dat["slave"] = id_map[parseInt(dat["slave"])]
+
+                code = code.replace(new RegExp("Dat:([^\*]+)"), "Dat:" + utf8_to_b64(JSON.stringify(dat)))
+                task.set("code",code)
+              }
+
+             
+              
+            }
+          }catch(e){}
+
+          
+          var new_task = new TaskModel(task.toJSON())
+          newbuffer2.push(new_task)
+        })
+
+        newbuffer = newbuffer2
+
         var insert_parent = _GobalModel.get("insert_parent")
         var insert_index = _GobalModel.get("insert_index")
         var insert_index_first = null;
         var insert_task_list = []
+        var if_var_list = {}
 
 
         _.each(_CopyBuffer.models, function(task){
@@ -827,6 +1397,51 @@
           if(!insert_index_first)
             insert_index_first = insert_index
 
+          /* replace FOREACH_ARRAY_ and IF_ELSE_EXPRESSION_ */
+          var code = task.get("code")
+          try
+          {
+            var match = code.match("Dat:([^\*]+)")
+            if(match)
+            {
+
+              var dat = JSON.parse(b64_to_utf8(match[1]))
+
+              if(code.indexOf("FOREACH_ARRAY_") >= 0)
+              {
+                var r = Math.floor(Math.random() * (999999 - 100000) + 100000)  
+                code = code.replace(new RegExp("FOREACH_ARRAY_\\d+","g"),"FOREACH_ARRAY_" + r)
+                task.set("code",code)
+              }
+
+
+              if(code.indexOf("IF_ELSE_EXPRESSION_") >= 0)
+              {
+                var if_var = code.match(new RegExp("IF_ELSE_EXPRESSION_\\d+"))[0]
+
+                var r;
+                if(if_var_list[if_var])
+                {
+                  r = if_var_list[if_var]
+                }else
+                {
+                  r = "IF_ELSE_EXPRESSION_" + Math.floor(Math.random() * (999999 - 100000) + 100000)    
+                  if_var_list[if_var] = r
+                }
+                
+                code = code.replace(new RegExp("IF_ELSE_EXPRESSION_\\d+","g"),r)
+
+                dat["if_var"] = r
+                code = code.replace(new RegExp("Dat:([^\*]+)"), "Dat:" + utf8_to_b64(JSON.stringify(dat)))
+                
+                task.set("code",code)
+              }
+              
+            }
+          }catch(e){}
+
+          
+
           insert_task_list.push(task)
           //_TaskCollection.add(task,{at: insert_index})
 
@@ -835,7 +1450,10 @@
         if(insert_index_first)
           _TaskCollection.add(insert_task_list,{at: insert_index_first})
 
-        _GobalModel.set("insert_index", insert_index)
+        //_GobalModel.set("insert_index", insert_index)
+        this.model.attributes["insert_index"] = insert_index
+        this.UpdateInsertDataInterface()
+
         //console.log(insert_index)
 
 
@@ -847,10 +1465,11 @@
           {
             task.set("parentid", id_map[task.get("parentid")])
           }
-          task.set("is_selected",false)
+          task.attributes["is_selected"] = false
         })
 
         this.model.set("dontsend",false)
+        //this.SetDefaultInsert()
         BrowserAutomationStudio_SaveToUndoManager()
         BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
         this.send()
@@ -858,7 +1477,17 @@
 
         this.ClearSelection();
 
-        BrowserAutomationStudio_SetClipboard(JSON.stringify(_CopyBuffer.toJSON()))
+        if(dontsetbuffer)
+        {
+
+        }else
+        {
+          BrowserAutomationStudio_SetClipboard(JSON.stringify(_CopyBuffer.toJSON()))
+        }
+
+        return Object.keys(id_map).map(function(key) {
+            return parseInt(key);
+        });
 
       },
 
@@ -896,6 +1525,8 @@
       DeleteSelected: function()
       {
         this.model.set("dontsend",true)
+
+        _CacheLoader.SetDontUpdate(true)
         var stillexists = true
 
         while(stillexists)
@@ -914,6 +1545,10 @@
           })
         }
 
+        _CacheLoader.SetDontUpdate(false)
+        _CacheLoader.Start()
+
+
         this.model.set("dontsend",false)
         BrowserAutomationStudio_SaveToUndoManager()
         BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
@@ -923,12 +1558,15 @@
 
       ClearSelection: function()
       {
+
+
          this.model.set("dontsend",true)
          _.every(this.collection.models, function(task,index){
-            task.set("is_selected",false)
+            task.attributes["is_selected"] = false
             return true
           })
-         $(".taskcontainer .selected").hide()
+         $(".taskcontainer .selected").css("visibility","hidden")
+         this.RecalculateMargins($(".tool-margin"),"clear")
          this.model.set("dontsend",false)
          
          BrowserAutomationStudio_SaveToUndoManager()
@@ -938,20 +1576,89 @@
          //this.render()
       },
 
+      UnfoldAll: function()
+      {
+         _.every(this.collection.models, function(task,index){
+            task.attributes["is_fold"] = false
+            return true
+          })
+         
+         this.RecalculateFolding($(".tool-margin"))
+         $(".folding-folded").hide()
+         $(".folding-unfolded").show()
+         
+         BrowserAutomationStudio_SaveToUndoManager()
+         this.send()
+      },
+
+      FoldAll: function()
+      {
+         _.every(this.collection.models, function(task,index){
+            if(task.get("name") != "Else")
+              task.attributes["is_fold"] = true
+            return true
+          })
+         
+         this.RecalculateFolding($(".tool-margin"))
+         $(".folding-folded").show()
+         $(".folding-unfolded").hide()
+         
+         BrowserAutomationStudio_SaveToUndoManager()
+         this.send()
+      },
+
+      GetSelection: function()
+      {
+         var res = []
+         
+         _.every(this.collection.models, function(task,index){
+            if(task.get("is_selected"))
+            {
+              res.push(parseInt(task.get("id")))
+            }
+            return true
+          })
+         
+         return res;
+      },
+
+      ClearSelectionFast: function()
+      {
+         _.every(this.collection.models, function(task,index){
+            task.attributes["is_selected"] = false
+            return true
+          })
+         $(".taskcontainer .selected").css("visibility","hidden")
+         this.RecalculateMargins($(".tool-margin"),"clear")
+      },
+
       ToggleVariableInspector: function()
       {
         var show_variable_inspector = this.model.get("show_variable_inspector")
         show_variable_inspector = !show_variable_inspector
-        this.model.set("show_variable_inspector",show_variable_inspector)
+
+        this.model.attributes["show_variable_inspector"] = show_variable_inspector
+        
         if(show_variable_inspector)
         {
+          $("#variableinspector").show()
+          $(".main").css("padding-bottom","250px")
+          
           BrowserAutomationStudio_AskForVariablesUpdateOrWait()
+        }else
+        {
+          $(".main").css("padding-bottom","50px")
+          $("#variableinspector").hide()
         }
       },
 
-      closevariableinspector: function()
+      closevariableinspector: function(event)
       {
-        this.model.set("show_variable_inspector",false)
+
+        event.preventDefault();
+        this.model.attributes["show_variable_inspector"] = false
+        $("#variableinspector").hide()
+        $(".main").css("padding-bottom","50px")
       },
 
       Delete: function(is_single){
@@ -1010,8 +1717,9 @@
 
           if(deleted_current_insert)
           {
-            this.model.set("insert_index", _TaskCollection.length)
-            this.model.set("insert_parent", 0)
+            this.model.attributes["insert_index"] = _TaskCollection.length
+            this.model.attributes["insert_parent"] = 0
+            this.UpdateInsertDataInterface()
           }
 
           if(deleted_current_execute)
@@ -1037,13 +1745,15 @@
         {
           if(GetFirstNotFunctionId() != 0)
           {
-            this.model.set("insert_index",_TaskCollection.length - 1)
-            this.model.set("insert_parent",0)
+            this.model.attributes["insert_index"] = _TaskCollection.length - 1
+            this.model.attributes["insert_parent"] = 0
           }else
           {
-            this.model.set("insert_index",0)
-            this.model.set("insert_parent",0)
+            this.model.attributes["insert_index"] = 0
+            this.model.attributes["insert_parent"] = 0
           }
+          this.UpdateInsertDataInterface()
+
         }else
         {
           var task = FindTaskById(0)
@@ -1078,8 +1788,10 @@
             task = FindNextTask(id)
           }
 
-          this.model.set("insert_index",insert_index)
-          this.model.set("insert_parent",insert_parent)
+          this.model.attributes["insert_index"] = insert_index
+          this.model.attributes["insert_parent"] = insert_parent
+
+          this.UpdateInsertDataInterface()
 
         }
       },
@@ -1095,20 +1807,56 @@
 
           if(task)
           {
+            var dat = task.dat()
+
             var is_selected;
             var el = $(".taskcontainer[task-id=" + task.get("id") + "] .selected")
+            var el_connected = null
+            var id_connected = null
+            if(dat && dat["role"])
+            {
+              if(dat["role"] == "master")
+              {
+                id_connected = parseInt(dat["slave"])
+                
+              }else if(dat["role"] == "slave")
+              {
+                id_connected = parseInt(dat["master"])
+              }
+
+            }
+
+            if(id_connected)
+            {
+              el_connected = $(".taskcontainer[task-id=" +  id_connected  + "] .selected")
+            }
+
+
             if(task.get("is_selected"))
             {
-              el.hide()
+              el.css("visibility","hidden")
+              if(el_connected)
+                el_connected.css("visibility","hidden")
               is_selected = false
             }
             else
             {
-              el.show()
+              el.css("visibility","visible")
+              if(el_connected)
+                el_connected.css("visibility","visible")
               is_selected = true
             }
 
-            task.set("is_selected",is_selected)
+            task.attributes["is_selected"] = is_selected
+            if(id_connected)
+            {
+              var task_connected = FindTaskById(id_connected)
+              if(task_connected)
+                task_connected.attributes["is_selected"] = is_selected
+
+            }
+
+            this.RecalculateMargins($(".tool-margin"),"compute")
           }
 
           this.model.set("dontsend",false)
@@ -1119,11 +1867,15 @@
           //this.render()
       },
 
+
       DeleteThisAndAllUpper: function(){
         this.model.set("dontsend",true)
+
         var task = this.collection.models[this.currentTargetId]
         if(!task)
           return
+
+        _CacheLoader.SetDontUpdate(true)
 
         var func_original = GetFunctionData(parseInt(task.get("id")))["name"]
 
@@ -1136,6 +1888,9 @@
             this.Delete()
           this.currentTargetId = this.currentTargetId - 1
         }
+
+        _CacheLoader.SetDontUpdate(false)
+        _CacheLoader.Start()
 
         this.model.set("dontsend",false)
         BrowserAutomationStudio_SaveToUndoManager()
@@ -1150,6 +1905,9 @@
         if(!task)
           return
 
+        _CacheLoader.SetDontUpdate(true)
+
+
         var parent_id = task.get("parentid")
         while(parseInt(this.currentTargetId)<this.collection.length)
         {
@@ -1158,6 +1916,9 @@
             break
           this.Delete()
         }
+
+        _CacheLoader.SetDontUpdate(false)
+        _CacheLoader.Start()
 
         this.model.set("dontsend",false)
         BrowserAutomationStudio_SaveToUndoManager()
@@ -1187,8 +1948,9 @@
           {
             var second_line = "section_start(\"test\", " + task.get("id") + ")!"
             var code = "_kill_call_stack()" + "\n" + second_line
-
+            NextModeIsClear = false
             BrowserAutomationStudio_Execute(code)
+
           }
       },
 
@@ -1210,16 +1972,20 @@
             _GobalModel.set("isscriptexecuting",true)
 
             var second_line = "section_start(\"test\", " + execute_next_id + ")!"
-            var code = task.get("code") + "\n" + second_line
+            var code = "_sa(" + parseInt(task.get("id")) + ");" + task.get("code") + "\n" + second_line
 
 
             if(code.indexOf("_goto(")>=0)
             {
+              var is_fast = code.indexOf("_fast_goto(")>=0
               code = code.split("_goto(")[1]
               code = code.split(")!")[0]
               var label = JSON.parse(code)
               second_line = "section_start(\"test\", " + FindTaskIdByLabel(label) + ")!"
+              if(!is_fast)
+                second_line = "_kill_call_stack();" + second_line
               code = second_line
+              NextModeIsClear = true
             }else if(code.indexOf("_set_goto_label(")>=0)
             {
               code = second_line
@@ -1230,22 +1996,33 @@
 
 
       Edit: function(){
-        this.isEdit = true
-        var code = this.collection.at(this.currentTargetId).get("code")
-        $("#TaskName").val(prepare_edit_body(code, this.collection.at(this.currentTargetId).get("name")))
 
+        var dat = this.collection.at(this.currentTargetId).dat()
+
+        if(dat && dat["role"] && dat["role"] == "slave")
+        {
+          return;
+        }
+
+        this.isEdit = true
+
+        var task = this.collection.at(this.currentTargetId)
+
+        var code = task.get("code")
+        $("#TaskName").val(prepare_edit_body(dat, task.get("name")))
+        $("#TaskId").html(task.get("id"))
+        $(".color-select").removeClass("color-select-active")
+        $(".color-select[color-id='" + task.get("color") + "']").addClass("color-select-active")
 
         $("#TaskDontRunWhenRecording").prop('checked', this.collection.at(this.currentTargetId).get("donotexecuteduringrecord"))
         $("#editmodal").modal({})
         var match = code.match(/\/\*Dat\:([^\*]+)\*\//)
         if(match)
         {
-          $("#TaskCode").val(code.replace(/\s*\/\*Dat\:[^\*]+\*\/\s*/g,""))
-          $("#TaskData").val("/*Dat:" + match[1] + "*/")
+          //$("#TaskCode").val(code.replace(/\s*\/\*Dat\:[^\*]+\*\/\s*/g,""))
+          //$("#TaskData").val("/*Dat:" + match[1] + "*/")
           BrowserAutomationStudio_EditStart(match[1])
         }
-        else
-          $("#TaskCode").val(code)
       },
 
       initialize: function(){
@@ -1263,6 +2040,11 @@
             //alert("send")
             try{
               var time = Date.now()
+
+              UpdateGotos()
+
+              console.log("Preprocessing in " + (Date.now() - time).toString())
+
               var code = GenerateCode(self.collection.toJSON(),self.model.toJSON())
               console.log("Generate in " + (Date.now() - time).toString())
               
@@ -1279,9 +2061,7 @@
 
               console.log("Patch length " + patch.length)
 
-              
-
-              BrowserAutomationStudio_SendCode(patch, extract_functions(code), extract_resources(code), extract_variables(code), extract_labels(code));
+              BrowserAutomationStudio_SendCode(patch, extract_functions(code), extract_resources(code), extract_variables(code), extract_global_variables(code), extract_labels(code));
               console.log("Send in " + (Date.now() - time).toString())
             }catch(e)
             {}
@@ -1335,6 +2115,7 @@
 
       render: function(model){
 
+
         if(_GobalModel.hasChanged("dontsend"))
         {
           return;
@@ -1365,12 +2146,15 @@
 
         var t = new Date()
 
-        _CacheLoader.Start()
+        if(!_CacheLoader.GetIsActiveForFindTaskById())
+          _CacheLoader.Start()
 
         t = new Date()
 
         //alert("render")
-        $("#containerdata").html(this.templates[this.model.get("state")]({data:this.collection.toJSON(),global:this.model.toJSON()}))
+
+        $("#containerdata").html(this.templates[this.model.get("state")]({data:this.collection,global:this.model.toJSON()}))
+
 
         console.trace("Render time" + (new Date() - t) )
         if(window.startTime)
@@ -1433,15 +2217,15 @@
         context.attach('html', [
           {header: tr('Actions')},
 
-          {text: tr('Copy selected'), action: function(e){
+          {text: '<img draggable="false" src="copy.png" style="width:14px" /> ' + tr('Copy selected'), action: function(e){
                 e.preventDefault();
                 self.Copy()
           }},
-          {text: tr('Paste selected'), action: function(e){
+          {text: '<img draggable="false" src="paste.png" style="width:14px" /> ' + tr('Paste selected'), action: function(e){
                 e.preventDefault();
                 self.Paste()
           }},
-          {text: tr('Cut selected'), action: function(e){
+          {text: '<img draggable="false" src="cut.png" style="width:14px" /> ' + tr('Cut selected'), action: function(e){
                 e.preventDefault();
                 self.Cut()
           }},
@@ -1450,12 +2234,72 @@
                 self.DeleteSelected()
 
           }},
-          {text: tr('Clear selection'), action: function(e){
+          {divider:true},
+          {text: tr('Enable selected'), action: function(e){
+                e.preventDefault();
+                self.EnableSelected()
+
+          }},
+          {text: tr('Disable selected'), action: function(e){
+                e.preventDefault();
+                self.DisableSelected()
+
+          }},
+          {divider:true},
+          {text: tr('Set color') + ' <span class="action-color-1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> ' + tr('for selected actions'), action: function(e){
+              e.preventDefault();
+              self.SetSelectedColor("1")
+          }},
+          {text: tr('Set color') + ' <span class="action-color-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> ' + tr('for selected actions'), action: function(e){
+              e.preventDefault();
+              self.SetSelectedColor("2")
+          }},
+          {text: tr('Set color') + ' <span class="action-color-3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> ' + tr('for selected actions'), action: function(e){
+              e.preventDefault();
+              self.SetSelectedColor("3")
+          }},
+          {text: tr('Set color') + ' <span class="action-color-4">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> ' + tr('for selected actions'), action: function(e){
+              e.preventDefault();
+              self.SetSelectedColor("4")
+          }},
+          {text: tr('Set color') + ' <span class="action-color-5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> ' + tr('for selected actions'), action: function(e){
+              e.preventDefault();
+              self.SetSelectedColor("5")
+          }},
+          {text: tr('Clear color') + " " + tr('for selected actions'), action: function(e){
+              e.preventDefault();
+              self.SetSelectedColor("")
+          }},
+          {divider:true},
+          {text: '<img draggable="false" src="checkall.png" style="width:14px" /> ' + tr('Select all'), action: function(e){
+                e.preventDefault();
+                self.CheckAll()
+
+          }},
+          {text: '<img draggable="false" src="uncheckall.png" style="width:14px" /> ' + tr('Clear selection'), action: function(e){
                 e.preventDefault();
                 self.ClearSelection()
 
           }},
-          {text: tr('Variable Inspector'), action: function(e){
+          {divider:true},
+          {text: '<i class="fa fa-arrow-circle-left" aria-hidden="true"></i> ' + tr('Fold all'), action: function(e){
+                e.preventDefault();
+                self.FoldAll()
+
+          }},
+          {text: '<i class="fa fa-arrow-circle-down" aria-hidden="true"></i> ' + tr('Unfold all'), action: function(e){
+                e.preventDefault();
+                self.UnfoldAll()
+
+          }},
+          {divider:true},
+
+          {text: '<i class="fa fa-search" aria-hidden="true"></i> ' + tr('Search'), action: function(e){
+                e.preventDefault();
+                _ActionFinder.Show()
+
+          }},
+          {text: '<i class="fa fa-bug" aria-hidden="true"></i> ' + tr('Variable Inspector'), action: function(e){
                 e.preventDefault();
                 self.ToggleVariableInspector()
 
@@ -1463,8 +2307,15 @@
         ]);
 
         tr()
+
+        _ActionFinder.SearchLast()
+        
+        _DragAndDrop.Init()
+
         $("body").show()
         BrowserAutomationStudio_HandlersInitialize()
+
+        _Tour.Start();
       }
 
     });
@@ -1491,6 +2342,17 @@
 
     var BrowserAutomationStudio_LastCode = ""
 
+    var NextModeIsClear = false
+
+    var _MultiSelect = new MultiSelect()
+
+    var _DragAndDrop = new DragAndDrop()
+
+    var _NewInsertId = null
+
+    var _Tour = new BrowserAutomationStudio_Tour()
+
+    _MultiSelect.Init()
 
     Backbone.history.start();
 
@@ -1526,6 +2388,7 @@
 
     function BrowserAutomationStudio_SaveToUndoManager()
     {
+
       if(BrowserAutomationStudio_StopSaveToUndoManager)
         return
 
@@ -1632,6 +2495,111 @@
       }
     }
 
+    function UpdateIfMasterSlave(Task, Code)
+    {
+      var match = Code.match("Dat:([^\*]+)")
+      if(!match)
+       return ""
+
+      var dat = JSON.parse(b64_to_utf8(match[1]))
+      if(dat["s"] != "if")
+        return;
+
+      if(!dat["d"])
+        return;
+
+      var IfElse = dat["d"].find(function(el){return el["id"] == "IfElse"})
+
+      if(!IfElse)
+        return;
+
+      var iselse_next = IfElse["data"]
+
+      IfElse = Task.dat()["d"].find(function(el){return el["id"] == "IfElse"})
+
+      if(!IfElse)
+        return;
+      
+      var iselse_prev = IfElse["data"]
+
+      dat["master"] = parseInt(Task.get("id"))
+
+      
+
+      if(!iselse_next && iselse_prev)
+      {
+        if(Task.dat()["slave"])
+        {
+          var slave = parseInt(Task.dat()["slave"])
+          var index = IndexOf(slave)
+          if(index >= 0)
+          {
+            _MainView.currentTargetId = index
+            _MainView.Delete()
+            _.every(_MainView.collection.models, function(task,index){
+              task.attributes["is_selected"] = false
+              return true
+            })
+            $(".taskcontainer .selected").css("visibility","hidden")
+            _MainView.RecalculateMargins($(".tool-margin"),"clear")
+          }
+        }
+      }else if(iselse_next && !iselse_prev)
+      {
+        
+        var original_id = parseInt(Task.get("id"))
+        var insert_index = IndexOf(original_id)
+        while(true)
+        {
+          var task_current = _MainView.collection.at(insert_index)
+          if(insert_index >= _MainView.collection.length)
+            break;
+          
+          if(parseInt(task_current.get("id")) != original_id &&  !IsAnsectorOf(original_id,task_current.get("parentid")))
+            break;
+
+          insert_index += 1
+        }
+
+        var insert_parent = parseInt(Task.get("parentid"))
+
+        var Id = parseInt(dat["slave"])
+
+        dat["role"] = "slave"
+
+        var Code = "/*Dat:" + utf8_to_b64(JSON.stringify(dat)) + "*/\n"
+        Code += "_if(!" + dat["if_var"] + ",function(){\n"
+        Code += "section_insert()\n"
+        Code += "})!\n"
+        Code += "delete " + dat["if_var"] + ";\n"
+
+        var task = { name: "Else", code: Code, id: Id, donotexecuteduringrecord: Task.get("donotexecuteduringrecord"), parentid: insert_parent}
+
+        
+        _TaskCollection.add(task,{at: insert_index})
+
+        dat["role"] = "master"
+
+        Code = Code.replace(new RegExp("Dat:([^\*]+)"), "Dat:" + utf8_to_b64(JSON.stringify(dat)))
+        Task.set("code",Code)  
+
+        _.every(_MainView.collection.models, function(task,index){
+
+
+          task.attributes["is_selected"] = false
+          return true
+        })
+        $(".taskcontainer .selected").css("visibility","hidden")
+        _MainView.RecalculateMargins($(".tool-margin"),"clear")
+        _MainView.SetDefaultInsert()
+
+
+      }
+
+      
+      
+    }
+
     function FindTaskIdByLabel(Label)
     {
       var search = "_set_goto_label(" + JSON.stringify(Label) + ")!"
@@ -1686,6 +2654,28 @@
         return null
 
       var nexttask = _TaskCollection.models[index + 1]
+      return nexttask
+    }
+
+    function FindPrevTask(Id)
+    {
+      var task = FindTaskById(Id)
+      if(!task)
+        return null
+      var index = _TaskCollection.models.indexOf(task)
+
+      if(index == 0)
+        index = _TaskCollection.models.length - 1
+      else
+        index -= 1
+
+      if(index<0)
+        return null
+
+      if(index >= _TaskCollection.models.length)
+        return null
+
+      var nexttask = _TaskCollection.models[index]
       return nexttask
     }
 
@@ -1879,6 +2869,40 @@
       return null
     }
 
+    function FindNextSibling(Id)
+    {
+      //var first_not_function = GetFirstNotFunctionId();
+      var task = FindTaskById(Id)
+      var task_depth = GetTaskDepth(parseInt(task.get("id")))
+      if(!task)
+        return null
+      while(true)
+      {
+        var tasknext = FindNextTask(Id)
+
+        if(!tasknext)
+          break
+
+        /*if(parseInt(first_not_function) == parseInt(tasknext.get("id")))
+          return null*/
+
+        if(tasknext)
+        {
+          var tasknext_depth = GetTaskDepth(parseInt(tasknext.get("id")))
+          if(tasknext_depth == task_depth)
+          {
+            return tasknext            
+          }
+          if(tasknext_depth < task_depth)
+          {
+            return null            
+          }
+        }
+        Id = parseInt(tasknext.get("id"))
+      }
+      return null
+    }
+
     function IsAnsectorOf(Id,IdAnsector)
     {
       if(Id == IdAnsector)
@@ -1923,7 +2947,16 @@
       if(index == 1)
         return true
 
-      if(parseInt(GetFirstNotFunctionId()) == parseInt(_TaskCollection.models[index].get("id")) ||  parseInt(_TaskCollection.models[index].get("parentid")) != parseInt(_TaskCollection.models[index - 1].get("parentid")) || ((_TaskCollection.models[index].get("code").indexOf("section_insert") < 0) && (_TaskCollection.models[index - 1].get("code").indexOf("section_insert") >= 0)))
+      if(_TaskCollection.models[index].get("name") == "Else")
+      {
+        return false
+      }
+
+      if(
+        parseInt(GetFirstNotFunctionId()) == parseInt(_TaskCollection.models[index].get("id")) || 
+        parseInt(_TaskCollection.models[index].get("parentid")) != parseInt(_TaskCollection.models[index - 1].get("parentid")) || 
+        (/*(_TaskCollection.models[index].get("code").indexOf("section_insert") < 0) &&*/ (_TaskCollection.models[index - 1].get("code").indexOf("section_insert") >= 0)) 
+      )
         return true
 
       return false
@@ -2096,7 +3129,13 @@
       {
         //var index = _.indexOf(_TaskCollection.models, task)
         var second_line = "";
-        var tasknext = FindNextSiblingOrUpper(parseInt(execute_next_id))
+
+        var tasknext;
+
+        if(NextModeIsClear)
+          tasknext = FindNextSibling(parseInt(execute_next_id))
+        else
+          tasknext = FindNextSiblingOrUpper(parseInt(execute_next_id))
 
         if(tasknext && GetFirstNotFunctionId() != parseInt(tasknext.get("id")) && !IsFunctionNode(parseInt(tasknext.get("id"))))
         {
@@ -2137,10 +3176,14 @@
           code += task.get("code")
           if(code.indexOf("_goto(")>=0)
           {
+            var is_fast = code.indexOf("_fast_goto(")>=0
             code = code.split("_goto(")[1]
             code = code.split(")!")[0]
             var label = JSON.parse(code)
             second_line = "section_start(\"test\", " + FindTaskIdByLabel(label) + ")!"
+            if(!is_fast)
+              second_line = "_kill_call_stack();" + second_line
+            NextModeIsClear = true
             code = ""
           }else if(code.indexOf("_set_goto_label(")>=0)
           {
@@ -2155,19 +3198,21 @@
             }
           }
         }
+
+        code = code.replace(new RegExp("\\_call_section\\(\\s*([^\\,\\s]+)\\s*\\,.*?\\)\\!","g"),"_call($1,null)!")
         var FunctionRegexp = new RegExp("\\_call\\(\\s*([^\\,\\s]+)\\s*\\,")
         var match = code.match(FunctionRegexp)
         if(match)
         {
           var name = match[1]
           code = GetFunctionBody(name) + "\n" + code
+          //NextModeIsClear = false
         }
 
         code += "\n"
         code += second_line
-        BrowserAutomationStudio_Execute(code)
-
-
+        //alert(second_line)
+        BrowserAutomationStudio_Execute("_sa(" + parseInt(task.get("id")) + ");" + code)
 
       }
 
@@ -2179,6 +3224,7 @@
 
     function BrowserAutomationStudio_GetVariablesList()
     {
+
       var code = GenerateCode(_TaskCollection.toJSON(),_GobalModel.toJSON())
       var match = code.match(/VAR_[A-Z0-9_]+/g)
       var variables = null
@@ -2188,8 +3234,148 @@
       }else
         variables = []       
 
+
+      JSON.parse(extract_global_variables(code)).forEach(function(el){
+        variables.push("GLOBAL:" + el["name"])
+
+      })
+
+
       return variables
     }
+
+    function BrowserAutomationStudio_FocusActionFast(Id)
+    {
+      BrowserAutomationStudio_FocusAction(Id,true)
+    }
+
+
+    function BrowserAutomationStudio_FocusAction(Id, Fast)
+    {
+      if(typeof(Fast) == "undefined" || Fast == false)
+      {
+        var task = FindTaskById(Id)
+        if(!task)
+          return
+        var funcdata = GetFunctionData(Id)
+        var function_name = _GobalModel.get("function_name")
+
+      
+        if(function_name != funcdata["name"])
+        {
+
+          if(_GobalModel.get("function_name") != funcdata["name"])
+          {
+            _MainView.ClearSelection()
+          }
+          
+          _GobalModel.set("function_name", funcdata["name"])
+          _MainView.SetDefaultInsert()
+        }
+      }
+
+      var el = $("*[task-id=" + Id + "]")
+      if(el.length > 0)
+      {
+        el[0].scrollIntoViewIfNeeded();
+        el.addClass("toolhighlight")
+        setTimeout(function(){el.removeClass("toolhighlight")},1000)
+      }
+      
+    }
+
+    function BrowserAutomationStudio_UnfoldTaskMasterSlave(Task)
+    {
+      var need_send = false
+
+      var dat = Task.dat()
+      if(dat && dat["role"] == "slave") 
+      {
+        if(Task.get("is_fold"))
+        {
+           need_send = true
+           Task.attributes["is_fold"] = false
+           $(".folding-unfolded[task-id='" + Task.get("id") + "']").show()
+           $(".folding-folded[task-id='" + Task.get("id") + "']").hide()
+        }
+
+        var master = FindTaskById(dat["master"])
+
+        if(master && master.get("is_fold"))
+        {
+          need_send = true
+          master.attributes["is_fold"] = false
+          $(".folding-unfolded[task-id='" + master.get("id") + "']").show()
+          $(".folding-folded[task-id='" + master.get("id") + "']").hide()
+        }
+      }
+      if(dat && dat["role"] == "master") 
+      {
+        var slave = FindTaskById(dat["slave"])
+
+        if(slave && slave.get("is_fold"))
+        {
+          need_send = true
+          slave.attributes["is_fold"] = false
+          $(".folding-unfolded[task-id='" + slave.get("id") + "']").show()
+          $(".folding-folded[task-id='" + slave.get("id") + "']").hide()
+        }
+      }
+      return need_send
+
+    }
+
+    function BrowserAutomationStudio_UnfoldParents(Id)
+    {
+      var need_send = false
+
+      Id = parseInt(Id)
+      if(Id == 0)
+        return;
+
+      var Task = FindTaskById(Id)
+      if(!Task)
+        return;
+
+      if(BrowserAutomationStudio_UnfoldTaskMasterSlave(Task))
+        need_send = true
+
+      Id = parseInt(Task.get("parentid"))
+
+      while(true)
+      {
+        if(Id == 0)
+          break;
+        var Task = FindTaskById(Id)
+        if(!Task)
+           break
+
+        if(Task.get("is_fold"))
+        {
+           need_send = true
+           Task.attributes["is_fold"] = false
+           $(".folding-unfolded[task-id='" + Task.get("id") + "']").show()
+           $(".folding-folded[task-id='" + Task.get("id") + "']").hide()
+        }
+
+        if(BrowserAutomationStudio_UnfoldTaskMasterSlave(Task))
+          need_send = true
+
+        var ParentId = parseInt(Task.get("parentid"))
+        if(ParentId == 0)
+           break
+        
+        Id = ParentId
+      }
+
+      if(need_send)
+      {
+        _MainView.RecalculateFolding($(".tool-margin"))
+        BrowserAutomationStudio_SaveToUndoManager()
+        _MainView.send()
+      }
+    }
+
 
     function BrowserAutomationStudio_AskForVariablesUpdateIfNeeded()
     {
@@ -2207,7 +3393,12 @@
           BrowserAutomationStudio_AskForVariablesUpdate()
         }else
         {
-          _GobalModel.set("show_variable_inspector_pending",true)
+          if(_GobalModel.get("show_variable_inspector"))
+          {
+            _GobalModel.attributes['show_variable_inspector_pending'] = true
+            $("#pendingnotice").show()
+            $("#variablelistpending").hide()
+          }
         }
     }
 
@@ -2234,7 +3425,8 @@
 
     function BrowserAutomationStudio_UpdateVariablesResult(data)
     {
-      _GobalModel.set("variable_inspector_data", data)
+      _GobalModel.attributes["variable_inspector_data"] = data
+      $("#variablelistpending").html(JSONTree.create(JSON.parse(data)))
     }
 
     var IsChangedUsed = false
@@ -2242,7 +3434,12 @@
     function BrowserAutomationStudio_GetClipboardResult(data)
     {
       if(data.length > 0)
-        _MainView.PasteFinal(data)
+      {
+        var new_ids = _MainView.PasteFinal(data)
+        new_ids.forEach(function(id){
+          BrowserAutomationStudio_FocusActionFast(parseInt(id))
+        })
+      }
     }
 
     function BrowserAutomationStudio_IsChanged()
@@ -2283,12 +3480,37 @@
         _MainView.send()
       }else
       {
-
         var donotexecuteduringrecord = false
-        while(Name.startsWith("_"))
+        var parsed = false
+        var color = ""
+        var is_fold = false
+        try{
+          if(Name.length > 0)
+          {
+            var data = JSON.parse(Name)
+            if("e" in data)
+              donotexecuteduringrecord = data["e"]
+            if("n" in data)
+              Name = data["n"]
+            else
+              Name = ""
+            if("c" in data)
+              color = data["c"]
+            if("f" in data)
+              is_fold = data["f"]
+          }
+
+          parsed = true
+
+        }catch(e){}
+
+        if(!parsed)
         {
-          donotexecuteduringrecord = true
-          Name = Name.slice(1)
+          while(Name.startsWith("_"))
+          {
+            donotexecuteduringrecord = true
+            Name = Name.slice(1)
+          }
         }
 
         if(_MainView.isEdit)
@@ -2308,13 +3530,37 @@
             insert_index = -IndexOf(GetFirstNotFunctionId())
         }
         insert_index = ((insert_index<0) ? - insert_index : insert_index + 1)
+
         var insert_parent = _GobalModel.get("insert_parent")
-        Id = Math.floor(Math.random() * (1000000000 - 100)) + 100
-        var task = { name: Name, code: Code, id: Id, donotexecuteduringrecord: donotexecuteduringrecord, parentid: insert_parent}
+        //Id = Math.floor(Math.random() * (1000000000 - 100)) + 100
+
+        try
+        {
+          var match = Code.match("Dat:([^\*]+)")
+          if(match)
+          {
+            var dat = JSON.parse(b64_to_utf8(match[1]))
+            if(dat["role"])
+            {
+              if(dat["role"] == "master") 
+              {
+                Id = dat["master"]
+              }else if(dat["role"] == "slave")
+              {
+                Id = dat["slave"]
+              }
+            }
+          }
+          Id = parseInt(Id)
+        }catch(e){}
+
+        var task = { name: Name, code: Code, id: Id, donotexecuteduringrecord: donotexecuteduringrecord, is_fold: is_fold, color: color, parentid: insert_parent}
 
         _GobalModel.set("dontsend",true)
           _TaskCollection.add(task,{at: insert_index})
-          _GobalModel.set("insert_index", insert_index)
+          _GobalModel.attributes["insert_index"] = insert_index
+          _MainView.UpdateInsertDataInterface()
+
         _GobalModel.set("dontsend",false)
 
         BrowserAutomationStudio_SaveToUndoManager()
@@ -2323,6 +3569,13 @@
 
 
         _MainView.render()
+        var el = $("*[task-id=" + Id + "]")
+        if(el.length > 0)
+        {
+          el[0].scrollIntoViewIfNeeded();
+        }
+
+        _NewInsertId = Id
         
       }
     }
@@ -2360,8 +3613,25 @@
               break;
            }
            //_GobalModel.set("insert_parent", _TaskCollection.models[index].get("parentid"))
-           if(Id != 0)
-              _GobalModel.set("function_name", GetFunctionData(parseInt(_TaskCollection.models[index].get("id")))["name"] )
+           
+           try{
+             if(Id != 0)
+             {
+                var new_name = GetFunctionData(parseInt(_TaskCollection.models[index].get("id")))["name"]
+                
+                if(new_name != _GobalModel.get("function_name"))
+                  _MainView.ClearSelection()
+
+                _GobalModel.set("function_name", new_name )
+              }else
+              {
+                if("Main" != _GobalModel.get("function_name"))
+                  _MainView.ClearSelection()
+
+                _GobalModel.set("function_name", "Main" )
+              }
+
+           }catch(e){}
            _MainView.SetDefaultInsert()
            //_GobalModel.set("insert_index", (upper) ? -index : index)
 
@@ -2402,10 +3672,31 @@
 
       if(!_GobalModel.get("isscriptexecuting") && !_GobalModel.get("istaskexecuting"))
       {
-        _GobalModel.set("show_variable_inspector_pending", false)
+        if(_GobalModel.get("show_variable_inspector"))
+        {
+          _GobalModel.attributes['show_variable_inspector_pending'] = false
+          $("#pendingnotice").hide()
+          $("#variablelistpending").show()
+        }
         BrowserAutomationStudio_AskForVariablesUpdate()
       }
 
+      if(typeof(Id) != "undefined")
+      {
+        if(Id == 0) 
+          Id = GetFirstNotFunctionId()
+        
+        if(!_GobalModel.get("isscriptexecuting") && !_GobalModel.get("istaskexecuting"))
+          BrowserAutomationStudio_UnfoldParents(Id)
+        BrowserAutomationStudio_FocusActionFast(parseInt(Id))
+      }else if(_NewInsertId)
+      {
+        if(!_GobalModel.get("isscriptexecuting") && !_GobalModel.get("istaskexecuting"))
+          BrowserAutomationStudio_UnfoldParents(Id)
+        BrowserAutomationStudio_FocusActionFast(parseInt(_NewInsertId))
+        _NewInsertId = null
+      }
+        
     }
 
     function BrowserAutomationStudio_RunningTask()
@@ -2480,11 +3771,38 @@
           //Match start
           var name = eval("\"" + MatchStart[1] + "\"")
           var donotexecuteduringrecord = false
-          while(name.startsWith("_"))
+          var parsed = false
+          var color = ""
+          var is_fold = false
+          try{
+            if(name.length > 0)
+            {
+              var data = JSON.parse(name)
+              if("e" in data)
+                donotexecuteduringrecord = data["e"]
+              if("n" in data)
+                name = data["n"]
+              else
+                name = ""
+              if("c" in data)
+                color = data["c"]
+              if("f" in data)
+                is_fold = data["f"]
+            }
+
+            parsed = true
+
+          }catch(e){}
+
+          if(!parsed)
           {
-            donotexecuteduringrecord = true
-            name = name.slice(1)
+            while(name.startsWith("_"))
+            {
+              donotexecuteduringrecord = true
+              name = name.slice(1)
+            }
           }
+
           var id = MatchStart[2]
           var parentid = "0"
           if(Stack.length > 0)
@@ -2497,7 +3815,7 @@
             code = Normalize(Code.substr(0, MatchStart.index - 1))
           }
 
-          var task = {name: name, id: id, donotexecuteduringrecord: donotexecuteduringrecord, parentid: parentid, code: code}
+          var task = {name: name, id: id, donotexecuteduringrecord: donotexecuteduringrecord, parentid: parentid, code: code, is_fold: is_fold, color: color}
           Stack.push(id)
           StackReverse.push(id)
           StackData[id] = task
@@ -2577,6 +3895,24 @@
       .replace(new RegExp("\"","g"),"\\u0022")
       .replace(new RegExp("'","g"),"\\u0027")
       .replace(new RegExp("&","g"),"\\u0026")
+      .replace(new RegExp("{","g"),"\\u007b")
+      .replace(new RegExp("}","g"),"\\u007d")
+
+      .replace(new RegExp("\\n","g"),"\\n")
+      .replace(new RegExp("\\r","g"),"\\r")
+    }
+
+    function jsort(json)
+    {
+      return json.sort(function (a, b) {
+        if (a["name"].toLowerCase() > b["name"].toLowerCase()) {
+          return 1;
+        }
+        if (a["name"].toLowerCase() < b["name"].toLowerCase()) {
+          return -1;
+        }
+        return 0;
+      })
     }
 
     function extract_functions(code)
@@ -2627,6 +3963,24 @@
       while (matches = regexp.exec(code))
       {
         res.push(matches[1]);
+      }
+
+      res = res.filter(function(item, pos) {
+            return res.indexOf(item) == pos;
+      })
+
+      res = res.map(function(el){return {name: el.toString()}})
+
+      return JSON.stringify(res)
+    }
+    function extract_global_variables(code)
+    {
+      var res = []
+      var regexp = new RegExp("PSet\\(\\s*\\\"basglobal\\\"\\s*\\,\\s*\\\"([^\\\"]+)\\\"","g")
+      var matches;
+      while (matches = regexp.exec(code))
+      {
+        res.push(JSON.parse("\"" + matches[1] + "\""));
       }
 
       res = res.filter(function(item, pos) {
@@ -2694,6 +4048,7 @@
       var IsActiveForGetFunctionData = false;
       var IsActiveForGetFunctionDataOfThisNode = false;
       var IsActiveForGetFirstNotFunctionId = false;
+      var DontUpdate = false;
 
       var firstNotFunctionId = 0;
       var IdToTask = {}
@@ -2730,8 +4085,15 @@
         return IsActiveForGetFirstNotFunctionId
       }
 
+      this.SetDontUpdate = function(NewDontUpdate)
+      {
+        DontUpdate = NewDontUpdate
+      }
+
       this.StartCarefully = function()
       {
+        if(DontUpdate)
+          return
         if(TimesStarted.length == 0 || Date.now() - TimesStarted[0] > 1000)
         {
           this.Start()
@@ -3031,7 +4393,7 @@
 
       var isfunction = true
       var wasonstartcall = false
-      var IsOnStartExists = IsFunctionExists("OnApplicationStart")
+      var IsOnStartExists = true
       while(true)
       {
         if(index >= data.length)
@@ -3041,7 +4403,8 @@
         var newres = ret["res"]
         if(index!=0 && IsOnStartExists)
         {
-          var isfunctionnew = newres.indexOf("function")>=0
+
+          var isfunctionnew = newres.match("function\\s+[^\\s]+\\(")!=null
           if(!isfunctionnew && isfunction)
           {
             res += "   _call(_on_start, null)!\n\n"
@@ -3088,10 +4451,25 @@
           }
         }
 
-        var name = ""
+        var obj = {}
         if(task.donotexecuteduringrecord)
-          name += "_"
-        name += task.name
+          obj["e"] = task.donotexecuteduringrecord
+        if(task.name.length > 0)
+          obj["n"] = task.name
+        if(task.color.length > 0)
+          obj["c"] = task.color
+        if(task.is_fold)
+          obj["f"] = task.is_fold
+
+        if(Object.keys(obj).length > 0)
+        {
+          obj = JSON.stringify(obj)
+        }else
+        {
+          obj = ""
+        }
+
+        var name = obj
 
         res += Normalize("section_start(\"" + je(name) + "\", " + task.id.toString() + ")!",level)
         res += "\n"

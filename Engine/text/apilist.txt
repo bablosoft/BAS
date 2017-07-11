@@ -20,6 +20,7 @@ rand()
 proxy_parse(proxy_string)
 proxy_pack(proxy_hash)
 parse_json(json)
+_spintax(text)
 md5(string)
 base64_encode(string)
 base64_decode(string)
@@ -51,6 +52,7 @@ result(text)
 result(text, number)
 result_html(html, text, number)
 result_file(number)
+clear_log()
 log(text)
 log_html(html, text)
 log_success(text)
@@ -162,6 +164,7 @@ wait_css_visible(css)!
 wait_memory(memory_size_kb)!
 wait(func_success,func_fail)!
 new_browser()!
+_settings(json)!
 browser()!
 mouse(x, y)!
 move(x, y)!
@@ -264,6 +267,7 @@ _template(template)!
 _switch_http_client_main()
 _switch_http_client_internal()
 _goto(label)!
+_fast_goto(label)!
 _set_goto_label(label)!
 _restrict_popups()!
 _allow_popups()!

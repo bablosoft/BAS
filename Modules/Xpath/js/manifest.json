@@ -1,6 +1,9 @@
 {
 	
 	"name":"Xpath",
+	"info":{"en": "Xpath - convinient way to parse html and xml.", "ru": "Xpath - удобный способ парсинга html и xml."},
+
+	"icon":"xpath.png",
 	"description":"Xpath Evaluate",
 	"description_small":{"en": "Xpath", "ru": "Xpath"},
 	"major_version": 1,

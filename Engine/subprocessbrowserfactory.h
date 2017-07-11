@@ -12,7 +12,8 @@ namespace BrowserAutomationStudioFramework
     {
         Q_OBJECT
         QList<IBrowser*> BrowserList;
-        void Clear();
+        QList<IBrowser*> BrowserListUnused;
+
         INetworkAccessManagerFactory *NetworkAccessManagerFactory;
         IProcessComunicatorFactory *ProcessComunicatorFactory;
         SubprocessListWidget *Widget;
@@ -20,6 +21,8 @@ namespace BrowserAutomationStudioFramework
     public:
         void SetLanguage(const QString & Language);
         explicit SubprocessBrowserFactory(QObject *parent = 0);
+        virtual void ClearAll();
+        virtual void Clear(QList<IBrowser*>* Browsers);
         virtual QList<IBrowser*> Create(int size);
         virtual void SetNetworkAccessManager(INetworkAccessManagerFactory *NetworkAccessManagerFactory);
         virtual INetworkAccessManagerFactory * GetNetworkAccessManager();

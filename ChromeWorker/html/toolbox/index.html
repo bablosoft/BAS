@@ -15,33 +15,45 @@
     
     </div>
    <div id="containerdata" ></div>
-   <div class="modal" id="RecourseModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+   <div class="modal" id="RecourseModal" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title tr" id="myModalLabel">Select Resource</h4>
+            <h4 class="modal-title tr step-1" data-step="1" id="myModalLabel">Select Resource</h4>
+            <h4 class="modal-title tr step-2" data-step="2" id="myModalLabel">Select Resource</h4>
           </div>
-          <div class="modal-body">
+          
+          <div class="modal-body step step-1">
             <span id="RecourseControls">
               <select class="form-control" id="RecourseName" placeholder="Recourse Name">
               </select>
-              <input type="checkbox" id="ResourceReuse" checked /> <label for="ResourceReuse" class="tr res-margin trtitle" data-toggle="tooltip" data-placement="top" title="Take new or old resource during this resource request">Reuse Resource</label>
-              <input type="checkbox" id="ResourceDontDie"/> <label for="ResourceDontDie" class="tr res-margin">Don't end application if not exists</label>
             </span>
-
-            <span id="NoResources" class="tr">No resources found.</span>
-
+            <span id="NoResources">
+              <span class="tr">No resources found.</span>
+              <div class="tr" style="color:gray;font-size:small;margin-top:10px">You can create resource with "+ Create New Resource" button which is located in the panel to the right.</div>
+            </span>
           </div>
+
+          <div class="modal-body step step-2" style="padding-top:5px">
+            <span id="RecourseControls">
+              <input type="checkbox" id="ResourceReuse" checked /> <label style="margin-bottom:0px" for="ResourceReuse" class="tr res-margin">Reuse Resource</label>
+              <div class="tr" style="color:gray;font-size:small">Take new or old resource during current resource request.</div>
+              <input type="checkbox" id="ResourceDontDie" style="margin-top:15px"/> <label for="ResourceDontDie" class="tr res-margin" style="margin-bottom:0px">Don't end application if not exists</label>
+              <div class="tr" style="color:gray;font-size:small">By default script will stop after resource is finished. You can use this option to complete not the entire script, but only the thread.</div>
+            </span>
+          </div>
+
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary resok standartbutton tr" data-dismiss="modal">Ok</button>
+            <button type="button" class="btn btn-primary rescontinue standartbutton tr step step-1" data-step="1">Next</button>
+            <button type="button" class="btn btn-primary resok standartbutton tr step step-2" data-step="2" data-dismiss="modal">Ok</button>
             <button type="button" class="btn btn-default standartbutton tr" data-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="modal " id="VariableModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal " id="VariableModal" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -52,6 +64,7 @@
             <select class="form-control" id="VariableName" placeholder="Variable Name">
             </select>
             <span id="NoVariable" class="tr">No variables found.</span>
+            <div class="tr" style="color:gray;font-size:small;margin-top:10px">Use "Set Variable" action to create variable.</div>
 
           </div>
           <div class="modal-footer">
@@ -62,7 +75,7 @@
       </div>
     </div>
 
-    <div class="modal" id="FunctionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal" id="FunctionModal" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -83,7 +96,7 @@
       </div>
     </div>
 
-    <div class="modal" id="LabelModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal" id="LabelModal" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -104,7 +117,7 @@
       </div>
     </div>
 
-    <div class="modal " id="TimeoutModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal " id="TimeoutModal" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -138,7 +151,7 @@
     </div>
 
 
-    <div class="modal text-center" id="WaitingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+    <div class="modal text-center" id="WaitingModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
     <div class="vertical-alignment-helper">
         <div class="modal-dialog vertical-align-center">
             <div class="modal-content">
@@ -220,11 +233,15 @@
 
 
   <script type="text/template" id="main">
+    <div class="leftactionpaneltitledrop" style="display:none">
+      <i class="fa fa-trash-o" aria-hidden="true"></i>
+    </div>
+
     <div class="searchbar">
       <div class="container-fluid">
         <div class="input-group input-group-sm">
           <span class="input-group-addon" id="basic-addon1"><i class="fa fa-search" aria-hidden="true"></i></span>
-          <input type="text" class="form-control" id="searchinput" placeholder="Action Name" aria-describedby="basic-addon1">
+          <input type="text" class="form-control typeahead" id="searchinput" placeholder="What to search?" aria-describedby="basic-addon1">
           <span class="input-group-btn">
             <button class="btn btn-default" type="button" id="searchinputclear"><i class="fa fa-times" aria-hidden="true"></i></button>
           </span>
@@ -232,32 +249,63 @@
       </div>
     </div>
     <div class="actions">
+      <div class="leftpanel">
+        <button type="button" id="showbookmarks" class="btn btn-default btn-sm" style="margin-bottom:5px"><i class="fa fa-bookmark" aria-hidden="true"></i></button>
+        <button type="button" id="showhistory" class="btn btn-default btn-sm"><i class="fa fa-history" aria-hidden="true"></i></button>
+      </div>
+      <div class="leftactionpanel" style="display:none">
+        
+        <div class="leftactionpaneltitle"></div>
+        <div class="leftactionpaneltitlebody" style="margin-top:3px;margin-bottom:3px">
+
+        </div>
+        
+      </div>
       <div class="container-fluid mainscreen" >
         <div class="panel-group" style="margin-bottom: 0px;">
-            <% var first = true; %>
-            <% var firstdescription = true; %>
+            <% var group = null; %>
             <% _.each(data, function(task) { %>
                 <% if(typeof(task.type) != "undefined" && task.type == "group") { %>
+                  <% group = task.name; %>
+                  <span data-group="<%= task.name %>" data-group-all="<%= task.name %>"  ondragstart="return false;" ondrop="return false;">
+                    <a href="#" data-group="<%= task.name %>" data-group-all="<%= task.name %>" class="groupshow" style="color:black" >
+                      <div class="panelgrid text-center" data-toggle-none="tooltip" data-placement-none="auto" title-none="<%=task.info%>">
+                        
+                        <div class="panelgridtitle"><div class="panelgridtitleinner"><%= task.description %></div></div>
+                        <div class="panelgridimage">
+                          <span class="helper"></span>
+                          <% if(typeof(task.icon) != "undefined") { %>
+                            <img src="<%= task.icon %>" class="center-block img-responsive" />
+                          <% } else { %>
+                            <img src="../icons/module.png" class="center-block img-responsive" />
+                          <% } %>
+                        </div>
+                      </div>
+                    </a>
+                    <span data-group="<%= task.name %>" style="display:none">
+                      <div class="returntomaindiv">
+                        <a href="#" class="returntomain"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span class="tr" style="font-size:smaller">Return to main screen</span></a>
+                      </div>
+                      <hr style="margin-top:5px;margin-bottom:5px" />
+                      <% if(typeof(task.info) != "undefined") { %>
+                        <div class="panelgriddescription"><%= task.info %>
+                        </div>
+                      <% } %>
+                      <div style="clear: both;"></div>
 
-                  <% if(!firstdescription) { %>
-                    </div>
-                    </div>
-                  <% } %>
-                  <% firstdescription = false; %>
-                  <div class="toolspanel panel panel-primary" style="margin: 0px 0px 4px 0px; padding:0px">
-                  <div class="panel-heading" style="padding:2px 10px; font-size:10px"><%= task.description %></div>
-                  <div class="panel-body" style="padding:2px 0px 0px 3px; font-size:13px">
-                  
-                  <% first = true; %>
-                <% } else { %>
-                  <div class="tool" >
-                    <a class="toolbutton" href="#!/<%= task.ref %>" data-placement="right" title="<%= task.description %>" data-name="<%= task.name %>"><i class="fa fa-cog"></i> <%= task.name %> </a>
-                  </div>
-                  <% first = false; %>
+                      
+                    </span>
+                  </span>
+                <% }else{ %>
+                    <a class="toolbutton" href="#!/<%= task.ref %>" data-placement="right" title="<%= task.description %>" data-name="<%= task.name %>" data-ref="<%= task.ref %>" data-group="<%= group %>" style="display:none">
+                      <div class="tool" >
+                         <span class="toolinner"><%= task.name %></span>
+                      </div>
+                    </a>
                 <% } %>
             <% }); %>
             </div>
-            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -266,33 +314,39 @@
   <script type="text/template" id="back">
     <div class="container-fluid back" >
       <div class="col-xs-12">
+        
+        <div id="validation" class="text-muted"><%= _GobalModel.GetPageInfo() || name %></div>
+        <hr style="margin-top:5px;margin-bottom:5px"/>
+
+        
+
+        <a tabindex="-1" class="btn btn-success standartbutton tr" id="ok">Ok</a> <a tabindex="-1" class="btn btn-danger standartbutton tr" href="#!/" id="backtomain">Cancel</a>
+
         <% if(typeof(use_waiter) != "undefined"){ %>
-          <a href="#" id="use-waiter" class="<%= (typeof(waiter_enabled) != "undefined" && waiter_enabled) ? "" : "use-waiter-disabled" %> trtitle" data-enabled="<%= (typeof(waiter_enabled) != "undefined" && waiter_enabled) ? "true" : "false" %>" data-toggle="tooltip" data-placement="top" title="Wait full page load after this action"><i class="fa fa-clock-o" aria-hidden="true"></i></a>
+          <a href="#" tabindex="-1" id="use-waiter" class="<%= (typeof(waiter_enabled) != "undefined" && waiter_enabled) ? "" : "use-waiter-disabled" %> trtitle" data-enabled="<%= (typeof(waiter_enabled) != "undefined" && waiter_enabled) ? "true" : "false" %>" data-toggle="tooltip" data-placement="top" title="Wait full page load after this action"><i class="fa fa-clock-o" aria-hidden="true"></i></a>
 
         <% } %>
 
         <% if(typeof(use_target) != "undefined"){ %>
-          <a href="#" id="use-target" class="<%= (typeof(target_enabled) != "undefined" && target_enabled) ? "" : "use-target-disabled" %> trtitle" data-enabled="<%= (typeof(target_enabled) != "undefined" && target_enabled) ? "true" : "false" %>" data-toggle="tooltip" data-placement="top" title="Toggle target. Apply this action only to specific url or to specific tab."><i class="fa fa-dot-circle-o" aria-hidden="true"></i></a>
+          <a href="#" tabindex="-1" id="use-target" class="<%= (typeof(target_enabled) != "undefined" && target_enabled) ? "" : "use-target-disabled" %> trtitle" data-enabled="<%= (typeof(target_enabled) != "undefined" && target_enabled) ? "true" : "false" %>" data-toggle="tooltip" data-placement="top" title="Toggle target. Apply this action only to specific url or to specific tab."><i class="fa fa-dot-circle-o" aria-hidden="true"></i></a>
 
         <% } %>
 
         <% if(typeof(use_timeout) != "undefined"){ %>
-          <a href="#" id="use-timeout" data-value="<%= (typeof(timeout_value) != "undefined" && timeout_value > 0) ? timeout_value : "0" %>" class="<%= (typeof(timeout_value) != "undefined" && timeout_value > 0) ? "" : "use-timeout-disabled" %> trtitle"  data-enabled="<%= (typeof(timeout_value) != "undefined" && timeout_value > 0) ? "true" : "false" %>" data-toggle="tooltip" data-placement="top" title="Maximum time to perform an action.">
+          <a href="#" tabindex="-1" id="use-timeout" data-value="<%= (typeof(timeout_value) != "undefined" && timeout_value > 0) ? timeout_value : "0" %>" class="<%= (typeof(timeout_value) != "undefined" && timeout_value > 0) ? "" : "use-timeout-disabled" %> trtitle"  data-enabled="<%= (typeof(timeout_value) != "undefined" && timeout_value > 0) ? "true" : "false" %>" data-toggle="tooltip" data-placement="top" title="Maximum time to perform an action.">
             <i class="fa fa-hourglass-end" aria-hidden="true" ><small id="timeout-is-default" class="tr">default</i><small id="timeout-val"></i><%= (typeof(timeout_value) != "undefined" && timeout_value > 0) ? ("" + timeout_value) : "" %></small></a>
         <% } %>
 
         <% if(typeof(use_move) != "undefined"){ %>
-          <a href="#" id="use-move" class="<%= (typeof(move_enabled) != "undefined" && move_enabled) ? "" : "use-move-disabled" %> trtitle" data-enabled="<%= (typeof(move_enabled) != "undefined" && move_enabled) ? "true" : "false" %>" data-toggle="tooltip" data-placement="top" title="Tweak speed and other parameters for mouse move."><i class="fa fa-sliders" aria-hidden="true"></i></a>
+          <a href="#" tabindex="-1" id="use-move" class="<%= (typeof(move_enabled) != "undefined" && move_enabled) ? "" : "use-move-disabled" %> trtitle" data-enabled="<%= (typeof(move_enabled) != "undefined" && move_enabled) ? "true" : "false" %>" data-toggle="tooltip" data-placement="top" title="Tweak speed and other parameters for mouse move."><i class="fa fa-sliders" aria-hidden="true"></i></a>
         <% } %>
 
 
-        <a class="btn btn-success standartbutton tr" id="ok">Ok</a> <a class="btn btn-danger standartbutton tr" href="#!/" id="backtomain">Cancel</a>
-        <span id="validation" class="text-muted"><%= _GobalModel.GetPageInfo() || name %></span>
         <% if(visible){ %>
           <div class="btn-group" role="group" id="executetype">
-            <button type="button" class="btn <%= (action == "execute") ? "btn-info":"btn-default" %> tr" data-action="execute">Only Execute</button>
-            <button type="button" class="btn <%= (action == "add") ? "btn-info":"btn-default" %> tr" data-action="add">Only Add</button>
-            <button type="button" class="btn <%= (action == "executeandadd") ? "btn-info":"btn-default" %> tr" data-action="executeandadd">Execute And Add</button>
+            <button tabindex="-1" type="button" class="btn <%= (action == "execute") ? "btn-info":"btn-default" %> " data-action="execute"><%= tr("Only Execute") %></button>
+            <button tabindex="-1" type="button" class="btn <%= (action == "add") ? "btn-info":"btn-default" %> " data-action="add"><%= tr("Only Add") %></button>
+            <button tabindex="-1" type="button" class="btn <%= (action == "executeandadd") ? "btn-info":"btn-default" %> " data-action="executeandadd"><%= tr("Execute And Add") %></button>
           </div>
         <% } %>
       </div>
@@ -304,11 +358,23 @@
       <div class="col-xs-12">
         <form class="form-horizontal">
           <div class="form-group">
-            <div class="col-xs-5">
-              <input class="form-control variable-input" type="text" id="<%= id %>" placeholder="<%= description %>" value="<%= default_variable %>" data-variable-constructor="true" <%= (typeof(append_mode) != "undefined") ? "data-append-array=\"true\"" : "" %> >
+            <div class="col-xs-12">
+              <div class="input-group">
+                <input class="form-control variable-input" style='text-transform: uppercase;color:#529653;'  type="text" id="<%= id %>" placeholder="<%= description %>" value="<%= default_variable %>" data-variable-constructor="true" <%= (typeof(append_mode) != "undefined") ? "data-append-array=\"true\"" : "" %> >
+                
+                <ul class="dropdown-menu input-field-dropdown dropdown-align dropdown-black">
+                  <li>
+                    <a tabindex="-1" href="#" data-toggle="modal" data-result-target="#<%= id %>" class="var" data-toggle="modal" data-target="#VariableModal" data-result-target="#<%= id %>" <%= (typeof(disable_locals) != "undefined") ? "disable_locals=\"true\"" : "" %> <%= (typeof(enable_globals) != "undefined") ? "":"disable_globals=true" %> >
+                      <i class="fa fa-at"/>
+                        <span class="tr">Insert existing variable</span>
+                    </a>
+                  </li>
+                </ul>
+
+                <span class="input-group-addon input-description"><%= description %></span>
+              </div>
             </div>
-            <button type="button" class="btn btn-default var" data-toggle="modal" data-target="#VariableModal" data-result-target="#<%= id %>" ><i class="fa fa-at"></i></button>
-            <label class="col-xs-6 control-label" for="<%= id %>"><%= description %></label>
+
           </div>
         </form>
       </div>
@@ -320,11 +386,22 @@
       <div class="col-xs-12">
         <form class="form-horizontal">
           <div class="form-group">
-            <div class="col-xs-5">
-              <input class="form-control resource-input" type="text" id="<%= id %>" placeholder="<%= description %>" value="" data-resource-constructor="true" />
+            <div class="col-xs-12">
+              <div class="input-group">
+                <input class="form-control resource-input" type="text" id="<%= id %>" placeholder="<%= description %>" value="" data-resource-constructor="true" />
+
+                <ul class="dropdown-menu input-field-dropdown dropdown-align dropdown-black">
+                  <li>
+                    <a tabindex="-1" href="#" data-toggle="modal" data-result-target="#<%= id %>" class="res" data-toggle="modal" data-target="#RecourseModal" data-result-target="#<%= id %>">
+                      <i class="fa fa-database"/>
+                        <span class="tr">Select resource</span>
+                    </a>
+                  </li>
+                </ul>
+
+                <span class="input-group-addon input-description"><%= description %></span>
+              </div>
             </div>
-            <button type="button" class="btn btn-default var" data-toggle="modal" data-target="#RecourseModal" data-result-target="#<%= id %>" ><i class="fa fa-database"></i></button>
-            <label class="col-xs-6 control-label" for="<%= id %>"><%= description %></label>
           </div>
         </form>
       </div>
@@ -333,41 +410,105 @@
 
   <script type="text/template" id="path">
     <div class="path" >
-      
-      <ul class="dropdown-menu dropdown-menu-css-options" style="<%= (BrowserAutomationStudio_HasPathChoice()) ? "display:block" : "" %>">
-        <% if("css1" in selector && selector["css1"].length > 0) { %>
-          <li><a href="#" class="dropdown-menu-css-item"><%= selector["css1"] %></a></li>
-        <% }else{ %>  
-          <li><a href="#" class="dropdown-menu-css-item"><%= selector["css"] %></a></li>
-        <% } %>
-        <% if("css2" in selector && selector["css2"].length > 0) { %>
-          <li><a href="#" class="dropdown-menu-css-item"><%= selector["css2"] %></a></li>
-        <% } %>
 
-        <% if("css3" in selector && selector["css3"].length > 0) { %>
-          <li><a href="#" class="dropdown-menu-css-item"><%= selector["css3"] %></a></li>
-        <% } %>
-      </ul>
+      <div class="col-xs-12">
+        <form class="form-horizontal" onsubmit="return false;">
+          <div class="form-group">
+            <div class="col-xs-12">
 
 
-      <div class="input-group pull-right">
-        <input type="text" class="form-control dropdown-menu-path" aria-label="..." id="selector-input">
+              <% if(selector["is_image"]){ %>
+                <table id="ImageTable">
+                  <tr>
+                    <td align="center">
+                      <a href="#" id="ImageDataRef">
+                        <img id="ImageData" style="max-width:300px;"/>
+                      </a>
+                    </td>
+                    <td style="width:100%;padding-left: 15px;" valign="top">
+                      
+                      <div class="path-options">
+                        <% if(typeof(disable_options) == "undefined"){ %>
+                          <span <%= (typeof(hide_options) != "undefined") ? 'style="display:none"':'' %> >
+                            <div class="checkbox checkbox-info" style="min-height: 20px;"><input tabindex="-1" id="checkbox-wait-element" type="checkbox" class="form-control-no-border" <%= (typeof(waitelement) == "boolean" && waitelement == false) ? '':'checked="checked"' %> > <label for="checkbox-wait-element" class="tr">Wait for element.</label></div>
+                            <div class="checkbox checkbox-danger" style="min-height: 20px;"><input tabindex="-1" id="checkbox-fail-action" type="checkbox" class="form-control-no-border" <%= (typeof(failaction) == "boolean" && failaction == false) ? '':'checked="checked"' %> > <label for="checkbox-fail-action" class="tr">Fail thread if element not found.</label></div>
+                          </span>
+                        <% } %>                            
+                        <div class="checkbox checkbox-success" style="min-height: 20px;"><input tabindex="-1" id="checkbox-image-show-data" type="checkbox" class="form-control-no-border"> <label for="checkbox-image-show-data" class="tr">Additional parameters.</label></div>
+                        <div style="clear: both;"></div>
+                      </div>
+
+                    </td>
+                  </tr>
+                </table>
+                <div id="ImageBase64Container" style="display:none">
+                  <div style="margin-bottom:5px">
+                    <%= _.template($('#input_constructor').html())({id:"Scroll", description:tr("Scroll to search for image"), default_selector: "string", disable_int:true, value_string: "scroll", variants: ["scroll", "no scroll"], dont_use_top:true,dont_use_col:true}) %>
+                  </div>
+                  <div style="margin-bottom:5px">
+                    <%= _.template($('#input_constructor').html())({id:"Threshold", description:tr("How well the image must fit. 100 - exactly fits, 0 - does not fit at all."), default_selector: "int", disable_string:true, value_number:80, min_number:0, max_number:100, dont_use_top:true,dont_use_col:true}) %>
+                  </div>
+                  <%= _.template($('#input_constructor').html())({id:"ImageBase64", description:tr("Image data as base64"), dont_use_top:true, dont_use_col:true, default_selector: "expression", disable_int:true, disable_editor:true, disable_string:true, use_textarea:true, size: 4, disable_type_chooser:true, textarea_height: 74}) %>
+                </div>
+
+              <% } else { %>
+                <% if(typeof(disable_options) == "undefined"){ %>
+
+                  <div class="path-options" <%= (typeof(hide_options) != "undefined") ? 'style="display:none"':'' %> >
+                    <div class="checkbox checkbox-one-line checkbox-info" style="margin-right:20px;"><input tabindex="-1" id="checkbox-wait-element" type="checkbox" class="form-control-no-border" <%= (typeof(waitelement) == "boolean" && waitelement == false) ? '':'checked="checked"' %> > <label for="checkbox-wait-element" class="tr">Wait for element.</label></div>
+                    <div class="checkbox checkbox-one-line checkbox-danger"><input tabindex="-1" id="checkbox-fail-action" type="checkbox" class="form-control-no-border" <%= (typeof(failaction) == "boolean" && failaction == false) ? '':'checked="checked"' %> > <label for="checkbox-fail-action" class="tr">Fail thread if element not found.</label></div>
+                    <div style="clear: both;"></div>
+                  </div>
+                <% } %>
 
 
+                <div class="input-group">
+                  <input type="text" class="form-control dropdown-menu-path" aria-label="..." id="selector-input">        
+                    
+                    <ul tabindex="-1" class="dropdown-menu dropdown-menu-css-options dropdown-black" style="<%= (BrowserAutomationStudio_HasPathChoice()) ? "" : "" %>">
+                      <% if("css1" in selector && selector["css1"].length > 0) { %>
+                        <li><a tabindex="-1" href="#" class="dropdown-menu-css-item"><%= selector["css1"] %></a></li>
+                      <% }else{ %>  
+                        <li><a tabindex="-1" href="#" class="dropdown-menu-css-item"><%= selector["css"] %></a></li>
+                      <% } %>
+                      <% if("css2" in selector && selector["css2"].length > 0) { %>
+                        <li><a tabindex="-1" href="#" class="dropdown-menu-css-item"><%= selector["css2"] %></a></li>
+                      <% } %>
 
-        <div class="input-group-btn">
-          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="selector"><%= selector["current"] %></span> <span class="caret"></span></button>
-          <ul class="dropdown-menu dropdown-menu-right">
-            <li><a id="css" class="tr">css</a></li>
-            <li><a id="match" class="tr">match</a></li>
-            <li><a id="xpath" class="tr">xpath</a></li>
-            <li><a id="at" class="tr">at</a></li>
-            <li><a id="none" class="tr">none</a></li>
-          </ul>
-        </div>
-        <button type="button" class="btn btn-default res" data-toggle="modal" data-target="#RecourseModal" data-result-target="#selector-input" ><i class="fa fa-database"></i></button>
-        <button type="button" class="btn btn-default varminim" data-toggle="modal" data-target="#VariableModal" data-result-target="#selector-input" ><i class="fa fa-at"></i></button>
+                      <% if("css3" in selector && selector["css3"].length > 0) { %>
+                        <li><a tabindex="-1" href="#" class="dropdown-menu-css-item"><%= selector["css3"] %></a></li>
+                      <% } %>
+                    </ul>
 
+                    <span class="input-group-addon input-description"><span class="tr">Element selector</span> ( <span class="tr">found</span> <span id="PathCount" class="text-info">0</span> )</span>
+
+                    <div class="input-group-btn">
+                      <a tabindex="-1" href="#" type="button" class="btn btn-default res" data-toggle="modal" data-target="#RecourseModal" data-result-target="#selector-input" style="border-left:0px;border-right:0px;border-radius:0px" ><i class="fa fa-database"></i></a>            
+                    </div>
+
+                    <div class="input-group-btn">
+                      <a tabindex="-1" type="button" class="btn btn-default var" data-toggle="modal" data-target="#VariableModal" data-result-target="#selector-input" style="border-right:0px;border-radius:0px" ><i class="fa fa-at"></i></a>
+                    </div>
+
+                    <div class="input-group-btn">
+                      <button tabindex="-1" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="selector"><%= selector["current"] %></span> <span class="caret"></span></button>
+                      <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a tabindex="-1" id="css" class="tr">css</a></li>
+                        <li><a tabindex="-1" id="match" class="tr">match</a></li>
+                        <li><a tabindex="-1" id="xpath" class="tr">xpath</a></li>
+                        <li><a tabindex="-1" id="at" class="tr">at</a></li>
+                        <li><a tabindex="-1" id="none" class="tr">none</a></li>
+                      </ul>
+                    </div>
+
+                </div>
+
+              <% } %>
+
+
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   </script>
@@ -379,14 +520,65 @@
         <form class="form-horizontal">
           <div class="form-group">
           <% } %>
-            <div class="col-xs-<%= (typeof(size) == 'undefined') ? "6" : size.toString() %>">
+            <% if(typeof(dont_use_col) == "undefined"){ %>
+            <div class="col-xs-12">
+            <% } %>
               <% if(typeof(use_textarea) == "undefined"){ %>
-               <div class="input-group">
+               <div class="input-group" style="width:100%">
+               
+
+
               <% } %>
                 <<%= (typeof(use_textarea) == "undefined") ? "input type=\"text\"" : ("textarea style=\"height:" + ((typeof(textarea_height) == "undefined") ? 146 : textarea_height ) + "px\"") %>  class="form-control input_selector_string" id="<%= id %>" <%= (default_selector == "int") ? "style=\"display:none\"" : "" %> placeholder="<%= description %>" value="<%= (typeof(value_string) != "undefined") ? value_string : "" %>" />
                 <input class="form-control input_selector_number" type="number" id="<%= id %>_number" <%= (default_selector != "int") ? "style=\"display:none\"" : "" %> placeholder="<%= description %>" value="<%= (typeof(value_number) != "undefined") ? value_number : 1%>" step="<%= (typeof(step_number) != "undefined") ? step_number : 1%>" min="<%= (typeof(min_number) != "undefined") ? min_number : 0%>" max="<%= (typeof(max_number) != "undefined") ? max_number : 10000%>" />
-                <div class="input-group-btn" <%= (typeof(disable_type_chooser) != "undefined") ? "style=\"display:none\"" : "" %>>
-                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="selector" data-selector-id="<%= id %>"><%= default_selector %></span> <span class="caret"></span></button>
+                
+
+                <% if(typeof(variants) != "undefined" || typeof(disable_editor) == "undefined" || typeof(disable_resource) == "undefined" || typeof(disable_variable) == "undefined") { %>
+                  <ul class="dropdown-menu input-field-dropdown dropdown-align dropdown-black">
+                    <% if(typeof(variants) != "undefined") { %>
+                      <% for(var i = 0;i<variants.length;i++) { %>
+                        <li>
+                          <a tabindex="-1" href="#" data-toggle="modal"  data-variant="<%= variants[i] %>" data-result="<%= id %>" class="variant" >
+                            <span><%= variants[i] %></span>
+                          </a>
+                        </li>
+                      <% } %>
+                      <li class="divider"></li>
+                    <% } %>
+
+                    <% if(typeof(disable_editor) == "undefined") { %>
+                      <li>
+                        <a tabindex="-1" href="#" data-toggle="modal" data-result-target="#<%= id %>" class="edit" >
+                          <i class="fa fa-circle" style="color:darkred" />
+                            <span class="tr">Create value in visual constructor</span>
+                        </a>
+                      </li>
+                    <% } %>
+                    <% if(typeof(disable_resource) == "undefined") { %>
+                      <li>
+                        <a tabindex="-1" href="#" data-toggle="modal" data-result-target="#<%= id %>" class="res" >
+                          <i class="fa fa-database" />
+                            <span class="tr">Load from file, user input, database</span>
+                        </a>
+                      </li>
+                    <% } %>
+                    <% if(typeof(disable_variable) == "undefined") { %>
+                      <li>
+                        <a tabindex="-1" href="#" data-toggle="modal" data-result-target="#<%= id %>" class="var" >
+                          <i class="fa fa-at" />
+                            <span class="tr">Insert variable</span>
+                        </a>
+                      </li>
+                    <% } %>
+                  </ul>
+                <% } %>
+
+                <% if(typeof(use_textarea) == "undefined" && typeof(disable_label) == "undefined" && typeof(description) == "string" && description.length > 0){ %>
+                  <span  tabindex="-1" class="input-group-addon input-description"><%= description %></span>
+                <% } %>
+                
+                <div class="input-group-btn dropdown-input-type" <%= (typeof(disable_type_chooser) != "undefined") ? "style=\"display:none\"" : "" %>>
+                  <button  tabindex="-1" type="button" class="btn btn-default dropdown-toggle dropdown-input-type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="selector" data-selector-id="<%= id %>"><%= default_selector %></span> <span class="caret"></span></button>
                   <ul class="dropdown-menu dropdown-menu-right">
                     <% if(typeof(disable_string) == "undefined") { %>
                       <li><a class="string" class="tr">string</a></li>
@@ -401,31 +593,18 @@
                     <% } %>
                   </ul>
                 </div>
+
               <% if(typeof(use_textarea) == "undefined"){ %>
+
                 </div>
               <% } %>
-            </div>
-            <% if(typeof(disable_editor) == "undefined") { %>
-              <button type="button" class="btn btn-default edit" data-toggle="modal" data-result-target="#<%= id %>" ><i class="fa fa-circle" style="color:darkred"></i></button>
+            <% if(typeof(dont_use_col) == "undefined"){ %>
+              </div>
             <% } %>
 
-            <% if(typeof(disable_resource) == "undefined") { %>
-              <button type="button" class="btn btn-default res" data-toggle="modal" data-target="#RecourseModal" data-result-target="#<%= id %>" ><i class="fa fa-database"></i></button>
-            <% } %>
-            <% if(typeof(disable_variable) == "undefined") { %>
-              <button type="button" class="btn btn-default var" data-toggle="modal" data-target="#VariableModal" data-result-target="#<%= id %>" ><i class="fa fa-at"></i></button>
-            <% } %>
-
-            <% if(typeof(variants) != "undefined") { %>
-              <% for(var i = 0;i<variants.length;i++) { %>
-                <button type="button" class="btn btn-default variant" data-variant="<%= variants[i] %>" data-result="<%= id %>" ><%= variants[i] %></button>
-              <% } %>
-            <% } %>
-            <% if(typeof(disable_label) == "undefined"){ %>
-              <label class="col-xs-<%= (typeof(size_label) == 'undefined') ? "4" : size_label.toString() %> control-label" for="<%= id %>"><%= description %></label>
-            <% } %>        
             <% if(typeof(dont_use_top) == "undefined"){ %>
-          </div>
+            </div>
+
         </form>
       </div>
       <% } %>
@@ -435,32 +614,32 @@
 
   <script type="text/template" id="special_buttons">
     <div class="col-xs-12">
-        <button type="button" class="btn btn-default specialletter btn-xs">CONTROL</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">MENU</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">SHIFT</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">CANCEL</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">BACK</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">TAB</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">CLEAR</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">RETURN</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">CAPITAL</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">ESCAPE</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">PRIOR</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">NEXT</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">END</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">HOME</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">LEFT</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">UP</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">RIGHT</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">DOWN</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">SELECT</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">PRINT</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">EXECUTE</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">SNAPSHOT</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">INSERT</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">DELETE</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">MOUSESCROLLUP</button>
-        <button type="button" class="btn btn-default specialletter btn-xs">MOUSESCROLLDOWN</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">CONTROL</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">MENU</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">SHIFT</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">CANCEL</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">BACK</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">TAB</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">CLEAR</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">RETURN</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">CAPITAL</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">ESCAPE</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">PRIOR</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">NEXT</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">END</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">HOME</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">LEFT</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">UP</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">RIGHT</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">DOWN</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">SELECT</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">PRINT</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">EXECUTE</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">SNAPSHOT</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">INSERT</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">DELETE</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">MOUSESCROLLUP</button>
+        <button tabindex="-1" type="button" class="btn btn-default specialletter btn-xs">MOUSESCROLLDOWN</button>
       </div>
   </script>
 
@@ -530,20 +709,22 @@
   <script type="text/template" id="goto">
     <div class="container-fluid executefunction">
       <div class="col-xs-12">
-        <form class="form-horizontal">
+        <form class="form-horizontal" onsubmit="return false;">
           <div class="form-group">
             <div class="col-xs-5">
               <span data-preserve="true" data-preserve-type="text" data-preserve-id="LabelName">
                 <input class="form-control label-input" type="text" id="LabelName" placeholder="Label">
               </span>
             </div>
-            <button type="button" class="btn btn-default lab" data-toggle="modal" data-target="#LabelModal" data-result-target="#LabelName" ><i class="fa fa-tag"></i></button>
+            <button tabindex="-1" type="button" class="btn btn-default lab" data-toggle="modal" data-target="#LabelModal" data-result-target="#LabelName" ><i class="fa fa-tag"></i></button>
             <label class="col-xs-6 control-label tr" for="LabelName">Label</label>
           </div>
         </form>
       </div>
     </div>
-     <%= _.template($('#back').html())({action:"executeandadd", visible:false}) %>
+    <div class="tooltipinternal tr">There are two types of goto: long and short. Short move is performed if goto and label are located inside same block (has one parent). This type of move preserves execution history and script continues afterward. In other cases long move is performed, which clears execution history. Long move case is perfect if you are jumping on script start, but if you move inside loop, you must use another move to leave it, otherwise thread will stop with success message.</div>
+
+    <%= _.template($('#back').html())({action:"executeandadd", visible:false}) %>
 
   </script>
 
@@ -562,7 +743,7 @@
       <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
          <input type="checkbox" id="Check"/> <label for="Check" class="tr">Additional processing. Use this option if you want to load template from file or variable.</label>
       </span>
-      <div class="tooltipinternal tr">Resolves template to variable. Can contain {{Resources}} and [[VARIABLES]]</div>
+      <div class="tooltipinternal tr">Resolves template to variable. Can contain {{Resources}} and [[VARIABLES]] and spintax {hi|hello}.</div>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
@@ -648,11 +829,39 @@
                 <input class="form-control function-input" type="text" id="FunctionName" placeholder="Function name">
               </span>
             </div>
-            <button type="button" class="btn btn-default func" data-toggle="modal" data-target="#FunctionModal" data-result-target="#FunctionName" ><i class="fa fa-dot-circle-o"></i></button>
+            <button tabindex="-1" type="button" class="btn btn-default func" data-toggle="modal" data-target="#FunctionModal" data-result-target="#FunctionName" ><i class="fa fa-dot-circle-o"></i></button>
             <label class="col-xs-6 control-label tr" for="FunctionName">Function name</label>
           </div>
         </form>
       </div>
+
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:false}) %>
+  </script>
+
+
+  <script type="text/template" id="executefunctioninseveralthreads">
+    <div class="container-fluid">
+      <div class="col-xs-12">
+        <form class="form-horizontal">
+          <div class="form-group">
+            <div class="col-xs-5">
+              <span data-preserve="true" data-preserve-type="text" data-preserve-id="FunctionName">
+                <input class="form-control function-input" type="text" id="FunctionName" placeholder="Function name">
+              </span>
+            </div>
+            <button tabindex="-1" type="button" class="btn btn-default func" data-toggle="modal" data-target="#FunctionModal" data-result-target="#FunctionName" ><i class="fa fa-dot-circle-o"></i></button>
+            <label class="col-xs-6 control-label tr" for="FunctionName">Function name</label>
+          </div>
+        </form>
+      </div>
+
+      <%= _.template($('#input_constructor').html())({id:"ThreadNumber", description:tr("Thread number"), default_selector: "int", disable_string:true, disable_string:true, min_number: 1, value_number:10}) %>
+      <%= _.template($('#input_constructor').html())({id:"SuccessNumber", description:tr("Success number"), default_selector: "int", disable_string:true, disable_string:true, min_number: 1, value_number:100}) %>
+      <%= _.template($('#input_constructor').html())({id:"FailNumber", description:tr("Fail number"), default_selector: "int", disable_string:true, disable_string:true, min_number: 1, value_number:100}) %>
+      <div class="tooltipinternal tr text-danger">Data exchange can only be performed with global variables or resources.</div>
+
+
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:false}) %>
   </script>
@@ -670,7 +879,7 @@
   <script type="text/template" id="solvecaptcha">
     <div class="container-fluid solvecaptcha">
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Captcha picture data encoded in base64"), default_selector: "expression", disable_int:true, disable_string:true}) %>
-      <%= _.template($('#input_constructor').html())({id:"Method", description:tr("Solve Method"), default_selector: "string", disable_int:true, value_string: "manual", variants: ["manual","antigate","rucaptcha","2captcha","capmonster","dbc"], size: 3}) %>
+      <%= _.template($('#input_constructor').html())({id:"Method", description:tr("Solve Method"), default_selector: "string", disable_int:true, value_string: "manual", variants: ["manual","antigate","rucaptcha","2captcha","capmonster","dbc", "captchasniper"], size: 3}) %>
       <%= _.template($('#input_constructor').html())({id:"Antigate", description:tr("Antigate/Rucaptcha/2captcha/DBC Key. Can be blank"), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#input_constructor').html())({id:"Server", description:tr("Server url. Can be blank"), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save Result"), default_variable: "CAPTCHA_RESULT"}) %>
@@ -775,23 +984,15 @@
 
   <script type="text/template" id="renderscreen">
     <div class="container-fluid renderscreen">
-    <div class="col-xs-12">
-      <form class="form-horizontal">
-        <div class="form-group">
-          <%= _.template($('#input_constructor').html())({id:"X", description:"X", default_selector: "int", disable_string:true, value_number:0, dont_use_top: true, size:2, size_label:2 }) %>
-          <%= _.template($('#input_constructor').html())({id:"Y", description:"Y", default_selector: "int", disable_string:true, value_number:0, dont_use_top: true, size:2, size_label:2 }) %>
-        </div>
-      </form>
-    </div>
-    <div class="col-xs-12">
-      <form class="form-horizontal">
-        <div class="form-group">
-          <%= _.template($('#input_constructor').html())({id:"Width", description:tr("Width"), default_selector: "int", disable_string:true, value_number:100, dont_use_top: true, size:2, size_label:2}) %>
-          <%= _.template($('#input_constructor').html())({id:"Height", description:tr("Height"), default_selector: "int", disable_string:true, value_number:100, dont_use_top: true, size:2, size_label:2}) %>
-        </div>
-      </form>
-    </div>
-    <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable to save as base64 png"), default_variable: "RENDER_RESULT"}) %>
+      <%= _.template($('#input_constructor').html())({id:"X", description:"X", default_selector: "int", disable_string:true, value_number:0}) %>
+      <%= _.template($('#input_constructor').html())({id:"Y", description:"Y", default_selector: "int", disable_string:true, value_number:0}) %>
+
+      <%= _.template($('#input_constructor').html())({id:"Width", description:tr("Width"), default_selector: "int", disable_string:true, value_number:100}) %>
+      <%= _.template($('#input_constructor').html())({id:"Height", description:tr("Height"), default_selector: "int", disable_string:true, value_number:100}) %>
+ 
+      <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable to save as base64 png"), default_variable: "RENDER_RESULT"}) %>
+
+ 
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
@@ -885,28 +1086,28 @@
   </script>
 
   <script type="text/template" id="loadcookiesfrombrowser">
-    <div class="container-fluid" style="margin-top:30px">
+    <div class="container-fluid">
       <div class="tooltipinternal tr">Load cookies from browser.</div>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
 
   <script type="text/template" id="loadcookiesfromhttpclient">
-    <div class="container-fluid" style="margin-top:30px">
+    <div class="container-fluid">
       <div class="tooltipinternal tr">Load cookies from http client.</div>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
 
   <script type="text/template" id="closebrowser">
-    <div class="container-fluid" style="margin-top:30px">
+    <div class="container-fluid">
       <div class="tooltipinternal tr">Close browser.</div>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
 
   <script type="text/template" id="openbrowser">
-    <div class="container-fluid" style="margin-top:30px">
+    <div class="container-fluid">
       <div class="tooltipinternal tr">Open browser.</div>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
@@ -1025,8 +1226,7 @@
 
 <script type="text/template" id="globalset">
     <div class="container-fluid globalset">
-
-      <%= _.template($('#input_constructor').html())({id:"Name", description:tr("Variable Name"), default_selector: "string", disable_int:true, disable_editor:true, disable_resource:true, disable_variable:true}) %>
+      <%= _.template($('#variable_constructor').html())({id:"Name", description:tr("Variable Name"), default_variable: "", disable_locals: true, enable_globals:true}) %>
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Value"), default_selector: "string"}) %>
       <div class="tooltipinternal tr">Global variables are availabe during whole script run.</div>
     </div>
@@ -1180,9 +1380,9 @@
       <div class="col-xs-12">
        <form class="form-horizontal">
           <div class="form-group">
-            <button type="button" class="btn btn-default addtopost" > + <span class="tr">Add</span></button>
-            <button type="button" class="btn btn-default addtopostfile" > + <span class="tr">Add As File</span></button>
-            <button type="button" class="btn btn-default addtopostbase64" > + <span class="tr">Add As Base64 Data</span></button>
+            <button tabindex="-1" type="button" class="btn btn-default addtopost" > + <span class="tr">Add</span></button>
+            <button tabindex="-1" type="button" class="btn btn-default addtopostfile" > + <span class="tr">Add As File</span></button>
+            <button tabindex="-1" type="button" class="btn btn-default addtopostbase64" > + <span class="tr">Add As Base64 Data</span></button>
             <span class="tr">Use these buttons to fill POST data</span>
           </div>
         </form>
@@ -1405,8 +1605,8 @@
   <script type="text/template" id="sleep">
     <div class="container-fluid sleep">
       <span id="sleeprandomspan" style="display:none">
-        <%= _.template($('#input_constructor').html())({id:"sleepfrom", description:tr("Sleep from value in milliseconds"), default_selector: "int", disable_string:true, min_number: 100, value_number: 1000}) %>
-        <%= _.template($('#input_constructor').html())({id:"sleepto", description:tr("Sleep to value in milliseconds"), default_selector: "int", disable_string:true, min_number: 100, value_number: 1000}) %>
+        <%= _.template($('#input_constructor').html())({id:"sleepfrom", description:tr("Sleep from value in milliseconds"), default_selector: "int", disable_string:true, min_number: 100, value_number: 1000,max_number: 99999999}) %>
+        <%= _.template($('#input_constructor').html())({id:"sleepto", description:tr("Sleep to value in milliseconds"), default_selector: "int", disable_string:true, min_number: 100, value_number: 1000,max_number: 99999999}) %>
       </span>
       <span id="sleepspan">
         <%= _.template($('#input_constructor').html())({id:"sleepfromto", description:tr("Sleep value in milliseconds"), default_selector: "int", disable_string:true, min_number: 100, value_number: 1000}) %>
@@ -1431,6 +1631,19 @@
     <div class="container-fluid setvariable">
       <%= _.template($('#variable_constructor').html())({id:"SetVariableName", description:tr("Name of variable"), default_variable: ""}) %>
       <%= _.template($('#input_constructor').html())({id:"IncVariableValue", description:tr("Increase variable value"), default_selector: "int", min_number: -9999999, value_number: 1}) %>
+      
+    </div>
+    <div class="tooltipinternal tr">This means [[VARIABLE]] = [[VARIABLE]] + num</div>
+
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
+
+  <script type="text/template" id="incglobalvariable">
+    <div class="container-fluid setvariable">
+      <%= _.template($('#variable_constructor').html())({id:"SetVariableName", description:tr("Name of variable"), default_variable: "", enable_globals:true, disable_locals: true}) %>
+      <%= _.template($('#input_constructor').html())({id:"IncVariableValue", description:tr("Increase variable value"), default_selector: "int", min_number: -9999999, value_number: 1}) %>
+      
     </div>
     <div class="tooltipinternal tr">This means [[VARIABLE]] = [[VARIABLE]] + num</div>
 
@@ -1446,49 +1659,61 @@
 
   <script type="text/template" id="xml">
     <div class="container-fluid xml">
+      <%= _.template($('#path').html())({selector:selector}) %>
       <%= _.template($('#variable_constructor').html())({id:"SaveXml", description:tr("Variable To Save"), default_variable: "SAVED_XML"}) %>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Get Element Content")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
+  </script>
+
+  <script type="text/template" id="coordinates">
+    <div class="container-fluid">
+      <%= _.template($('#path').html())({selector:selector}) %>
+      <%= _.template($('#variable_constructor').html())({id:"X", description:tr("X"), default_variable: "X"}) %>
+      <%= _.template($('#variable_constructor').html())({id:"Y", description:tr("Y"), default_variable: "Y"}) %>
+      <%= _.template($('#variable_constructor').html())({id:"Width", description:tr("Width"), default_variable: "Width"}) %>
+      <%= _.template($('#variable_constructor').html())({id:"Height", description:tr("Heigth"), default_variable: "Height"}) %>
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true}) %>
   </script>
 
   <script type="text/template" id="script">
     <div class="container-fluid script">
+      <%= _.template($('#path').html())({selector:selector}) %>
       <%= _.template($('#variable_constructor').html())({id:"SaveScript", description:tr("Variable To Save"), default_variable: "SAVED_SCRIPT_RESULT"}) %>
       <%= _.template($('#input_constructor').html())({id:"ScriptValue", description:tr("Script Text"), default_selector: "string", disable_int:true}) %>
       <div class="tooltipinternal tr">Use self variable, which is point to selected element.</div>
 
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Execute Javascript On Element")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
   <script type="text/template" id="text">
     <div class="container-fluid text">
+      <%= _.template($('#path').html())({selector:selector}) %>
       <%= _.template($('#variable_constructor').html())({id:"SaveText", description:tr("Variable To Save"), default_variable: "SAVED_TEXT"}) %>
     </div>
+
     <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Get Element Text")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
   <script type="text/template" id="clickelement">
     <div class="container-fluid clickelement">
-      <div class="tooltipinternal tr">Click on element.</div>
-      <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
+      <%= _.template($('#path').html())({selector:selector}) %>
+      <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check" class="disable-if-find-by-image">
         <input type="checkbox" id="Check"/> <label for="Check" class="tr">Disable mouse emulation.</label>
       </span>
     </div>
+    
     <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true,use_timeout: true, visible:true, name: tr("Click On Element")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
   <script type="text/template" id="moveelement">
     <div class="container-fluid moveelement">
+      <%= _.template($('#path').html())({selector:selector}) %>
       <div class="tooltipinternal tr">Move mouse pointer on element.</div>
     </div>
     <%= _.template($('#movefields').html())({}) %>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, use_move: true, name: tr("Move On Element")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
   <script type="text/template" id="mousesettings">
@@ -1501,94 +1726,109 @@
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
 
+  <script type="text/template" id="browsersettings">
+    <div class="container-fluid">
+      <%= _.template($('#input_constructor').html())({id:"UseFlash", description:tr("Enable Flash"), default_selector: "string", disable_int:true, value_string: "", variants: ["true", "false"]}) %>
+      <%= _.template($('#input_constructor').html())({id:"IsSafe", description:tr("Disable webrtc and canvas"), default_selector: "string", disable_int:true, value_string: "", variants: ["true", "false"]}) %>
+      <%= _.template($('#input_constructor').html())({id:"SkipFrames", description:tr("Number of frames to skip in run mode"), default_selector: "int", disable_string:true, value_number: 0}) %>
+      <%= _.template($('#input_constructor').html())({id:"EncodeUtf8", description:tr("Force UTF-8 Encoding"), default_selector: "string", disable_int:true, value_string: "", variants: ["true", "false"]}) %>
+      <%= _.template($('#input_constructor').html())({id:"RefreshConnections", description:tr("Proxies reconnect"), default_selector: "string", disable_int:true, value_string: "", variants: ["true", "false"]}) %>
+
+      <div class="tooltipinternal tr">Empty string or 0 means, that value wont be changed. "Enable Flash" and "Disable webrtc and canvas" options will restart browser process and thereby reset all settings(proxies, headers, etc), so the best place to use this action is thread start. If you want to change settings for every thread, it is better to use settings tab.</div>
+
+    </div>
+
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
   <script type="text/template" id="dragelement">
     <div class="container-fluid dragelement">
-      <div class="tooltipinternal tr">Drag On Element</div>
+      <%= _.template($('#path').html())({selector:selector}) %>
     </div>
     <%= _.template($('#movefields').html())({}) %>
-
     <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, use_move: true, name: tr("Drag On Element")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
 
   <script type="text/template" id="dropelement">
     <div class="container-fluid dropelement">
-      <div class="tooltipinternal tr">Drop On Element</div>
+      <%= _.template($('#path').html())({selector:selector}) %>
+
     </div>
     <%= _.template($('#movefields').html())({}) %>
-
     <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, use_move: true, name: tr("Drop On Element")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
   <script type="text/template" id="moveandclickelement">
     <div class="container-fluid moveandclickelement">
-      <div class="tooltipinternal tr">Move mouse pointer and click on element.</div>
-      <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
+      <%= _.template($('#path').html())({selector:selector}) %>
+
+      <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check" class="disable-if-find-by-image">
         <input type="checkbox" id="Check"/> <label for="Check" class="tr">Disable mouse emulation.</label>
       </span>
     </div>
     <%= _.template($('#movefields').html())({}) %>
     <%= _.template($('#back').html())({action:"executeandadd", use_waiter:true,use_timeout: true, use_move:true, visible:true, name: tr("Move And Click On Element")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
   <script type="text/template" id="clear">
     <div class="container-fluid clear">
+      <%= _.template($('#path').html())({selector:selector}) %>
+
       <div class="tooltipinternal tr">Clear edit. Works only on edit.</div>
     </div>
     <%= _.template($('#movefields').html())({}) %>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, use_move: true, name: tr("Clear Edit")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
   <script type="text/template" id="typeelement">
     <div class="container-fluid typeelement">
+      <%= _.template($('#path').html())({selector:selector}) %>
+
       <%= _.template($('#input_constructor').html())({id:"TypeData", description:tr("Text to type"), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#input_constructor').html())({id:"TypeInterval", description:tr("Interval in milliseconds"), default_selector: "int", disable_string:true, value_number: 100, step_number: 100, min_number: 0, max_number:10000}) %>
 
       <%= _.template($('#special_buttons').html())({}) %>
-      <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
+      <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check" class="disable-if-find-by-image">
          <input type="checkbox" id="Check"/> <label for="Check" class="tr">Disable mouse and keyboard emulation.</label>
       </span>
     </div>
     <%= _.template($('#movefields').html())({}) %>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, use_waiter:true, use_move: true, name: tr("Type Text")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
   <script type="text/template" id="exist">
     <div class="container-fluid exist">
+      <%= _.template($('#path').html())({selector:selector, hide_options:true, waitelement: false, failaction: false}) %>
+
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "IS_EXISTS"}) %>
-      <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
+      <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check" class="disable-if-find-by-image">
         <input type="checkbox" id="Check"/> <label for="Check" class="tr">Also check if visible on a screen</label>
       </span>
 
-      <div class="tooltipinternal tr">Check if element exists.</div>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true, name: tr("Is Element Exists")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
   <script type="text/template" id="style">
     <div class="container-fluid style">
+      <%= _.template($('#path').html())({selector:selector}) %>
+
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "SAVED_STYLE"}) %>
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Style To Check"), default_selector: "string", disable_int:true}) %>
      <div class="tooltipinternal tr">Get element style. Use "display" to check if element is visible</div>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true, use_timeout:true, name: tr("Get Element Style")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
   <script type="text/template" id="check">
     <div class="container-fluid check">
+      <%= _.template($('#path').html())({selector:selector}) %>
+
       <div class="tooltipinternal tr">Check cehckbox. Works only on checkboxes.</div>
     </div>
     <%= _.template($('#movefields').html())({}) %>
-
     <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, use_move: true, name: tr("Set Checkbox")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
   <script type="text/template" id="waitfullload">
@@ -1601,45 +1841,9 @@
   <script type="text/template" id="waitelement">
     <span class="path2">
       <div class="container-fluid waitelement">
-        <div class="col-xs-12">
-          <form class="form-horizontal">
-            <div class="form-group">
-              <div class="col-xs-6">
-                <div class="input-group">
-                    <ul class="dropdown-menu dropdown-menu-css-options"  style="<%= (BrowserAutomationStudio_HasPathChoice()) ? "display:block" : "" %>">
-                      <% if("css1" in selector && selector["css1"].length > 0) { %>
-                        <li><a href="#" class="dropdown-menu-css-item"><%= selector["css1"] %></a></li>
-                      <% }else{ %>  
-                        <li><a href="#" class="dropdown-menu-css-item"><%= selector["css"] %></a></li>
-                      <% } %>
-                      <% if("css2" in selector && selector["css2"].length > 0) { %>
-                        <li><a href="#" class="dropdown-menu-css-item"><%= selector["css2"] %></a></li>
-                      <% } %>
-
-                      <% if("css3" in selector && selector["css3"].length > 0) { %>
-                        <li><a href="#" class="dropdown-menu-css-item"><%= selector["css3"] %></a></li>
-                      <% } %>
-                    </ul>
-                  <input type="text" class="form-control dropdown-menu-path" aria-label="..." id="selector-input" value="<%= selector["css"] %>">
-                  <div class="input-group-btn">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="selector">css</span> <span class="caret"></span></button>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                      <li><a id="css" class="tr">css</a></li>
-                      <li><a id="match" class="tr">match</a></li>
-                      <li><a id="xpath" class="tr">xpath</a></li>
-
-                    </ul>
-                  </div>
-                  <button type="button" class="btn btn-default res" data-toggle="modal" data-target="#RecourseModal" data-result-target="#selector-input" ><i class="fa fa-database"></i></button>
-                  <button type="button" class="btn btn-default varminim" data-toggle="modal" data-target="#VariableModal" data-result-target="#selector-input" ><i class="fa fa-at"></i></button>
-                  </div>
-                </div>
-              </div>
-            </form>
-          </div>
-
-        <div class="tooltipinternal tr">Wait while matching query element exists on page.</div>
-        <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check">
+       <%= _.template($('#path').html())({selector:selector, disable_options:true}) %>
+       <div class="tooltipinternal tr">Wait while matching query element exists on page.</div>
+        <span data-preserve="true" data-preserve-type="check" data-preserve-id="Check" class="disable-if-find-by-image">
           <input type="checkbox" id="Check"/> <label for="Check" class="tr">Also check if visible on a screen</label>
         </span>
       </div>
@@ -1649,68 +1853,83 @@
 
   <script type="text/template" id="focus">
     <div class="container-fluid focus">
+      <%= _.template($('#path').html())({selector:selector}) %>
+
       <div class="tooltipinternal tr">Scroll to element.</div>
     </div>
     <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Scroll To Element")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
   <script type="text/template" id="set">
     <div class="container-fluid set">
+      <%= _.template($('#path').html())({selector:selector}) %>
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Set String"), default_selector: "string", disable_int:true}) %>
       <div class="tooltipinternal tr">Set combobox value to desired string. Works only on comboboxes.</div>
     </div>
+
     <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Set Combobox Value")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
   <script type="text/template" id="set_integer">
     <div class="container-fluid set_integer">
+      <%= _.template($('#path').html())({selector:selector}) %>
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Set Index"), default_selector: "int", disable_string:true}) %>
       <div class="tooltipinternal tr">Set combobox index to desired int. Works only on comboboxes.</div>
     </div>
+    
     <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Set Combobox Index")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
   <script type="text/template" id="set_random">
     <div class="container-fluid set_random">
+      <%= _.template($('#path').html())({selector:selector}) %>
       <div class="tooltipinternal tr">Set combobox index to random int. Works only on comboboxes.</div>
     </div>
+    
     <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Set Combobox To Random")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
   <script type="text/template" id="attr">
     <div class="container-fluid attr">
+      <%= _.template($('#path').html())({selector:selector}) %>
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "SAVED_ATTRIBUTE"}) %>
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Attribute Name"), default_selector: "string", disable_int:true}) %>
-      <div class="tooltipinternal tr">Get element attribute.</div>
     </div>
+    
     <%= _.template($('#back').html())({action:"executeandadd", visible:true, use_timeout:true, name: tr("Get Element Attribute")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
   <script type="text/template" id="set_attr">
     <div class="container-fluid attr">
+      <%= _.template($('#path').html())({selector:selector}) %>
       <%= _.template($('#input_constructor').html())({id:"Name", description:tr("Attribute Name"), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#input_constructor').html())({id:"Value", description:tr("Attribute Value"), default_selector: "string", disable_int:true}) %>
 
       <div class="tooltipinternal tr">Set element attribute.</div>
     </div>
+    
     <%= _.template($('#back').html())({action:"executeandadd", visible:true, use_timeout:true, name: tr("Set Element Attribute")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
   </script>
 
   <script type="text/template" id="captcha">
     <div class="container-fluid captcha">
+      <%= _.template($('#path').html())({selector:selector}) %>
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "CAPTCHA_RESULT"}) %>
-      <%= _.template($('#input_constructor').html())({id:"Method", description:tr("Solve Method"), default_selector: "string", disable_int:true, value_string: "manual", variants: ["manual","antigate","rucaptcha","2captcha","capmonster","dbc"], size: 3}) %>
+      <%= _.template($('#input_constructor').html())({id:"Method", description:tr("Solve Method"), default_selector: "string", disable_int:true, value_string: "manual", variants: ["manual","antigate","rucaptcha","2captcha","capmonster","dbc","captchasniper"], size: 3}) %>
       <%= _.template($('#input_constructor').html())({id:"Antigate", description:tr("Antigate/Rucaptcha/2captcha/DBC Key. Can be blank"), default_selector: "string", disable_int:true}) %>
       <%= _.template($('#input_constructor').html())({id:"Server", description:tr("Server url. Can be blank"), default_selector: "string", disable_int:true}) %>
     </div>
+    
     <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true, name: tr("Solve Captcha")}) %>
-    <%= _.template($('#path').html())({selector:selector}) %>
+  </script>
+
+  <script type="text/template" id="screenshot">
+    <div class="container-fluid">
+      <%= _.template($('#path').html())({selector:selector}) %>
+      <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable to save screenshot as base64"), default_variable: "SCREENSHOT_BASE64"}) %>
+    </div>
+    
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true,use_timeout: true}) %>
   </script>
 
 
@@ -1720,42 +1939,7 @@
     <div class="container-fluid length">
       <%= _.template($('#variable_constructor').html())({id:"Save", description:tr("Variable To Save"), default_variable: "ELEMENT_LENGTH"}) %>
 
-      <div class="col-xs-12">
-        <form class="form-horizontal">
-          <div class="form-group">
-            <div class="col-xs-6">
-              <div class="input-group">
-                <ul class="dropdown-menu dropdown-menu-css-options"   style="<%= (BrowserAutomationStudio_HasPathChoice()) ? "display:block" : "" %>">
-                  <% if("css1" in selector && selector["css1"].length > 0) { %>
-                    <li><a href="#" class="dropdown-menu-css-item"><%= selector["css1"] %></a></li>
-                  <% }else{ %>  
-                    <li><a href="#" class="dropdown-menu-css-item"><%= selector["css"] %></a></li>
-                  <% } %>
-                  <% if("css2" in selector && selector["css2"].length > 0) { %>
-                    <li><a href="#" class="dropdown-menu-css-item"><%= selector["css2"] %></a></li>
-                  <% } %>
-
-                  <% if("css3" in selector && selector["css3"].length > 0) { %>
-                    <li><a href="#" class="dropdown-menu-css-item"><%= selector["css3"] %></a></li>
-                  <% } %>
-                </ul>
-                <input type="text" class="form-control dropdown-menu-path" aria-label="..." id="selector-input" value="<%= selector["css"] %>">
-                <div class="input-group-btn">
-                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="selector" class="tr">css</span> <span class="caret"></span></button>
-                  <ul class="dropdown-menu dropdown-menu-right">
-                    <li><a id="css" class="tr">css</a></li>
-                    <li><a id="match" class="tr">match</a></li>
-                    <li><a id="xpath" class="tr">xpath</a></li>
-
-                  </ul>
-                </div>
-                <button type="button" class="btn btn-default res" data-toggle="modal" data-target="#RecourseModal" data-result-target="#selector-input" ><i class="fa fa-database"></i></button>
-                <button type="button" class="btn btn-default varminim" data-toggle="modal" data-target="#VariableModal" data-result-target="#selector-input" ><i class="fa fa-at"></i></button>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
+      <%= _.template($('#path').html())({selector:selector, disable_options:true}) %>
 
       <div class="tooltipinternal tr">Get elements number matching query.</div>
     </div>
@@ -1768,44 +1952,7 @@
     <span class="path2">
 
     <div class="container-fluid loopelement">
-
-      <div class="col-xs-12">
-        <form class="form-horizontal">
-          <div class="form-group">
-            <div class="col-xs-6">
-              <div class="input-group">
-                <ul class="dropdown-menu dropdown-menu-css-options"   style="<%= (BrowserAutomationStudio_HasPathChoice()) ? "display:block" : "" %>">
-                  <% if("css1" in selector && selector["css1"].length > 0) { %>
-                    <li><a href="#" class="dropdown-menu-css-item"><%= selector["css1"] %></a></li>
-                  <% }else{ %>  
-                    <li><a href="#" class="dropdown-menu-css-item"><%= selector["css"] %></a></li>
-                  <% } %>
-                  <% if("css2" in selector && selector["css2"].length > 0) { %>
-                    <li><a href="#" class="dropdown-menu-css-item"><%= selector["css2"] %></a></li>
-                  <% } %>
-
-                  <% if("css3" in selector && selector["css3"].length > 0) { %>
-                    <li><a href="#" class="dropdown-menu-css-item"><%= selector["css3"] %></a></li>
-                  <% } %>
-                </ul>
-                <input type="text" class="form-control dropdown-menu-path" aria-label="..." id="selector-input" value="<%= selector["css"] %>">
-                <div class="input-group-btn">
-                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="selector">css</span> <span class="caret"></span></button>
-                  <ul class="dropdown-menu dropdown-menu-right">
-                    <li><a id="css">css</a></li>
-                    <li><a id="match">match</a></li>
-                    <li><a id="xpath" class="tr">xpath</a></li>
-
-                  </ul>
-                </div>
-                <button type="button" class="btn btn-default res" data-toggle="modal" data-target="#RecourseModal" data-result-target="#selector-input" ><i class="fa fa-database"></i></button>
-                <button type="button" class="btn btn-default varminim" data-toggle="modal" data-target="#VariableModal" data-result-target="#selector-input" ><i class="fa fa-at"></i></button>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-
+      <%= _.template($('#path').html())({selector:selector}) %>
       <div class="tooltipinternal tr">Foreach element, which matching query.</div>
     </div>
     </span>
@@ -1937,6 +2084,12 @@
     <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
   </script>
 
+  <script type="text/template" id="clearlog">
+    <div class="container-fluid log">
+    </div>
+    <%= _.template($('#back').html())({action:"executeandadd", visible:true}) %>
+  </script>
+
   <script type="text/template" id="solverfailed">
     <div class="container-fluid log">
       <div class="tooltipinternal tr">Use this action if last captcha was solved wrong.</div>
@@ -1947,6 +2100,10 @@
 
   <script type="text/template" id="log_code">
       log(<%= text %>)
+  </script>
+
+  <script type="text/template" id="clearlog_code">
+      clear_log()
   </script>
 
   <script type="text/template" id="solverfailed_code">
@@ -2151,11 +2308,29 @@
       _call(<%= name %>,null)!
   </script>
 
+  <script type="text/template" id="executefunctioninseveralthreads_code">
+      _call_section(<%= name %>,<%= thread %>,<%= success %>,<%= fail %>)!
+  </script>
+
   <script type="text/template" id="xml_code">
       /*Browser*/
       <%= waiter %>
       <%= path %>.xml()!
       <%= variable %> = _result()
+  </script>
+
+  <script type="text/template" id="coordinates_code">
+      /*Browser*/
+      <%= waiter %>
+      <%= path %>.script("(function(){var rect = self.getBoundingClientRect();return (rect.left + positionx).toString() + '|' + (rect.top + positiony).toString() + '|' + (rect.right - rect.left).toString() + '|' + (rect.bottom - rect.top).toString()})();")!
+      if(_result().length > 0)
+      {
+        var split = _result().split("|")
+        <%= x %> = parseInt(split[0])
+        <%= y %> = parseInt(split[1])
+        <%= width %> = parseInt(split[2])
+        <%= height %> = parseInt(split[3])
+      }
   </script>
 
 
@@ -2204,42 +2379,63 @@
         capmonster(<%= antigate %>)
       }
 
+
       <%= waiter %>
-
-      _if_else(<%= method %> == "capmonster" || <%= method %> == "capmonsterimage" || <%= method %> == "capmonsteraudio", function(){
-        <%= path %>.attr("src")!
-        <%= variable %> = _result()
-        _if(<%= variable %>.length == 0, function(){
-          <%= path %>.css("img").attr("src")!
+      <%= path %>.exist()!
+      _if(_result() == "1", function(){
+        _if_else(<%= method %> == "capmonster" || <%= method %> == "capmonsterimage" || <%= method %> == "capmonsteraudio" || <%= method %> == "captchasniper", function(){
+          <%= path %>.attr("src")!
           <%= variable %> = _result()
+          _if(<%= variable %>.length == 0, function(){
+            <%= path %>.css("img").attr("src")!
+            <%= variable %> = _result()
+          })!
+
+          if(<%= variable %>.length == 0)
+          {
+            fail(tr("Image tag not found. Is this element captcha?"))
+          }
+
+          wait_load(<%= variable %>)!
+
+          cache_get_base64(<%= variable %>)!
+
+          if(_result().length == 0)
+          {
+            fail(tr("Url ") + <%= variable %> + tr(" is not present in cache. Please enable cache before page load with Cache Mask Allow action"))
+          }
+
+          _if_else(<%= method %> == "captchasniper", function(){
+            _switch_http_client_internal()
+            http_client_post(<%= serverurl %>, ["file","base64://" + _result()], {"content-type":("multipart"), "encoding":("UTF-8"), "method":("POST")})!
+            {var split = http_client_content().split("|");<%= variable %> = split[split.length-1]}
+            _switch_http_client_main()
+          }, function(){
+            <%= timeout_solver() %>
+            solve_base64("capmonster", _result())!
+            <%= variable %> = _result()
+          })!
+
+        },function(){
+          <%= path %>.render_base64()!
+          <%= timeout_solver() %>
+          solve_base64(<%= method %>, _result())!
+          <%= variable %> = _result()
+
         })!
-
-        if(<%= variable %>.length == 0)
-        {
-          fail(tr("Image tag not found. Is this element captcha?"))
-        }
-
-        wait_load(<%= variable %>)!
-
-        cache_get_base64(<%= variable %>)!
-
-        if(_result().length == 0)
-        {
-          fail(tr("Url ") + <%= variable %> + tr(" is not present in cache. Please enable cache before page load with Cache Mask Allow action"))
-        }
-        <%= timeout_solver() %>
-        solve_base64("capmonster", _result())!
-        <%= variable %> = _result()
-        
-      },function(){
-        <%= path %>.render_base64()!
-        <%= timeout_solver() %>
-        solve_base64(<%= method %>, _result())!
-        <%= variable %> = _result()
-
-      })!
+    })!
 
       
+  </script>
+
+  <script type="text/template" id="screenshot_code">
+      /*Browser*/
+      <%= waiter %>
+      <%= path %>.exist()!
+      _if(_result() == "1", function(){
+          <%= path %>.render_base64()!
+          <%= variable %> = _result()
+      })!
   </script>
 
   <script type="text/template" id="replacestring_code">
@@ -2248,7 +2444,7 @@
 
   <script type="text/template" id="template_code">
       _template(<%= template %>)!
-      <%= variable %> = _result()
+      <%= variable %> = _spintax(_result())
   </script>
 
 
@@ -2269,6 +2465,10 @@
 
   <script type="text/template" id="exist_code">
       /*Browser*/
+      <% if(imagesearch){ %>
+        <%= waiter %>        
+      <% } %>
+
       <%= path %>.exist()!
       <%= variable %> = _result() == 1
       <% if(isvisible){ %>
@@ -2377,9 +2577,19 @@
         capmonster(<%= antigate %>)
       }
 
-      <%= timeout_solver() %>
-      solve_base64(<%= method %>,<%= value %>)!
-      <%= variable %> = _result()
+      _if_else(<%= method %> == "captchasniper", function(){
+        _switch_http_client_internal()
+        http_client_post(<%= serverurl %>, ["file","base64://" + <%= value %>], {"content-type":("multipart"), "encoding":("UTF-8"), "method":("POST")})!
+        {var split = http_client_content().split("|");<%= variable %> = split[split.length-1]}
+        _switch_http_client_main()
+      }, function(){
+        <%= timeout_solver() %>
+        solve_base64(<%= method %>,<%= value %>)!
+        <%= variable %> = _result()
+      })!
+
+
+      
   
   </script>
 
@@ -2412,12 +2622,14 @@
       <%= waiter %>
       <% if(!disableemulation){ %>
         <%= path %>.random_point()!
-        X = parseInt(_result().split(",")[0])
-        Y = parseInt(_result().split(",")[1])
-        move(X,Y, <%= move_settings %>)!
-        mouse(X,Y)!
-        <%= timeout_general() %>
-        page().type(<%= text %>,<%= interval %>)!
+        _if(_result().length > 0, function(){
+          move(<%= move_settings %>)!
+          <%= path %>.clarify(X,Y)!
+          _call(_clarify,<%= move_settings %>)!
+          mouse(X,Y)!
+          <%= timeout_general() %>
+          page().type(<%= text %>,<%= interval %>)!
+        })!
       <% }else{ %>
         <%= path %>.script("self.value=(" + JSON.stringify(<%= text %>) + ")")!
       <% } %>
@@ -2427,11 +2639,13 @@
       /*Browser*/
       <%= waiter %>
       <%= path %>.random_point()!
-      X = parseInt(_result().split(",")[0])
-      Y = parseInt(_result().split(",")[1])
-      move(X,Y, <%= move_settings %>)!
-      mouse(X,Y)!
-      page().type("<CONTROL>a<DELETE>")!
+      _if(_result().length > 0, function(){
+        move(<%= move_settings %>)!
+        <%= path %>.clarify(X,Y)!
+        _call(_clarify,<%= move_settings %>)!
+        mouse(X,Y)!
+        page().type("<CONTROL>a<DELETE>")!
+      })!
   </script>
 
   <script type="text/template" id="clickelement_code">
@@ -2439,9 +2653,11 @@
       <%= waiter %>
       <% if(!disableemulation){ %>
         <%= path %>.random_point()!
-        X = parseInt(_result().split(",")[0])
-        Y = parseInt(_result().split(",")[1])
-        mouse(X,Y)!
+        _if(_result().length > 0, function(){        
+          X = parseInt(_result().split(",")[0])
+          Y = parseInt(_result().split(",")[1])
+          mouse(X,Y)!
+        })!
       <% }else{ %>
         <%= path %>.script("self.click()")!
       <% } %>
@@ -2451,10 +2667,12 @@
       /*Browser*/
       <%= waiter %>
       <%= path %>.random_point()!
-      X = parseInt(_result().split(",")[0])
-      Y = parseInt(_result().split(",")[1])
-      move(X,Y, <%= move_settings %>)!
-      mouse(X,Y)!
+      _if(_result().length > 0, function(){
+        move(<%= move_settings %>)!
+        <%= path %>.clarify(X,Y)!
+        _call(_clarify,<%= move_settings %>)!
+        mouse(X,Y)!
+      })!
   </script>
 
   <script type="text/template" id="focus_code">
@@ -2476,9 +2694,11 @@
       /*Browser*/
       <%= waiter %>
       <%= path %>.random_point()!
-      X = parseInt(_result().split(",")[0])
-      Y = parseInt(_result().split(",")[1])
-      move(X,Y, <%= move_settings %>)!
+      _if(_result().length > 0, function(){
+        move(<%= move_settings %>)!
+        <%= path %>.clarify(X,Y)!
+        _call(_clarify,<%= move_settings %>)!
+      })!
   </script>
 
   <script type="text/template" id="moveandclickelement_code">
@@ -2486,10 +2706,12 @@
       <%= waiter %>
       <% if(!disableemulation){ %>
         <%= path %>.random_point()!
-        X = parseInt(_result().split(",")[0])
-        Y = parseInt(_result().split(",")[1])
-        move(X,Y,<%= move_settings %>)!
-        mouse(X,Y)!
+        _if(_result().length > 0, function(){
+          move(<%= move_settings %>)!
+          <%= path %>.clarify(X,Y)!
+          _call(_clarify,<%= move_settings %>)!           
+          mouse(X,Y)!
+        })!
       <% }else{ %>
         <%= path %>.script("self.click()")!
       <% } %>
@@ -2499,20 +2721,24 @@
       /*Browser*/
       <%= waiter %>
       <%= path %>.random_point()!
-      X = parseInt(_result().split(",")[0])
-      Y = parseInt(_result().split(",")[1])
-      move(X,Y, <%= move_settings %>)!
-      mouse_down(X,Y)!
+      _if(_result().length > 0, function(){
+        move(<%= move_settings %>)!
+        <%= path %>.clarify(X,Y)!
+        _call(_clarify,<%= move_settings %>)!           
+        mouse_down(X,Y)!
+      })!
   </script>
 
   <script type="text/template" id="dropelement_code">
       /*Browser*/
       <%= waiter %>
       <%= path %>.random_point()!
-      X = parseInt(_result().split(",")[0])
-      Y = parseInt(_result().split(",")[1])
-      move(X,Y, <%= move_settings %>)!
-      mouse_up(X,Y)!
+      _if(_result().length > 0, function(){
+        move(<%= move_settings %>)!
+        <%= path %>.clarify(X,Y)!
+        _call(_clarify,<%= move_settings %>)!           
+        mouse_up(X,Y)!
+      })!
   </script>
 
   <script type="text/template" id="text_code">
@@ -2609,6 +2835,10 @@
       <%= variable_name %> = parseInt(<%= variable_name %>) + parseInt(<%= variable_value %>)
   </script>
 
+  <script type="text/template" id="incglobalvariable_code">
+      PSet("basglobal", <%= variable_name %>, parseInt(JSON.parse(P("basglobal", <%= variable_name %>) || "0")) + parseInt(<%= variable_value %>))
+  </script>
+
   <script type="text/template" id="resource_code">
       RS("<%= je(resource) %>", <%= notreuse %>, <%= onlyfail %>)!
       <%= variable %> = _result().get()
@@ -2670,6 +2900,30 @@
   <script type="text/template" id="mousesettings_code">
       /*Browser*/
       _default_move_params({speed: <%= speed %>,gravity: <%= gravity %>,deviation: <%= deviation %>})
+  </script>
+
+  <script type="text/template" id="browsersettings_code">
+
+      var Params = {};
+      var IsSafe = (<%= IsSafe %>);
+      var UseFlash = (<%= UseFlash %>);
+      var SkipFrames = (<%= SkipFrames %>);
+      var RefreshConnections = (<%= RefreshConnections %>);
+      var EncodeUtf8 = (<%= EncodeUtf8 %>);
+
+      if(IsSafe.length > 0)
+        Params["IsSafe"] = IsSafe == "true"
+      if(UseFlash.length > 0)
+        Params["UseFlash"] = UseFlash == "true"
+      if(SkipFrames !== 0)
+        Params["SkipFrames"] = SkipFrames
+      if(RefreshConnections.length > 0)
+        Params["RefreshConnections"] = RefreshConnections == "true"
+      if(EncodeUtf8.length > 0)
+        Params["EncodeUtf8"] = EncodeUtf8 == "true"
+
+      _settings(Params)!
+      
   </script>
 
   <script type="text/template" id="resize_code">
@@ -2840,6 +3094,9 @@
       _if(<%= expression %>,function(){
         section_insert()
       })!
+      <% if(do_delete.length > 0){ %>
+        delete <%= do_delete %>;
+      <% } %>
   </script>
 
   <script type="text/template" id="proxy_code">
@@ -2875,6 +3132,7 @@
        _break()
        })
        VAR_WAS_ERROR = false
+       CYCLES.Current().RemoveLabel("function")
        section_insert()
     },null)!
 
@@ -2977,6 +3235,10 @@
   <script src="tooledViewPlugin.js"></script>
   <script src="preservemainpage.js"></script>
   <script src="databasefilter.js"></script>
+  <script src="sortable.js"></script>
+  <script src="search.js"></script>
+  <script src="typeahead.js"></script>
+  <script src="cursorposition.js"></script>
   
   <script type="text/javascript"> _L = $.extend(_L, _AL)</script>
   <script type="text/javascript"> _MACRO_INSERT_LOCALIZE_ </script>
@@ -2990,6 +3252,8 @@
   <link rel="stylesheet" href="font-awesome.min.css">
   <link rel="stylesheet" href="expressioneditor.css">
   <link rel="stylesheet" href="rappid.css">
+  <link rel="stylesheet" href="typeahead.css">
+  <link rel="stylesheet" href="bootstrap-checkbox.css">
 
 
 
@@ -3060,6 +3324,8 @@
             mousey: 0,
             current: "css",
             is_editing: false,
+            is_image:false,
+            image_data:"",
             version: "1.0"
         }
     });
@@ -3079,6 +3345,9 @@
         model: ResourceModel
     });
     var VariableCollection = Backbone.Collection.extend({
+        model: VariableModel
+    });
+    var GlobalVariableCollection = Backbone.Collection.extend({
         model: VariableModel
     });
     var FunctionCollection = Backbone.Collection.extend({
@@ -3101,6 +3370,8 @@
         //"mouseover .toolbutton": "showtooltip",
         "click #backtomain": "backtomain",
         "show.bs.modal #VariableModal": "varaddstart",
+        "mousedown .var": "varaddstarttrigger",
+
         "click .varok": "varadd",
         "show.bs.modal #FunctionModal": "funcaddstart",
         "show.bs.modal #LabelModal": "labeladdstart",
@@ -3110,10 +3381,19 @@
 
         "click .timeoutok": "timeoutadd",
         "click .timeoutdefault": "timeoutdefault",
+        "click .groupshow": "groupshow",
+        "click .returntomain": "returntomain",
+        "click #showhistory": "showhistory",
+        "click #showbookmarks": "showbookmarks",
+        "mouseup #showhistory": "showhistorymouseup",
+        "mouseup #showbookmarks": "showbookmarksmouseup",
+        
 
         "show.bs.modal #RecourseModal": "resaddstart",
+        "mousedown .res": "resaddstarttrigger",
         "click .resok": "resadd",
-        "click .edit": "editstart",
+        "click .rescontinue": "rescontinue",
+        "mousedown .edit": "editstart",
         "click .specialletter": "specialletter",
         "click #executetype button":"clickexecutetype",
         "click #css":"css",
@@ -3125,7 +3405,7 @@
         "click .expression": "expression",
         "click .int": "int",
         "change .groupselector": "groupselector",
-        "click .variant": "selectvariant",
+        "mousedown .variant": "selectvariant",
         "click .addtopost": "addpostdata",
         "click .addtopostfile": "addpostdatafile",
         "click .addtopostbase64": "addpostdatabase64",
@@ -3141,10 +3421,124 @@
         "focus .dropdown-menu-path": "dropdownmenupathfocus",
         "blur .dropdown-menu-path": "dropdownmenupathblur",
         "click .dropdown-menu-path": "stoppropagation",
-        "click .dropdown-menu-css-item": "dropdownmenupathselectitem",
+        "keyup .dropdown-menu-path": "pathchanged",
+        "mousedown .dropdown-menu-css-item": "dropdownmenupathselectitem",
 
-        "change #Table": "tablechange"
+        "change #Table": "tablechange",
+        "mouseenter .tool": "toolmouseenter",
+        "mouseleave .tool": "toolmouseleave",
+
+        "focus .input_selector_string": "input_selector_focus",
+        "blur .input_selector_string": "input_selector_blur",
+        "focus .input_selector_number": "input_selector_focus",
+        "blur .input_selector_number": "input_selector_blur",
+        "focus .variable-input": "input_selector_focus",
+        "blur .variable-input": "input_selector_blur",
+        "focus .resource-input": "input_selector_focus",
+        "blur .resource-input": "input_selector_blur",
+        "change #checkbox-image-show-data": "toggleimageshowdata",
+        "change #ImageBase64": "imagebase64changed",
+        "click #ImageDataRef": "showimage",
+        
      },
+      showimage: function(event)
+      {
+        event.preventDefault();
+        event.stopPropagation();
+        var dialog = bootbox.alert({
+          message: $("<img/>").attr("src",$("#ImageData").attr("src")).attr("class","img-responsive")[0].outerHTML
+   
+        });
+      },
+
+      imagebase64changed:function()
+      {
+        var data = $("#ImageBase64").val()
+        $("#ImageData").attr("src","data:image/png;base64," + data)
+      },
+
+      toggleimageshowdata:function()
+      {
+        if($("#checkbox-image-show-data").prop("checked"))
+        {
+          $("#ImageBase64Container").show()
+        }else
+        {
+          $("#ImageBase64Container").hide()
+        }
+      },
+
+      pathchanged:function()
+      {
+        BrowserAutomationStudio_TestPathInternal();
+      },
+
+
+      input_selector_focus:function(event)
+      {
+        $(event.target).siblings(".input-field-dropdown").show();
+      },
+
+      input_selector_blur:function(event)
+      {
+        $(event.target).siblings(".input-field-dropdown").hide();  
+      },
+
+
+      toolmouseenter:function(event)
+      {
+        $(event.target).closest(".tool").addClass("toolhover")
+      },
+
+      toolmouseleave:function(event)
+      {
+        $(event.target).closest(".tool").removeClass("toolhover")
+      },
+
+      showhistory:function(event)
+      {
+        event.preventDefault();
+        event.stopPropagation();
+        BrowserAutomationStudio_ShowHideHistory();
+      },
+
+      showbookmarks:function(event)
+      {
+        event.preventDefault();
+        event.stopPropagation();
+        BrowserAutomationStudio_ShowHideBookmarks();
+      },
+      showhistorymouseup:function(event)
+      {
+        $("#showhistory").blur();
+      },
+
+      showbookmarksmouseup:function(event)
+      {
+        $("#showbookmarks").blur();
+      },
+
+      returntomain:function(event)
+      {
+        event.preventDefault();
+        event.stopPropagation();
+        BrowserAutomationStudio_ReturnToMainFunction();
+      },
+
+      groupshow:function(event)
+      {
+        event.preventDefault();
+        event.stopPropagation();
+        if(CurrentGroup == "")
+        {
+          var group = $(event.target).closest("a").attr("data-group")
+          BrowserAutomationStudio_GotoGroup(group);
+        }else
+        {
+          BrowserAutomationStudio_ReturnToMainFunction();
+        }
+
+      },
 
       tablechange:function(event)
       {
@@ -3173,7 +3567,9 @@
           event.stopPropagation();
 
           $(".dropdown-menu-path").val($(event.target).closest("a").text())
+          $(".dropdown-menu-path").blur();
           $(".dropdown-menu-css-options").hide()
+          BrowserAutomationStudio_TestPathInternal()
       },
 
       dropdownmenupathblur: function(event)
@@ -3205,42 +3601,6 @@
       {
         var tools = $(".toolbutton")
         var searchterm = $("#searchinput").val().toLowerCase()
-        for(var i = 0;i<tools.length;i++)
-        {
-          var tool = $(tools[i])
-          var name = tool.attr("data-name")
-          var description = tool.attr("title")
-          if(name.toLowerCase().indexOf(searchterm) >= 0 || description.toLowerCase().indexOf(searchterm) >= 0 || searchterm.toLowerCase().length == 0)
-          {
-              tool.removeClass("toolbutton-searchfailed")
-          }else
-          {
-              tool.addClass("toolbutton-searchfailed")
-          }
-        }
-
-        var toolpanels = $(".toolspanel")
-        for(var i = 0;i<toolpanels.length;i++)
-        {
-          var toolpannel = $(toolpanels[i])
-          var tools = toolpannel.find(".toolbutton")
-
-          var isvisible = false
-          for(var j = 0;j<tools.length;j++)
-          {
-            var tool = $(tools[j])
-            if(!tool.hasClass("toolbutton-searchfailed"))
-            {
-              isvisible = true
-              break;
-            }
-          }
-
-          if(isvisible)
-              toolpannel.show()
-          else
-              toolpannel.hide()
-        }
 
       },
 
@@ -3302,8 +3662,10 @@
 
       editstart: function(event)
       {
+        event.preventDefault();
+
         $("#containerdata").hide()
-        var target = $(event.target).closest(".btn")
+        var target = $(event.target).closest("a")
         var selector = target.attr("data-result-target")
         ToolboxMaximizeCallback = function()
         {
@@ -3385,7 +3747,7 @@
 
       selectvariant: function(event)
       {
-          var target = $(event.target)
+          var target = $(event.target).closest("a")
           var variant = target.attr("data-variant")
           var result = $("#" + target.attr("data-result"))
           if(result.closest(".input-group").find(".string").length > 0)
@@ -3441,18 +3803,24 @@
 
       updatepath: function()
       {
-        var current = _SelectorModel.get("current")
-        
-        if(current == "css")
-          this.css()
-        else if(current == "match")
-          this.match()
-        else if(current == "xpath")
-          this.xpath()
-        else if(current == "at")
-          this.at()
-        else if(current == "none")
-          this.none()
+        if(_SelectorModel.get("is_image"))
+        {
+          $(".disable-if-find-by-image").hide()
+        }else
+        {
+          var current = _SelectorModel.get("current")
+          
+          if(current == "css")
+            this.css()
+          else if(current == "match")
+            this.match()
+          else if(current == "xpath")
+            this.xpath()
+          else if(current == "at")
+            this.at()
+          else if(current == "none")
+            this.none()
+        }
       },
 
       css:function(event)
@@ -3460,6 +3828,7 @@
         $("#selector").html("css")
         $("#selector-input").removeAttr("disabled").val(_SelectorModel.get("css"))
         _SelectorModel.set("current","css")
+        BrowserAutomationStudio_TestPathInternal();
       },
 
       match:function(event)
@@ -3467,6 +3836,7 @@
         $("#selector").html("match")
         $("#selector-input").removeAttr("disabled").val(_SelectorModel.get("match"))
         _SelectorModel.set("current","match")
+        BrowserAutomationStudio_TestPathInternal();
       },
 
       xpath:function(event)
@@ -3474,6 +3844,7 @@
         $("#selector").html("xpath")
         $("#selector-input").removeAttr("disabled").val(_SelectorModel.get("xpath"))
         _SelectorModel.set("current","xpath")
+        BrowserAutomationStudio_TestPathInternal();
       },
 
       at:function(event)
@@ -3481,6 +3852,7 @@
         $("#selector").html("at")
         $("#selector-input").removeAttr("disabled").val(_SelectorModel.get("mousex") + ", " + _SelectorModel.get("mousey"))
         _SelectorModel.set("current","at")
+        BrowserAutomationStudio_TestPathInternal();
       },
 
       none:function(event)
@@ -3489,6 +3861,7 @@
         $("#selector-input").attr("disabled","disabled").val("")
 
         _SelectorModel.set("current","none")
+        BrowserAutomationStudio_TestPathInternal();
       },
 
       clickexecutetype:function(event)
@@ -3504,24 +3877,43 @@
         InsertAtCaret("TypeData","<" + $(event.target).html() + ">");
       },
 
+      resaddstarttrigger: function(event)
+      {
+        this.currentInputResource = $(event.target).closest("a").attr("data-result-target")
+
+        $('#RecourseModal').modal('show')   
+
+      },
+
+      rescontinue: function(event)
+      {
+        $('#RecourseModal').find(".step-2").show()
+        $('#RecourseModal').find(".step-1").hide()
+
+      },
+
       resaddstart: function(event)
       {
-        console.log("resaddstart")
+
+        $('#RecourseModal').find(".step-1").show()
+        $('#RecourseModal').find(".step-2").hide()
+
+
         var json = _ResourceCollection.toJSON();
         $('#RecourseName').html("")
         if(json.length == 0)
         {
           $("#NoResources").show()
           $("#RecourseControls").hide()
-          $(".resok").hide()
-
+          $(".rescontinue").hide()
         }else
         {
           $("#NoResources").hide()
           $("#RecourseControls").show()
           $("#ResourceReuse").prop('checked', true);
           $("#ResourceDontDie").prop('checked', false);
-          $(".resok").show()
+          $(".rescontinue").show()
+          json = jsort(json);
           for(var i = 0;i<json.length;i+=1)
           {
             $('#RecourseName')
@@ -3532,15 +3924,40 @@
          }
 
         $('#RecourseName').focus()
-        this.currentInputResource = $(event.relatedTarget).attr("data-result-target")
+      },
+
+      varaddstarttrigger: function(event)
+      {
+        this.currentInputVariable = $(event.target).closest("a").attr("data-result-target")
+        this.disable_locals = $(event.target).closest("a").attr("disable_locals") == "true"
+        this.disable_globals = $(event.target).closest("a").attr("disable_globals") == "true"
+
+
+        $('#VariableModal').modal('show');
       },
 
       varaddstart: function(event)
       {
-        console.log("varaddstart")
+        //console.log("varaddstart")
+
         var json = _VariableCollection.toJSON();
+        var json2 = _GlobalVariableCollection.toJSON();
+        var total = 0
+
+
+        
+        if(!this.disable_locals)
+        {
+          total += json.length  
+        }        
+
+        if(!this.disable_globals)
+        {
+          total += json2.length
+        }
+
         $('#VariableName').html("")
-        if(json.length == 0)
+        if(total == 0)
         {
           $("#NoVariable").show()
           $("#VariableName").hide()
@@ -3551,17 +3968,34 @@
           $("#NoVariable").hide()
           $("#VariableName").show()
           $(".varok").show()
-          for(var i = 0;i<json.length;i+=1)
+          if(!this.disable_locals)
           {
-            $('#VariableName')
-             .append($("<option></option>")
-             .attr("value",json[i]["name"])
-             .text(json[i]["name"]));
-           }
+            json = jsort(json);
+            for(var i = 0;i<json.length;i+=1)
+            {
+              $('#VariableName')
+               .append($("<option></option>")
+               .attr("value",json[i]["name"])
+               .text(json[i]["name"]));
+            }
+          }
+          if(!this.disable_globals)
+          {
+            json2 = jsort(json2);
+            for(var i = 0;i<json2.length;i+=1)
+            {
+              $('#VariableName')
+               .append($("<option></option>")
+               .attr("value",json2[i]["name"])
+               .attr("isglobal","true")
+               .text(tr("Global: ") + json2[i]["name"]));
+            }
+          }
          }
 
+
+
         $('#VariableName').focus()
-        this.currentInputVariable = $(event.relatedTarget).attr("data-result-target")
       },
 
       funcaddstart: function(event)
@@ -3582,6 +4016,7 @@
           $(".funcok").show()
           for(var i = 0;i<json.length;i+=1)
           {
+            json = jsort(json);
             $('#FunctionNameInput')
              .append($("<option></option>")
              .attr("value",json[i]["name"])
@@ -3610,6 +4045,7 @@
           $("#NoLabelFound").hide()
           $("#LabelNameInput").show()
           $(".labelok").show()
+          json = jsort(json);
           for(var i = 0;i<json.length;i+=1)
           {
             $('#LabelNameInput')
@@ -3623,6 +4059,8 @@
         this.currentInputLabel = $(event.relatedTarget).attr("data-result-target")
 
       },
+
+
 
       resadd: function(event)
       {
@@ -3652,9 +4090,20 @@
               el.val(res)
             }else
             {
-              el.val(el.val() + "{{" + res + "}}")
+              var start = 0
+              try{
+                start = el.val().length
+                start = cursorposition(el[0]).start
+              }catch(e){}
+              var val = el.val()
+              val = val.slice(0, start) + "{{" + res + "}}" + val.slice(start)
+              el.val(val)
             }
           }
+        }
+        if(this.currentInputResource == "#selector-input")
+        {
+          BrowserAutomationStudio_TestPathInternal();
         }
 
       },
@@ -3664,13 +4113,21 @@
 
         var el = $(this.currentInputVariable)
         var isnumber = $(this.currentInputVariable + "_number:visible").length > 0
+        var isglobal = $("#VariableName option:selected").attr("isglobal") == "true"
 
         if(isnumber)
         {
           el.closest(".input-group").find(".selector").html("expression")
           el.closest(".input-group").find(".input_selector_number").hide()
           el.closest(".input-group").find(".input_selector_string").show()
-          el.val("[[" + $("#VariableName").val() + "]]")
+          if(isglobal)
+          {
+            el.val("[[GLOBAL:" + $("#VariableName").val() + "]]")
+          }else
+          {
+            el.val("[[" + $("#VariableName").val() + "]]")  
+          }
+          
         }else
         {
 
@@ -3679,7 +4136,25 @@
           {
             if(!el.is("[data-variable-constructor]"))
             {
-              el.val(el.val() + "[[" + $("#VariableName").val() + "]]")
+
+              var insert = ""
+              if(isglobal)
+              {
+                insert = "[[GLOBAL:" + $("#VariableName").val() + "]]"
+              }else
+              {
+                insert = "[[" + $("#VariableName").val() + "]]"
+              }
+
+              var start = 0
+              try{
+                start = el.val().length
+                start = cursorposition(el[0]).start
+              }catch(e){}
+              var val = el.val()
+              val = val.slice(0, start) + insert + val.slice(start)
+
+              el.val(val)
             }else
             {
               if(el.is("[data-append-array]"))
@@ -3695,6 +4170,11 @@
             }
           }
         }
+        if(this.currentInputVariable == "#selector-input")
+        {
+          BrowserAutomationStudio_TestPathInternal();
+        }
+
       },
 
       funcadd: function(event)
@@ -3753,6 +4233,9 @@
           var loader = new ResourceLoader();
 
           var action = $("#executetype .btn-info").attr("data-action")
+
+          BrowserAutomationStudio_LastExecuteType = action
+
           if(typeof(action) == "undefined")
           {
             action = 2
@@ -3767,12 +4250,15 @@
             action = 2
           }
 
+
           var DisableIfAdd = true
           if(_GobalModel.get("isedit"))
           {
             DisableIfAdd = action == 1
             action = 1
           }
+
+
 
 
           if(State == "load")
@@ -4480,10 +4966,10 @@
             
           }else if(State == "globalset")
           {
-            var Name = GetInputConstructorValue("Name",loader)
+            var Name = this.$el.find("#Name").val().toUpperCase();
             var Value = GetInputConstructorValue("Value",loader)
 
-            if(Name["original"].length <= 0)
+            if(Name.length <= 0)
             {
               Invalid("Key is empty");
               return;
@@ -4494,7 +4980,7 @@
               return;
             }
              try{
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({key:Name["updated"],value:Value["updated"]})
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({key:JSON.stringify(Name),value:Value["updated"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -5347,22 +5833,41 @@
                try{
                 if(!ElseEnabled)
                 {
-                  var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({expression:val["updated"]})
+                  var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({expression:val["updated"], do_delete: ""})
                   code = Normalize(code,0)
                   BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
                 }else
                 {
-                  var code = loader.GetAdditionalData() + "\n" + "IF_ELSE_EXPRESSION = " + val["updated"] + ";\n"
+                  var v = "IF_ELSE_EXPRESSION_" + Math.floor(Math.random() * (999999 - 100000) + 100000)
+                  var slave_id = Math.floor(Math.random() * (1000000000 - 100)) + 100
+                  var master_id = Math.floor(Math.random() * (1000000000 - 100)) + 100
 
-                  code += _.template($('#' + State + "_code").html())({expression:"IF_ELSE_EXPRESSION"})
+                  if(_GobalModel.get("isedit"))
+                  {
+                    if(CurrentDat && CurrentDat["slave"])
+                      slave_id = parseInt(CurrentDat["slave"])
+
+                    if(CurrentDat && CurrentDat["master"])
+                      master_id = parseInt(CurrentDat["master"])
+
+                    if(CurrentDat && CurrentDat["if_var"])
+                      v = CurrentDat["if_var"]
+                  }
+
+
+                  var code = loader.GetAdditionalData() + "\n" +  v + " = " + val["updated"] + ";\n"
+
+ 
+
+                  code += _.template($('#' + State + "_code").html())({expression:v, do_delete: ""})
                   code = Normalize(code,0)
-                  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
+                  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls({role: "master", slave: slave_id, master: master_id, if_var: v}) + code, 1, false, master_id.toString());
 
                   if(!_GobalModel.get("isedit"))
                   {
-                    code = _.template($('#' + State + "_code").html())({expression:"!IF_ELSE_EXPRESSION"})
+                    code = _.template($('#' + State + "_code").html())({expression:"!" + v, do_delete: v})
                     code = Normalize(code,0)
-                    BrowserAutomationStudio_Append("Else", code, 1, false);
+                    BrowserAutomationStudio_Append("Else", BrowserAutomationStudio_SaveControls({role: "slave", slave: slave_id, master: master_id, if_var: v}) + code, 1, false, slave_id.toString());
                   }
                 }
               }catch(e)
@@ -5571,6 +6076,15 @@
               Invalid("Log data is empty");
               return;
             }
+          }else if(State == "clearlog")
+          {
+
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
           }else if(State == "timeout")
           {
             var val = GetInputConstructorValue("Value", loader)
@@ -5623,6 +6137,27 @@
               Invalid("Function is empty");
               return;
             }
+          }else if(State == "executefunctioninseveralthreads")
+          {
+            var FunctionName = $("#FunctionName").val();
+            var ThreadNumber = GetInputConstructorValue("ThreadNumber", loader)
+            var SuccessNumber = GetInputConstructorValue("SuccessNumber", loader)
+            var FailNumber = GetInputConstructorValue("FailNumber", loader)
+
+
+            if(FunctionName.length <= 0)
+            {
+              Invalid("Function is empty");
+              return;
+            }
+
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({name:FunctionName, thread: ThreadNumber["updated"], success: SuccessNumber["updated"], fail: FailNumber["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, 1, false);
+            }catch(e)
+            {}
+          
           }else if(State == "setvariable")
           {
             var VariableName = this.$el.find("#SetVariableName").val().toUpperCase();
@@ -5671,6 +6206,30 @@
             }catch(e)
             {}
 
+          }else if(State == "incglobalvariable")
+          {
+            var VariableName = this.$el.find("#SetVariableName").val().toUpperCase();
+            var VariableValue = GetInputConstructorValue("IncVariableValue", loader)
+
+
+            if(VariableName.length == 0)
+            {
+              Invalid("Variable name is empty");
+              return;
+            }
+
+            if(VariableValue["original"].length == 0)
+            {
+              Invalid("Variable value is empty");
+              return;
+            }
+             try{
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable_name:JSON.stringify(VariableName),variable_value:VariableValue["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+
           }else if(State == "xml")
           {
             var Variable = this.$el.find("#SaveXml").val().toUpperCase();
@@ -5689,6 +6248,46 @@
               Invalid("Variable is empty");
               return;
             }
+          }else if(State == "coordinates")
+          {
+            var X = this.$el.find("#X").val().toUpperCase();
+            var Y = this.$el.find("#Y").val().toUpperCase();
+            var Width = this.$el.find("#Width").val().toUpperCase();
+            var Height = this.$el.find("#Height").val().toUpperCase();
+
+
+            if(X.length == 0)
+            {
+              Invalid("X is empty");
+              return;
+            }
+
+            if(Y.length == 0)
+            {
+              Invalid("Y is empty");
+              return;
+            }
+
+            if(Width.length == 0)
+            {
+              Invalid("Width is empty");
+              return;
+            }
+
+            if(Height.length == 0)
+            {
+              Invalid("Height is empty");
+              return;
+            }
+
+            try{
+              var path = GetPath(loader)
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({x:"VAR_" + X,y:"VAR_" + Y,width:"VAR_" + Width,height:"VAR_" + Height,path: path["path"],waiter: path["waiter"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+            
           }else if(State == "exist")
           {
             var Variable = this.$el.find("#Save").val().toUpperCase();
@@ -5698,7 +6297,12 @@
             {
                try{
                 var path = GetPath(loader)
-                var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Variable,path: path["path"],waiter: path["waiter"], isvisible: CheckIsvisible})
+                var imagesearch = false 
+                if(typeof(path["imagesearch"]) != "undefined")
+                {
+                  imagesearch = path["imagesearch"]
+                }
+                var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Variable,path: path["path"],waiter: path["waiter"], imagesearch: imagesearch, isvisible: CheckIsvisible})
                 code = Normalize(code,0)
                 BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e)
@@ -5782,6 +6386,7 @@
               var MoveSettings = BrowserAutomationStudio_GetMoveJson(loader)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({path: path["path"],waiter: path["waiter"], disableemulation: Check, move_settings: MoveSettings}) + BrowserAutomationStudio_GetWaitCode()
               code = Normalize(code,0)
+
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
             {}
@@ -5840,6 +6445,24 @@
 
               var path = GetPath(loader)
               var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Variable,path: path["path"],waiter: path["waiter"],method: Method["updated"], antigate: Antigate["updated"], serverurl: Server["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+
+          }else if(State == "screenshot")
+          {
+            var Variable = this.$el.find("#Save").val().toUpperCase();
+            if(Variable.length == 0)
+            {
+              Invalid("Variable is empty");
+              return;
+            }
+            
+             try{
+
+              var path = GetPath(loader)
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Variable,path: path["path"],waiter: path["waiter"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)
@@ -6076,6 +6699,22 @@
             }catch(e)
             {}
           }
+          else if(State == "browsersettings")
+          {
+            var IsSafe = GetInputConstructorValue("IsSafe", loader);
+            var UseFlash = GetInputConstructorValue("UseFlash", loader);
+            var SkipFrames = GetInputConstructorValue("SkipFrames", loader);
+            var RefreshConnections = GetInputConstructorValue("RefreshConnections", loader);
+            var EncodeUtf8 = GetInputConstructorValue("EncodeUtf8", loader);
+            
+
+            try{
+              var code = loader.GetAdditionalData() +  _.template($('#' + State + "_code").html())({IsSafe:IsSafe["updated"],UseFlash:UseFlash["updated"],SkipFrames:SkipFrames["updated"],RefreshConnections:RefreshConnections["updated"],EncodeUtf8:EncodeUtf8["updated"]})
+              code = Normalize(code,0)
+              BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+            }catch(e)
+            {}
+          }
           else if(State == "scroll")
           {
             var X = GetInputConstructorValue("X", loader);
@@ -6201,8 +6840,10 @@
           "failnumber" : _.template($('#failnumber').html()),
           "successnumber" : _.template($('#successnumber').html()),
           "log" : _.template($('#log').html()),
+          "clearlog" : _.template($('#clearlog').html()),
           "url" : _.template($('#url').html()),
           "xml" : _.template($('#xml').html()),
+          "coordinates" : _.template($('#coordinates').html()),
           "text" : _.template($('#text').html()),
           "setvariable": _.template($('#setvariable').html()),
           "if": _.template($('#if').html()),
@@ -6231,6 +6872,7 @@
           "attr": _.template($('#attr').html()),
           "set_attr": _.template($('#set_attr').html()),
           "captcha": _.template($('#captcha').html()),
+          "screenshot": _.template($('#screenshot').html()),
           "length": _.template($('#length').html()),
           "loopelement": _.template($('#loopelement').html()),
           "setheader": _.template($('#setheader').html()),
@@ -6296,6 +6938,7 @@
           "solverfailed": _.template($('#solverfailed').html()),
           "onloadjavascript": _.template($('#onloadjavascript').html()),
           "incvariable": _.template($('#incvariable').html()),
+          "incglobalvariable": _.template($('#incglobalvariable').html()),
           "ignoreerrors": _.template($('#ignoreerrors').html()),
           "die": _.template($('#die').html()),
           "template": _.template($('#template').html()),
@@ -6320,7 +6963,9 @@
           "allowpopups": _.template($('#allowpopups').html()),
           "restrictdownloads": _.template($('#restrictdownloads').html()),
           "allowdownloads": _.template($('#allowdownloads').html()),
-          "mousesettings": _.template($('#mousesettings').html())
+          "mousesettings": _.template($('#mousesettings').html()),
+          "browsersettings": _.template($('#browsersettings').html()),
+          "executefunctioninseveralthreads": _.template($('#executefunctioninseveralthreads').html())
           _MACRO_INSERT_TEMPLATES_
         }
         this.model.bind('change', this.render, this);
@@ -6345,20 +6990,41 @@
         $("#containerdata").html(this.templates[this.model.get("state")]({data:d,model:this.model.toJSON(),selector:_SelectorModel.toJSON()}))
         _Filter.InstallEvents()
         $(".variable-input, .function-input").keypress(function(e){
-            var charCode = !e.charCode ? e.which : e.charCode;
-            var IsGoodchar =  (charCode == ','.charCodeAt(0) && $(e.target).is("[data-append-array]")) || charCode >= 'A'.charCodeAt(0) && charCode <= 'Z'.charCodeAt(0) || charCode >= 'a'.charCodeAt(0) && charCode <= 'z'.charCodeAt(0) || charCode == '_'.charCodeAt(0) || charCode >= '0'.charCodeAt(0) && charCode <= '9'.charCodeAt(0)
-            if(!IsGoodchar)
-                e.preventDefault();
+          var charCode = !e.charCode ? e.which : e.charCode;
+          var IsGoodchar =  (charCode == ','.charCodeAt(0) && $(e.target).is("[data-append-array]")) || charCode >= 'A'.charCodeAt(0) && charCode <= 'Z'.charCodeAt(0) || charCode >= 'a'.charCodeAt(0) && charCode <= 'z'.charCodeAt(0) || charCode == '_'.charCodeAt(0) || charCode >= '0'.charCodeAt(0) && charCode <= '9'.charCodeAt(0)
+          if(!IsGoodchar)
+              e.preventDefault();
         })
         tr()
         this.updatepath()
         
         $(".actions").css("height", window.innerHeight * (100.0 / _Z) - 40 + "px")
+        $(".leftactionpanel").css("height", window.innerHeight * (100.0 / _Z) - 45 + "px")
+        $(".leftactionpaneltitlebody").css("min-height", window.innerHeight * (100.0 / _Z) - 95 + "px")
         $(".actions").css("overflow-y","auto")
+        $(".leftactionpanel").css("overflow-y","auto")
+        $(".leftactionpanel").css("overflow-x","hidden")
+        
 
         $('[data-toggle="tooltip"]').tooltip({trigger:'hover', template:'<div class="mytooltip" role="tooltip"><div class="mytooltip-arrow tooltip-arrow"></div><div class="mytooltip-inner tooltip-inner"></div></div>',delay: { "show": 500, "hide": 100 }})
 
         _PreserveMainPosition.AfterUrlChanged(this.model.get("state"))
+
+        if(CurrentTab == "history")
+        {
+          BrowserAutomationStudio_RenderHistory();
+        }else if (CurrentTab == "bookmarks")
+        {
+          BrowserAutomationStudio_RenderBookmarks();
+        }
+
+        BrowserAutomationStudio_InstallBookmarks();
+
+        BrowserAutomationStudio_InitSearch();
+
+        BrowserAutomationStudio_TestPathInternal();
+
+        BrowserAutomationStudio_SetExecuteType();
 
         $("body").show()
 
@@ -6400,8 +7066,10 @@
             "!/successnumber": "successnumber",
             "!/failnumber": "failnumber",
             "!/log": "log",
+            "!/clearlog": "clearlog",
             "!/url": "url",
             "!/xml": "xml",
+            "!/coordinates": "coordinates",
             "!/text": "text",
             "!/setvariable": "setvariable",
             "!/if": "if",
@@ -6430,6 +7098,7 @@
             "!/attr": "attr",
             "!/set_attr": "set_attr",
             "!/captcha": "captcha",
+            "!/screenshot": "screenshot",
             "!/length": "length",
             "!/loopelement": "loopelement",
             "!/setheader": "setheader",
@@ -6494,6 +7163,7 @@
             "!/solverfailed": "solverfailed",
             "!/onloadjavascript": "onloadjavascript",
             "!/incvariable": "incvariable",
+            "!/incglobalvariable": "incglobalvariable",
             "!/ignoreerrors": "ignoreerrors",
             "!/die": "die",
             "!/template": "template",
@@ -6518,11 +7188,14 @@
             "!/allowpopups": "allowpopups",
             "!/restrictdownloads": "restrictdownloads",
             "!/allowdownloads": "allowdownloads",
-            "!/mousesettings": "mousesettings"
+            "!/mousesettings": "mousesettings",
+            "!/browsersettings": "browsersettings",
+            "!/executefunctioninseveralthreads": "executefunctioninseveralthreads"
             _MACRO_INSERT_ROUTER_DEF_
         },
 
         main: function () {
+          CurrentGroup = ""
           _GobalModel.set({ state: "main" });
           
         },
@@ -6580,11 +7253,17 @@
         log: function () {
           _GobalModel.set({ state: "log" });
         },
+        clearlog: function () {
+          _GobalModel.set({ state: "clearlog" });
+        },
         url: function () {
           _GobalModel.set({ state: "url" });
         },
         xml: function () {
           _GobalModel.set({ state: "xml" });
+        },
+        coordinates: function () {
+          _GobalModel.set({ state: "coordinates" });
         },
         text: function () {
           _GobalModel.set({ state: "text" });
@@ -6669,6 +7348,9 @@
         },
         captcha: function(){
           _GobalModel.set({ state: "captcha" });
+        },
+        screenshot: function(){
+          _GobalModel.set({ state: "screenshot" });
         },
         length: function(){
           _GobalModel.set({ state: "length" });
@@ -6862,6 +7544,9 @@
         incvariable: function(){
           _GobalModel.set({ state: "incvariable" });
         },
+        incglobalvariable: function(){
+          _GobalModel.set({ state: "incglobalvariable" });
+        },
         ignoreerrors: function(){
           _GobalModel.set({ state: "ignoreerrors" });
         },
@@ -6939,13 +7624,21 @@
         ,mousesettings: function(){
           _GobalModel.set({ state: "mousesettings" });
         }
+        ,browsersettings: function(){
+          _GobalModel.set({ state: "browsersettings" });
+        },
+        executefunctioninseveralthreads: function(){
+          _GobalModel.set({ state: "executefunctioninseveralthreads" });
+        }
         _MACRO_INSERT_ROUTER_FUNC_
     });
 
     var _Router = new Router();
 
+
+
     var _TaskCollection = new TaskCollection([
-                { description: tr("Browser"), type: "group" },
+                { description: tr("Browser"), type: "group", name: "browser", icon: _G["browser"]["icon"], info: tr(_G["browser"]["info"])},
                 { name: tr(_A["load"]["name"]), description: tr(_A["load"]["description"]), ref: "load" },
                 { name: tr(_A["url"]["name"]), description: tr(_A["url"]["description"]), ref: "url" },
                 { name: tr(_A["html"]["name"]), description: tr(_A["html"]["description"]), ref: "html" },
@@ -6963,8 +7656,9 @@
                 { name: tr(_A["solvecaptcha"]["name"]), description: tr(_A["solvecaptcha"]["description"]), ref: "solvecaptcha" },
                 { name: tr(_A["solverfailed"]["name"]), description: tr(_A["solverfailed"]["description"]), ref: "solverfailed" },
                 { name: tr(_A["timeout"]["name"]), description: tr(_A["timeout"]["description"]), ref: "timeout" },
+                { name: tr(_A["browsersettings"]["name"]), description: tr(_A["browsersettings"]["description"]), ref: "browsersettings" },
                 { name: tr(_A["mousesettings"]["name"]), description: tr(_A["mousesettings"]["description"]), ref: "mousesettings" },
-                { description: tr("Script logic"), type: "group" },
+                { description: tr("Script logic"), type: "group", name: "logic", icon: _G["logic"]["icon"], info: tr(_G["logic"]["info"]) },
                 { name: tr(_A["if"]["name"]), description: tr(_A["if"]["description"]), ref: "if" },
                 { name: tr(_A["while"]["name"]), description: tr(_A["while"]["description"]), ref: "while" },
                 { name: tr(_A["for"]["name"]), description: tr(_A["for"]["description"]), ref: "for" },
@@ -6979,20 +7673,23 @@
                 { name: tr(_A["ignoreerrors"]["name"]), description: tr(_A["ignoreerrors"]["description"]), ref: "ignoreerrors" },
                 { name: tr(_A["setvariable"]["name"]), description: tr(_A["setvariable"]["description"]), ref: "setvariable" },
                 { name: tr(_A["incvariable"]["name"]), description: tr(_A["incvariable"]["description"]), ref: "incvariable" },
+                { name: tr(_A["globalset"]["name"]), description: tr(_A["globalset"]["description"]), ref: "globalset" },
+                { name: tr(_A["incglobalvariable"]["name"]), description: tr(_A["incglobalvariable"]["description"]), ref: "incglobalvariable" },
                 { name: tr(_A["executefunction"]["name"]), description: tr(_A["executefunction"]["description"]), ref: "executefunction" },
-                { description: tr("Tools"), type: "group" },
+                { name: tr(_A["executefunctioninseveralthreads"]["name"]), description: tr(_A["executefunctioninseveralthreads"]["description"]), ref: "executefunctioninseveralthreads" },
+                { description: tr("Tools"), type: "group", name: "tools", icon: _G["tools"]["icon"], info: tr(_G["tools"]["info"]) },
                 { name: tr(_A["log"]["name"]), description: tr(_A["log"]["description"]), ref: "log" },
+                { name: tr(_A["clearlog"]["name"]), description: tr(_A["clearlog"]["description"]), ref: "clearlog" },
                 { name: tr(_A["result"]["name"]), description: tr(_A["result"]["description"]), ref: "result" },
                 { name: tr(_A["custom"]["name"]), description: tr(_A["custom"]["description"]), ref: "custom" },
                 { name: tr(_A["base64"]["name"]), description: tr(_A["base64"]["description"]), ref: "base64" },
-                { name: tr(_A["globalset"]["name"]), description: tr(_A["globalset"]["description"]), ref: "globalset" },
-                { name: tr(_A["globalget"]["name"]), description: tr(_A["globalget"]["description"]), ref: "globalget" },
+                /*{ name: tr(_A["globalget"]["name"]), description: tr(_A["globalget"]["description"]), ref: "globalget" },*/
                 { name: tr(_A["parseline"]["name"]), description: tr(_A["parseline"]["description"]), ref: "parseline" },
                 { name: tr(_A["template"]["name"]), description: tr(_A["template"]["description"]), ref: "template" },
                 { name: tr(_A["replacestring"]["name"]), description: tr(_A["replacestring"]["description"]), ref: "replacestring" },
                 { name: tr(_A["randomstring"]["name"]), description: tr(_A["randomstring"]["description"]), ref: "randomstring" },
                 { name: tr(_A["randomint"]["name"]), description: tr(_A["randomint"]["description"]), ref: "randomint" },
-                { description: tr("Network"), type: "group" },
+                { description: tr("Network"), type: "group", name: "network", icon: _G["network"]["icon"], info: tr(_G["network"]["info"]) },
                 { name: tr(_A["setheader"]["name"]), description: tr(_A["setheader"]["description"]), ref: "setheader" },
                 { name: tr(_A["getcookiesforurl"]["name"]), description: tr(_A["getcookiesforurl"]["description"]), ref: "getcookiesforurl" },
                 { name: tr(_A["savecookies"]["name"]), description: tr(_A["savecookies"]["description"]), ref: "savecookies" },
@@ -7011,7 +7708,7 @@
                 { name: tr(_A["allowpopups"]["name"]), description: tr(_A["allowpopups"]["description"]), ref: "allowpopups" },
                 { name: tr(_A["restrictdownloads"]["name"]), description: tr(_A["restrictdownloads"]["description"]), ref: "restrictdownloads" },
                 { name: tr(_A["allowdownloads"]["name"]), description: tr(_A["allowdownloads"]["description"]), ref: "allowdownloads" },
-                { description: tr("Waiters"), type: "group" },
+                { description: tr("Waiters"), type: "group", name: "waiters", icon: _G["waiters"]["icon"], info: tr(_G["waiters"]["info"]) },
                 { name: tr(_A["waitfullload"]["name"]), description: tr(_A["waitfullload"]["description"]), ref: "waitfullload" },
                 { name: tr(_A["waitload"]["name"]), description: tr(_A["waitload"]["description"]), ref: "waitload" },
                 { name: tr(_A["waiturl"]["name"]), description: tr(_A["waiturl"]["description"]), ref: "waiturl" },
@@ -7019,14 +7716,14 @@
                 { name: tr(_A["waitcss"]["name"]), description: tr(_A["waitcss"]["description"]), ref: "waitcss" },
                 { name: tr(_A["waitfiledownload"]["name"]), description: tr(_A["waitfiledownload"]["description"]), ref: "waitfiledownload" },
                 { name: tr(_A["sleep"]["name"]), description: tr(_A["sleep"]["description"]), ref: "sleep" },
-                { description: tr("Email"), type: "group" },
+                { description: tr("Email"), type: "group", name: "email", icon: _G["email"]["icon"], info: tr(_G["email"]["info"]) },
                 { name: tr(_A["emailsettings"]["name"]), description: tr(_A["emailsettings"]["description"]), ref: "emailsettings" },
                 { name: tr(_A["emailproxy"]["name"]), description: tr(_A["emailproxy"]["description"]), ref: "emailproxy" },
                 { name: tr(_A["emaillength"]["name"]), description: tr(_A["emaillength"]["description"]), ref: "emaillength" },
                 { name: tr(_A["emailsearchfirst"]["name"]), description: tr(_A["emailsearchfirst"]["description"]), ref: "emailsearchfirst" },
                 { name: tr(_A["emailsearchall"]["name"]), description: tr(_A["emailsearchall"]["description"]), ref: "emailsearchall" },
                 { name: tr(_A["emailpull"]["name"]), description: tr(_A["emailpull"]["description"]), ref: "emailpull" },
-                { description: tr("Http Client"), type: "group" },
+                { description: tr("Http Client"), type: "group", name: "httpclient", icon: _G["httpclient"]["icon"], info: tr(_G["httpclient"]["info"]) },
                 { name: tr(_A["httpclientproxy"]["name"]), description: tr(_A["httpclientproxy"]["description"]), ref: "httpclientproxy" },
                 { name: tr(_A["httpclientreset"]["name"]), description: tr(_A["httpclientreset"]["description"]), ref: "httpclientreset" },
                 { name: tr(_A["httpclientget"]["name"]), description: tr(_A["httpclientget"]["description"]), ref: "httpclientget" },
@@ -7051,12 +7748,29 @@
                 { name: tr(_A["httpclientxpathtextlist"]["name"]), description: tr(_A["httpclientxpathtextlist"]["description"]), ref: "httpclientxpathtextlist" },
                 { name: tr(_A["httpclientxpathcount"]["name"]), description: tr(_A["httpclientxpathcount"]["description"]), ref: "httpclientxpathcount" },
                 { name: tr(_A["httpclientxpathexists"]["name"]), description: tr(_A["httpclientxpathexists"]["description"]), ref: "httpclientxpathexists" },
-                { description: tr("Manual browser control"), type: "group" },
+                { description: tr("Manual browser control"), type: "group", name: "manual", icon: _G["manual"]["icon"], info: tr(_G["manual"]["info"]) },
                 { name: tr(_A["openbrowser"]["name"]), description: tr(_A["openbrowser"]["description"]), ref: "openbrowser" },
                 { name: tr(_A["closebrowser"]["name"]), description: tr(_A["closebrowser"]["description"]), ref: "closebrowser" }
                 _MACRO_INSERT_ACTION_LIST_
 
             ]);
+
+    var _A2G = {}
+
+    var CurrentGroup = ""
+
+    for(var i=0; i<_TaskCollection.length; i++)
+    {
+      var el = _TaskCollection.models[i]
+      if(el.get("type") == "group")
+      {
+        CurrentGroup = el.get("name")
+        _G[CurrentGroup]["name"] = el.get("description")
+      }else
+      {
+        _A2G[el.get("ref")] = CurrentGroup
+      }
+    }
 
     var _PreserveMainPosition = new PreserveMainPosition();
 
@@ -7070,6 +7784,8 @@
 
     var _VariableCollection = new VariableCollection();
 
+    var _GlobalVariableCollection = new GlobalVariableCollection();
+
     var _Schema = [];
 
     var _FunctionCollection = new FunctionCollection();
@@ -7080,6 +7796,411 @@
 
     var ToolboxMaximizeCallback = null;
 
+    var ActionHistory = []
+
+    var BookmarkList = []
+
+    var CurrentGroup = ""
+
+    var CurrentTab = ""
+
+    var BookmarkDrop = null;
+
+    var RemoveBookmarkDrop = null;
+
+    var BookmarkDrag = [];
+
+    var OnHold = false;
+
+    var CurrentDat = null;
+
+    /* Preserve execute type */
+
+    var BrowserAutomationStudio_LastExecuteType = "executeandadd"
+
+    function BrowserAutomationStudio_SetExecuteType()
+    {
+      if(typeof(BrowserAutomationStudio_LastExecuteType) == "undefined")
+      {
+        BrowserAutomationStudio_LastExecuteType = "executeandadd"
+      }
+      $("#executetype button").removeClass("btn-info")
+      $("#executetype button").addClass("btn-default")
+
+      $("#executetype *[data-action=" + BrowserAutomationStudio_LastExecuteType + "]").removeClass("btn-default").addClass("btn-info")
+    }
+
+    /* Test path */
+
+
+    var BrowserAutomationStudio_TestPathLastPath = ""
+
+    function BrowserAutomationStudio_TestPathInternal()
+    {
+      
+      var clear_highlight = true;
+      var path = "page().highlight()!" + "\n" + "section_start(\"test\",-3)!"
+      if($("#selector-input").length > 0)
+      {
+        var loader = new ResourceLoader();
+        var p = GetPath(loader,true,true)
+        path = p["path"] + ".highlight()!" + "\n" + "section_start(\"test\",-3)!"
+        var selector = "";
+        if(p["query"])
+        {
+          selector = ";_SELECTOR=" + p["query"] + ";"
+        }
+        path = loader.GetAdditionalData() + selector + path
+        clear_highlight = false
+      }
+      
+      if(typeof(BrowserAutomationStudio_TestPathLastPath) == "undefined")
+        BrowserAutomationStudio_TestPathLastPath = ""
+
+      if(BrowserAutomationStudio_TestPathLastPath != path)
+      {
+
+        BrowserAutomationStudio_TestPathFirstTry = false
+
+        var prev = BrowserAutomationStudio_TestPathLastPath
+
+        BrowserAutomationStudio_TestPathLastPath = path
+
+        if(prev != "" && typeof(OnHold) == "boolean" && OnHold == false)
+        {
+          if(clear_highlight)
+          {
+            BrowserAutomationStudio_SetPathCount("0")
+            BrowserAutomationStudio_ClearHighlight()  
+          }else
+          {
+            BrowserAutomationStudio_SetPathCount("")
+            BrowserAutomationStudio_Execute(path)
+          }
+        }
+      }
+    }
+
+    function BrowserAutomationStudio_SetPathCount(count)
+    {
+      if(count.toString().length > 0)
+      {
+        $("#PathCount").css("visibility","visible")
+        $("#PathCount").html(count)
+      }else
+      {
+        $("#PathCount").css("visibility","hidden")
+      }
+      
+    }
+
+
+
+    /* Bookmarks history */
+    function BrowserAutomationStudio_DisableDragFunction(ev)
+    {
+        var img = document.createElement('img')
+        img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+        ev.dataTransfer.setDragImage(img, 0, 0)
+    }
+
+    function BrowserAutomationStudio_SaveBookmarks()
+    {
+      if(CurrentTab == "bookmarks")
+      {
+        BookmarkList = []
+        $(".leftactionpaneltitlebody a").toArray().forEach(function(el){
+          var ref = $(el).attr("data-ref")
+          BookmarkList.push(ref)
+        })
+        BrowserAutomationStudio_PreserveInterfaceState();
+        
+      }
+      
+    }
+
+    function BrowserAutomationStudio_InstallBookmarks()
+    {
+      if(BookmarkDrag)
+      {
+        BookmarkDrag.forEach(function(el){
+          el.destroy()
+        })
+      }
+      BookmarkDrag = []
+      $(".panel-group").toArray().forEach(function(el){
+        el.ondragstart = BrowserAutomationStudio_DisableDragFunction
+        BookmarkDrag.push(Sortable.create(el, {
+          group: {
+            name: 'input',
+            pull: "clone",
+            put: function(e){return false;}
+          },
+          draggable: ".toolbutton",
+          onStart: function () {
+            $(".tool").removeClass("toolhover")
+          },
+
+          onEnd: function () {
+            $(".tool").removeClass("toolhover")
+            BrowserAutomationStudio_SaveBookmarks();
+          },
+          ghostClass: 'ghost',
+
+          sort: false,
+          animation: 70
+        }))
+      })
+    }
+
+
+    function BrowserAutomationStudio_ShowHideHistory()
+    {
+      if(CurrentTab.length == 0)
+      {
+        BrowserAutomationStudio_RenderHistory();
+        
+        return;
+      }
+
+      if(CurrentTab == "bookmarks")
+      {
+        BrowserAutomationStudio_RenderHistory();
+        return;
+      }
+
+      if(CurrentTab == "history")
+      {
+        BrowserAutomationStudio_HideHistoryBookmarks();
+        return;
+      }
+      
+    }
+
+    function BrowserAutomationStudio_ShowHideBookmarks()
+    {
+
+      if(CurrentTab.length == 0)
+      {
+        BrowserAutomationStudio_RenderBookmarks();
+        return;
+      }
+
+      if(CurrentTab == "history")
+      {
+        BrowserAutomationStudio_RenderBookmarks();
+        return;
+      }
+
+      if(CurrentTab == "bookmarks")
+      {
+        BrowserAutomationStudio_HideHistoryBookmarks();
+        return;
+      }
+    }
+
+    function BrowserAutomationStudio_HideHistoryBookmarks()
+    {
+      $(".leftactionpaneltitledrop").hide()
+
+      $(".leftactionpanel").hide()
+      $(".mainscreen").css('margin-left','37px');
+      CurrentTab = ""
+      BrowserAutomationStudio_PreserveInterfaceState()
+      $("#showhistory").removeClass("btn-primary").removeClass("btn-default").addClass("btn-default")
+      $("#showbookmarks").removeClass("btn-primary").removeClass("btn-default").addClass("btn-default")
+
+    }
+
+    function BrowserAutomationStudio_RenderBookmarks()
+    {
+      $(".leftactionpaneltitledrop").hide()
+      $(".leftactionpanel").show()
+      $(".mainscreen").css('margin-left','259px');
+        
+      $(".leftactionpaneltitle").html('<div>' + tr('Bookmarks') + '</div><div style="color:gray">' + tr('Drag actions here') + '</div>')
+      CurrentTab = "bookmarks"; 
+      BrowserAutomationStudio_PreserveInterfaceState()
+      
+
+      $("#showhistory").removeClass("btn-primary").removeClass("btn-default").addClass("btn-default")
+      $("#showbookmarks").removeClass("btn-primary").removeClass("btn-default").addClass("btn-primary")
+
+      var render = ""
+      BookmarkList.forEach(function(el){
+        var name = ""
+        if(_A[el])
+        {
+            name = tr(_A[el]["name"])
+        }
+        render += '<a class="toolbutton" href="#!/' + el + '" data-ref="' + el + '"><div class="tool"><span class="toolinner">' + name + '</span></div></a>'
+      })
+
+
+      $(".leftactionpaneltitlebody").html(render)
+
+      if(BookmarkDrop)
+        BookmarkDrop.destroy()
+
+      BookmarkDrop = null
+
+      if(RemoveBookmarkDrop)
+        RemoveBookmarkDrop.destroy()
+
+      RemoveBookmarkDrop = null
+
+      var leftactionpaneltitledrop = $(".leftactionpaneltitledrop")
+      if(leftactionpaneltitledrop.length > 0)
+      {
+        $(".leftactionpaneltitledrop")[0].ondragstart = BrowserAutomationStudio_DisableDragFunction
+
+        RemoveBookmarkDrop = Sortable.create($(".leftactionpaneltitledrop")[0], {
+          group: {
+            name: 'output',
+            put: function(e)
+            {
+              return true;
+            }
+          },
+          onAdd: function (evt) {
+            var el = evt.item;
+            el.parentNode.removeChild(el);
+          },
+          onEnd: function () {
+            $(".tool").removeClass("toolhover")
+            BrowserAutomationStudio_SaveBookmarks();
+          },
+          animation: 70
+        });
+      }
+
+
+
+      var leftactionpaneltitlebody = $(".leftactionpaneltitlebody")
+      if(leftactionpaneltitlebody.length > 0)
+      {
+        $(".leftactionpaneltitlebody")[0].ondragstart = BrowserAutomationStudio_DisableDragFunction
+
+        BookmarkDrop = Sortable.create($(".leftactionpaneltitlebody")[0], {
+          group: {
+            name: 'output',
+            put: function(e){
+              return true;
+            }
+          },
+
+          onStart: function (e) {
+            $(".leftactionpaneltitledrop").show()
+          },
+
+          onEnd: function (e) {
+            $(".leftactionpaneltitledrop").hide()
+            BrowserAutomationStudio_SaveBookmarks();
+
+          },
+          onAdd: function (e) {
+            var item = e.item;
+            if(BookmarkList.indexOf($(item).attr("data-ref")) >= 0)
+              item.parentNode.removeChild(item);
+
+          },
+
+          ghostClass: 'ghost',
+          animation: 70
+        });
+      }
+
+    }
+
+    function BrowserAutomationStudio_RenderHistory()
+    {
+      $(".leftactionpaneltitledrop").hide()
+      $(".leftactionpanel").show()
+      $(".mainscreen").css('margin-left','259px');
+        
+      $(".leftactionpaneltitle").html('<div>' + tr('History') + '</div><div style="color:gray">' + tr('Your recent actions') + '</div>')
+      CurrentTab = "history";
+      BrowserAutomationStudio_PreserveInterfaceState()
+      $("#showhistory").removeClass("btn-primary").removeClass("btn-default").addClass("btn-primary")
+      $("#showbookmarks").removeClass("btn-primary").removeClass("btn-default").addClass("btn-default")
+      
+      var data = "";
+
+      _.each(ActionHistory, function(Action) {
+        if(_A[Action])
+        {
+          data += '<a href="#!/' + Action + '"><div class="tool"><span class="toolinner">' + tr(_A[Action]["name"]) + '</span></div></a>'
+        }
+        
+      })
+
+      $(".leftactionpaneltitlebody").html(data)
+
+      if(BookmarkDrop)
+        BookmarkDrop.destroy()
+
+      BookmarkDrop = null
+      
+    }
+
+
+
+
+    function BrowserAutomationStudio_ReturnToMainFunction()
+    {
+      $(".mainscreen *[data-group]").hide()
+      $(".mainscreen *[data-group-all").show()
+      $(".actions")[0].scrollTop = 0
+      CurrentGroup = ""
+    }
+
+    function BrowserAutomationStudio_GotoGroup(group)
+    {
+        $(".mainscreen *[data-group]").hide()
+        $(".mainscreen *[data-group=" + group + "]").show()
+        $(".actions")[0].scrollTop = 0
+        CurrentGroup = group
+    }
+
+
+    // Action history
+
+    _Router.on("route", function(route, params) {
+      if(route != "main" && _A[route] && _A[route]["class"] != "browser")
+      {
+        var index = ActionHistory.indexOf(route)
+        if(index >= 0)
+          ActionHistory.splice(index,1)
+
+        ActionHistory.splice(0,0,route);
+        ActionHistory = ActionHistory.slice(0,10);
+        BrowserAutomationStudio_PreserveInterfaceState();
+      }
+    });
+
+    function BrowserAutomationStudio_PreserveInterfaceState()
+    {
+      BrowserAutomationStudio_SaveInterfaceState(JSON.stringify({history: ActionHistory,tab: CurrentTab, bookmarks: BookmarkList}));
+    }
+
+    function BrowserAutomationStudio_LoadInterfaceState(interface_json)
+    {
+      try
+      {
+        var interface_obj = JSON.parse(interface_json)
+        ActionHistory = interface_obj["history"]
+        BookmarkList = interface_obj["bookmarks"]
+        var tab = interface_obj["tab"] || ""
+        if(tab == "history")
+        {
+          BrowserAutomationStudio_RenderHistory();
+        }else if (tab == "bookmarks")
+        {
+          BrowserAutomationStudio_RenderBookmarks();
+        }
+      }catch(e){}
+
+    }
 
 
     function BrowserAutomationStudio_MaximizeCallback()
@@ -7103,6 +8224,71 @@
           $(".dropdown-menu-css-options").hide()
         })
 
+        $( window ).resize(function() {
+          $(".actions").css("height", window.innerHeight * (100.0 / _Z) - 40 + "px")
+          $(".leftactionpanel").css("height", window.innerHeight * (100.0 / _Z) - 45 + "px")
+          $(".leftactionpaneltitlebody").css("min-height", window.innerHeight * (100.0 / _Z) - 95 + "px")
+
+        });
+
+        $(document).keyup(function(e) {
+          if (e.keyCode == 27)
+          {
+
+            if($('.modal.in').length > 0)
+            {
+              $('#' + $('.modal.in').attr("id")).modal('hide');
+              return;
+            }
+
+            if($("#expressioneditor-container").is(":visible"))
+            {
+              $("#expressioneditor-cancel").click()
+              return;
+            }
+
+            if($(".returntomain").is(":visible") && CurrentGroup != "")
+            {
+              BrowserAutomationStudio_ReturnToMainFunction();
+              return;
+            }
+            
+            var el = $("#backtomain")
+            if(el.length > 0)
+            {
+              el[0].click()
+            }
+            
+          }
+          if (e.keyCode == 13)
+          {
+
+            if( e.target.nodeName == "TEXTAREA" ) return
+
+
+            if($('.modal.in').length > 0)
+            {
+              return;
+            }
+
+            if($("#expressioneditor-container").is(":visible"))
+            {
+              return;
+            }
+
+            if($(".returntomain").is(":visible") && CurrentGroup != "")
+            {
+              return;
+            }
+            
+            var el = $("#ok")
+            if(el.length > 0)
+            {
+              el[0].click()
+            }
+            
+          }
+        });
     });
 
     function Invalid(data)
@@ -7127,6 +8313,19 @@
 
       .replace(new RegExp("\\n","g"),"\\n")
       .replace(new RegExp("\\r","g"),"\\r")
+    }
+
+    function jsort(json)
+    {
+      return json.sort(function (a, b) {
+        if (a["name"].toLowerCase() > b["name"].toLowerCase()) {
+          return 1;
+        }
+        if (a["name"].toLowerCase() < b["name"].toLowerCase()) {
+          return -1;
+        }
+        return 0;
+      })
     }
 
     function utf8_to_b64( str ) {
@@ -7187,6 +8386,25 @@
       return "" 
     }
 
+    function timeout_value()
+    {
+      var usewaiter = $("#use-timeout")
+      if(usewaiter.length == 0)
+        return 0
+      var timeout_value = usewaiter.attr("data-value")
+        if(timeout_value.length == 0)
+          timeout_value = "0"
+
+      timeout_value = parseInt(timeout_value) * 1000
+
+      if(usewaiter.length > 0 && usewaiter.attr("data-enabled") == "true" && timeout_value != "0")  
+      {
+        return timeout_value
+      }
+
+      return 0 
+    }
+
     function timeout_waiter()
     {
       var usewaiter = $("#use-timeout")
@@ -7229,10 +8447,10 @@
         var Speed = GetInputConstructorValue("Speed",loader);
         var Gravity = GetInputConstructorValue("Gravity",loader);
         var Deviation = GetInputConstructorValue("Deviation",loader);
-        return '{"speed": ' + Speed["updated"] + ',"gravity": ' +  Gravity["updated"] + ',"deviation": ' + Deviation["updated"] + '}'
+        return ' {"speed": ' + Speed["updated"] + ',"gravity": ' +  Gravity["updated"] + ',"deviation": ' + Deviation["updated"] + '} '
       }
 
-      return '{}';
+      return ' {} ';
     }
 
     function BrowserAutomationStudio_UsesWaitCode()
@@ -7253,6 +8471,11 @@
         _Router.navigate("#!/executefunction", true);
     }
 
+    function BrowserAutomationStudio_RunFunctionSeveralThreads()
+    {
+        _Router.navigate("#!/executefunctioninseveralthreads", true); 
+    }
+
     function BrowserAutomationStudio_SuccessNumberEdit()
     {
         _Router.navigate("#!/successnumber", true);
@@ -7263,11 +8486,14 @@
         _Router.navigate("#!/failnumber", true);
     }
 
-    function BrowserAutomationStudio_SaveControls()
+    function BrowserAutomationStudio_SaveControls(additional)
     {
       var loader = new ResourceLoader();
 
-      var ControlsText = {s:_GobalModel.get("state"),e:$("#executetype .btn-info").attr("data-action"),v: 1}
+      var ControlsText = {s:_GobalModel.get("state"),v: 1}
+
+      if(additional)
+        ControlsText = Object.assign({},ControlsText, additional);
 
       ControlsText["f"] = _Filter.GetModels()
       
@@ -7350,21 +8576,37 @@
       {
         var all = {}
         var json = _SelectorModel.toJSON()
-        var current = json["current"]
+        all["is_image"] = json["is_image"]
+        if(json["is_image"])
+        {
+          //all["image_data"] = json["image_data"]
+          /*all["scroll"] = json["scroll"]
+          all["threshold"] = json["threshold"]*/
+        }else
+        {
+          var current = json["current"]
 
+          
+          all["css"] = json["css"]
+          all["version"] = json["version"]
+          all["css1"] = ("css1" in json) ? json["css1"] : ""
+          all["css2"] = ("css2" in json) ? json["css2"] : ""
+          all["css3"] = ("css3" in json) ? json["css3"] : ""
+          all["current"] = current
+          all["match"] = json["match"]
+          all["xpath"] = json["xpath"]
+          all["at"] = json["mousex"] + ", " + json["mousey"]
+
+          if(current!="none")
+            all[current] = $("#selector-input").val()
+
+          
+        }
+        if($("#checkbox-wait-element").length > 0)
+          all["we"] = $("#checkbox-wait-element").prop("checked")
         
-        all["css"] = json["css"]
-        all["version"] = json["version"]
-        all["css1"] = ("css1" in json) ? json["css1"] : ""
-        all["css2"] = ("css2" in json) ? json["css2"] : ""
-        all["css3"] = ("css3" in json) ? json["css3"] : ""
-        all["current"] = current
-        all["match"] = json["match"]
-        all["xpath"] = json["xpath"]
-        all["at"] = json["mousex"] + ", " + json["mousey"]
-
-        if(current!="none")
-          all[current] = $("#selector-input").val()
+        if($("#checkbox-fail-action").length > 0)
+          all["fa"] = $("#checkbox-fail-action").prop("checked")
 
         ControlsText["p"] = all
       }
@@ -7377,43 +8619,67 @@
     {
       _SelectorModel.set("is_editing",true)
       var data = JSON.parse(b64_to_utf8(dataraw))
+      CurrentDat = data
+      
 
       if("p" in data)
       {
         var selector = data["p"]
-        _SelectorModel.set("css",selector["css"])
+        _SelectorModel.set("is_image",selector["is_image"])
 
-        if("css1" in selector)
-          _SelectorModel.set("css1",selector["css1"])
-        else
-          _SelectorModel.set("css1","")
-        
-        if("css2" in selector)
-          _SelectorModel.set("css2",selector["css2"])
-        else
-          _SelectorModel.set("css2","")
-        
-        if("css3" in selector)
-          _SelectorModel.set("css3",selector["css3"])
-        else
-          _SelectorModel.set("css3","")
+        if(selector["is_image"])
+        {
+          //console.log(data["d"])
+          //_SelectorModel.set("image_data",data["d"]["ImageBase64"]["data"])
+          /*_SelectorModel.set("threshold",selector["threshold"])
+          _SelectorModel.set("scroll",selector["scroll"])*/
+        }else
+        {
+          _SelectorModel.set("css",selector["css"])
 
-        _SelectorModel.set("match",selector["match"])
-        _SelectorModel.set("xpath",selector["xpath"] || "")
-        var split = selector["at"].split(",")
-        _SelectorModel.set("mousex",split[0].replace(/\s/g, ''))
-        _SelectorModel.set("mousey",split[split.length - 1].replace(/\s/g, ''))
-        _SelectorModel.set("current",selector["current"])
-        _SelectorModel.set("version",selector["version"])
+          if("css1" in selector)
+            _SelectorModel.set("css1",selector["css1"])
+          else
+            _SelectorModel.set("css1","")
+          
+          if("css2" in selector)
+            _SelectorModel.set("css2",selector["css2"])
+          else
+            _SelectorModel.set("css2","")
+          
+          if("css3" in selector)
+            _SelectorModel.set("css3",selector["css3"])
+          else
+            _SelectorModel.set("css3","")
+
+          _SelectorModel.set("match",selector["match"])
+          _SelectorModel.set("xpath",selector["xpath"] || "")
+          var split = selector["at"].split(",")
+          _SelectorModel.set("mousex",split[0].replace(/\s/g, ''))
+          _SelectorModel.set("mousey",split[split.length - 1].replace(/\s/g, ''))
+          _SelectorModel.set("current",selector["current"])
+          _SelectorModel.set("version",selector["version"])
+        }
+
       }
 
       _GobalModel.set({ state: data["s"] });
       _GobalModel.set("isedit",true)
 
-      $("#executetype button").removeClass("btn-info")
-      $("#executetype button").addClass("btn-default")
+      $("#executetype").hide()
 
-      $("#executetype *[data-action=" + data["e"] + "]").removeClass("btn-default").addClass("btn-info")
+      if("p" in data)
+      {
+        if(typeof(selector["we"]) != "undefined")
+        {
+          $("#checkbox-wait-element").prop("checked", selector["we"]);
+        }
+        
+        if(typeof(selector["fa"]) != "undefined")
+        {
+          $("#checkbox-fail-action").prop("checked", selector["fa"]);
+        }
+      }
 
       if(data["uw"] == "1")
       {
@@ -7480,6 +8746,12 @@
         var type = el["type"]
         var _data = el["data"]
 
+        if(id == "ImageBase64")
+        {
+          _SelectorModel.set("image_data",_data)
+          $("#ImageData").attr("src","data:image/png;base64," + _SelectorModel.get("image_data"))
+        }
+
         if(type == "constr")
         {
           
@@ -7534,16 +8806,35 @@
     function BrowserAutomationStudio_SetVariables(variables)
     {
       _VariableCollection.reset()
-      var res = JSON.parse(variables)
+      var res = JSON.parse(variables);
       var added_cycle_index = false
       for(var i = 0;i < res.length;i+=1)
       {
-        _VariableCollection.add({name:res[i]["name"]})
         if(res[i]["name"] == "CYCLE_INDEX")
           added_cycle_index = true
       }
       if(!added_cycle_index)
-      _VariableCollection.add({name:"CYCLE_INDEX"})
+        res.push({name:"CYCLE_INDEX"})
+      
+      res.sort(function(a,b){return a["name"] >= b["name"]})
+
+      for(var i = 0;i < res.length;i+=1)
+      {
+        _VariableCollection.add({name:res[i]["name"]})
+      }
+    }
+
+    function BrowserAutomationStudio_SetGlobalVariables(global_variables)
+    {
+
+      _GlobalVariableCollection.reset()
+      var res = JSON.parse(global_variables)
+      res.sort(function(a,b){return a["name"] >= b["name"]})
+      var added_cycle_index = false
+      for(var i = 0;i < res.length;i+=1)
+      {
+        _GlobalVariableCollection.add({name:res[i]["name"]})
+      }
     }
 
     function BrowserAutomationStudio_SetSchema(schema)
@@ -7598,7 +8889,43 @@
 
     function GetPath(loader, need_all, need_visible)
     {
-      if(_SelectorModel.get("version") == "1.0" || $("#selector-input").val().indexOf(">CSS>") >= 0 || $("#selector-input").val().indexOf(">MATCH>") >= 0|| $("#selector-input").val().indexOf(">FRAME>") >= 0|| $("#selector-input").val().indexOf(">XPATH>") >= 0 || $("#selector-input").val().indexOf(">AT>") >= 0 || _SelectorModel.get("current") == "xpath")
+      if(_SelectorModel.get("is_image"))
+      {
+        var waitelement = true
+        var failaction = true
+        if($("#checkbox-wait-element").length > 0)
+        {
+          waitelement = $("#checkbox-wait-element").prop("checked") 
+        }
+
+        if($("#checkbox-fail-action").length > 0)
+        {
+          failaction = $("#checkbox-fail-action").prop("checked") 
+        }
+
+        var scroll = 'data["scroll"] = ' + GetInputConstructorValue("Scroll",loader)["updated"] + ' == "scroll";'
+        var threshold = 'data["threshold"] = parseInt(' + GetInputConstructorValue("Threshold",loader)["updated"] + ');'
+        var timeout = timeout_value()
+        if(timeout == 0)
+          timeout = 60000
+        timeout = 'data["timeout"] = ' + timeout + ';'
+
+        var dataraw = GetInputConstructorValue("ImageBase64",loader)["updated"]
+        
+        var data = 'data["data"] = "' + dataraw + '";'
+
+        var rawnodata = scroll + threshold + timeout
+        var raw = rawnodata + data
+
+        var resultwaiter = ""
+        var resultpath = ""
+
+        resultwaiter = "var data = {fail:" + failaction + ",wait:" + waitelement + "};" + raw + "_wait_image(data)!"
+        resultpath = "_image()"
+
+        return {path: resultpath,waiter: resultwaiter, imagesearch:true}
+
+      }else if(_SelectorModel.get("version") == "1.0" || $("#selector-input").val().indexOf(">CSS>") >= 0 || $("#selector-input").val().indexOf(">MATCH>") >= 0|| $("#selector-input").val().indexOf(">FRAME>") >= 0|| $("#selector-input").val().indexOf(">XPATH>") >= 0 || $("#selector-input").val().indexOf(">AT>") >= 0 || _SelectorModel.get("current") == "xpath")
       {
         //New selectors
        
@@ -7621,6 +8948,19 @@
         {
           waiter_func_name = "wait_element_visible"
         }
+
+        var waitelement = true
+        var failaction = true
+        if($("#checkbox-wait-element").length > 0)
+        {
+          waitelement = $("#checkbox-wait-element").prop("checked") 
+        }
+
+        if($("#checkbox-fail-action").length > 0)
+        {
+          failaction = $("#checkbox-fail-action").prop("checked") 
+        }
+        
 
         var querycss = _SelectorModel.get("css")
         var querycss2 = _SelectorModel.get("css2")
@@ -7647,7 +8987,26 @@
           querymatch = loader.Resolve(querymatch+"")
         }
 
-        return {path:"get_element_selector(" + raw + ", " + (typeof(need_all) != "undefined" && need_all).toString() + ")",waiter: timeout_waiter() + "\n" + waiter_func_name + "(" + raw + ")!",raw:"css " + raw_not_escaped, querycss: querycss, querycss2: querycss2, querycss3: querycss3, querymatch: querymatch, queryxpath: queryxpath, query: raw}
+        var resultpath = "get_element_selector(_SELECTOR, " + (typeof(need_all) != "undefined" && need_all).toString() + ")"
+        var resultwaiter = "_SELECTOR = " + raw + ";"
+
+        if(waitelement == true && failaction == true)
+        {
+          resultwaiter += timeout_waiter() + "\n" + waiter_func_name + "(_SELECTOR)!"
+        }else if(waitelement == false && failaction == true)
+        {
+          resultwaiter += "get_element_selector(_SELECTOR, false).exist()! if(_result()=='0')fail('Element " + JSON.stringify(raw_not_escaped) + " not exists');"
+          resultpath += ".nowait()"
+        }else if(waitelement == true && failaction == false)
+        {
+          resultwaiter += timeout_waiter() + "\nwaiter_nofail_next();\n" + waiter_func_name + "(_SELECTOR)!"
+          resultpath += ".nowait()"
+        }else if(waitelement == false && failaction == false)
+        {
+          resultpath += ".nowait()"
+        }
+
+        return {path: resultpath,waiter: resultwaiter,raw:"css " + raw_not_escaped, querycss: querycss, querycss2: querycss2, querycss3: querycss3, querymatch: querymatch, queryxpath: queryxpath, query: raw}
         
        
       }
@@ -7880,7 +9239,23 @@
           if(IsPrerender)
             resnew += match[0]
           else
-            resnew += (IsJsonStringify) ? "JSON.stringify(VAR_" + match[1] + ")" : "VAR_" + match[1]
+          {
+            var match_add = match[1]
+            if(match_add.indexOf("GLOBAL:") >= 0)
+            {
+              match_add = "JSON.parse(P(\"basglobal\", " + JSON.stringify(match_add.substr(7)) + ") || '\"\"')";
+            }else
+            {
+              match_add = "VAR_" + match_add
+            }
+
+            if(IsJsonStringify)
+            {
+              match_add = "JSON.stringify(" + match_add + ")"
+            }
+            resnew += match_add
+            
+          }
 
 
           i = match.index + match[0].length
@@ -8022,26 +9397,37 @@
 
     function BrowserAutomationStudio_ElementFunction(selector, name, is_loop)
     {
+      console.log(selector)
       _SelectorModel.set("is_editing",false)
       _SelectorModel.set("version","1.0")
+      var need_to_set_image_data = false
 
       _Router.navigate("#", true);
       if(is_loop !== 1)
       {
-        _SelectorModel.set("css",selector["css"])
-        _SelectorModel.set("css1",selector["css1"])
-        if("css2" in selector)
-          _SelectorModel.set("css2",selector["css2"])
-        else
-          _SelectorModel.set("css2","")
+        if(typeof(selector) == "string")
+        {
+          need_to_set_image_data = true
+          _SelectorModel.set("is_image",true)
+          _SelectorModel.set("image_data",selector)
+        }else
+        {
+          _SelectorModel.set("is_image",false)
+          _SelectorModel.set("css",selector["css"])
+          _SelectorModel.set("css1",selector["css1"])
+          if("css2" in selector)
+            _SelectorModel.set("css2",selector["css2"])
+          else
+            _SelectorModel.set("css2","")
 
-        if("css3" in selector)
-          _SelectorModel.set("css3",selector["css3"])
-        else
-          _SelectorModel.set("css3","")
+          if("css3" in selector)
+            _SelectorModel.set("css3",selector["css3"])
+          else
+            _SelectorModel.set("css3","")
 
-        _SelectorModel.set("match",selector["match"])
-        _SelectorModel.set("xpath",selector["xpath"] || "")
+          _SelectorModel.set("match",selector["match"])
+          _SelectorModel.set("xpath",selector["xpath"] || "")
+        }
 
       }
       else
@@ -8052,18 +9438,24 @@
           return
         }
 
-        _SelectorModel.set("css","[[FOR_EACH_CSS]] >AT> [[CYCLE_INDEX]]")
-        _SelectorModel.set("css1","[[FOR_EACH_CSS]] >AT> [[CYCLE_INDEX]]")
+        _SelectorModel.set("css","[[FOR_EACH_CSS]]>AT>[[CYCLE_INDEX]]")
+        _SelectorModel.set("css1","[[FOR_EACH_CSS]]>AT>[[CYCLE_INDEX]]")
         _SelectorModel.set("css2","")
         _SelectorModel.set("css3","")
-        _SelectorModel.set("match","[[FOR_EACH_MATCH]] >AT> [[CYCLE_INDEX]]")
-        _SelectorModel.set("xpath","[[FOR_EACH_XPATH]] >AT> [[CYCLE_INDEX]]")
+        _SelectorModel.set("match","[[FOR_EACH_MATCH]]>AT>[[CYCLE_INDEX]]")
+        _SelectorModel.set("xpath","[[FOR_EACH_XPATH]]>AT>[[CYCLE_INDEX]]")
 
       }
       _SelectorModel.set("mousex",parseInt(selector["mousex"]))
       _SelectorModel.set("mousey",parseInt(selector["mousey"]))
 
       _Router.navigate("#!/" + name, true);
+      if(need_to_set_image_data)
+      {
+        $("#ImageBase64").val(_SelectorModel.get("image_data"))
+        $("#ImageData").attr("src","data:image/png;base64," + _SelectorModel.get("image_data"))
+
+      }
     }
 
     function BrowserAutomationStudio_LoopElement(selector)
@@ -8166,11 +9558,20 @@
     {
       BrowserAutomationStudio_ElementFunction(selector, "length", false)
     }
+    function BrowserAutomationStudio_Screenshot(selector, is_loop)
+    {
+      BrowserAutomationStudio_ElementFunction(selector, "screenshot", is_loop)
+    }
+    function BrowserAutomationStudio_GetCoordinates(selector, is_loop)
+    {
+      BrowserAutomationStudio_ElementFunction(selector, "coordinates", is_loop)
+    }
 
     function BrowserAutomationStudio_ShowWaiting(code)
     {
+      OnHold = true
       $(".modal").modal('hide')
-      var text = prepare_title(code,"")
+      var text = prepare_title_code(code,"")
       if(text.length > 0)
       {
         $("#WaitingActionName").html(text)
@@ -8182,6 +9583,7 @@
     }
     function BrowserAutomationStudio_HideWaiting()
     {
+      OnHold = false
       $('#WaitingModal').modal('hide')
     }
 

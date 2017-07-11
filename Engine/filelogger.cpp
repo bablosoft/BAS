@@ -11,11 +11,25 @@ namespace BrowserAutomationStudioFramework
 
     }
 
+    void FileLogger::SetReplaceActionIdWithLink()
+    {
+
+    }
+    void FileLogger::SetReplaceActionIdWithColor()
+    {
+
+    }
+
     QString FileLogger::GetFileName()
     {
         QFileInfo info(FileName);
 
         return info.absoluteFilePath();
+    }
+
+    void FileLogger::Clear()
+    {
+
     }
 
     void FileLogger::SetFileName(const QString& FileName)

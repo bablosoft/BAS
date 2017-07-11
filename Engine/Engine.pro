@@ -18,7 +18,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 TARGET = Engine
 TEMPLATE = lib
 
-DEFINES += ENGINE_LIBRARY QSCINTILLA_DLL QUAZIP_BUILD
+DEFINES += ENGINE_LIBRARY QSCINTILLA_DLL QUAZIP_BUILD NO_BAS_DEBUG
 DEFINES += IS_X64
 
 
@@ -296,7 +296,15 @@ SOURCES += engine.cpp \
     databaseschemaeditor.cpp \
     databaseschemaeditorcolumndialog.cpp \
     itabblink.cpp \
-    mainwindowtabblink.cpp
+    mainwindowtabblink.cpp \
+    substagemanager.cpp \
+    iconstructresource.cpp \
+    constructresourcewizard.cpp \
+    resourcewizard.cpp \
+    uiconstructor.cpp \
+    tabinputdialog.cpp \
+    iworkersettings.cpp \
+    workersettings.cpp
 
 win32:SOURCES += CrashHandler.cpp
 
@@ -587,7 +595,15 @@ HEADERS += engine.h\
     databaseschemaeditor.h \
     databaseschemaeditorcolumndialog.h \
     itabblink.h \
-    mainwindowtabblink.h
+    mainwindowtabblink.h \
+    substagemanager.h \
+    iconstructresource.h \
+    constructresourcewizard.h \
+    resourcewizard.h \
+    uiconstructor.h \
+    tabinputdialog.h \
+    iworkersettings.h \
+    workersettings.h
 
 win32:HEADERS += CrashHandler.h
 
@@ -639,7 +655,10 @@ FORMS += \
     modulemanagerwindow.ui \
     databaseconnectiondialog.ui \
     databaseschemaeditordialog.ui \
-    databaseschemaeditorcolumndialog.ui
+    databaseschemaeditorcolumndialog.ui \
+    resourcewizard.ui \
+    uiconstructor.ui \
+    tabinputdialog.ui
 
 OTHER_FILES += \
     scripts/pages.js \
@@ -677,7 +696,9 @@ OTHER_FILES += \
     scripts/engine/common/memory.js \
     scripts/engine/multiworker/properties.js \
     scripts/engine/worker/properties.js \
-    scripts/engine/worker/record.js
+    scripts/engine/worker/record.js \
+    scripts/engine/worker/images.js
+
 
 INCLUDEPATH += zip debug_memory accordion diff snappy
 

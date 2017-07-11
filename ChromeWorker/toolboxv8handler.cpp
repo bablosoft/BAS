@@ -7,7 +7,40 @@ ToolboxV8Handler::ToolboxV8Handler()
     IsEditCancel = false;
     IsMaximize = false;
     IsMinimize = false;
+    IsInterfaceState = false;
     url_changed = false;
+    ChangedExecute = false;
+}
+
+std::pair<std::string, bool> ToolboxV8Handler::GetExecuteCode()
+{
+    std::lock_guard<std::mutex> lock(mut_code);
+
+    std::pair<std::string, bool> r;
+    r.first = LastResultExecute;
+    r.second = ChangedExecute;
+
+    ChangedExecute = false;
+
+    LastResultExecute.clear();
+
+    return r;
+}
+
+
+std::pair<std::string, bool> ToolboxV8Handler::GetInterfaceState()
+{
+    std::lock_guard<std::mutex> lock(mut_interface);
+
+    std::pair<std::string, bool> r;
+    r.second = IsInterfaceState;
+    if(IsInterfaceState)
+    {
+        r.first = interfacestate;
+        interfacestate.clear();
+        IsInterfaceState = false;
+    }
+    return r;
 }
 
 
@@ -66,6 +99,14 @@ bool ToolboxV8Handler::GetIsInterrupt()
     return res;
 }
 
+bool ToolboxV8Handler::GetClearHighlight()
+{
+    bool res = ClearHighlight;
+    ClearHighlight = false;
+
+    return res;
+}
+
 
 bool ToolboxV8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> object, const CefV8ValueList& arguments, CefRefPtr<CefV8Value>& retval, CefString& exception)
 {
@@ -87,7 +128,18 @@ bool ToolboxV8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> obje
             if(arguments.size() > 3)
                 res.DisableIfAdd = arguments[3]->GetBoolValue();
 
+            if(arguments.size() > 4)
+                res.Id = arguments[4]->GetStringValue().ToString();
+
             LastResult.push_back(res);
+        }
+    }else if(name == std::string("BrowserAutomationStudio_Execute"))
+    {
+        if (arguments.size() == 1 && arguments[0]->IsString())
+        {
+            std::lock_guard<std::mutex> lock(mut_code);
+            LastResultExecute = arguments[0]->GetStringValue().ToString();
+            ChangedExecute = true;
         }
     }else if(name == std::string("BrowserAutomationStudio_Initialized"))
     {
@@ -118,7 +170,24 @@ bool ToolboxV8Handler::Execute(const CefString& name, CefRefPtr<CefV8Value> obje
             url = arguments[0]->GetStringValue().ToString();
             url_changed = true;
         }
+    }else if(name == std::string("BrowserAutomationStudio_SaveInterfaceState"))
+    {
+        if (arguments.size() == 1 && arguments[0]->IsString())
+        {
+            std::lock_guard<std::mutex> lock(mut_interface);
+            interfacestate = arguments[0]->GetStringValue().ToString();
+            IsInterfaceState = true;
+        }
+    }else if(name == std::string("BrowserAutomationStudio_ClearHighlight"))
+    {
+        if (arguments.size() == 0)
+        {
+            ClearHighlight = true;
+        }
     }
+
+
+
     return true;
 }
 

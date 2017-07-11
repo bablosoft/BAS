@@ -19,6 +19,7 @@ namespace BrowserAutomationStudioFramework
         IProcessComunicator *ProcessComunicator;
         QString NextAction;
         QString Language;
+        IWorkerSettings *WorkerSettings;
     public:
 
         explicit SubprocessBrowser(QObject *parent = 0);
@@ -39,6 +40,9 @@ namespace BrowserAutomationStudioFramework
         virtual void GetUrl(const QString& callback);
         virtual void CreateNewBrowser(bool ForseNewBrowserCreation, const QString& callback);
         virtual void CloseBrowser();
+        virtual void SetWorkerSettings(IWorkerSettings *WorkerSettings);
+        virtual IWorkerSettings * GetWorkerSettings();
+
         virtual INetworkAccessManager* GetNetworkAccessManager();
         virtual void SetScriptResources(IScriptResources* ScriptResources);
         virtual IScriptResources* GetScriptResources();
@@ -67,6 +71,12 @@ namespace BrowserAutomationStudioFramework
         virtual void Scroll(int x, int y, const QString& callback);
         virtual void Render(int x, int y, int width, int height, const QString& callback);
         virtual void DebugVariablesResult(const QString& data, const QString& callback);
+        virtual void SendWorkerSettings(const QString& json, const QString& callback);
+
+
+        virtual void ClearImageData(const QString& callback);
+        virtual void SetImageData(const QString& base64, const QString& callback);
+        virtual void FindImage(const QString& callback);
 
         void MarkBeforeReset();
         void MarkAfterReset();
@@ -105,6 +115,10 @@ namespace BrowserAutomationStudioFramework
         void Timezone();
         void Geolocation();
         void Crush();
+        void ClearImageData();
+        void SetImageData();
+        void FindImage();
+        void SendWorkerSettings();
 
     private slots:
         void Received(const QString& value);

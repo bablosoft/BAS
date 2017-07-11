@@ -14,3 +14,7 @@
 513 BITMAP "Maximize.bmp"
 514 BITMAP "Settings.bmp"
 515 BITMAP "hold90.bmp"
+516 BITMAP "upup.bmp"
+517 BITMAP "downdown.bmp"
+518 BITMAP "leftleft.bmp"
+519 BITMAP "rightright.bmp"

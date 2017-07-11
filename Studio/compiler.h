@@ -16,6 +16,7 @@ class Compiler : public QObject
     QString CompiledFolder;
     QString ReleaseFolder;
     QString BuildFolder;
+    bool HideBrowsers;
     void CalculateCompiledFolder();
 public:
     enum CompileType{NoProtection,PrivateScriptEnterPassForUser,PrivateScriptUserEnterPass};
@@ -24,6 +25,7 @@ private:
 public:
 
     void SetName(const QString & Name);
+    void SetHideBrowsers(bool HideBrowsers);
     void SetOs(const QString & Os);
     void SetVersion(const QString & Version);
 
@@ -31,6 +33,7 @@ public:
     void SetPassword(const QString & Password);
     void SetType(const CompileType & Type);
 
+    bool GetHideBrowsers();
     QString GetName();
     QString GetOs();
     QString GetVersion();

@@ -9,6 +9,15 @@ namespace BrowserAutomationStudioFramework
     {
     }
 
+    void ComplexLogger::SetReplaceActionIdWithLink()
+    {
+
+    }
+    void ComplexLogger::SetReplaceActionIdWithColor()
+    {
+
+    }
+
     void ComplexLogger::AddLogger(ILogger* Logger)
     {
         Loggers.append(Logger);
@@ -25,7 +34,11 @@ namespace BrowserAutomationStudioFramework
         }
     }
 
-
+    void ComplexLogger::Clear()
+    {
+        foreach(ILogger *log,Loggers)
+            log->Clear();
+    }
 
     void ComplexLogger::Write(const QString& line)
     {

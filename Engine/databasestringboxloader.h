@@ -16,6 +16,8 @@ namespace BrowserAutomationStudioFramework
         QStringList Groups;
         QList<int> Columns;
         int TableId;
+        int LoadRetries;
+        bool IsWaitingForLoadRetry;
     public:
         explicit DatabaseStringBoxLoader(QObject *parent = 0);
         void SetDatabaseConnector(IDatabaseConnector *DatabaseConnector);
@@ -27,6 +29,7 @@ namespace BrowserAutomationStudioFramework
 
     public slots:
         virtual void Load();
+        void LoadInternal();
         void ItemDeleted(const QString& item);
 
     };

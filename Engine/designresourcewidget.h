@@ -17,6 +17,14 @@ namespace BrowserAutomationStudioFramework
         bool MoreState;
         ILanguageModel *LanguageModel;
         QStringList ComboBoxData;
+        QString OldName;
+        bool TooltipUserFocus;
+        bool ShowTooltip;
+        bool TooltipUserFocus2;
+        bool ShowTooltip2;
+        bool TooltipUserFocus3;
+        bool ShowTooltip3;
+        bool eventFilter(QObject *obj, QEvent *event);
 
     public:
         MultiLanguageTextBox *DescriptionTextBox;
@@ -35,6 +43,7 @@ namespace BrowserAutomationStudioFramework
         QString GetTypeId();
         MultiLanguageString GetSectionName();
         void SetSectionName(const MultiLanguageString& SectionName);
+
         QString GetVisibilityConditionVariable();
         void SetVisibilityConditionVariable(const QString& VisibilityConditionVariable);
         QString GetVisibilityConditionValue();
@@ -76,11 +85,12 @@ namespace BrowserAutomationStudioFramework
         void HideMore();
 
         void Visibility(bool visibility);
-        void on_ButtonUp_clicked();
 
-        void on_ButtonDown_clicked();
+        void SetSectionName(const QString& SectionName);
 
         void GoingToDelete();
+
+        void on_lineEdit_textChanged(const QString &arg1);
 
     private:
         Ui::DesignResourceWidget *ui;

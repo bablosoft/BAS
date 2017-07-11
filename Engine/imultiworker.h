@@ -23,6 +23,8 @@
 #include "icsvhelper.h"
 #include "idatabaseconnector.h"
 #include "imodulemanager.h"
+#include "istringbuilder.h"
+#include "iworkersettings.h"
 
 namespace BrowserAutomationStudioFramework
 {
@@ -35,6 +37,9 @@ namespace BrowserAutomationStudioFramework
     public:
 
         explicit IMultiWorker(QObject *parent = 0);
+
+        virtual void SetStringBuilder(IStringBuilder *StringBuilder) = 0;
+        virtual IStringBuilder * GetStringBuilder() = 0;
 
         virtual void AddModule(QObject *Module, const QString& Name, bool AddToMultiWorker, bool AddToWorker) = 0;
 
@@ -133,6 +138,9 @@ namespace BrowserAutomationStudioFramework
 
         virtual void SetProjectPath(const QString& ProjectPath) = 0;
         virtual QString GetProjectPath() = 0;
+
+        virtual void SetWorkerSettings(IWorkerSettings* WorkerSettings) = 0;
+        virtual IWorkerSettings* GetWorkerSettings() = 0;
     signals:
         void Finished();
         void StageFinished();

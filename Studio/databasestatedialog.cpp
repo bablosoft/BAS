@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QClipboard>
 #include <QDir>
+#include <QCompleter>
 
 
 DatabaseStateDialog::DatabaseStateDialog(QWidget *parent) :
@@ -15,9 +16,96 @@ DatabaseStateDialog::DatabaseStateDialog(QWidget *parent) :
     ui->DatabaseLocation->setEnabled(false);
     ui->RestartProcess->setVisible(false);
     ui->groupBox_2->setVisible(false);
+    on_ConnectionType_currentIndexChanged(-1);
+    ui->label_6->setVisible(false);
+    ui->label_7->setVisible(false);
+    ui->ConnectionLogin->setVisible(false);
+    ui->ConnectionPassword->setVisible(false);
+
+}
+
+void DatabaseStateDialog::SetIsRemote(bool IsRemote)
+{
+    if(IsRemote)
+    {
+        ui->ConnectionType->setCurrentIndex(1);
+    }else
+    {
+        ui->ConnectionType->setCurrentIndex(0);
+    }
+
+}
+bool DatabaseStateDialog::GetIsRemote()
+{
+    return ui->ConnectionType->currentIndex() == 1;
+}
+
+void DatabaseStateDialog::SetConnectionServer(const QString& ConnectionServer)
+{
+    ui->ConnectionServer->setText(ConnectionServer);
+}
+QString DatabaseStateDialog::GetConnectionServer()
+{
+    return ui->ConnectionServer->text();
+}
+
+void DatabaseStateDialog::SetConnectionPort(const QString& ConnectionPort)
+{
+    ui->ConnectionPort->setText(ConnectionPort);
+}
+QString DatabaseStateDialog::GetConnectionPort()
+{
+    return ui->ConnectionPort->text();
+}
+
+void DatabaseStateDialog::SetConnectionLogin(const QString& ConnectionLogin)
+{
+    ui->ConnectionLogin->setText(ConnectionLogin);
+}
+QString DatabaseStateDialog::GetConnectionLogin()
+{
+    return ui->ConnectionLogin->text();
+}
+
+void DatabaseStateDialog::SetConnectionPassword(const QString& ConnectionPassword)
+{
+    ui->ConnectionPassword->setText(ConnectionPassword);
+}
+QString DatabaseStateDialog::GetConnectionPassword()
+{
+
+    return ui->ConnectionPassword->text();
+
+}
+
+
+bool DatabaseStateDialog::eventFilter(QObject *target, QEvent *event)
+{
+    if (target == ui->DatabaseId)
+    {
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+            ui->DatabaseId->completer()->complete();
+        }
+    }
+    return QDialog::eventFilter(target, event);
 }
 void DatabaseStateDialog::SetDatabaseBaseLocation(const QString& DatabaseBaseLocation)
 {
+
+    QDir recoredDir(DatabaseBaseLocation);
+    QStringList List = recoredDir.entryList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs, QDir::DirsFirst);
+
+
+    QCompleter *completer = new QCompleter(List, ui->DatabaseId);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+
+    ui->DatabaseId->setCompleter(completer);
+    completer->complete();
+
+    ui->DatabaseId->installEventFilter(this);
+
     this->DatabaseBaseLocation = DatabaseBaseLocation;
     UpdateDatabaseLocation();
 }
@@ -216,4 +304,42 @@ void DatabaseStateDialog::on_CopyDatabaseLocation_clicked()
 {
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setText(ui->DatabaseLocation->text());
+}
+
+void DatabaseStateDialog::on_ConnectionType_currentIndexChanged(int index)
+{
+    if(ui->ConnectionType->currentIndex() == 0)
+    {
+        ui->groupBox_4->setVisible(true);
+        ui->groupBox_5->setVisible(true);
+        ui->groupBox_7->setVisible(false);
+    }else
+    {
+        ui->groupBox_4->setVisible(false);
+        ui->groupBox_5->setVisible(false);
+        ui->groupBox_7->setVisible(true);
+    }
+    if(index>=0)
+        SetIsDirty(true);
+
+}
+
+void DatabaseStateDialog::on_ConnectionServer_textEdited(const QString &arg1)
+{
+    SetIsDirty(true);
+}
+
+void DatabaseStateDialog::on_ConnectionPort_textEdited(const QString &arg1)
+{
+    SetIsDirty(true);
+}
+
+void DatabaseStateDialog::on_ConnectionLogin_textEdited(const QString &arg1)
+{
+    SetIsDirty(true);
+}
+
+void DatabaseStateDialog::on_ConnectionPassword_textEdited(const QString &arg1)
+{
+    SetIsDirty(true);
 }

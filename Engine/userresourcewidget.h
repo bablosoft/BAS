@@ -14,7 +14,7 @@ class UserResourceWidget;
 namespace BrowserAutomationStudioFramework
 {
 
-    class ENGINESHARED_EXPORT UserResourceWidget : public QGroupBox
+    class ENGINESHARED_EXPORT UserResourceWidget : public QWidget
     {
         Q_OBJECT
         QStringList ComboBoxData;

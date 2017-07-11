@@ -15,6 +15,7 @@ public:
         std::string Code;
         ExecuteType HowToExecute;
         bool DisableIfAdd;
+        std::string Id;
     };
 
 private:
@@ -22,22 +23,30 @@ private:
 
     bool IsInitialized;
     bool IsEditCancel;
+    bool ChangedExecute;
 
     bool IsMaximize;
     bool IsMinimize;
     bool IsInterrupt;
+    bool IsInterfaceState;
+    bool ClearHighlight;
 
 
     std::mutex mut;
+    std::mutex mut_code;
     std::mutex mut_initialized;
     std::mutex mut_maximize;
     std::mutex mut_minimize;
     std::mutex mut_editcancel;
     std::mutex mut_interrupt;
+    std::mutex mut_interface;
     std::mutex url_mut;
     std::string url;
     bool url_changed;
 
+
+    std::string interfacestate;
+    std::string LastResultExecute;
 
 
 public:
@@ -47,9 +56,11 @@ public:
     bool GetIsMaximize();
     bool GetIsMinimize();
     bool GetIsInterrupt();
+    bool GetClearHighlight();
+    std::pair<std::string, bool> GetInterfaceState();
 
     std::pair<std::string, bool> GetLoadUrl();
-
+    std::pair<std::string, bool> GetExecuteCode();
 
     virtual bool Execute(const CefString& name, CefRefPtr<CefV8Value> object, const CefV8ValueList& arguments, CefRefPtr<CefV8Value>& retval, CefString& exception) OVERRIDE;
     std::pair<ResultClass, bool> GetResult();

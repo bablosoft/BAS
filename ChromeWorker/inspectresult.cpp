@@ -4,7 +4,7 @@
 
 void InspectResult::Paint(HDC hdc, int BrowserRealWidth, int BrowserRealHeight, int BrowserDrawWidth, int BrowserDrawHeight, int BrowserScrollX, int BrowserScrollY, int BrowserLeft, int BrowserTop)
 {
-    //WORKER_LOG(std::string("Paint<<") + std::to_string(x) + std::string("<<") + std::to_string(y));
+
     if(!active)
         return;
 
@@ -35,6 +35,8 @@ void InspectResult::Paint(HDC hdc, int BrowserRealWidth, int BrowserRealHeight, 
     if(y1 + height1 >= BrowserDrawHeight)
        height1 = BrowserDrawHeight - y1 - 1;
 
+    //WORKER_LOG(std::string("Paint<<") + std::to_string(x1) + std::string("<<") + std::to_string(y1)+ std::string("<<") + std::to_string(width1)+ std::string("<<") + std::to_string(height1));
+
     MoveToEx(hdc, BrowserLeft + x1, BrowserTop + y1, &pt);
     LineTo(hdc, BrowserLeft + x1, BrowserTop + y1 + height1);
 
@@ -58,16 +60,26 @@ std::string InspectResult::Serialize()
 {
     picojson::value::object res;
 
-    res["css"] = picojson::value(css);
-    res["css1"] = picojson::value(css);
-    if(css2 != css)
-        res["css2"] = picojson::value(css2);
-    if(css3 != css && css3 != css2)
-        res["css3"] = picojson::value(css3);
-    res["match"] = picojson::value(match);
-    res["xpath"] = picojson::value(xpath);
-    res["mousex"] = picojson::value(std::to_string(mousex));
-    res["mousey"] = picojson::value(std::to_string(mousey));
+    if(isimage)
+    {
+        std::string res = imagedata;
+        res.insert(res.begin(),'"');
+        res.push_back('"');
+        imagedata.clear();
+        return res;
+    }else
+    {
+        res["css"] = picojson::value(css);
+        res["css1"] = picojson::value(css);
+        if(css2 != css)
+            res["css2"] = picojson::value(css2);
+        if(css3 != css && css3 != css2)
+            res["css3"] = picojson::value(css3);
+        res["match"] = picojson::value(match);
+        res["xpath"] = picojson::value(xpath);
+        res["mousex"] = picojson::value(std::to_string(mousex));
+        res["mousey"] = picojson::value(std::to_string(mousey));
 
-    return picojson::value(res).serialize();
+        return picojson::value(res).serialize();
+    }
 }

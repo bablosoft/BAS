@@ -42,32 +42,32 @@
         <translation>Пожалуйста введите ресурсы</translation>
     </message>
     <message>
-        <location filename="../askuserforresourcesdialog.ui" line="32"/>
+        <location filename="../askuserforresourcesdialog.ui" line="47"/>
         <source>Defaults</source>
         <translation>Стандартные значения</translation>
     </message>
     <message>
-        <location filename="../askuserforresourcesdialog.ui" line="43"/>
+        <location filename="../askuserforresourcesdialog.ui" line="58"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="../askuserforresourcesdialog.ui" line="54"/>
+        <location filename="../askuserforresourcesdialog.ui" line="69"/>
         <source>Load</source>
         <translation>Загрузить</translation>
     </message>
     <message>
-        <location filename="../askuserforresourcesdialog.ui" line="65"/>
+        <location filename="../askuserforresourcesdialog.ui" line="80"/>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
     <message>
-        <location filename="../askuserforresourcesdialog.ui" line="76"/>
+        <location filename="../askuserforresourcesdialog.ui" line="91"/>
         <source>Log Location</source>
         <translation>Папка с логами</translation>
     </message>
     <message>
-        <location filename="../askuserforresourcesdialog.ui" line="87"/>
+        <location filename="../askuserforresourcesdialog.ui" line="102"/>
         <source>Show Advanced</source>
         <translation>Продвинутые настройки</translation>
     </message>
@@ -94,44 +94,54 @@
 <context>
     <name>BrowserAutomationStudioFramework::AskUserForResourcesDialog</name>
     <message>
-        <location filename="../askuserforresourcesdialog.cpp" line="20"/>
+        <location filename="../askuserforresourcesdialog.cpp" line="23"/>
         <source>Data</source>
         <translation>База</translation>
     </message>
     <message>
-        <location filename="../askuserforresourcesdialog.cpp" line="72"/>
-        <location filename="../askuserforresourcesdialog.cpp" line="91"/>
-        <location filename="../askuserforresourcesdialog.cpp" line="100"/>
-        <location filename="../askuserforresourcesdialog.cpp" line="137"/>
-        <location filename="../askuserforresourcesdialog.cpp" line="171"/>
+        <location filename="../askuserforresourcesdialog.cpp" line="29"/>
+        <source>File</source>
+        <translation>Файл</translation>
+    </message>
+    <message>
+        <location filename="../askuserforresourcesdialog.cpp" line="35"/>
+        <source>Settings</source>
+        <translation>Настройки</translation>
+    </message>
+    <message>
+        <location filename="../askuserforresourcesdialog.cpp" line="98"/>
+        <location filename="../askuserforresourcesdialog.cpp" line="117"/>
+        <location filename="../askuserforresourcesdialog.cpp" line="126"/>
+        <location filename="../askuserforresourcesdialog.cpp" line="163"/>
+        <location filename="../askuserforresourcesdialog.cpp" line="197"/>
         <source>Show Advanced</source>
         <translation>Продвинутые настройки</translation>
     </message>
     <message>
-        <location filename="../askuserforresourcesdialog.cpp" line="78"/>
+        <location filename="../askuserforresourcesdialog.cpp" line="104"/>
         <source>Save Project</source>
         <translation>Сохранить проект</translation>
     </message>
     <message>
-        <location filename="../askuserforresourcesdialog.cpp" line="78"/>
-        <location filename="../askuserforresourcesdialog.cpp" line="87"/>
+        <location filename="../askuserforresourcesdialog.cpp" line="104"/>
+        <location filename="../askuserforresourcesdialog.cpp" line="113"/>
         <source>Project Files (*.xml);;All Files (*.*)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../askuserforresourcesdialog.cpp" line="87"/>
+        <location filename="../askuserforresourcesdialog.cpp" line="113"/>
         <source>Open Project</source>
         <translation>Открыть проект</translation>
     </message>
     <message>
-        <location filename="../askuserforresourcesdialog.cpp" line="125"/>
-        <location filename="../askuserforresourcesdialog.cpp" line="133"/>
-        <location filename="../askuserforresourcesdialog.cpp" line="167"/>
+        <location filename="../askuserforresourcesdialog.cpp" line="151"/>
+        <location filename="../askuserforresourcesdialog.cpp" line="159"/>
+        <location filename="../askuserforresourcesdialog.cpp" line="193"/>
         <source>Hide Advanced</source>
         <translation>Стандартные настройки</translation>
     </message>
     <message>
-        <location filename="../askuserforresourcesdialog.cpp" line="148"/>
+        <location filename="../askuserforresourcesdialog.cpp" line="174"/>
         <source>Data is not valid. Are you sure, that you want to continue?</source>
         <translation>Данные заполнены не верно. Действительно продолжить?</translation>
     </message>
@@ -218,17 +228,17 @@
 <context>
     <name>BrowserAutomationStudioFramework::DesignResourceWidget</name>
     <message>
-        <location filename="../designresourcewidget.cpp" line="81"/>
+        <location filename="../designresourcewidget.cpp" line="257"/>
         <source>Are you sure, that you want to delete resource?</source>
         <translation>Вы уверены, что хотите удалить ресурс?</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.cpp" line="467"/>
+        <location filename="../designresourcewidget.cpp" line="655"/>
         <source>Hide</source>
         <translation>Спрятать</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.cpp" line="473"/>
+        <location filename="../designresourcewidget.cpp" line="661"/>
         <source>Show more</source>
         <translation>Больше</translation>
     </message>
@@ -253,97 +263,102 @@
 <context>
     <name>BrowserAutomationStudioFramework::MongoDatabaseConnector</name>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="66"/>
+        <location filename="../mongodatabaseconnector.cpp" line="78"/>
         <source>User cancel</source>
         <translation>Отменено пользователем</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="112"/>
-        <location filename="../mongodatabaseconnector.cpp" line="283"/>
+        <location filename="../mongodatabaseconnector.cpp" line="125"/>
+        <location filename="../mongodatabaseconnector.cpp" line="296"/>
         <source>Failed to write to file</source>
         <translation>Ошибка записи файла</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="233"/>
-        <location filename="../mongodatabaseconnector.cpp" line="342"/>
-        <location filename="../mongodatabaseconnector.cpp" line="439"/>
-        <location filename="../mongodatabaseconnector.cpp" line="808"/>
-        <location filename="../mongodatabaseconnector.cpp" line="873"/>
-        <location filename="../mongodatabaseconnector.cpp" line="898"/>
-        <location filename="../mongodatabaseconnector.cpp" line="924"/>
-        <location filename="../mongodatabaseconnector.cpp" line="977"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1037"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1062"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1090"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1143"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1170"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1215"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1254"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1278"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1300"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1331"/>
+        <location filename="../mongodatabaseconnector.cpp" line="246"/>
+        <location filename="../mongodatabaseconnector.cpp" line="355"/>
+        <location filename="../mongodatabaseconnector.cpp" line="452"/>
+        <location filename="../mongodatabaseconnector.cpp" line="821"/>
+        <location filename="../mongodatabaseconnector.cpp" line="889"/>
+        <location filename="../mongodatabaseconnector.cpp" line="916"/>
+        <location filename="../mongodatabaseconnector.cpp" line="942"/>
+        <location filename="../mongodatabaseconnector.cpp" line="995"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1055"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1080"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1108"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1161"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1188"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1233"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1272"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1296"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1318"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1349"/>
         <source>Database Error : </source>
         <translation>Ошибка базы : </translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="239"/>
-        <location filename="../mongodatabaseconnector.cpp" line="348"/>
-        <location filename="../mongodatabaseconnector.cpp" line="445"/>
-        <location filename="../mongodatabaseconnector.cpp" line="814"/>
-        <location filename="../mongodatabaseconnector.cpp" line="879"/>
-        <location filename="../mongodatabaseconnector.cpp" line="904"/>
-        <location filename="../mongodatabaseconnector.cpp" line="930"/>
-        <location filename="../mongodatabaseconnector.cpp" line="983"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1043"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1068"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1096"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1149"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1176"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1221"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1260"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1284"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1306"/>
-        <location filename="../mongodatabaseconnector.cpp" line="1337"/>
+        <location filename="../mongodatabaseconnector.cpp" line="252"/>
+        <location filename="../mongodatabaseconnector.cpp" line="361"/>
+        <location filename="../mongodatabaseconnector.cpp" line="458"/>
+        <location filename="../mongodatabaseconnector.cpp" line="827"/>
+        <location filename="../mongodatabaseconnector.cpp" line="896"/>
+        <location filename="../mongodatabaseconnector.cpp" line="922"/>
+        <location filename="../mongodatabaseconnector.cpp" line="948"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1001"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1061"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1086"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1114"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1167"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1194"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1239"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1278"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1302"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1324"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1355"/>
         <source>Database Error</source>
         <translation>Ошибка базы</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="379"/>
+        <location filename="../mongodatabaseconnector.cpp" line="392"/>
         <source>Failed to read to file</source>
         <translation>Ошибка чтения файла</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="1001"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1019"/>
         <source>All data in table</source>
         <translation>Все данные в таблице</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="1003"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1021"/>
         <source>All</source>
         <translation>Все</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="1010"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1028"/>
         <source>Items, which is not present in any group</source>
         <translation>Записи, которых нет ни в одной группе</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="1012"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1030"/>
         <source>Not in groups</source>
         <translation>Не в группе</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="1564"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1601"/>
         <source>Database error</source>
         <translation>Ошибка базы</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="1597"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1643"/>
         <source>Failed to create data dir</source>
         <translation>Не удалось создать папку с данными</translation>
     </message>
     <message>
-        <location filename="../mongodatabaseconnector.cpp" line="1685"/>
+        <location filename="../mongodatabaseconnector.cpp" line="1658"/>
+        <source>Failed to connect to database on server %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mongodatabaseconnector.cpp" line="1748"/>
         <source>Failed to run database server on port %1. Please check firewall settings, maybe exception should be added. This error may occur if you have less than 4GB free space on hard drive.</source>
         <translation>Ошибка запуска базы(порт %1).Пожалуйста, проверьте настройки брандмауэра, возможно нужно добавить исключение. Также, эта ошибка может возникнуть, если у вас меньше, чем 4 Гб свободного места на жестком диске.</translation>
     </message>
@@ -376,6 +391,14 @@
     <message>
         <source>Failed to start listen server #2 %1</source>
         <translation type="vanished">Failed to start listen server #2 %1</translation>
+    </message>
+</context>
+<context>
+    <name>BrowserAutomationStudioFramework::QtResourceController</name>
+    <message>
+        <location filename="../qtresourcecontroller.cpp" line="422"/>
+        <source>This is how user interface will look like:</source>
+        <translation type="unfinished">Так будет выглядеть пользовательский интерфейс:</translation>
     </message>
 </context>
 <context>
@@ -473,61 +496,61 @@
 <context>
     <name>BrowserAutomationStudioFramework::ScriptMultiWorker</name>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="489"/>
+        <location filename="../scriptmultiworker.cpp" line="511"/>
         <source>Script finished with error :</source>
         <translation>Скрипт выполнен с ошибкой :</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="493"/>
+        <location filename="../scriptmultiworker.cpp" line="515"/>
         <source> Line number:</source>
         <translation> Номер строки:</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="493"/>
+        <location filename="../scriptmultiworker.cpp" line="515"/>
         <source> During execution of script </source>
         <translation> Во время выполнения скрипта </translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="495"/>
+        <location filename="../scriptmultiworker.cpp" line="517"/>
         <source>[%1] Script finished with error : </source>
         <translation>[%1] Скрипт выполнен с ошибкой : </translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="539"/>
-        <location filename="../scriptmultiworker.cpp" line="752"/>
-        <location filename="../scriptmultiworker.cpp" line="753"/>
+        <location filename="../scriptmultiworker.cpp" line="561"/>
+        <location filename="../scriptmultiworker.cpp" line="883"/>
+        <location filename="../scriptmultiworker.cpp" line="884"/>
         <source>Ended with message: </source>
         <translation>Закончен с сообщением: </translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="555"/>
-        <location filename="../scriptmultiworker.cpp" line="568"/>
+        <location filename="../scriptmultiworker.cpp" line="577"/>
+        <location filename="../scriptmultiworker.cpp" line="590"/>
         <source>Aborted By User</source>
         <translation>Прервано Пользователем</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="584"/>
+        <location filename="../scriptmultiworker.cpp" line="606"/>
         <source>[%1] Script finished correctly</source>
         <translation>[%1] Скрипт завершен корректно</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="622"/>
+        <location filename="../scriptmultiworker.cpp" line="695"/>
         <source>Success</source>
         <translation>Удачно</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="648"/>
+        <location filename="../scriptmultiworker.cpp" line="722"/>
         <source>Stage Timeout</source>
         <translation>Время На Выполнение Этапа Истекло</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="743"/>
+        <location filename="../scriptmultiworker.cpp" line="874"/>
         <source>Too Much Fails</source>
         <translation>Слишком Много Ошибок</translation>
     </message>
     <message>
-        <location filename="../scriptmultiworker.cpp" line="1043"/>
-        <location filename="../scriptmultiworker.cpp" line="1044"/>
+        <location filename="../scriptmultiworker.cpp" line="1185"/>
+        <location filename="../scriptmultiworker.cpp" line="1186"/>
         <source>All data have been processed</source>
         <translation>Все данные были обработаны</translation>
     </message>
@@ -543,34 +566,34 @@
 <context>
     <name>BrowserAutomationStudioFramework::ScriptWorker</name>
     <message>
-        <location filename="../scriptworker.cpp" line="461"/>
+        <location filename="../scriptworker.cpp" line="472"/>
         <source>Aborted By User</source>
         <translation>Прервано Пользователем</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="621"/>
+        <location filename="../scriptworker.cpp" line="629"/>
         <source> Line number:</source>
         <translation> Номер строки:</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="621"/>
+        <location filename="../scriptworker.cpp" line="629"/>
         <source> During execution of script </source>
         <translation> Во время выполнения скрипта </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="649"/>
-        <location filename="../scriptworker.cpp" line="736"/>
+        <location filename="../scriptworker.cpp" line="657"/>
+        <location filename="../scriptworker.cpp" line="744"/>
         <source>Fail number exceed</source>
         <translation>Превышено количество ошибок</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="656"/>
-        <location filename="../scriptworker.cpp" line="806"/>
+        <location filename="../scriptworker.cpp" line="664"/>
+        <location filename="../scriptworker.cpp" line="814"/>
         <source>Success number exceed</source>
         <translation>Превышено количество успехов</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="853"/>
+        <location filename="../scriptworker.cpp" line="861"/>
         <source>Failed because process is stopped</source>
         <translation>Процесс остановлен</translation>
     </message>
@@ -579,7 +602,7 @@
         <translation type="vanished">не удалось получить ресурс </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1229"/>
+        <location filename="../scriptworker.cpp" line="1257"/>
         <source>Thread suspended</source>
         <translation>Поток приостановлен</translation>
     </message>
@@ -592,132 +615,133 @@
         <translation type="vanished">Поток аварийно завершился</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1210"/>
+        <location filename="../scriptworker.cpp" line="1238"/>
         <source>All data have been processed for </source>
         <translation>Все данные были обработаны для </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1234"/>
-        <location filename="../scriptworker.cpp" line="1235"/>
+        <location filename="../scriptworker.cpp" line="1264"/>
+        <location filename="../scriptworker.cpp" line="1265"/>
         <source>Thread ended</source>
         <translation>Поток завершился</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1236"/>
+        <location filename="../scriptworker.cpp" line="1266"/>
         <source>Thread succeeded</source>
         <translation>Поток выполнен успешно</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1238"/>
+        <location filename="../scriptworker.cpp" line="1268"/>
         <source> with message &quot;</source>
         <translation> с сообщением &quot;</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1250"/>
+        <location filename="../scriptworker.cpp" line="1310"/>
+        <location filename="../scriptworker.cpp" line="1321"/>
         <source>Thread #</source>
         <translation>Поток №</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1262"/>
-        <location filename="../scriptworker.cpp" line="1292"/>
+        <location filename="../scriptworker.cpp" line="1333"/>
+        <location filename="../scriptworker.cpp" line="1363"/>
         <source>CAPTCHA_FAIL</source>
         <translation>Ошибка решения капчи</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1262"/>
+        <location filename="../scriptworker.cpp" line="1333"/>
         <source>Failed to get solver</source>
         <translation>Неизвестный метод решения капчи</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1305"/>
+        <location filename="../scriptworker.cpp" line="1376"/>
         <source>Captcha wait timeout</source>
         <translation>Время ожидания решения капчи истекло</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1318"/>
+        <location filename="../scriptworker.cpp" line="1389"/>
         <source>Async function is called in sync mode</source>
         <translation>Асинхронная функция вызвана синхронно</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1326"/>
-        <location filename="../scriptworker.cpp" line="1390"/>
+        <location filename="../scriptworker.cpp" line="1397"/>
+        <location filename="../scriptworker.cpp" line="1461"/>
         <source>Failed to run function </source>
         <translation>Ошибка при запуске функции </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1345"/>
+        <location filename="../scriptworker.cpp" line="1416"/>
         <source>Sync function is called in async mode</source>
         <translation>Синхронная функция вызвана асинхронно</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1355"/>
+        <location filename="../scriptworker.cpp" line="1426"/>
         <source>Failed to execute module function </source>
         <translation>Не удалось выполнить функцию </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1415"/>
+        <location filename="../scriptworker.cpp" line="1486"/>
         <source>Failed to get mail number with Pop3CLient</source>
         <translation>Не удалось получить количество писем с помощью Pop3 клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1423"/>
+        <location filename="../scriptworker.cpp" line="1494"/>
         <source>Failed to get message with Pop3CLient</source>
         <translation>Не удалось получить письмо с помощью Pop3 клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1486"/>
+        <location filename="../scriptworker.cpp" line="1557"/>
         <source>Failed to get mail number with ImapCLient</source>
         <translation>Не удалось получить количество писем с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1494"/>
+        <location filename="../scriptworker.cpp" line="1565"/>
         <source>Failed to search mail with ImapCLient</source>
         <translation>Не удалось выполнить поиск с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1502"/>
+        <location filename="../scriptworker.cpp" line="1573"/>
         <source>Failed to custom search mail with ImapCLient</source>
         <translation>Не удалось выполнить специальный поиск с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1510"/>
+        <location filename="../scriptworker.cpp" line="1581"/>
         <source>Failed to fetch mail with ImapCLient</source>
         <translation>Не удалось получить письмо с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1518"/>
+        <location filename="../scriptworker.cpp" line="1589"/>
         <source>Failed to execute custom query with ImapCLient</source>
         <translation>Не удалось выполнить специальный запрос с помощью Imap клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1569"/>
-        <location filename="../scriptworker.cpp" line="1707"/>
-        <location filename="../scriptworker.cpp" line="1715"/>
-        <location filename="../scriptworker.cpp" line="1724"/>
-        <location filename="../scriptworker.cpp" line="1752"/>
+        <location filename="../scriptworker.cpp" line="1640"/>
+        <location filename="../scriptworker.cpp" line="1778"/>
+        <location filename="../scriptworker.cpp" line="1786"/>
+        <location filename="../scriptworker.cpp" line="1795"/>
+        <location filename="../scriptworker.cpp" line="1823"/>
         <source>Failed to get page </source>
         <translation>Не удалось получить страницу </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1569"/>
-        <location filename="../scriptworker.cpp" line="1606"/>
-        <location filename="../scriptworker.cpp" line="1657"/>
-        <location filename="../scriptworker.cpp" line="1707"/>
-        <location filename="../scriptworker.cpp" line="1715"/>
-        <location filename="../scriptworker.cpp" line="1724"/>
-        <location filename="../scriptworker.cpp" line="1752"/>
-        <location filename="../scriptworker.cpp" line="1780"/>
+        <location filename="../scriptworker.cpp" line="1640"/>
+        <location filename="../scriptworker.cpp" line="1677"/>
+        <location filename="../scriptworker.cpp" line="1728"/>
+        <location filename="../scriptworker.cpp" line="1778"/>
+        <location filename="../scriptworker.cpp" line="1786"/>
+        <location filename="../scriptworker.cpp" line="1795"/>
+        <location filename="../scriptworker.cpp" line="1823"/>
+        <location filename="../scriptworker.cpp" line="1851"/>
         <source> with HttpClient</source>
         <translation> с помошью ХТТП клиента</translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1606"/>
-        <location filename="../scriptworker.cpp" line="1657"/>
+        <location filename="../scriptworker.cpp" line="1677"/>
+        <location filename="../scriptworker.cpp" line="1728"/>
         <source>Failed to post page </source>
         <translation>Не удалось выполнить пост запрос </translation>
     </message>
     <message>
-        <location filename="../scriptworker.cpp" line="1780"/>
+        <location filename="../scriptworker.cpp" line="1851"/>
         <source>Failed to download page </source>
         <translation>Не удалось скачать страницу </translation>
     </message>
@@ -748,37 +772,41 @@
 <context>
     <name>BrowserAutomationStudioFramework::SubprocessBrowser</name>
     <message>
-        <location filename="../subprocessbrowser.cpp" line="28"/>
-        <location filename="../subprocessbrowser.cpp" line="40"/>
-        <location filename="../subprocessbrowser.cpp" line="52"/>
-        <location filename="../subprocessbrowser.cpp" line="64"/>
-        <location filename="../subprocessbrowser.cpp" line="76"/>
-        <location filename="../subprocessbrowser.cpp" line="88"/>
-        <location filename="../subprocessbrowser.cpp" line="100"/>
-        <location filename="../subprocessbrowser.cpp" line="115"/>
-        <location filename="../subprocessbrowser.cpp" line="127"/>
-        <location filename="../subprocessbrowser.cpp" line="139"/>
-        <location filename="../subprocessbrowser.cpp" line="151"/>
-        <location filename="../subprocessbrowser.cpp" line="166"/>
-        <location filename="../subprocessbrowser.cpp" line="186"/>
-        <location filename="../subprocessbrowser.cpp" line="199"/>
+        <location filename="../subprocessbrowser.cpp" line="38"/>
+        <location filename="../subprocessbrowser.cpp" line="50"/>
+        <location filename="../subprocessbrowser.cpp" line="62"/>
+        <location filename="../subprocessbrowser.cpp" line="74"/>
+        <location filename="../subprocessbrowser.cpp" line="86"/>
+        <location filename="../subprocessbrowser.cpp" line="98"/>
+        <location filename="../subprocessbrowser.cpp" line="110"/>
+        <location filename="../subprocessbrowser.cpp" line="125"/>
+        <location filename="../subprocessbrowser.cpp" line="137"/>
+        <location filename="../subprocessbrowser.cpp" line="149"/>
+        <location filename="../subprocessbrowser.cpp" line="161"/>
+        <location filename="../subprocessbrowser.cpp" line="173"/>
+        <location filename="../subprocessbrowser.cpp" line="185"/>
+        <location filename="../subprocessbrowser.cpp" line="197"/>
         <location filename="../subprocessbrowser.cpp" line="212"/>
-        <location filename="../subprocessbrowser.cpp" line="224"/>
-        <location filename="../subprocessbrowser.cpp" line="240"/>
-        <location filename="../subprocessbrowser.cpp" line="252"/>
-        <location filename="../subprocessbrowser.cpp" line="265"/>
-        <location filename="../subprocessbrowser.cpp" line="277"/>
-        <location filename="../subprocessbrowser.cpp" line="289"/>
-        <location filename="../subprocessbrowser.cpp" line="301"/>
-        <location filename="../subprocessbrowser.cpp" line="313"/>
-        <location filename="../subprocessbrowser.cpp" line="325"/>
-        <location filename="../subprocessbrowser.cpp" line="337"/>
-        <location filename="../subprocessbrowser.cpp" line="349"/>
-        <location filename="../subprocessbrowser.cpp" line="361"/>
-        <location filename="../subprocessbrowser.cpp" line="373"/>
-        <location filename="../subprocessbrowser.cpp" line="385"/>
-        <location filename="../subprocessbrowser.cpp" line="404"/>
-        <location filename="../subprocessbrowser.cpp" line="728"/>
+        <location filename="../subprocessbrowser.cpp" line="232"/>
+        <location filename="../subprocessbrowser.cpp" line="245"/>
+        <location filename="../subprocessbrowser.cpp" line="258"/>
+        <location filename="../subprocessbrowser.cpp" line="296"/>
+        <location filename="../subprocessbrowser.cpp" line="319"/>
+        <location filename="../subprocessbrowser.cpp" line="335"/>
+        <location filename="../subprocessbrowser.cpp" line="347"/>
+        <location filename="../subprocessbrowser.cpp" line="360"/>
+        <location filename="../subprocessbrowser.cpp" line="372"/>
+        <location filename="../subprocessbrowser.cpp" line="384"/>
+        <location filename="../subprocessbrowser.cpp" line="396"/>
+        <location filename="../subprocessbrowser.cpp" line="408"/>
+        <location filename="../subprocessbrowser.cpp" line="420"/>
+        <location filename="../subprocessbrowser.cpp" line="432"/>
+        <location filename="../subprocessbrowser.cpp" line="444"/>
+        <location filename="../subprocessbrowser.cpp" line="456"/>
+        <location filename="../subprocessbrowser.cpp" line="468"/>
+        <location filename="../subprocessbrowser.cpp" line="480"/>
+        <location filename="../subprocessbrowser.cpp" line="499"/>
+        <location filename="../subprocessbrowser.cpp" line="845"/>
         <source>Timeout during </source>
         <translation>Таймаут во время выполнения </translation>
     </message>
@@ -837,32 +865,33 @@
 <context>
     <name>BrowserAutomationStudioFramework::SubprocessWebElement</name>
     <message>
-        <location filename="../subprocesswebelement.cpp" line="230"/>
-        <location filename="../subprocesswebelement.cpp" line="238"/>
-        <location filename="../subprocesswebelement.cpp" line="246"/>
-        <location filename="../subprocesswebelement.cpp" line="254"/>
-        <location filename="../subprocesswebelement.cpp" line="260"/>
-        <location filename="../subprocesswebelement.cpp" line="273"/>
-        <location filename="../subprocesswebelement.cpp" line="281"/>
-        <location filename="../subprocesswebelement.cpp" line="289"/>
-        <location filename="../subprocesswebelement.cpp" line="297"/>
-        <location filename="../subprocesswebelement.cpp" line="305"/>
-        <location filename="../subprocesswebelement.cpp" line="313"/>
-        <location filename="../subprocesswebelement.cpp" line="320"/>
+        <location filename="../subprocesswebelement.cpp" line="241"/>
+        <location filename="../subprocesswebelement.cpp" line="249"/>
+        <location filename="../subprocesswebelement.cpp" line="257"/>
+        <location filename="../subprocesswebelement.cpp" line="265"/>
+        <location filename="../subprocesswebelement.cpp" line="271"/>
+        <location filename="../subprocesswebelement.cpp" line="284"/>
+        <location filename="../subprocesswebelement.cpp" line="292"/>
+        <location filename="../subprocesswebelement.cpp" line="300"/>
+        <location filename="../subprocesswebelement.cpp" line="308"/>
+        <location filename="../subprocesswebelement.cpp" line="316"/>
+        <location filename="../subprocesswebelement.cpp" line="324"/>
         <location filename="../subprocesswebelement.cpp" line="331"/>
-        <location filename="../subprocesswebelement.cpp" line="338"/>
-        <location filename="../subprocesswebelement.cpp" line="345"/>
-        <location filename="../subprocesswebelement.cpp" line="352"/>
-        <location filename="../subprocesswebelement.cpp" line="359"/>
-        <location filename="../subprocesswebelement.cpp" line="366"/>
-        <location filename="../subprocesswebelement.cpp" line="373"/>
-        <location filename="../subprocesswebelement.cpp" line="380"/>
-        <location filename="../subprocesswebelement.cpp" line="387"/>
-        <location filename="../subprocesswebelement.cpp" line="394"/>
-        <location filename="../subprocesswebelement.cpp" line="401"/>
-        <location filename="../subprocesswebelement.cpp" line="488"/>
-        <location filename="../subprocesswebelement.cpp" line="514"/>
-        <location filename="../subprocesswebelement.cpp" line="521"/>
+        <location filename="../subprocesswebelement.cpp" line="342"/>
+        <location filename="../subprocesswebelement.cpp" line="349"/>
+        <location filename="../subprocesswebelement.cpp" line="357"/>
+        <location filename="../subprocesswebelement.cpp" line="364"/>
+        <location filename="../subprocesswebelement.cpp" line="371"/>
+        <location filename="../subprocesswebelement.cpp" line="378"/>
+        <location filename="../subprocesswebelement.cpp" line="385"/>
+        <location filename="../subprocesswebelement.cpp" line="392"/>
+        <location filename="../subprocesswebelement.cpp" line="399"/>
+        <location filename="../subprocesswebelement.cpp" line="406"/>
+        <location filename="../subprocesswebelement.cpp" line="413"/>
+        <location filename="../subprocesswebelement.cpp" line="511"/>
+        <location filename="../subprocesswebelement.cpp" line="519"/>
+        <location filename="../subprocesswebelement.cpp" line="546"/>
+        <location filename="../subprocesswebelement.cpp" line="553"/>
         <source>Timeout during </source>
         <translation>Таймаут во время выполнения </translation>
     </message>
@@ -918,29 +947,29 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="122"/>
-        <location filename="../chooserresourcewidget.ui" line="149"/>
-        <location filename="../chooserresourcewidget.ui" line="198"/>
+        <location filename="../chooserresourcewidget.ui" line="128"/>
+        <location filename="../chooserresourcewidget.ui" line="155"/>
+        <location filename="../chooserresourcewidget.ui" line="204"/>
         <source>Value</source>
         <translation>Значение</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="280"/>
+        <location filename="../chooserresourcewidget.ui" line="286"/>
         <source>Minimum Value</source>
         <translation>Минимум</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="312"/>
+        <location filename="../chooserresourcewidget.ui" line="318"/>
         <source>Maximum Value</source>
         <translation>Максимум</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="411"/>
+        <location filename="../chooserresourcewidget.ui" line="417"/>
         <source>Filenames or directory</source>
         <translation>Файлы или папки</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="489"/>
+        <location filename="../chooserresourcewidget.ui" line="495"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If lines in file will be erased after max success usage or max fail usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Будет ли  строка удалена после использования максимального числа раз.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -953,195 +982,195 @@
         <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Изменять файл&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="492"/>
+        <location filename="../chooserresourcewidget.ui" line="498"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Write file&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Запись&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="512"/>
-        <location filename="../chooserresourcewidget.ui" line="933"/>
+        <location filename="../chooserresourcewidget.ui" line="518"/>
+        <location filename="../chooserresourcewidget.ui" line="939"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If lines will be mixed after load. This options selected will result data in random order.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Будут ли строки перемешаны после загрузки.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="515"/>
-        <location filename="../chooserresourcewidget.ui" line="936"/>
+        <location filename="../chooserresourcewidget.ui" line="521"/>
+        <location filename="../chooserresourcewidget.ui" line="942"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Mix lines&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Мешать строки&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="535"/>
-        <location filename="../chooserresourcewidget.ui" line="956"/>
+        <location filename="../chooserresourcewidget.ui" line="541"/>
+        <location filename="../chooserresourcewidget.ui" line="962"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Max success usage, after which line will be removed. Success definition depends on your script purpose.&lt;/p&gt;&lt;p&gt;For example, if you register accounts and define proxy, this integer will designate maximum registration from one proxy.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Максимальное количество успешных использований. Определение успешности использования зависит от назначения скрипта.&lt;/p&gt;&lt;p&gt;Например, если скрипт регистрирует аккаунты, а ресурс задает прокси, то значение поля задает количество успешных регистраций с одного прокси.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="538"/>
-        <location filename="../chooserresourcewidget.ui" line="959"/>
-        <location filename="../chooserresourcewidget.ui" line="1415"/>
-        <location filename="../chooserresourcewidget.ui" line="1897"/>
+        <location filename="../chooserresourcewidget.ui" line="544"/>
+        <location filename="../chooserresourcewidget.ui" line="965"/>
+        <location filename="../chooserresourcewidget.ui" line="1421"/>
+        <location filename="../chooserresourcewidget.ui" line="1933"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Max success usage&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Успешных использований&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="551"/>
+        <location filename="../chooserresourcewidget.ui" line="557"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Max fail usage, after which line will be removed. Fail is often page load timeout or wait timeout.&lt;/p&gt;&lt;p&gt;If you set this property low - resource will be banned quickly, otherwise engine will try a lot of time before give up with each file line.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Максимальное количество ошибочных использований. Как правило это ошибки загрузки страниц или превышение периодов ожидания.&lt;/p&gt;&lt;p&gt;Если вы сделаете этот параметр достаточно маленьким - ресурс будет использован быстро, иначе движок будет повторять попытки множество раз для каждой строки.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="554"/>
-        <location filename="../chooserresourcewidget.ui" line="997"/>
-        <location filename="../chooserresourcewidget.ui" line="1431"/>
-        <location filename="../chooserresourcewidget.ui" line="1929"/>
+        <location filename="../chooserresourcewidget.ui" line="560"/>
+        <location filename="../chooserresourcewidget.ui" line="1003"/>
+        <location filename="../chooserresourcewidget.ui" line="1437"/>
+        <location filename="../chooserresourcewidget.ui" line="1965"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Max fail usage&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Ошибочных использований&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="567"/>
-        <location filename="../chooserresourcewidget.ui" line="1032"/>
+        <location filename="../chooserresourcewidget.ui" line="573"/>
+        <location filename="../chooserresourcewidget.ui" line="1038"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How many times one line could be used by different threads.&lt;/p&gt;&lt;p&gt;For example is you set it to 5 and the resource is proxy - one proxy could be used with up to 5 threads simultaneously.&lt;/p&gt;&lt;p&gt;If you set it too high - proxy could be banned by server.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Сколько раз одна и та же строка может быть использовна разными потоками.&lt;/p&gt;&lt;p&gt;Например, если Вы установите этот параметр в 5, а ресурс задает прокси, то один прокси может быть использован с 5 тредов одновременно.&lt;/p&gt;&lt;p&gt;Если Вы выставите это значение слишком высоко, то прокси может быть забанен сервером.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="570"/>
-        <location filename="../chooserresourcewidget.ui" line="1035"/>
-        <location filename="../chooserresourcewidget.ui" line="1447"/>
-        <location filename="../chooserresourcewidget.ui" line="1961"/>
+        <location filename="../chooserresourcewidget.ui" line="576"/>
+        <location filename="../chooserresourcewidget.ui" line="1041"/>
+        <location filename="../chooserresourcewidget.ui" line="1453"/>
+        <location filename="../chooserresourcewidget.ui" line="1997"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Max number of simultaneous use&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Количество одновременных использований&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="583"/>
-        <location filename="../chooserresourcewidget.ui" line="1070"/>
+        <location filename="../chooserresourcewidget.ui" line="589"/>
+        <location filename="../chooserresourcewidget.ui" line="1076"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Interval between usage. How much time needed to wait to use line repeatedly.&lt;/p&gt;&lt;p&gt;For example, if you register accounts and define proxy this integer will designate maximum interval between usage of each proxy.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Интервал между использованиями. Сколько времени нужно ждать, чтобы скрипт получил доступ к ресурсу повторно.&lt;/p&gt;&lt;p&gt;Например, если скрипт регистрирует аккаунты, а ресурс задает прокси, то этот параметр будет задавать интервал между использованиями прокси.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="586"/>
-        <location filename="../chooserresourcewidget.ui" line="1073"/>
-        <location filename="../chooserresourcewidget.ui" line="1463"/>
-        <location filename="../chooserresourcewidget.ui" line="1993"/>
+        <location filename="../chooserresourcewidget.ui" line="592"/>
+        <location filename="../chooserresourcewidget.ui" line="1079"/>
+        <location filename="../chooserresourcewidget.ui" line="1469"/>
+        <location filename="../chooserresourcewidget.ui" line="2029"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Interval between usage(millisecond)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Время между использованиями&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="690"/>
+        <location filename="../chooserresourcewidget.ui" line="696"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If file needs to be reloaded periodically in certain periods of time.&lt;/p&gt;&lt;p&gt;For example, you can point external application to grab names and write result to file. Engine will reload this file and data with new names.&lt;/p&gt;&lt;p&gt;This is expensive option, use it only if you sure, that file content will change.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Должен ли файл быть перезагружен периодически через определенные периоды времени.&lt;/p&gt;&lt;p&gt;Например, вы можете использовать внешнюю программу, чтобы она искала прокси и сохраняла в файл. Движок будет периодически перезагружать этот файл и обновлять прокси.&lt;/p&gt;&lt;p&gt;Эта функция может увеличить потребление ресурсов, используйте ее только если уверены, что файл будет изменяться.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="693"/>
-        <location filename="../chooserresourcewidget.ui" line="1114"/>
-        <location filename="../chooserresourcewidget.ui" line="1596"/>
-        <location filename="../chooserresourcewidget.ui" line="2048"/>
+        <location filename="../chooserresourcewidget.ui" line="699"/>
+        <location filename="../chooserresourcewidget.ui" line="1120"/>
+        <location filename="../chooserresourcewidget.ui" line="1602"/>
+        <location filename="../chooserresourcewidget.ui" line="2084"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Reload periodically&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Перегружать переоидически&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="716"/>
+        <location filename="../chooserresourcewidget.ui" line="722"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How often engine will reload file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Как часто движок будет перезагружать файл.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="719"/>
-        <location filename="../chooserresourcewidget.ui" line="1143"/>
-        <location filename="../chooserresourcewidget.ui" line="1612"/>
-        <location filename="../chooserresourcewidget.ui" line="2071"/>
+        <location filename="../chooserresourcewidget.ui" line="725"/>
+        <location filename="../chooserresourcewidget.ui" line="1149"/>
+        <location filename="../chooserresourcewidget.ui" line="1618"/>
+        <location filename="../chooserresourcewidget.ui" line="2107"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Reload interval (millisecond)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Интервал перезагрузки&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="760"/>
-        <location filename="../chooserresourcewidget.ui" line="1184"/>
+        <location filename="../chooserresourcewidget.ui" line="766"/>
+        <location filename="../chooserresourcewidget.ui" line="1190"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If data needs to be renewed in certain periods of time.&lt;/p&gt;&lt;p&gt;In this case all information about usage of lines will be cleared periodically and data could be used again.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Нужно ли обновлять информацию об использовании данных периодически.&lt;/p&gt;&lt;p&gt;Если выбрать эту опцию, данные могут быть использованы повторно через промежутки времени.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="763"/>
-        <location filename="../chooserresourcewidget.ui" line="1187"/>
-        <location filename="../chooserresourcewidget.ui" line="1666"/>
-        <location filename="../chooserresourcewidget.ui" line="2106"/>
+        <location filename="../chooserresourcewidget.ui" line="769"/>
+        <location filename="../chooserresourcewidget.ui" line="1193"/>
+        <location filename="../chooserresourcewidget.ui" line="1672"/>
+        <location filename="../chooserresourcewidget.ui" line="2142"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Renew periodically&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Обновлять периодически&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="776"/>
-        <location filename="../chooserresourcewidget.ui" line="1200"/>
-        <location filename="../chooserresourcewidget.ui" line="1686"/>
-        <location filename="../chooserresourcewidget.ui" line="2126"/>
+        <location filename="../chooserresourcewidget.ui" line="782"/>
+        <location filename="../chooserresourcewidget.ui" line="1206"/>
+        <location filename="../chooserresourcewidget.ui" line="1692"/>
+        <location filename="../chooserresourcewidget.ui" line="2162"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How often engine will renew data.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Как часто движок будет обновлять данные&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="779"/>
-        <location filename="../chooserresourcewidget.ui" line="1203"/>
-        <location filename="../chooserresourcewidget.ui" line="1689"/>
-        <location filename="../chooserresourcewidget.ui" line="2129"/>
+        <location filename="../chooserresourcewidget.ui" line="785"/>
+        <location filename="../chooserresourcewidget.ui" line="1209"/>
+        <location filename="../chooserresourcewidget.ui" line="1695"/>
+        <location filename="../chooserresourcewidget.ui" line="2165"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Renew interval&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Частота обновлений&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="841"/>
+        <location filename="../chooserresourcewidget.ui" line="847"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If engine will read from file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Будет ли движок читать из файла.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="844"/>
+        <location filename="../chooserresourcewidget.ui" line="850"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Read file&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Чтение&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1848"/>
+        <location filename="../chooserresourcewidget.ui" line="1884"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If rows will be deleted after max success usage or max fail usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1851"/>
+        <location filename="../chooserresourcewidget.ui" line="1887"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Change table&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Менять таблицу&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1871"/>
+        <location filename="../chooserresourcewidget.ui" line="1907"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If rows will be mixed after load. This options selected will result data in random order.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1874"/>
+        <location filename="../chooserresourcewidget.ui" line="1910"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Mix rows&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1894"/>
+        <location filename="../chooserresourcewidget.ui" line="1930"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Max success usage, after which row will be removed. Success definition depends on your script purpose.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1926"/>
+        <location filename="../chooserresourcewidget.ui" line="1962"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Max row usage, after which line will be removed. Fail is often page load timeout or wait timeout.&lt;/p&gt;&lt;p&gt;If you set this property low - resource will be banned quickly, otherwise engine will try a lot of time before give up with each row.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1958"/>
+        <location filename="../chooserresourcewidget.ui" line="1994"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How many times one row could be used by different threads.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1990"/>
+        <location filename="../chooserresourcewidget.ui" line="2026"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Interval between usage. How much time needed to wait to use row repeatedly.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="2045"/>
+        <location filename="../chooserresourcewidget.ui" line="2081"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If rows need to be reloaded periodically in certain periods of time.&lt;/p&gt;&lt;p&gt;This is expensive option, use it only if you sure, that table content will change.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="2068"/>
+        <location filename="../chooserresourcewidget.ui" line="2104"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How often engine will reload table content.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="2103"/>
+        <location filename="../chooserresourcewidget.ui" line="2139"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If data needs to be renewed in certain periods of time.&lt;/p&gt;&lt;p&gt;In this case all information about usage of files will be cleared periodically and rows could be used again.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1150,28 +1179,28 @@
         <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Частота обновлений(в минутах)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="824"/>
-        <location filename="../chooserresourcewidget.ui" line="1248"/>
-        <location filename="../chooserresourcewidget.ui" line="1730"/>
-        <location filename="../chooserresourcewidget.ui" line="2022"/>
+        <location filename="../chooserresourcewidget.ui" line="830"/>
+        <location filename="../chooserresourcewidget.ui" line="1254"/>
+        <location filename="../chooserresourcewidget.ui" line="1736"/>
+        <location filename="../chooserresourcewidget.ui" line="2058"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If this option is set, еngine will try to use same lines again and again. Otherwise, new line will be used on every resource request.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;При использовании жадного алгоритма, движок будет использовать одни и те же ресурсы пока не закончится число их успехов или неудач.&lt;/p&gt;&lt;p&gt;Иначе движок будет пробовать работать с разными ресурсами.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="827"/>
-        <location filename="../chooserresourcewidget.ui" line="1251"/>
-        <location filename="../chooserresourcewidget.ui" line="1733"/>
-        <location filename="../chooserresourcewidget.ui" line="2025"/>
+        <location filename="../chooserresourcewidget.ui" line="833"/>
+        <location filename="../chooserresourcewidget.ui" line="1257"/>
+        <location filename="../chooserresourcewidget.ui" line="1739"/>
+        <location filename="../chooserresourcewidget.ui" line="2061"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Greedy algorithm&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Жадный алгоритм&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="884"/>
+        <location filename="../chooserresourcewidget.ui" line="890"/>
         <source>Urls separated by | symbol</source>
         <translation>Ссылки с разделителем |</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1663"/>
+        <location filename="../chooserresourcewidget.ui" line="1669"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If data needs to be renewed in certain periods of time.&lt;/p&gt;&lt;p&gt;In this case all information about usage of files will be cleared periodically and files could be used again.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Нужно ли обновлять информацию об использовании данных периодически.&lt;/p&gt;&lt;p&gt;Если выбрать эту опцию, данные могут быть использованы повторно через промежутки времени.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -1180,77 +1209,77 @@
         <translation type="vanished">Список url, разделенных запятыми</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="994"/>
+        <location filename="../chooserresourcewidget.ui" line="1000"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Max fail usage, after which line will be removed. Fail is often page load timeout or wait timeout.&lt;/p&gt;&lt;p&gt;If you set this property low - resource will be banned quickly, otherwise engine will try a lot of time before give up with each line.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Максимальное количество ошибочных использований. Как правило это ошибки загрузки страниц или превышение периодов ожидания.&lt;/p&gt;&lt;p&gt;Если вы сделаете этот параметр достаточно маленьким - ресурс будет использован быстро, иначе движок будет повторять попытки множество раз для каждой строки.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1111"/>
+        <location filename="../chooserresourcewidget.ui" line="1117"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If url needs to be reloaded periodically in certain periods of time.&lt;/p&gt;&lt;p&gt;For example, you can load proxies from url and this option enable, engine will reload fresh proxies.&lt;/p&gt;&lt;p&gt;This is expensive option, use it only if you sure, that url content will change.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Должен ли url быть перезагружен периодически через определенные периоды времени.&lt;/p&gt;&lt;p&gt;Например, эта функция может быть использована для обновления списка прокси с веб-сервиса.&lt;/p&gt;&lt;p&gt;Эта функция может увеличить потребление ресурсов, используйте ее только если уверены, что содержимое url будет изменяться.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1140"/>
+        <location filename="../chooserresourcewidget.ui" line="1146"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How often engine will reload url.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Как часто движок будет загружать url.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1288"/>
+        <location filename="../chooserresourcewidget.ui" line="1294"/>
         <source>Directory</source>
         <translation>Папка</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1366"/>
+        <location filename="../chooserresourcewidget.ui" line="1372"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If files will be deleted after max success usage or max fail usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Будет ли  файл удален после использования максимального числа раз.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1369"/>
+        <location filename="../chooserresourcewidget.ui" line="1375"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Delete files after use&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Удалять после использования&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1389"/>
+        <location filename="../chooserresourcewidget.ui" line="1395"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If files will be mixed after load. This options selected will result data in random order.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Будут ли файлы перемешаны после загрузки.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1392"/>
+        <location filename="../chooserresourcewidget.ui" line="1398"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Mix files&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Перемешивать файлы&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1412"/>
+        <location filename="../chooserresourcewidget.ui" line="1418"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Max success usage, after which file will be removed. Success definition depends on your script purpose.&lt;/p&gt;&lt;p&gt;For example, if you register accounts and define picture, this integer will designate maximum times one picture could be in different accounts.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Максимальное количество успешных использований. Определение успешности использования зависит от назначения скрипта.&lt;/p&gt;&lt;p&gt;Например, если скрипт регистрирует аккаунты, а ресурс задает аватары, которые находятся в папке, то значение поля задает сколько раз один аватар может быть использован для разных аккаунтов.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1428"/>
+        <location filename="../chooserresourcewidget.ui" line="1434"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Max fail usage, after which line will be removed. Fail is often page load timeout or wait timeout.&lt;/p&gt;&lt;p&gt;If you set this property low - resource will be banned quickly, otherwise engine will try a lot of time before give up with each file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Максимальное количество ошибочных использований. Как правило это ошибки загрузки страниц или превышение периодов ожидания.&lt;/p&gt;&lt;p&gt;Если вы сделаете этот параметр достаточно маленьким - ресурс будет использован быстро, иначе движок будет повторять попытки множество раз для каждого файла.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1444"/>
+        <location filename="../chooserresourcewidget.ui" line="1450"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How many times one file could be used by different threads.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Сколько раз один и тот же файл может быть использовн разными потоками.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1460"/>
+        <location filename="../chooserresourcewidget.ui" line="1466"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Interval between usage. How much time needed to wait to use file repeatedly.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Интервал между использованиями. Сколько времени нужно ждать, чтобы скрипт получил доступ к файлу повторно.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1567"/>
+        <location filename="../chooserresourcewidget.ui" line="1573"/>
         <source>Wildcard</source>
         <translation>Маска</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1593"/>
+        <location filename="../chooserresourcewidget.ui" line="1599"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If folder content needs to be reloaded periodically in certain periods of time.&lt;/p&gt;&lt;p&gt;This is expensive option, use it only if you sure, that folder content will change.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Должна ли папка быть перезагружена через определенные периоды времени.&lt;/p&gt;&lt;p&gt;Эта функция может увеличить потребление ресурсов, используйте ее только если уверены, что файл будет изменяться.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.ui" line="1609"/>
+        <location filename="../chooserresourcewidget.ui" line="1615"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How often engine will reload directory content.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Как часто движок будет перезагружать папку.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -1260,48 +1289,48 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="524"/>
+        <location filename="../chooserresourcewidget.cpp" line="620"/>
         <source>No groups selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="545"/>
+        <location filename="../chooserresourcewidget.cpp" line="641"/>
         <source>Field is empty</source>
         <translation>Поле пустое</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="584"/>
+        <location filename="../chooserresourcewidget.cpp" line="680"/>
         <source>File not exists</source>
         <translation>Файл не существует</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="621"/>
+        <location filename="../chooserresourcewidget.cpp" line="717"/>
         <source>Url not valid</source>
         <translation>Ссылка не правильная</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="650"/>
+        <location filename="../chooserresourcewidget.cpp" line="746"/>
         <source>Directory not exists</source>
         <translation>Папка не существует</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="739"/>
+        <location filename="../chooserresourcewidget.cpp" line="835"/>
         <source>Open File</source>
         <translation>Открыть файл</translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="739"/>
-        <location filename="../chooserresourcewidget.cpp" line="746"/>
+        <location filename="../chooserresourcewidget.cpp" line="835"/>
+        <location filename="../chooserresourcewidget.cpp" line="842"/>
         <source>All Files (*.*)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="746"/>
+        <location filename="../chooserresourcewidget.cpp" line="842"/>
         <source>Save File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../chooserresourcewidget.cpp" line="757"/>
+        <location filename="../chooserresourcewidget.cpp" line="853"/>
         <source>Open Directory</source>
         <translation>Открыть папку</translation>
     </message>
@@ -2131,30 +2160,30 @@
         <translation>Режим конструктора</translation>
     </message>
     <message>
-        <location filename="../databaseschemaeditordialog.cpp" line="217"/>
-        <location filename="../databaseschemaeditordialog.cpp" line="282"/>
+        <location filename="../databaseschemaeditordialog.cpp" line="221"/>
+        <location filename="../databaseschemaeditordialog.cpp" line="286"/>
         <source>Move up </source>
         <translation>Переместить вверх </translation>
     </message>
     <message>
-        <location filename="../databaseschemaeditordialog.cpp" line="218"/>
-        <location filename="../databaseschemaeditordialog.cpp" line="283"/>
+        <location filename="../databaseschemaeditordialog.cpp" line="222"/>
+        <location filename="../databaseschemaeditordialog.cpp" line="287"/>
         <source>Move down </source>
         <translation>Переместить вниз </translation>
     </message>
     <message>
-        <location filename="../databaseschemaeditordialog.cpp" line="219"/>
-        <location filename="../databaseschemaeditordialog.cpp" line="285"/>
+        <location filename="../databaseschemaeditordialog.cpp" line="223"/>
+        <location filename="../databaseschemaeditordialog.cpp" line="289"/>
         <source>Erase </source>
         <translation type="unfinished">Стереть </translation>
     </message>
     <message>
-        <location filename="../databaseschemaeditordialog.cpp" line="284"/>
+        <location filename="../databaseschemaeditordialog.cpp" line="288"/>
         <source>Edit </source>
         <translation>Редактировать</translation>
     </message>
     <message>
-        <location filename="../databaseschemaeditordialog.cpp" line="330"/>
+        <location filename="../databaseschemaeditordialog.cpp" line="334"/>
         <source>Are you sure, that you want to delete table?</source>
         <translation>Вы уверены, что хотите удалить таблицу?</translation>
     </message>
@@ -2257,31 +2286,31 @@
     </message>
     <message>
         <location filename="../designresourcewidget.ui" line="177"/>
-        <location filename="../designresourcewidget.ui" line="529"/>
+        <location filename="../designresourcewidget.ui" line="497"/>
         <source>FixedString</source>
         <translation>Строка</translation>
     </message>
     <message>
         <location filename="../designresourcewidget.ui" line="186"/>
-        <location filename="../designresourcewidget.ui" line="512"/>
+        <location filename="../designresourcewidget.ui" line="480"/>
         <source>FixedInteger</source>
         <translation>Число</translation>
     </message>
     <message>
         <location filename="../designresourcewidget.ui" line="195"/>
-        <location filename="../designresourcewidget.ui" line="556"/>
+        <location filename="../designresourcewidget.ui" line="524"/>
         <source>RandomString</source>
         <translation>Генератор строк</translation>
     </message>
     <message>
         <location filename="../designresourcewidget.ui" line="204"/>
-        <location filename="../designresourcewidget.ui" line="542"/>
+        <location filename="../designresourcewidget.ui" line="510"/>
         <source>RandomInteger</source>
         <translation>Случайное число</translation>
     </message>
     <message>
         <location filename="../designresourcewidget.ui" line="213"/>
-        <location filename="../designresourcewidget.ui" line="563"/>
+        <location filename="../designresourcewidget.ui" line="531"/>
         <source>Select</source>
         <translation>Список</translation>
     </message>
@@ -2302,77 +2331,74 @@
     </message>
     <message>
         <location filename="../designresourcewidget.ui" line="249"/>
-        <location filename="../designresourcewidget.ui" line="570"/>
+        <location filename="../designresourcewidget.ui" line="538"/>
         <source>Database</source>
         <translation>База</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="302"/>
         <source>Move Up</source>
-        <translation>Вверх</translation>
+        <translation type="vanished">Вверх</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="313"/>
         <source>Move Down</source>
-        <translation>Вниз</translation>
+        <translation type="vanished">Вниз</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="324"/>
+        <location filename="../designresourcewidget.ui" line="302"/>
         <source>Show more</source>
         <translation>Больше</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="341"/>
+        <location filename="../designresourcewidget.ui" line="319"/>
         <source>Enabled to user</source>
         <translation>Доступно</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="351"/>
+        <location filename="../designresourcewidget.ui" line="329"/>
         <source>Visible to user</source>
         <translation>Видимость</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="361"/>
+        <location filename="../designresourcewidget.ui" line="339"/>
         <source>Is Advanced</source>
         <translation>Продвинутые</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="372"/>
         <source>Section Name</source>
-        <translation>Название секции</translation>
+        <translation type="vanished">Название секции</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="399"/>
+        <location filename="../designresourcewidget.ui" line="367"/>
         <source>Visible if:</source>
         <translation>Видно если:</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="416"/>
+        <location filename="../designresourcewidget.ui" line="384"/>
         <source>Variable</source>
         <translation>Переменная</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="449"/>
+        <location filename="../designresourcewidget.ui" line="417"/>
         <source>Contains</source>
         <translation>Содержит</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="485"/>
+        <location filename="../designresourcewidget.ui" line="453"/>
         <source>Choosable Types:</source>
         <translation>Доступные типы данных:</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="522"/>
+        <location filename="../designresourcewidget.ui" line="490"/>
         <source>File</source>
         <translation>Из Файла</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="549"/>
+        <location filename="../designresourcewidget.ui" line="517"/>
         <source>Url</source>
         <translation>Из Ссылки</translation>
     </message>
     <message>
-        <location filename="../designresourcewidget.ui" line="505"/>
+        <location filename="../designresourcewidget.ui" line="473"/>
         <source>Directory</source>
         <translation>Файлы из папки</translation>
     </message>
@@ -2636,6 +2662,475 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>ResourceWizard</name>
+    <message>
+        <location filename="../resourcewizard.ui" line="14"/>
+        <source>Create Resource</source>
+        <translation>Создать ресурс</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="30"/>
+        <location filename="../resourcewizard.ui" line="45"/>
+        <source>Name.</source>
+        <translation>Имя.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="33"/>
+        <source>Select resource internal name and description.</source>
+        <translation>Выберите идентификатор и описание ресурса.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="55"/>
+        <source>This is internal resource name used inside script.</source>
+        <translation>Это внутреннее имя ресурса, используемое внутри скрипта.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="81"/>
+        <source>Description En.</source>
+        <translation>Описание En.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="91"/>
+        <source>Description for English speaking users.</source>
+        <translation>Описание для англоговорящих пользователей.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="117"/>
+        <source>Description Ru.</source>
+        <translation>Описание Ru.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="127"/>
+        <source>Description for Russian speaking users.</source>
+        <translation>Описание для русскоязычных пользователей.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="144"/>
+        <source>Type.</source>
+        <translation>Тип.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="147"/>
+        <source>Select resource type.</source>
+        <translation>Выберите тип ресурса.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="153"/>
+        <source>FixedString</source>
+        <translation>Строка</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="172"/>
+        <source>User sets constant string value.</source>
+        <translation>Пользователь задает строку, она не изменяется на протяжении работы скрипта.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="182"/>
+        <source>FixedInteger</source>
+        <translation>Число</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="198"/>
+        <source>User sets constant integer value.</source>
+        <translation>Пользователь задает число, оно не изменяется на протяжении работы скрипта.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="208"/>
+        <source>RandomString</source>
+        <translation>Генератор строк</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="224"/>
+        <source>String is generated for every request. Mask can be used.</source>
+        <translation>Пользователь задает маску, по которой каждый раз будет генерироваться новая строка.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="234"/>
+        <source>RandomInteger</source>
+        <translation>Случайное число</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="250"/>
+        <source>Integer between minimum and maximum values is generated for every request.</source>
+        <translation>Случайное число между будет сгенерировано во время каждого запроса. Минимум и максимум задает пользователь.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="260"/>
+        <source>Select</source>
+        <translation>Список</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="276"/>
+        <source>User can select one of predefined value.</source>
+        <translation>Пользователь может выбрать одно из заданых значений.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="286"/>
+        <source>LinesFromFile</source>
+        <translation>Из Файла</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="302"/>
+        <source>User sets file, files or directory, where files located. Each line from these files will be used as data. Engine can reload files during script execution.</source>
+        <translation>Пользователь задает файлы или папку с файлами. Каждая строка из файла будет использована как данные. Движок может перегружать файлы во время работы скрипта.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="312"/>
+        <source>LinesFromUrl</source>
+        <translation>Из Ссылки</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="328"/>
+        <source>User sets url, or list of urls. Each line from these urls will be used as data. Engine can reload urls during script execution.</source>
+        <translation>Пользователь задает url. Каждая строка будет использована как данные. Движок может перегружать url во время работы скрипта.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="338"/>
+        <source>FilesFromDirectory</source>
+        <translation>Файлы из папки</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="354"/>
+        <source>User sets directory, which holds files. Each filename will be used as data. Typically used to configure folder with upload images.</source>
+        <translation>Пользователь указывает папку, из которой берутся файлы.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="364"/>
+        <source>Database</source>
+        <translation>База</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="380"/>
+        <source>Data from database. Can be parsed with parse line action.</source>
+        <translation>Строчки из базы данных. Строка может быть разобрана с помощью действия парсить строку.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="391"/>
+        <source>String properties.</source>
+        <translation>Параметры строки.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="394"/>
+        <source>Select default value and can the string be empty?</source>
+        <translation>Выберите значение по умолчанию, и может ли быть строка пустой.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="413"/>
+        <location filename="../resourcewizard.ui" line="1160"/>
+        <source>Default value</source>
+        <translation>Значение по умолчанию</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="426"/>
+        <location filename="../resourcewizard.ui" line="1005"/>
+        <source>Leave blank to let user fill it.</source>
+        <translation>Оставьте поле пустым, чтобы пользователь сам мог его заполнить.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="449"/>
+        <source>String must be not empty</source>
+        <translation>Строка не должна быть пустой</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="470"/>
+        <source>Random number.</source>
+        <translation>Случайное число.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="473"/>
+        <source>Set min and max values and default values.</source>
+        <translation>Задайте минимальные и максимальные значения и значения по умолчанию.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="495"/>
+        <source>Default value minimum</source>
+        <translation>Минимальное значение по умолчанию</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="512"/>
+        <source>Default value maximum</source>
+        <translation>Максимальное значение по умолчанию</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="545"/>
+        <location filename="../resourcewizard.ui" line="651"/>
+        <source>Min Value</source>
+        <translation>Минимальное значение</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="562"/>
+        <location filename="../resourcewizard.ui" line="684"/>
+        <source>Max Value</source>
+        <translation>Максимальное значение</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="596"/>
+        <source>Number.</source>
+        <translation>Число.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="599"/>
+        <source>Set min and max values and default value.</source>
+        <translation>Задайте минимальные и максимальные значения и значение по умолчанию.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="618"/>
+        <source>Default</source>
+        <translation>По умолчанию</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="718"/>
+        <source>Read/Write Mode.</source>
+        <translation>Режим чтения/записи.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="721"/>
+        <source>Set read/write mode.</source>
+        <translation>Выберите режим чтения/записи.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="743"/>
+        <source>Only read.</source>
+        <translation>Только чтение.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="753"/>
+        <source>Read and delete lines after use.</source>
+        <translation>Чтение и удаление строк после использования.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="763"/>
+        <source>Lines will be deleted from file only after some time or after script restart.</source>
+        <translation>Строки будут удалены из файла только через некоторое время или после перезапуска скрипта.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="770"/>
+        <source>Only write.</source>
+        <translation>Только запись.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="818"/>
+        <source>Mix lines.</source>
+        <translation>Мешать строки.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="839"/>
+        <source>Use mode.</source>
+        <translation>Режим использования.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="842"/>
+        <source>Set use mode.</source>
+        <translation>Выберите режим использования.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="867"/>
+        <source>Use each line one time.</source>
+        <translation>Используйте каждую строку один раз.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="880"/>
+        <source>Good for accounts, phone numbers.</source>
+        <translation>Подходит для аккаунтов.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="890"/>
+        <source>Use each line several times.</source>
+        <translation>Используйте каждую строку несколько раз.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="900"/>
+        <source>Good for proxies.</source>
+        <translation>Подходит для прокси.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="910"/>
+        <source>Use each line any number of times.</source>
+        <translation>Используйте каждую строку любое число раз.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="920"/>
+        <source>Good for user agent, accept language.</source>
+        <translation>Подходит для юзер агентов.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="941"/>
+        <source>Random string.</source>
+        <translation>Случайная строка.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="944"/>
+        <source>Fill default value or leave blank.</source>
+        <translation>Задайте значение по умолчанию или оставьте поле пустым.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="963"/>
+        <source>Default value.</source>
+        <translation>Значение по умолчанию.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1026"/>
+        <location filename="../resourcewizard.ui" line="1029"/>
+        <source>Select constructor.</source>
+        <translation>Список.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1043"/>
+        <source>Type:</source>
+        <translation>Тип:</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1066"/>
+        <source>Combo</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1071"/>
+        <source>Radio</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1076"/>
+        <source>Check</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1081"/>
+        <source>DragAndDrop</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1198"/>
+        <source>Visibility.</source>
+        <translation>Видимость.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1201"/>
+        <source>Set visibility depending on other resource of type &quot;Select&quot;.</source>
+        <translation>Установить видимость в зависимости от другого ресурса типа Список.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1220"/>
+        <source>Other resource name.</source>
+        <translation>Имя другого ресурса.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1246"/>
+        <source>Other resource value.</source>
+        <translation>Значение другого ресурса.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1270"/>
+        <source>Tab.</source>
+        <translation>Вкладки.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1273"/>
+        <source>Move resource on tab.</source>
+        <translation>Переместить ресурс на вкладку.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1292"/>
+        <source>Tab name En.</source>
+        <translation>Название вкладки En.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1302"/>
+        <source>Tab name for English speaking users.</source>
+        <translation>Название вкладки для англоговорящих пользователей.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1328"/>
+        <source>Tab name Ru.</source>
+        <translation>Название вкладки Ru.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1338"/>
+        <source>Tab name for Russian speaking users.</source>
+        <translation>Имя вкладки для русскоязычных пользователей.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1362"/>
+        <source>Done.</source>
+        <translation>Готово.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1365"/>
+        <source>Resource have been created.</source>
+        <translation>Ресурс создан.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1387"/>
+        <source>You have created new resource!</source>
+        <translation>Вы создали новый ресурс!</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1424"/>
+        <source>Finish</source>
+        <translation>Закрыть</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1431"/>
+        <source>this dialog, or</source>
+        <translation>этот диалог, или</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1484"/>
+        <source>Use </source>
+        <translation>Используйте </translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1503"/>
+        <source>Move resource to tab</source>
+        <translation>Поместить ресурс на вкладку</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1510"/>
+        <source>if you want to make resource appear in certain tab.</source>
+        <translation>если вы хотите, чтобы ресурс появился на определенной вкладке.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1550"/>
+        <source>Use</source>
+        <translation type="unfinished">Используйте </translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1569"/>
+        <source>Set visible if condition</source>
+        <translation>Установить условие видимости</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.ui" line="1576"/>
+        <source>if you want to change visibility depending on other resource.</source>
+        <translation>eсли вы хотите задать видимость в зависимости от значения другого ресурса.</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.cpp" line="15"/>
+        <source>Skip</source>
+        <translation>Пропустить</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.cpp" line="43"/>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.cpp" line="44"/>
+        <source> Next &gt;</source>
+        <translation> Вперед &gt;</translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.cpp" line="45"/>
+        <source>&lt; Back </source>
+        <translation>&lt; Назад </translation>
+    </message>
+    <message>
+        <location filename="../resourcewizard.cpp" line="75"/>
+        <source>Are you sure, all changes will be lost?</source>
+        <translation>Вы уверены, все изменения будут потеряны?</translation>
+    </message>
+</context>
+<context>
     <name>ScriptLanguageChooserDialog</name>
     <message>
         <location filename="../scriptlanguagechooserdialog.ui" line="14"/>
@@ -2670,6 +3165,24 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>TabInputDialog</name>
+    <message>
+        <location filename="../tabinputdialog.ui" line="14"/>
+        <source>Set tab name.</source>
+        <translation>Задайте название вкладки.</translation>
+    </message>
+    <message>
+        <location filename="../tabinputdialog.ui" line="20"/>
+        <source>Tab name en.</source>
+        <translation>Название вкладки en.</translation>
+    </message>
+    <message>
+        <location filename="../tabinputdialog.ui" line="30"/>
+        <source>Tab name ru.</source>
+        <translation>Название вкладки ru.</translation>
+    </message>
+</context>
+<context>
     <name>TextFinderWidget</name>
     <message>
         <location filename="../textfinderwidget.ui" line="14"/>
@@ -2678,72 +3191,133 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>UIConstructor</name>
+    <message>
+        <location filename="../uiconstructor.ui" line="20"/>
+        <source>Form</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../uiconstructor.ui" line="80"/>
+        <source>Drag resource here to create a new tab</source>
+        <translation>Перетащите ресурс сюда, чтобы создать новую вкладку</translation>
+    </message>
+    <message>
+        <location filename="../uiconstructor.cpp" line="49"/>
+        <location filename="../uiconstructor.cpp" line="114"/>
+        <location filename="../uiconstructor.cpp" line="170"/>
+        <location filename="../uiconstructor.cpp" line="185"/>
+        <location filename="../uiconstructor.cpp" line="201"/>
+        <location filename="../uiconstructor.cpp" line="223"/>
+        <location filename="../uiconstructor.cpp" line="276"/>
+        <location filename="../uiconstructor.cpp" line="301"/>
+        <location filename="../uiconstructor.cpp" line="334"/>
+        <location filename="../uiconstructor.cpp" line="416"/>
+        <location filename="../uiconstructor.cpp" line="592"/>
+        <location filename="../uiconstructor.cpp" line="596"/>
+        <location filename="../uiconstructor.cpp" line="630"/>
+        <location filename="../uiconstructor.cpp" line="754"/>
+        <location filename="../uiconstructor.cpp" line="798"/>
+        <source>&lt;No Tab&gt;</source>
+        <translation>&lt;Пустая вкладка&gt;</translation>
+    </message>
+    <message>
+        <location filename="../uiconstructor.cpp" line="240"/>
+        <source>This tab is already exists</source>
+        <translation>Эта вкладка уже существует</translation>
+    </message>
+    <message>
+        <location filename="../uiconstructor.cpp" line="257"/>
+        <location filename="../uiconstructor.cpp" line="370"/>
+        <source>Edit</source>
+        <translation>Редактировать</translation>
+    </message>
+    <message>
+        <location filename="../uiconstructor.cpp" line="258"/>
+        <location filename="../uiconstructor.cpp" line="371"/>
+        <source>Delete</source>
+        <translation>Удалить</translation>
+    </message>
+    <message>
+        <location filename="../uiconstructor.cpp" line="270"/>
+        <source>Are you sure, that you want to delete tab?</source>
+        <translation>Вы уверены, что хотите удалить вкладку?</translation>
+    </message>
+    <message>
+        <location filename="../uiconstructor.cpp" line="389"/>
+        <source>Are you sure, that you want to delete this resource?</source>
+        <translation>Вы уверены, что хотите удалить этот ресурс?</translation>
+    </message>
+    <message>
+        <location filename="../uiconstructor.cpp" line="448"/>
+        <source>Edit resource</source>
+        <translation>Редактировать ресурс</translation>
+    </message>
+</context>
+<context>
     <name>UserResourceWidget</name>
     <message>
         <location filename="../userresourcewidget.ui" line="26"/>
-        <location filename="../userresourcewidget.ui" line="53"/>
         <source>GroupBox</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../userresourcewidget.ui" line="88"/>
-        <location filename="../userresourcewidget.ui" line="305"/>
-        <location filename="../userresourcewidget.ui" line="327"/>
+        <location filename="../userresourcewidget.ui" line="82"/>
+        <location filename="../userresourcewidget.ui" line="288"/>
+        <location filename="../userresourcewidget.ui" line="310"/>
         <source>TextLabel</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../userresourcewidget.ui" line="185"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Type sets how engine would load data. Possible values are:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;FixedString&lt;/span&gt; - User sets constant string value.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;FixedInteger&lt;/span&gt; - User sets constant integer value.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RandomString&lt;/span&gt; - String is generated for every request. Mask can be used. For example mask &lt;span style=&quot; font-style:italic;&quot;&gt;&amp;lt;AnyLetter&amp;gt;&amp;lt;AnyLetter&amp;gt;&amp;lt;AnyLetter&amp;gt;&lt;/span&gt; will generate three random letters every time.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RandomInteger&lt;/span&gt; - Integer between minimum and maximum values is generated for every request.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Select&lt;/span&gt; - User can select one of predefined value.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;LinesFromFile&lt;/span&gt; - User sets file, files or directory, where files located. Each line from these files will be used as data. Engine can reload files during script execution.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;LinesFromUrl&lt;/span&gt; - User sets url, or list of urls. Each line from these urls will be used as data. Engine can reload urls during script execution.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;FilesFromDirectory&lt;/span&gt; - User sets directory, which holds files. Each filename will be used as data. Typically used to configure folder with upload images.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Типы указывают как движок будет получать данные. Возможные значения:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Строка&lt;/span&gt; - Пользователь задает строку, она не изменяется на протяжении работы скрипта.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Число&lt;/span&gt; - Пользователь задает число, оно не изменяется на протяжении работы скрипта.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Генератор строк&lt;/span&gt; - Пользователь задает маску, по которой каждый раз будет генерироваться новая строка. Например, маска &lt;span style=&quot; font-style:italic;&quot;&gt;&amp;lt;AnyLetter&amp;gt;&amp;lt;AnyLetter&amp;gt;&amp;lt;AnyLetter&amp;gt;&lt;/span&gt; будет генерировать 3 случайных буквы каждый раз.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Случайное число&lt;/span&gt; - Случайное число между будет сгенерировано во время каждого запроса. Минимум и максимум задает пользователь.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Список&lt;/span&gt; - Пользователь может выбрать одно из заданых значений.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Из Файла&lt;/span&gt; - Пользователь задает файлы или папку с файлами. Каждая строка из файла будет использована как данные. Движок может перегружать файлы во время работы скрипта.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Из Ссылки&lt;/span&gt; - Пользователь задает url. Каждая строка будет использована как данные. Движок может перегружать url во время работы скрипта.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Файлы из папки&lt;/span&gt; - Пользователь указывает папку, из которой берутся файлы. Имя каждого файла будет использовано как данные. Чаще всего используется для загрузки картинок.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Типы указывают как движок будет получать данные. Возможные значения:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Строка&lt;/span&gt; - Пользователь задает строку, она не изменяется на протяжении работы скрипта.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Число&lt;/span&gt; - Пользователь задает число, оно не изменяется на протяжении работы скрипта.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Генератор строк&lt;/span&gt; - Пользователь задает маску, по которой каждый раз будет генерироваться новая строка. Например, маска &lt;span style=&quot; font-style:italic;&quot;&gt;&amp;lt;AnyLetter&amp;gt;&amp;lt;AnyLetter&amp;gt;&amp;lt;AnyLetter&amp;gt;&lt;/span&gt; будет генерировать 3 случайных буквы каждый раз.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Случайное число&lt;/span&gt; - Случайное число между будет сгенерировано во время каждого запроса. Минимум и максимум задает пользователь.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Список&lt;/span&gt; - Пользователь может выбрать одно из заданых значений.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Из Файла&lt;/span&gt; - Пользователь задает файлы или папку с файлами. Каждая строка из файла будет использована как данные. Движок может перегружать файлы во время работы скрипта.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Из Ссылки&lt;/span&gt; - Пользователь задает url. Каждая строка будет использована как данные. Движок может перегружать url во время работы скрипта.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Файлы из папки&lt;/span&gt; - Пользователь указывает папку, из которой берутся файлы. Имя каждого файла будет использовано как данные. Чаще всего используется для загрузки картинок.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../userresourcewidget.ui" line="188"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Type&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Тип&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/engine/images/info.png&quot;/&gt; Тип&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../userresourcewidget.ui" line="242"/>
+        <location filename="../userresourcewidget.ui" line="225"/>
         <source>FixedString</source>
         <translation>Строка</translation>
     </message>
     <message>
-        <location filename="../userresourcewidget.ui" line="247"/>
+        <location filename="../userresourcewidget.ui" line="230"/>
         <source>FixedInteger</source>
         <translation>Число</translation>
     </message>
     <message>
-        <location filename="../userresourcewidget.ui" line="252"/>
+        <location filename="../userresourcewidget.ui" line="235"/>
         <source>RandomString</source>
         <translation>Генератор строк</translation>
     </message>
     <message>
-        <location filename="../userresourcewidget.ui" line="257"/>
+        <location filename="../userresourcewidget.ui" line="240"/>
         <source>RandomInteger</source>
         <translation>Случайное число</translation>
     </message>
     <message>
-        <location filename="../userresourcewidget.ui" line="262"/>
+        <location filename="../userresourcewidget.ui" line="245"/>
         <source>Select</source>
         <translation>Список</translation>
     </message>
     <message>
-        <location filename="../userresourcewidget.ui" line="267"/>
+        <location filename="../userresourcewidget.ui" line="250"/>
         <source>LinesFromFile</source>
         <translation>Из Файла</translation>
     </message>
     <message>
-        <location filename="../userresourcewidget.ui" line="272"/>
+        <location filename="../userresourcewidget.ui" line="255"/>
         <source>LinesFromUrl</source>
         <translation>Из Ссылки</translation>
     </message>
     <message>
-        <location filename="../userresourcewidget.ui" line="277"/>
+        <location filename="../userresourcewidget.ui" line="260"/>
         <source>FilesFromDirectory</source>
         <translation>Файлы из папки</translation>
     </message>
     <message>
-        <location filename="../userresourcewidget.ui" line="282"/>
+        <location filename="../userresourcewidget.ui" line="265"/>
         <source>Database</source>
         <translation>База</translation>
     </message>

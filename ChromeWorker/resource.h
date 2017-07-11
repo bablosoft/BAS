@@ -16,6 +16,11 @@
 #define IDB_MAXIMIZE 513
 #define IDB_SETTINGS 514
 #define IDB_HOLD90 515
+#define IDB_UPUP 516
+#define IDB_DOWNDOWN 517
+#define IDB_LEFTLEFT 518
+#define IDB_RIGHTRIGHT 519
+
 
 
 

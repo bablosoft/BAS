@@ -8,6 +8,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QMessageBox>
+#include <QCompleter>
 #include "classcomboboxfillpictures.h"
 #include "multiselect.h"
 #include "every_cpp.h"
@@ -27,8 +28,13 @@ namespace BrowserAutomationStudioFramework
         DescriptionTextBox->setMinimumWidth(175);
         SectionTextBox->setMaximumWidth(175);
         SectionTextBox->setMinimumWidth(175);
+        SectionTextBox->setVisible(false);
         ui->descriptionLayout->addWidget(DescriptionTextBox);
         ui->sectionNameLayout->addWidget(SectionTextBox);
+
+        ui->lineEdit_VisibilityVariable->installEventFilter(this);
+        ui->lineEdit_VisibilityContains->installEventFilter(this);
+        SectionTextBox->GetEdit()->installEventFilter(this);
         connect(ui->comboBox, SIGNAL(activated(int)), ui->ChooserWidget, SLOT(setCurrentIndex(int)));
         connect(ui->comboBox, SIGNAL(activated(int)), ui->MoreChooserWidget, SLOT(setCurrentIndex(int)));
         connect(DescriptionTextBox, SIGNAL(textChanged(QString)), this, SLOT(DescriptionChanged(QString)));
@@ -73,6 +79,176 @@ namespace BrowserAutomationStudioFramework
         ui->ChooserWidget->SetShowValidation(false);
 
         connect(ui->lineEdit,SIGNAL(textChanged(QString)), this, SIGNAL(VariableNameChanged(QString)));
+
+        TooltipUserFocus = true;
+        ShowTooltip = false;
+        TooltipUserFocus2 = true;
+        ShowTooltip2 = false;
+        TooltipUserFocus3 = true;
+        ShowTooltip3 = false;
+    }
+
+    bool DesignResourceWidget::eventFilter(QObject *target, QEvent *event)
+    {
+        if (target == SectionTextBox->GetEdit())
+        {
+            if (event->type() == QEvent::FocusIn)
+            {
+                if(TooltipUserFocus)
+                {
+                    TooltipUserFocus = false;
+                    ShowTooltip = true;
+                }else
+                {
+                    TooltipUserFocus = true;
+                }
+
+
+            }else if (event->type() == QEvent::MouseButtonRelease)
+            {
+                if(ShowTooltip)
+                {
+                    ShowTooltip = false;
+                    QStringList List;
+
+                    QList<QGroupBox*> Widgets = parentWidget()->parentWidget()->parentWidget()->parentWidget()->findChildren<QGroupBox*>("DesignResourceWidget");
+                    for(QGroupBox* group:Widgets)
+                    {
+                        if(group!=this)
+                        {
+                            DesignResourceWidget *w = qobject_cast<DesignResourceWidget *>(group);
+                            if(w)
+                            {
+                                List.append(w->GetSectionName().GetTranslation("en") + QString("|") + w->GetSectionName().GetTranslation("ru"));
+                            }
+                        }
+                    }
+                    List.removeDuplicates();
+
+                    if(!List.empty())
+                    {
+                        QCompleter *completer = new QCompleter(List, SectionTextBox->GetEdit());
+                        connect(completer,SIGNAL(activated(QString)),this,SLOT(SetSectionName(QString)));
+                        completer->setCaseSensitivity(Qt::CaseInsensitive);
+                        completer->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+
+                        SectionTextBox->GetEdit()->setCompleter(completer);
+                        SectionTextBox->GetEdit()->completer()->complete();
+                    }
+                }
+            }
+        }
+
+        if (target == ui->lineEdit_VisibilityVariable)
+        {
+            if (event->type() == QEvent::FocusIn)
+            {
+                if(TooltipUserFocus2)
+                {
+                    TooltipUserFocus2 = false;
+                    ShowTooltip2 = true;
+                }else
+                {
+                    TooltipUserFocus2 = true;
+                }
+
+
+            }else if (event->type() == QEvent::MouseButtonRelease)
+            {
+                if(ShowTooltip2)
+                {
+                    ShowTooltip2 = false;
+                    QStringList List;
+
+                    QList<QGroupBox*> Widgets = parentWidget()->parentWidget()->parentWidget()->parentWidget()->findChildren<QGroupBox*>("DesignResourceWidget");
+                    for(QGroupBox* group:Widgets)
+                    {
+                        if(group!=this)
+                        {
+                            DesignResourceWidget *w = qobject_cast<DesignResourceWidget *>(group);
+                            if(w)
+                            {
+                                if(w->GetTypeId() == "Select")
+                                    List.append(w->GetVariableName());
+                            }
+                        }
+                    }
+                    List.removeDuplicates();
+
+                    if(!List.empty())
+                    {
+                        QCompleter *completer = new QCompleter(List, ui->lineEdit_VisibilityVariable);
+                        completer->setCaseSensitivity(Qt::CaseInsensitive);
+                        completer->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+
+                        ui->lineEdit_VisibilityVariable->setCompleter(completer);
+                        ui->lineEdit_VisibilityVariable->completer()->complete();
+                    }
+                }
+            }
+        }
+
+
+        if (target == ui->lineEdit_VisibilityContains)
+        {
+            if (event->type() == QEvent::FocusIn)
+            {
+                if(TooltipUserFocus3)
+                {
+                    TooltipUserFocus3 = false;
+                    ShowTooltip3 = true;
+                }else
+                {
+                    TooltipUserFocus3 = true;
+                }
+
+
+            }else if (event->type() == QEvent::MouseButtonRelease)
+            {
+                if(ShowTooltip3)
+                {
+                    ShowTooltip3 = false;
+                    QStringList List;
+
+                    QList<QGroupBox*> Widgets = parentWidget()->parentWidget()->parentWidget()->parentWidget()->findChildren<QGroupBox*>("DesignResourceWidget");
+                    for(QGroupBox* group:Widgets)
+                    {
+                        if(group!=this)
+                        {
+                            DesignResourceWidget *w = qobject_cast<DesignResourceWidget *>(group);
+                            if(w)
+                            {
+                                if(w->GetVariableName() == GetVisibilityConditionVariable())
+                                {
+                                    QPlainTextEdit * SelectValuesEdit = w->findChild<QPlainTextEdit *>("SelectValuesEdit");
+                                    if(SelectValuesEdit)
+                                    {
+                                        List = SelectValuesEdit->toPlainText().split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
+                                        break;
+                                    }
+
+                                }
+
+                            }
+                        }
+                    }
+                    List.removeDuplicates();
+
+                    if(!List.empty())
+                    {
+                        QCompleter *completer = new QCompleter(List, ui->lineEdit_VisibilityContains);
+                        completer->setCaseSensitivity(Qt::CaseInsensitive);
+                        completer->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+
+                        ui->lineEdit_VisibilityContains->setCompleter(completer);
+                        ui->lineEdit_VisibilityContains->completer()->complete();
+                    }
+                }
+            }
+        }
+
+
+        return QWidget::eventFilter(target, event);
     }
 
     void DesignResourceWidget::GoingToDelete()
@@ -247,6 +423,20 @@ namespace BrowserAutomationStudioFramework
     void DesignResourceWidget::SetSectionName(const MultiLanguageString& SectionName)
     {
         SectionTextBox->SetText(SectionName);
+    }
+
+    void DesignResourceWidget::SetSectionName(const QString& SectionName)
+    {
+        MultiLanguageString res;
+        QStringList list = SectionName.split("|");
+        res.SetTranslation("en",list.first());
+        res.SetTranslation("ru",list.last());
+        SectionTextBox->SetText(res);
+        if(SectionTextBox->GetEdit()->completer())
+        {
+            SectionTextBox->GetEdit()->completer()->disconnect();
+            SectionTextBox->GetEdit()->completer()->deleteLater();
+        }
     }
 
     bool DesignResourceWidget::GetIsAdvanced()
@@ -432,7 +622,6 @@ namespace BrowserAutomationStudioFramework
         ui->MoreChooserWidget->setVisible(visibility);
         ui->checkBox_2->setVisible(visibility);
         ui->checkBox_RandomInteger->setVisible(visibility);
-        SectionTextBox->setVisible(visibility);
         ui->checkBox_RandomString->setVisible(visibility);
         ui->checkBox_Directory->setVisible(visibility);
         ui->checkBox_File->setVisible(visibility);
@@ -441,7 +630,6 @@ namespace BrowserAutomationStudioFramework
         ui->checkBox_Database->setVisible(visibility);
         ui->checkBox->setVisible(visibility);
         ui->label_4->setVisible(visibility);
-        ui->label_5->setVisible(visibility);
         ui->checkBox_FixedInteger->setVisible(visibility);
         ui->label_8->setVisible(visibility);
         ui->label_7->setVisible(visibility);
@@ -510,17 +698,7 @@ namespace BrowserAutomationStudioFramework
         return -1;
     }
 
-    void DesignResourceWidget::on_ButtonUp_clicked()
-    {
 
-
-        emit Up(FindMyIndex());
-    }
-
-    void DesignResourceWidget::on_ButtonDown_clicked()
-    {
-        emit Down(FindMyIndex());
-    }
 
     void DesignResourceWidget::changeEvent(QEvent *e)
     {
@@ -538,6 +716,37 @@ namespace BrowserAutomationStudioFramework
             break;
         }
     }
+
+
+}
+
+void BrowserAutomationStudioFramework::DesignResourceWidget::on_lineEdit_textChanged(const QString &arg1)
+{
+    QString Compare = OldName;
+    OldName = arg1;
+    MultiLanguageString res;
+    QHashIterator<QString,QString> i(DescriptionTextBox->GetText().GetData());
+    while (i.hasNext())
+    {
+        i.next();
+        if(i.key() == "en")
+        {
+            if(i.value() != "PLEASE FILL DESCRIPTION" && i.value() != Compare)
+            {
+               return;
+            }
+            res.SetTranslation("en",arg1);
+        }else if(i.key() == "ru")
+        {
+            if(i.value() != QString::fromStdWString(std::wstring(L"\x0412\x0412\x0415\x0414\x0418\x0422\x0415\x0020\x041E\x041F\x0418\x0421\x0410\x041D\x0418\x0415")) && i.value() != Compare)
+            {
+               return;
+            }
+            res.SetTranslation("ru",arg1);
+        }
+    }
+
+    DescriptionTextBox->SetText(res);
 
 
 }

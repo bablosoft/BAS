@@ -105,6 +105,8 @@ bool FixPageContent::FixCharset(const std::string& ContentTypeHeader, std::strin
     //static std::regex FormRegexp1("\\<\\s*[Ff][Oo][Rr][Mm]\\s+(\\w+\\=\\\")");
     //static std::regex FormRegexp2("\\<\\s*[Ff][Oo][Rr][Mm]\\s+(\\w+\\=\\\\\\\")");
     static std::regex FormRegexp3("\\<\\s*[Ff][Oo][Rr][Mm]\\s+");
+    static std::regex CSPRegexp("[cC][oO][nN][tT][eE][nN][tT]\\-[sS][eE][cC][uU][rR][iI][tT][yY]\\-[pP][oO][lL][iI][cC][yY]");
+    static std::regex IntegrityRegexp("integrity\\s*\\=\\s*[\\'\\\"]?([^\\'\\\"\\/]*)[\\'\\\"]?");
 
     //Find charset by content if not present in header
     if(Mime == "text/html")
@@ -217,6 +219,13 @@ bool FixPageContent::FixCharset(const std::string& ContentTypeHeader, std::strin
                 WORKER_LOG(std::string(std::string("[") + Url + std::string("]") + "Error during meta replace #3"));
             }
 
+            try{
+                PageContent = std::regex_replace (PageContent,CSPRegexp,"");
+            }catch(...)
+            {
+                WORKER_LOG(std::string(std::string("[") + Url + std::string("]") + "Error during csp replace"));
+            }
+
             if(!Charset.empty() && !IsUtf8(Charset))
             {
                 WORKER_LOG(std::string(std::string("[") + Url + std::string("]") + "Fix charset111" + PageContent));
@@ -231,6 +240,15 @@ bool FixPageContent::FixCharset(const std::string& ContentTypeHeader, std::strin
                     WORKER_LOG(std::string(std::string("[") + Url + std::string("]") + "Error form accept charset replace"));
                 }
             }
+
+            try{
+                PageContent = std::regex_replace (PageContent,IntegrityRegexp,"");
+            }catch(...)
+            {
+                WORKER_LOG(std::string(std::string("[") + Url + std::string("]") + "Error during integrity replace"));
+            }
+
+
 
 
         }

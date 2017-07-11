@@ -13,6 +13,7 @@ public:
     {
         std::string LastResultCodeDiff;
         std::string LastResultVariables;
+        std::string LastResultGlobalVariables;
         std::string LastResultFunctions;
         std::string LastResultResources;
         std::string LastResultLabels;
@@ -36,11 +37,13 @@ private:
     std::mutex mut_editstart;
     std::mutex mut_editend;
     std::mutex mut_runfunction;
+    std::mutex mut_runfunctionseveralthreads;
 
     bool IsThreadNumberEditStart;
     bool IsSuccessNumberEditStart;
     bool IsFailNumberEditStart;
     bool IsRunFunctionStart;
+    bool IsRunFunctionSeveralThreadsStart;
 
 
     std::mutex mut_threadnumbereditstart;
@@ -72,6 +75,7 @@ public:
     bool GetIsSuccessNumberEditStart();
     bool GetIsFailNumberEditStart();
     bool GetIsRunFunctionStart();
+    bool GetIsRunFunctionSeveralThreadsStart();
     std::pair<std::string, bool> GetIsEditStart();
     std::pair<std::string, bool> GetClipboardSetRequest();
     bool GetClipboardGetRequest();

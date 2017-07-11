@@ -35,9 +35,12 @@ struct InspectResult
   int mousex;
   int mousey;
   bool active;
+  bool isimage = false;
+  std::string imagedata;
   FrameInspectResult FrameData;
   void Paint(HDC hdc, int BrowserRealWidth, int BrowserRealHeight, int BrowserDrawWidth, int BrowserDrawHeight, int BrowserScrollX, int BrowserScrollY, int BrowserLeft, int BrowserTop);
   std::string Serialize();
+
 };
 
 

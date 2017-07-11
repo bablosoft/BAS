@@ -8,8 +8,19 @@ namespace BrowserAutomationStudioFramework
     PlainTextLogger::PlainTextLogger(QObject *parent) : ILogger(parent), TextEdit(0)
     {
         NumberOfLines = 0;
-
+        ReplaceActionIdWithLink = false;
+        ReplaceActionIdWithColor = false;
     }
+
+    void PlainTextLogger::SetReplaceActionIdWithLink()
+    {
+        ReplaceActionIdWithLink = true;
+    }
+    void PlainTextLogger::SetReplaceActionIdWithColor()
+    {
+        ReplaceActionIdWithColor = true;
+    }
+
 
     QString PlainTextLogger::GetFileName()
     {
@@ -20,7 +31,7 @@ namespace BrowserAutomationStudioFramework
     void PlainTextLogger::SetPlainTextElement(QTextBrowser * TextEdit)
     {
         this->TextEdit = TextEdit;
-        TextEdit->setOpenExternalLinks(true);
+        //TextEdit->setOpenExternalLinks(true);
     }
 
     QTextBrowser * PlainTextLogger::GetSetPlainTextElement()
@@ -51,6 +62,14 @@ namespace BrowserAutomationStudioFramework
 
         if(escape)
             res.replace("<","&lt;").replace(">","&gt;");
+
+        QRegExp ReplaceIds("^\\[(\\d+)\\]");
+
+        if(ReplaceActionIdWithLink)
+            res = res.replace(ReplaceIds,"<a href='action://action\\1' style='color:gray;'>[\\1]</a>");
+        else if (ReplaceActionIdWithColor)
+            res = res.replace(ReplaceIds,"<span style='color:gray;'>[\\1]</span>");
+
         TextEdit->append(suffix + res + prefix);
     }
 
@@ -66,6 +85,14 @@ namespace BrowserAutomationStudioFramework
             Color = QApplication::palette().color(QPalette::Text).name();
         }
         WriteInternal(line,QString("<font color='%1'>").arg(Color),"</font>",true);
+    }
+
+    void PlainTextLogger::Clear()
+    {
+        TextEdit->clear();
+        NumberOfLines = 0;
+        Tail.clear();
+        Color.clear();
     }
 
     void PlainTextLogger::WriteFail(const QString& line)

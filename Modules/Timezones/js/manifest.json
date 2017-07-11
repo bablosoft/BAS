@@ -1,6 +1,9 @@
 {
 	
 	"name":"Timezones",
+	"info":{"en": "Change browser timezone.", "ru": "Изменить часовой пояс браузера."},
+
+	"icon":"timezones.png",
 	"description":"Timezone",
 	"description_small":{"en": "Timezone", "ru": "Часовой пояс"},
 	"major_version": 1,

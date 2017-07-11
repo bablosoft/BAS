@@ -26,6 +26,7 @@ namespace BrowserAutomationStudioFramework
             ui->Picture->setText(lab);
             ui->Picture->show();
             ui->Picture->setWordWrap(true);
+            ui->Picture->setTextInteractionFlags(Qt::TextSelectableByMouse);
             update();
         }else
         {

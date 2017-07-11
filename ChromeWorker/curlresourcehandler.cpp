@@ -38,7 +38,7 @@ void ParseHeaders(CurlResourceHandler::CurlThreadDataClass * Data)
             Data->NeedToReadWholeResponceAndThanFixEncoding = FixPageContent().NeedToFix(Data->ContentType,Data->Url);
         std::vector<std::string> MimeTypeSplit = split(Data->MimeType,';');
         if(MimeTypeSplit.size() > 1)
-            Data->MimeType = MimeTypeSplit[0];
+            Data->MimeType = trim(MimeTypeSplit[0]);
     }
 
 

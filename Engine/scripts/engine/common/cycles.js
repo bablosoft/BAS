@@ -359,6 +359,11 @@ function _call(f,a,n)
 
 }
 
+function _call_section(func,threads,success_number,fail_number,callback)
+{
+    ScriptWorker.SubstageCall(func.name,threads,success_number,fail_number,_get_function_body(callback))
+}
+
 function _result()
 {
     return CYCLES.Result
@@ -401,7 +406,7 @@ function _goto(label, callback)
     ScriptWorker.RunSubScript()
 }
 
-function _goto_fast(label, callback)
+function _fast_goto(label, callback)
 {
 
     if(typeof(_BAS_GOTO_DATA) == "undefined" || !(label in _BAS_GOTO_DATA))

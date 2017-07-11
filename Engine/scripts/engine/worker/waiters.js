@@ -1,11 +1,17 @@
 BROWSERAUTOMATIONSTUDIO_WAIT_TIMEOUT = 60
 BROWSERAUTOMATIONSTUDIO_FULL_LOAD_TIMEOUT = 4
 BROWSERAUTOMATIONSTUDIO_WAIT_TIMEOUT_NEXT = 0
+BROWSERAUTOMATIONSTUDIO_WAIT_NOFAIL_NEXT = false
 
 
 function waiter_timeout_next(timeout)
 {
     BROWSERAUTOMATIONSTUDIO_WAIT_TIMEOUT_NEXT = Math.floor(timeout/1000);
+}
+
+function waiter_nofail_next()
+{
+    BROWSERAUTOMATIONSTUDIO_WAIT_NOFAIL_NEXT = true;
 }
 
 function wait_url()
@@ -463,6 +469,10 @@ function wait()
         BROWSERAUTOMATIONSTUDIO_WAIT_TIMEOUT_CURRENT = BROWSERAUTOMATIONSTUDIO_WAIT_TIMEOUT_NEXT;
         BROWSERAUTOMATIONSTUDIO_WAIT_TIMEOUT_NEXT = 0;
     }
+
+    BROWSERAUTOMATIONSTUDIO_WAIT_NOFAIL_CURRENT = BROWSERAUTOMATIONSTUDIO_WAIT_NOFAIL_NEXT;
+    BROWSERAUTOMATIONSTUDIO_WAIT_NOFAIL_NEXT = false;
+
     var func_success = null;
     var func_fail = null;
     var func_continue = null;
@@ -505,7 +515,12 @@ function wait()
     _do(function(i)
     {
         if(i>BROWSERAUTOMATIONSTUDIO_WAIT_TIMEOUT_CURRENT)
-            fail(fail_message)
+        {
+            if(BROWSERAUTOMATIONSTUDIO_WAIT_NOFAIL_CURRENT)
+                _break()
+            else
+                fail(fail_message)
+        }
 
         _set_result(false)
         _call(func_success,arg,function(){

@@ -18,9 +18,12 @@ _do(function(){
 	http_client_get2(api_url,{method:("GET")})!	
 	<%= variable %> = http_client_content()
 
-	var json = JSON.parse(<%= variable %>)
-	if(!json["trylater"])
-		_break()
+	try
+	{
+		var json = JSON.parse(<%= variable %>)
+		if(!json["trylater"])
+			_break()
+	}catch(e){}
 
 	sleep(20000)!
 })!  

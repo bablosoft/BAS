@@ -23,6 +23,9 @@
 #include "every_cpp.h"
 #include "mongodatabaseconnector.h"
 #include "addavexclusion.h"
+#if defined(BAS_DEBUG)
+    #include "CrashHandler.h"
+#endif
 
 
 class MyOpenSslLocks
@@ -97,9 +100,41 @@ extern "C" {
 
 using namespace BrowserAutomationStudioFramework;
 
+void myMessageHandler(QtMsgType type, const QMessageLogContext &, const QString & str)
+{
+    QString txt;
+    QString datestring = QTime::currentTime().toString("hh:mm:ss");
+    switch (type) {
+    case QtDebugMsg:
+        txt = QString("Debug %1: %2").arg(datestring).arg(str);
+        break;
+    case QtWarningMsg:
+        txt = QString("Warning %1: %2").arg(datestring).arg(str);
+    break;
+    case QtCriticalMsg:
+        txt = QString("Critical %1: %2").arg(datestring).arg(str);
+    break;
+    case QtFatalMsg:
+        txt = QString("Fatal %1: %2").arg(datestring).arg(str);
+        abort();
+    }
+    QFile outFile("debug.txt");
+    outFile.open(QIODevice::WriteOnly | QIODevice::Append);
+    QTextStream ts(&outFile);
+    ts << txt << endl;
+    outFile.close();
+}
+
 int main(int argc, char *argv[])
 {
 
+    //qInstallMessageHandler(myMessageHandler);
+
+    #if defined(BAS_DEBUG)
+        CCrashHandler ch;
+        ch.SetProcessExceptionHandlers();
+        ch.SetThreadExceptionHandlers();
+    #endif
 
     if(!MongoDatabaseConnector::Init())
     {

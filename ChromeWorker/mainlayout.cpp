@@ -1,4 +1,5 @@
 #include "mainlayout.h"
+#include "log.h"
 #include <chrono>
 
 using namespace std::chrono;
@@ -12,6 +13,10 @@ MainLayout::MainLayout(int ToolboxHeight, int ScenarioWidth)
     HButtonDown = 0;
     HButtonLeft = 0;
     HButtonRight = 0;
+    HButtonUpUp = 0;
+    HButtonDownDown = 0;
+    HButtonLeftLeft = 0;
+    HButtonRightRight = 0;
     HButtonDevTools = 0;
     HButtonScenario = 0;
     HButtonSettings = 0;
@@ -20,7 +25,7 @@ MainLayout::MainLayout(int ToolboxHeight, int ScenarioWidth)
     IsToolboxMaximized = false;
     IsCentralShown = false;
     IsSettingsShown = false;
-    IsSettingsShown = false;
+    IsNoDataShown = false;
     HButtonMinimizeMaximize = 0;
     ButtonMinimize = 0;
     ButtonMaximize = 0;
@@ -48,10 +53,16 @@ MainLayout::MainLayout(int ToolboxHeight, int ScenarioWidth)
     State = Hold;
 
     DevToolsRectWidth = (ScenarioWidth == 0)?500:ScenarioWidth;
-    ToolBoxRectHeight = (ToolboxHeight == 0)?250:ToolboxHeight;
+    ToolBoxRectHeight = (ToolboxHeight == 0)?300:ToolboxHeight;
 
     LastTimeChangedHoldPicture = 0;
     HoldAnimation = 0;
+
+    //Splitter
+    IsInsideScrollVertical = false;
+    IsInsideScrollHorizontal = false;
+    IsMoveScrollVertical = false;
+    IsMoveScrollHorizontal = false;
 
 
     /*int ScreenWidth = GetSystemMetrics(SM_CXSCREEN);
@@ -64,6 +75,13 @@ MainLayout::MainLayout(int ToolboxHeight, int ScenarioWidth)
     if(ToolBoxRectHeight > ScreenHeight - 600)
         ToolBoxRectHeight = ScreenHeight - 600;*/
 
+    //Is image select
+    IsImageSelect = false;
+    ImageSelectStartX = -1;
+    ImageSelectStartY = -1;
+
+    IsRenderEmpty = true;
+
 }
 
 void MainLayout::ShowCentralBrowser(bool IsSettings)
@@ -72,11 +90,16 @@ void MainLayout::ShowCentralBrowser(bool IsSettings)
     {
         IsSettingsShown = IsSettings;
         IsCentralShown = true;
+        IsNoDataShown = false;
         ShowWindow(HButtonUp,SW_HIDE);
         ShowWindow(HButtonDown,SW_HIDE);
         ShowWindow(HButtonLeft,SW_HIDE);
         ShowWindow(HButtonRight,SW_HIDE);
         ShowWindow(CentralHandle,SW_SHOW);
+        ShowWindow(HButtonUpUp,SW_HIDE);
+        ShowWindow(HButtonDownDown,SW_HIDE);
+        ShowWindow(HButtonLeftLeft,SW_HIDE);
+        ShowWindow(HButtonRightRight,SW_HIDE);
     }
 
 }
@@ -84,12 +107,29 @@ void MainLayout::HideCentralBrowser()
 {
     if(CentralHandle)
     {
+        if((IsNoDataShown || IsRenderEmpty) && IsRecord)
+        {
+            IsNoDataShown = true;
+            IsCentralShown = false;
+            IsCentralShown = true;
+            for(auto f:EventLoadNoDataPage)
+                f();
+            return;
+        }
+
         IsSettingsShown = false;
         IsCentralShown = false;
+        IsNoDataShown = false;
+
+
         ShowWindow(HButtonUp,SW_SHOW);
         ShowWindow(HButtonDown,SW_SHOW);
         ShowWindow(HButtonLeft,SW_SHOW);
         ShowWindow(HButtonRight,SW_SHOW);
+        ShowWindow(HButtonUpUp,SW_SHOW);
+        ShowWindow(HButtonDownDown,SW_SHOW);
+        ShowWindow(HButtonLeftLeft,SW_SHOW);
+        ShowWindow(HButtonRightRight,SW_SHOW);
         ShowWindow(CentralHandle,SW_HIDE);
     }
 }
@@ -103,6 +143,10 @@ void MainLayout::MaximizeToolbox(int BrowserWidth,int BrowserHeight,int WindowWi
         ShowWindow(HButtonDown,SW_HIDE);
         ShowWindow(HButtonLeft,SW_HIDE);
         ShowWindow(HButtonRight,SW_HIDE);
+        ShowWindow(HButtonUpUp,SW_HIDE);
+        ShowWindow(HButtonDownDown,SW_HIDE);
+        ShowWindow(HButtonLeftLeft,SW_HIDE);
+        ShowWindow(HButtonRightRight,SW_HIDE);
         ShowWindow(HButtonDevTools,SW_HIDE);
         ShowWindow(HButtonScenario,SW_HIDE);
         ShowWindow(HButtonMinimizeMaximize,SW_HIDE);
@@ -122,6 +166,10 @@ void MainLayout::MinimizeToolbox(int BrowserWidth,int BrowserHeight,int WindowWi
         ShowWindow(HButtonDown,SW_SHOW);
         ShowWindow(HButtonLeft,SW_SHOW);
         ShowWindow(HButtonRight,SW_SHOW);
+        ShowWindow(HButtonUpUp,SW_SHOW);
+        ShowWindow(HButtonDownDown,SW_SHOW);
+        ShowWindow(HButtonLeftLeft,SW_SHOW);
+        ShowWindow(HButtonRightRight,SW_SHOW);
         ShowWindow(HButtonDevTools,SW_SHOW);
         ShowWindow(HButtonScenario,SW_SHOW);
         ShowWindow(HButtonMinimizeMaximize,SW_SHOW);
@@ -141,7 +189,8 @@ void MainLayout::MinimizeOrMaximize(HWND MainWindow, HWND ParentWindow)
 
         LONG lStyle = GetWindowLong( MainWindow, GWL_STYLE );
         SavelStyle = lStyle;
-        lStyle &= ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU);
+        //lStyle &= ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU);
+        lStyle &= ~(WS_CAPTION | WS_THICKFRAME);
         SetWindowLong( MainWindow, GWL_STYLE, lStyle);
         LONG lExStyle = GetWindowLong( MainWindow, GWL_EXSTYLE );
         SavelExStyle = lExStyle;
@@ -171,20 +220,20 @@ void MainLayout::MinimizeOrMaximize(HWND MainWindow, HWND ParentWindow)
 void MainLayout::CalculateAllSize(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight, RECT& DevToolsRectangle, RECT& ToolboxRectangle, RECT& BrowserRectangle)
 {
     DevToolsRectangle.left = 0;
-    DevToolsRectangle.right = DevToolsRectWidth;
+    DevToolsRectangle.right = DevToolsRectWidth-3;
     DevToolsRectangle.top = 31;
     DevToolsRectangle.bottom = WindowHeight;
 
-    ToolboxRectangle.left = DevToolsRectWidth+2;
+    ToolboxRectangle.left = DevToolsRectWidth+6;
     ToolboxRectangle.right = WindowWidth;
     ToolboxRectangle.top = 0;
-    ToolboxRectangle.bottom = ToolBoxRectHeight - 1;
+    ToolboxRectangle.bottom = ToolBoxRectHeight - 4;
 
     if(IsRecord)
     {
-        BrowserRectangle.left = DevToolsRectWidth+2;
+        BrowserRectangle.left = DevToolsRectWidth+5;
         BrowserRectangle.right = WindowWidth-31;
-        BrowserRectangle.top = ToolBoxRectHeight + 1;
+        BrowserRectangle.top = ToolBoxRectHeight + 4;
         BrowserRectangle.bottom = WindowHeight-31;
     }else
     {
@@ -266,11 +315,14 @@ void MainLayout::UpdateTabs()
 void MainLayout::UpdateTabs(bool DevToolsTab)
 {
     this->DevToolsTab = DevToolsTab;
-    HWND DevToolsHandle = GetDevToolsHandle();
-    if(DevToolsHandle)
-        ShowWindow(DevToolsHandle,(DevToolsTab)?SW_SHOW:SW_HIDE);
-    if(ScenarioHandle)
-        ShowWindow(ScenarioHandle,(DevToolsTab)?SW_HIDE:SW_SHOW);
+    if(!SplitterIsChangingSize())
+    {
+        HWND DevToolsHandle = GetDevToolsHandle();
+        if(DevToolsHandle)
+            ShowWindow(DevToolsHandle,(DevToolsTab)?SW_SHOW:SW_HIDE);
+        if(ScenarioHandle)
+            ShowWindow(ScenarioHandle,(DevToolsTab)?SW_HIDE:SW_SHOW);
+    }
 
     if(DevToolsTab)
     {
@@ -326,6 +378,39 @@ void MainLayout::UpdateState(StateClass State)
     }
 }
 
+bool MainLayout::GetIsRenderEmpty()
+{
+    return IsRenderEmpty;
+}
+
+void MainLayout::SetIsRenderEmpty(bool IsRenderEmpty)
+{
+    if(IsRecord)
+    {
+        if(this->IsRenderEmpty && !IsRenderEmpty && IsNoDataShown)
+        {
+            this->IsRenderEmpty = IsRenderEmpty;
+            IsNoDataShown = false;
+
+            HideCentralBrowser();
+        }else if(!this->IsRenderEmpty && IsRenderEmpty && !IsCentralShown)
+        {
+            this->IsRenderEmpty = IsRenderEmpty;
+
+            ShowCentralBrowser(false);
+            IsNoDataShown = true;
+            IsCentralShown = true;
+            IsSettingsShown = false;
+            for(auto f:EventLoadNoDataPage)
+                f();
+        }
+        else
+        {
+            this->IsRenderEmpty = IsRenderEmpty;
+        }
+    }
+}
+
 void MainLayout::CustomDraw(HDC hdc,int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight)
 {
     if(!IsRecord)
@@ -333,26 +418,71 @@ void MainLayout::CustomDraw(HDC hdc,int BrowserWidth,int BrowserHeight,int Windo
 
     if(IsToolboxMaximized)
         return;
+    if(!SplitterIsChangingSize())
+    {
+        POINT pt;
+        SelectObject(hdc, GetStockObject(DC_PEN));
+        SetDCPenColor(hdc, RGB(125,125,125));
+
+        MoveToEx(hdc, 0, 30, &pt);
+        LineTo(hdc, DevToolsRectWidth - 3, 30);
+    }
+
+    RECT rect;
+    HBRUSH brush = CreateSolidBrush(RGB(225, 225, 225));
+
+    rect.left = DevToolsRectWidth - 2;
+    rect.right = DevToolsRectWidth + 5;
+    rect.top = 0;
+    rect.bottom = WindowHeight;
+
+    FillRect(hdc, &rect, brush);
+
+
+    rect.left = DevToolsRectWidth + 5;
+    rect.right = WindowWidth;
+    rect.top = ToolBoxRectHeight-3;
+    rect.bottom = ToolBoxRectHeight+3;
+
+    FillRect(hdc, &rect, brush);
+    DeleteObject(brush);
+
+}
+
+bool MainLayout::DrawImageSelect(HDC hdc)
+{
+    if(!GetIsImageSelect())
+    {
+        return false;
+    }
     POINT pt;
     SelectObject(hdc, GetStockObject(DC_PEN));
-    SetDCPenColor(hdc, RGB(125,125,125));
+    SetDCPenColor(hdc, RGB(0,255,0));
 
-    MoveToEx(hdc, DevToolsRectWidth + 1, 0, &pt);
-    LineTo(hdc, DevToolsRectWidth + 1, WindowHeight);
+    MoveToEx(hdc, ImageSelectStartX, ImageSelectStartY, &pt);
+    LineTo(hdc, ImageSelectStartX, ImageSelectEndY);
 
-    MoveToEx(hdc, 0, 30, &pt);
-    LineTo(hdc, DevToolsRectWidth, 30);
+    MoveToEx(hdc, ImageSelectStartX, ImageSelectEndY, &pt);
+    LineTo(hdc, ImageSelectEndX, ImageSelectEndY);
 
-    MoveToEx(hdc, DevToolsRectWidth + 2, ToolBoxRectHeight, &pt);
-    LineTo(hdc, WindowWidth, ToolBoxRectHeight);
+    MoveToEx(hdc, ImageSelectEndX, ImageSelectEndY, &pt);
+    LineTo(hdc, ImageSelectEndX, ImageSelectStartY);
 
+    MoveToEx(hdc, ImageSelectEndX, ImageSelectStartY, &pt);
+    LineTo(hdc, ImageSelectStartX, ImageSelectStartY);
+    return true;
+}
+
+bool MainLayout::GetIsImageSelect()
+{
+    return IsImageSelect && std::abs(ImageSelectStartX - ImageSelectEndX) > 5 && std::abs(ImageSelectStartY - ImageSelectEndY) > 5;
 }
 
 RECT MainLayout::GetBrowserOuterRectangle(int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight)
 {
     RECT r;
-    r.left = DevToolsRectWidth + 2;
-    r.top = ToolBoxRectHeight;
+    r.left = DevToolsRectWidth + 5;
+    r.top = ToolBoxRectHeight + 3;
     if(!IsRecord)
     {
         r.left = 0;
@@ -373,6 +503,10 @@ void MainLayout::Update(int BrowserWidth,int BrowserHeight,int WindowWidth,int W
         ShowWindow(HButtonDown,SW_HIDE);
         ShowWindow(HButtonLeft,SW_HIDE);
         ShowWindow(HButtonRight,SW_HIDE);
+        ShowWindow(HButtonUpUp,SW_HIDE);
+        ShowWindow(HButtonDownDown,SW_HIDE);
+        ShowWindow(HButtonLeftLeft,SW_HIDE);
+        ShowWindow(HButtonRightRight,SW_HIDE);
         ShowWindow(HButtonDevTools,SW_HIDE);
         ShowWindow(HButtonScenario,SW_HIDE);
         ShowWindow(HButtonSettings,SW_HIDE);
@@ -413,15 +547,19 @@ void MainLayout::Update(int BrowserWidth,int BrowserHeight,int WindowWidth,int W
 
     MoveDevTools();
 
-
+    MoveWindow(HButtonUpUp,BrowserRectangle.right + 5, BrowserRectangle.bottom - 111,20,20,true);
     MoveWindow(HButtonUp,BrowserRectangle.right + 5,BrowserRectangle.bottom - 90,20,20,true);
     MoveWindow(HButtonDown,BrowserRectangle.right + 5, BrowserRectangle.bottom - 60,20,20,true);
+    MoveWindow(HButtonDownDown,BrowserRectangle.right + 5, BrowserRectangle.bottom - 39,20,20,true);
+
+    MoveWindow(HButtonLeftLeft,BrowserRectangle.right - 111, BrowserRectangle.bottom + 5,20,20,true);
     MoveWindow(HButtonLeft,BrowserRectangle.right - 90, BrowserRectangle.bottom + 5,20,20,true);
     MoveWindow(HButtonRight,BrowserRectangle.right - 60, BrowserRectangle.bottom + 5,20,20,true);
+    MoveWindow(HButtonRightRight,BrowserRectangle.right - 39, BrowserRectangle.bottom + 5,20,20,true);
 
-    MoveWindow(HButtonSettings,BrowserRectangle.right + 5, BrowserRectangle.top + 35,20,20,true);
+    MoveWindow(HButtonSettings,BrowserRectangle.right + 5, BrowserRectangle.top + 21,20,20,true);
 
-    MoveWindow(HButtonMinimizeMaximize,BrowserRectangle.right + 5,BrowserRectangle.top + 5,20,20,true);
+    MoveWindow(HButtonMinimizeMaximize,BrowserRectangle.right + 5,BrowserRectangle.top,20,20,true);
 
     MoveWindow(HButtonDevTools,5,5,20,20,true);
     MoveWindow(HButtonScenario,35,5,20,20,true);
@@ -434,8 +572,8 @@ void MainLayout::Update(int BrowserWidth,int BrowserHeight,int WindowWidth,int W
 std::pair<int,int> MainLayout::GetDefaultWindowSize()
 {
     std::pair<int,int> res;
-    res.first = 1024 + DevToolsRectWidth + 30 + 70;
-    res.second = 600 + ToolBoxRectHeight - 1 + 30 + 120;
+    res.first = 1024 + DevToolsRectWidth + 30 + 70 + 3;
+    res.second = 600 + ToolBoxRectHeight - 4 + 30 + 120;
     return res;
 }
 
@@ -483,7 +621,7 @@ RECT MainLayout::GetLabelRectangle(int BrowserWidth,int BrowserHeight,int Window
     CalculateAllSize(BrowserWidth,BrowserHeight,WindowWidth,WindowHeight,DevToolsRectangle, ToolboxRectangle, BrowserRectangle);
     RECT res;
     res.left = BrowserRectangle.left;
-    res.right = BrowserRectangle.right - 100;
+    res.right = BrowserRectangle.right - 121;
     res.top = BrowserRectangle.bottom + 3;
     res.bottom = BrowserRectangle.bottom + 20;
     return res;
@@ -527,5 +665,311 @@ HBITMAP MainLayout::GetHoldAnimationButton()
         case 0:return BHold;
         case 1:return BHold90;
     }
+}
+
+//Splitter
+
+void MainLayout::SplitterSetCursor()
+{
+    if(IsMoveScrollVertical || IsInsideScrollVertical)
+    {
+        SetCursor(hcSizeNS);
+
+
+    }else if(IsMoveScrollHorizontal || IsInsideScrollHorizontal)
+    {
+        SetCursor(hcSizeEW);
+    }
+    else
+    {
+        SetCursor(hcArrow);
+    }
+
+}
+
+bool MainLayout::OnMouseMove(int x, int y, int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight)
+{
+    if(!IsRecord)
+        return false;
+
+    if(!IsImageSelect)
+    {
+        RECT r = GetBrowserRectangle(BrowserWidth,BrowserHeight,WindowWidth,WindowHeight);
+
+        ImageSelectEndX = -1;
+        ImageSelectEndY = -1;
+
+        if(x > r.left && x < r.right && y > r.top && y < r.bottom)
+        {
+            ImageSelectStartX = x - r.left;
+            ImageSelectStartY = y - r.top;
+        }else
+        {
+            ImageSelectStartX = -1;
+            ImageSelectStartY = -1;
+        }
+
+    }else
+    {
+
+        RECT r = GetBrowserRectangle(BrowserWidth,BrowserHeight,WindowWidth,WindowHeight);
+        if(x > r.left && x < r.right && y > r.top && y < r.bottom)
+        {
+            ImageSelectEndX = x - r.left;
+            ImageSelectEndY = y - r.top;
+        }else
+        {
+            IsImageSelect = false;
+            ImageSelectStartX = -1;
+            ImageSelectStartY = -1;
+            ImageSelectEndX = -1;
+            ImageSelectEndY = -1;
+        }
+    }
+
+    SplitterX = x;
+    SplitterY = y;
+
+    if(x > WindowWidth - 20 || y > WindowHeight - 20 || x < 20 || y < 20)
+    {
+        return OnMouseLeave();
+    }
+
+    if(IsMoveScrollVertical)
+    {
+        ToolBoxRectHeight = y;
+        if(MainWindowHandle)
+            InvalidateRect(MainWindowHandle,NULL,true);
+    }
+
+    if(IsMoveScrollHorizontal)
+    {
+        DevToolsRectWidth = x;
+        if(MainWindowHandle)
+            InvalidateRect(MainWindowHandle,NULL,true);
+
+    }
+
+    if(x >= DevToolsRectWidth - 2 && x <= DevToolsRectWidth + 5)
+    {
+        IsInsideScrollHorizontal = true;
+        IsInsideScrollVertical = false;
+    }else if(y >= ToolBoxRectHeight - 3 && y <= ToolBoxRectHeight + 3 && x > DevToolsRectWidth - 2)
+    {
+        IsInsideScrollHorizontal = false;
+        IsInsideScrollVertical = true;
+    }
+    else
+    {
+        IsInsideScrollHorizontal = false;
+        IsInsideScrollVertical = false;
+    }
+    SplitterSetCursor();
+    return false;
+}
+
+bool MainLayout::OnMouseLeave()
+{
+    if(!IsRecord)
+        return false;
+
+    IsImageSelect = false;
+
+    if(!IsMoveScrollVertical && !IsMoveScrollHorizontal)
+        return false;
+    if(IsMoveScrollHorizontal)
+        DevToolsRectWidth = DevToolsRectWidthStart;
+    if(IsMoveScrollVertical)
+        ToolBoxRectHeight = ToolBoxRectHeightStart;
+    return OnMouseUp();
+
+}
+
+bool MainLayout::OnMouseUp()
+{
+    if(!IsRecord)
+        return false;
+
+    IsImageSelect = false;
+    ImageSelectStartX = -1;
+    ImageSelectStartY = -1;
+
+    if(!IsMoveScrollVertical && !IsMoveScrollHorizontal)
+        return false;
+
+    bool NeedUpdate = SplitterIsChangingSize();
+    IsMoveScrollHorizontal = false;
+    IsMoveScrollVertical = false;
+    SplitterShowInterface();
+
+    SplitterSetCursor();
+
+    return NeedUpdate;
+}
+bool MainLayout::OnMouseDown(int x, int y, int BrowserWidth,int BrowserHeight,int WindowWidth,int WindowHeight)
+{
+    if(!IsRecord)
+        return false;
+    if(IsInsideScrollHorizontal)
+    {
+        IsMoveScrollHorizontal = true;
+        DevToolsRectWidthStart = DevToolsRectWidth;
+        SplitterHideInterface();
+
+    }
+
+    if(IsInsideScrollVertical)
+    {
+        IsMoveScrollVertical = true;
+        ToolBoxRectHeightStart = ToolBoxRectHeight;
+        SplitterHideInterface();
+
+    }
+    SplitterSetCursor();
+
+    if(!IsImageSelect)
+    {
+        RECT r = GetBrowserRectangle(BrowserWidth,BrowserHeight,WindowWidth,WindowHeight);
+
+        ImageSelectEndX = -1;
+        ImageSelectEndY = -1;
+
+        if(x > r.left && x < r.right && y > r.top && y < r.bottom)
+        {
+            ImageSelectStartX = x - r.left;
+            ImageSelectStartY = y - r.top;
+        }else
+        {
+            ImageSelectStartX = -1;
+            ImageSelectStartY = -1;
+        }
+
+        if(ImageSelectStartX >= 0 && ImageSelectStartY >= 0)
+        {
+            IsImageSelect = true;
+            ImageSelectEndX = ImageSelectStartX;
+            ImageSelectEndY = ImageSelectStartY;
+        }
+    }
+
+    return false;
+}
+
+void MainLayout::SplitterHideInterface()
+{
+    if(ToolBoxHandle)
+        ShowWindow(ToolBoxHandle,SW_HIDE);
+
+    if(ScenarioHandle)
+        ShowWindow(ScenarioHandle,SW_HIDE);
+
+    if(CentralHandle)
+        ShowWindow(CentralHandle,SW_HIDE);
+
+    GetDevToolsHandle();
+    if(DevToolsHandle)
+        ShowWindow(DevToolsHandle,SW_HIDE);
+
+
+    if(HButtonSettings)
+        ShowWindow(HButtonSettings,SW_HIDE);
+    if(HButtonScenario)
+        ShowWindow(HButtonScenario,SW_HIDE);
+    if(HButtonDevTools)
+        ShowWindow(HButtonDevTools,SW_HIDE);
+
+
+    if(HButtonUp)
+        ShowWindow(HButtonUp,SW_HIDE);
+    if(HButtonDown)
+        ShowWindow(HButtonDown,SW_HIDE);
+    if(HButtonLeft)
+        ShowWindow(HButtonLeft,SW_HIDE);
+    if(HButtonRight)
+        ShowWindow(HButtonRight,SW_HIDE);
+
+    if(HButtonUpUp)
+        ShowWindow(HButtonUpUp,SW_HIDE);
+    if(HButtonDownDown)
+        ShowWindow(HButtonDownDown,SW_HIDE);
+    if(HButtonLeftLeft)
+        ShowWindow(HButtonLeftLeft,SW_HIDE);
+    if(HButtonRightRight)
+        ShowWindow(HButtonRightRight,SW_HIDE);
+
+    if(HButtonMinimizeMaximize)
+        ShowWindow(HButtonMinimizeMaximize,SW_HIDE);
+
+    if(HTextHold)
+        ShowWindow(HTextHold,SW_HIDE);
+
+    if(HTextFinished)
+        ShowWindow(HTextFinished,SW_HIDE);
+
+    if(MainWindowHandle)
+        InvalidateRect(MainWindowHandle,NULL,true);
+}
+
+void MainLayout::SplitterShowInterface()
+{
+    if(ToolBoxHandle)
+        ShowWindow(ToolBoxHandle,SW_SHOW);
+
+    if(ScenarioHandle)
+        ShowWindow(ScenarioHandle,(DevToolsTab)?SW_HIDE:SW_SHOW);
+
+    if(CentralHandle)
+        ShowWindow(CentralHandle,(IsCentralShown)?SW_SHOW:SW_HIDE);
+
+    GetDevToolsHandle();
+    if(DevToolsHandle)
+        ShowWindow(DevToolsHandle,(DevToolsTab)?SW_SHOW:SW_HIDE);
+
+
+    if(HButtonUp)
+        ShowWindow(HButtonUp,(!IsCentralShown && !IsSettingsShown)?SW_SHOW:SW_HIDE);
+    if(HButtonDown)
+        ShowWindow(HButtonDown,(!IsCentralShown && !IsSettingsShown)?SW_SHOW:SW_HIDE);
+    if(HButtonLeft)
+        ShowWindow(HButtonLeft,(!IsCentralShown && !IsSettingsShown)?SW_SHOW:SW_HIDE);
+    if(HButtonRight)
+        ShowWindow(HButtonRight,(!IsCentralShown && !IsSettingsShown)?SW_SHOW:SW_HIDE);
+
+    if(HButtonUpUp)
+        ShowWindow(HButtonUpUp,(!IsCentralShown && !IsSettingsShown)?SW_SHOW:SW_HIDE);
+    if(HButtonDownDown)
+        ShowWindow(HButtonDownDown,(!IsCentralShown && !IsSettingsShown)?SW_SHOW:SW_HIDE);
+    if(HButtonLeftLeft)
+        ShowWindow(HButtonLeftLeft,(!IsCentralShown && !IsSettingsShown)?SW_SHOW:SW_HIDE);
+    if(HButtonRightRight)
+        ShowWindow(HButtonRightRight,(!IsCentralShown && !IsSettingsShown)?SW_SHOW:SW_HIDE);
+
+
+    if(HButtonSettings)
+        ShowWindow(HButtonSettings,SW_SHOW);
+    if(HButtonScenario)
+        ShowWindow(HButtonScenario,SW_SHOW);
+    if(HButtonDevTools)
+        ShowWindow(HButtonDevTools,SW_SHOW);
+
+    if(HButtonMinimizeMaximize)
+        ShowWindow(HButtonMinimizeMaximize,SW_SHOW);
+
+
+    if(HTextHold)
+        ShowWindow(HTextHold,(State == Hold)?SW_SHOW:SW_HIDE);
+
+    if(HTextFinished)
+        ShowWindow(HTextFinished,(State == Finished)?SW_SHOW:SW_HIDE);
+
+    if(MainWindowHandle)
+        InvalidateRect(MainWindowHandle,NULL,true);
+
+
+}
+
+bool MainLayout::SplitterIsChangingSize()
+{
+    return IsMoveScrollVertical || IsMoveScrollHorizontal;
 }
 

@@ -87,6 +87,30 @@ namespace BrowserAutomationStudioFramework
         }
     }
 
+    void RecordProcessCommunication::HighlightAction(const QString& ActionId)
+    {
+        if(Comunicator && CanSend)
+        {
+            QString WriteString;
+            QXmlStreamWriter xmlWriter(&WriteString);
+            xmlWriter.writeTextElement("HighlightAction",ActionId);
+            Comunicator->Send(WriteString);
+        }
+    }
+
+
+
+    void RecordProcessCommunication::RestoreOriginalStage()
+    {
+        if(Comunicator && CanSend)
+        {
+            QString WriteString;
+            QXmlStreamWriter xmlWriter(&WriteString);
+            xmlWriter.writeTextElement("RestoreOriginalStage","");
+            Comunicator->Send(WriteString);
+        }
+    }
+
     void RecordProcessCommunication::SendResources(const QList<IRecordProcessCommunication::ResourceDescription>& Resources)
     {
         if(Comunicator && CanSend)
@@ -122,6 +146,11 @@ namespace BrowserAutomationStudioFramework
             {
                 xmlReader.readNext();
                 emit LoadScript(xmlReader.text().toString());
+            }
+            if(xmlReader.name() == "MaximizeWindow" && token == QXmlStreamReader::StartElement)
+            {
+                xmlReader.readNext();
+                emit MaximizeWindow();
             }
             if(xmlReader.name() == "Interrupt" && token == QXmlStreamReader::StartElement)
             {

@@ -17,7 +17,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 TARGET = FastExecuteScript
 TEMPLATE = app
 
-DEFINES += NONE_X64
+DEFINES += NONE_X64 NO_BAS_DEBUG
 
 #DEFINES += MEMORY_DEBUG
 #SOURCES += debug_memory/debug_new.cpp

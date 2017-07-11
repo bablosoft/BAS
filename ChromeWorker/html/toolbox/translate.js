@@ -1,5 +1,43 @@
 _L = 
 {
+	"There are two types of goto: long and short. Short move is performed if goto and label are located inside same block (has one parent). This type of move preserves execution history and script continues afterward. In other cases long move is performed, which clears execution history. Long move case is perfect if you are jumping on script start, but if you move inside loop, you must use another move to leave it, otherwise thread will stop with success message.": 
+	{"ru": "Есть два типа goto: длинные и короткие. Короткое перемещение выполняется, если goto и метка расположены внутри одного и того же блока (имеют одного родителя). Этот тип перемещения сохраняет историю выполнения и скрипт продолжается впоследствии. В других случаях выполняется длинное перемещение, которое очищает историю выполнения скрипта. Вариант с длинным перемещением идеально подходит, если вы перемещаетесь в начало скрипта, но если вы перемещаетесь в цикл или в условие, то вы должны использовать еще одно действие перемещения, чтобы выйти из цикла, иначе поток остановится с успешным сообщением."},
+	"Enable Flash": {"ru": "Использовать Флеш"},
+	"Disable webrtc and canvas": {"ru": "Отключить webrtc и canvas"},
+
+	"Force UTF-8 Encoding": {"ru": "Преобразовывать все страницы в UTF-8"},
+	"Proxies reconnect": {"ru": "Восстановление соединения"},
+	"Number of frames to skip in run mode": {"ru": "Пропуск кадров в рабочем режиме."},
+
+	"Empty string or 0 means, that value wont be changed. \"Enable Flash\" and \"Disable webrtc and canvas\" options will restart browser process and thereby reset all settings(proxies, headers, etc), so the best place to use this action is thread start. If you want to change settings for every thread, it is better to use settings tab.": {"ru": "Пустая строка или 0 означает, что значение изменяться не будут. \"Использовать Флеш\" и \"Отключить webrtc и canvas\" перезапустят браузер и таким образом обнулят остальные настройки(прокси, заголовки, и т.д.), так что лучшее место для этого действия - начало работы потока. Если вы хотите поменять настройки для всех потоков, то лучше воспользоваться вкладкой настройки."},
+
+	
+
+	"Scroll to search for image": {"ru": "Прокрутка для поиска изображения"},
+	"How well the image must fit. 100 - exactly fits, 0 - does not fit at all.": {"ru": "Насколько хорошо изображение должно подходить. 100 - точно подходит, 0 - не подходит совсем."},
+	"Additional parameters.": {"ru": "Дополнительные параметры."},
+	"Image data as base64": {"ru": "Данные изображения в формате base64."},
+	"Variable to save screenshot as base64": {"ru": "Переменная для сохранения результата как base64."},
+	"Wait for element.": {"ru": "Ждать появления элемента."},
+	"Fail thread if element not found.": {"ru": "Остановить поток, если элемент не найден."},
+	"Use \"Set Variable\" action to create variable.": {"ru": "Используйте действие \"Установить переменную\" для создания переменной."},
+	"You can create resource with \"+ Create New Resource\" button which is located in the panel to the right.": {"ru": "Вы можете создать ресурс с помощью кнопки \"+ Создать новый ресурс\", которая расположена на панели справа."},
+	"By default script will stop after resource is finished. You can use this option to complete not the entire script, but only the thread.": {"ru": "По умолчанию скрипт останавливается после завершения ресурса. Вы можете использовать эту опцию для остановки не всего скрипта, а только потока."},
+	"Next": {"ru": "Дальше"},
+	"found": {"ru": "найдено"},
+	"Select resource": {"ru": "Выбрать ресурс"},
+	"Element selector": {"ru": "Селектор элемента"},
+	"Insert existing variable": {"ru": "Вставить существующую переменную"},
+	"Create value in visual constructor": {"ru": "Создать значение в конструкторе"},
+	"Load from file, user input, database": {"ru": "Взять из файла, поля для ввода или базы"},
+	"Insert variable": {"ru": "Из переменной"},
+	"Remove bookmark": {"ru": "Удалить закладку"},
+	"Your recent actions": {"ru": "Последние действия"},
+	"History": {"ru": "История"},
+	"Bookmarks": {"ru": "Закладки"},
+	"Drag actions here": {"ru": "Перетаскивайте действия сюда"},
+	"Data exchange can only be performed with global variables or resources.": {"ru": "Обмен данными может быть осуществлен только с помощью глобальных переменных или ресурсов."},
+	"Global: ": {"ru": "Глобальная: "},
 	"Record list": {"ru": "Список записей"},
 	"Remove this filter?": {"ru": "Удалить этот фильтр?"},
 	"Not empty": {"ru": "Не пустое"},
@@ -15,12 +53,15 @@ _L =
 	"Same month": {"ru": "В тот же месяц"},
 	"Same day": {"ru": "В тот же день"},
 	"Same hour": {"ru": "В тот же час"},
+	"Action history is clean": {"ru": "История действий пуста"},
+	"Return to main screen": {"ru": "Вернуться на главный экран"},
+	
 
 	"Table": {"ru": "Таблица"},
 	"Field": {"ru": "Поле"},
 	"Filter type": {"ru": "Тип фильтра"},
 	"Add filter": {"ru": "Добавить фильтр"},
-	"Take new or old resource during this resource request": {"ru": "Брать новый ресурс или использовать старый при этом запросе ресурса"},
+	"Take new or old resource during current resource request.": {"ru": "Брать новый ресурс или использовать старый при данном запросе ресурса."},
 	"Restrict all popups. You can restrict specific popup with Request Mask Deny action.": {"ru": "Запретить все всплывающие окна. Запретить конкретные окна можно с помощью действия Запретить запрос"},
 	"Restrict all downloads. You can restrict specific download with Request Mask Deny action.": {"ru": "Запретить загрузку файлов. Запретить конкретные загрузки можно с помощью действия Запретить запрос"},
 	"Allow all popups. Revokes Allow popup action.": {"ru": "Разрешить все всплывающие окна. Отменяет действие Запретить всплывающие окна"},
@@ -68,7 +109,7 @@ _L =
 	"Immediately End Script": {"ru": "Немедленно Прервать Скрипт"},
 	"Use Template": {"ru": "Использовать Шаблон"},
 	"Replace all occurrences of one string to another": {"ru": "Заменить все вхождения одной строки на другую"},
-	"Resolves template to variable. Can contain {{Resources}} and [[VARIABLES]]": {"ru": "Генерирует строку по шаблону. Шаблон может содержать {{Ресурсы}} и [[ПЕРЕМЕННЫЕ]]"},
+	"Resolves template to variable. Can contain {{Resources}} and [[VARIABLES]] and spintax {hi|hello}.": {"ru": "Генерирует строку по шаблону. Шаблон может содержать {{Ресурсы}} и [[ПЕРЕМЕННЫЕ]] и спинтакс {вариант 1|вариант 2}"},
 	"Replace From": {"ru": "Заменить Из"},
 	"Original String": {"ru": "Оригинальная Строка"},
 	"Replace To": {"ru": "Заменить На"},
@@ -453,7 +494,7 @@ _L =
 	"Message Id":{"ru": "Идентификатор сообщения"},
 	"Use self variable, which is point to selected element.":{"ru": "Используйте переменную self, которая указывает на выбранный элемент."},
 	"Start Loop to use this function" :{"ru": "Начните цикл, чтобы использовать эту функцию"},
-	"Action Name" :{"ru": "Имя Действия"},
+	"What to search?" :{"ru": "Что искать?"},
 	"Execute javascript on every page load in browser" :{"ru": "Выполнять яваскрипт при каждой загрузке страницы в браузере"},
 
 }

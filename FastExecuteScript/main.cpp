@@ -10,6 +10,9 @@
 #include <QtGlobal>
 #include "mongodatabaseconnector.h"
 #include "addavexclusion.h"
+#if defined(BAS_DEBUG)
+    #include "CrashHandler.h"
+#endif
 
 class MyOpenSslLocks
 {
@@ -111,6 +114,12 @@ using namespace BrowserAutomationStudioFramework;
 
 int main(int argc, char *argv[])
 {
+
+    #if defined(BAS_DEBUG)
+        CCrashHandler ch;
+        ch.SetProcessExceptionHandlers();
+        ch.SetThreadExceptionHandlers();
+    #endif
 
     qInstallMessageHandler(myMessageHandler);
     qDebug()<<"Start 001";

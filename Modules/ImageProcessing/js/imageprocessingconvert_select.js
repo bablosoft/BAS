@@ -1,0 +1,22 @@
+var Id = GetInputConstructorValue("Id", loader);
+var Format = GetInputConstructorValue("Format", loader);
+
+
+if(Id["original"].length == 0)
+{
+  Invalid("Id is empty");
+  return;
+}
+
+if(Format["original"].length == 0)
+{
+  Invalid("Format is empty");
+  return;
+}
+
+ try{
+  var code = loader.GetAdditionalData() + _.template($("#imageprocessingconvert_code").html())({id: Id["updated"],format: Format["updated"],})
+  code = Normalize(code,0)
+  BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
+}catch(e)
+{}

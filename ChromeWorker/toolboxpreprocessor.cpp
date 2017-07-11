@@ -26,21 +26,32 @@ void ScenarioPreprocess(const ModulesDataList & Modules, std::string& OriginalSc
 
     std::string Actions;
     picojson::value::object ActionsObject;
+    picojson::value::object GroupsObject;
+
     for(ModulesData Module:Modules)
     {
+        if(!Module->Icon.empty())
+        {
+            picojson::value::object Object;
+            Object["icon"] = picojson::value(std::string("../../modules/") + Module->Name + std::string("/") + Module->Icon);
 
+            GroupsObject[Module->Name] = picojson::value(Object);
+        }
         for(ActionData a:Module->Actions)
         {
             picojson::value::object Object;
             Object["name"] = picojson::value(a->Description);
             Object["description"] = picojson::value(a->Description);
             Object["template"] = picojson::value(a->Template);
+            Object["group"] = picojson::value(Module->Name);
 
             ActionsObject[a->Name] = picojson::value(Object);
         }
 
     }
     Actions = "_A = $.extend(_A," +  picojson::value(ActionsObject).serialize() + ");";
+    Actions += "_G = $.extend(_G," +  picojson::value(GroupsObject).serialize() + ");";
+
     WORKER_LOG("_MACRO_INSERT_ACTIONS_");
     WORKER_LOG(Actions);
     ReplaceAllInPlace(OriginalScript,"_MACRO_INSERT_ACTIONS_",Actions);
@@ -52,21 +63,43 @@ void ToolboxPreprocess(const ModulesDataList & Modules, std::string& OriginalScr
     {
         std::string Actions;
         picojson::value::object ActionsObject;
+        picojson::value::object GroupsObject;
+
         for(ModulesData Module:Modules)
         {
+            if(!Module->Icon.empty())
+            {
+                picojson::value::object Object;
+                Object["icon"] = picojson::value(std::string("../../modules/") + Module->Name + std::string("/") + Module->Icon);
 
+                GroupsObject[Module->Name] = picojson::value(Object);
+            }
             for(ActionData a:Module->Actions)
             {
                 picojson::value::object Object;
                 Object["name"] = picojson::value(a->Description);
                 Object["description"] = picojson::value(a->Description);
                 Object["template"] = picojson::value(a->Template);
+                if(a->IsElement)
+                {
+                    Object["class"] = picojson::value("browser");
+                }
+
+                if(!a->SuggestionEn.empty() || a->SuggestionRu.empty())
+                {
+                    picojson::value::object Suggestion;
+                    Suggestion["en"] = picojson::value(a->SuggestionEn);
+                    Suggestion["ru"] = picojson::value(a->SuggestionRu);
+
+                    Object["suggestion"] = picojson::value(Suggestion);
+                }
 
                 ActionsObject[a->Name] = picojson::value(Object);
             }
 
         }
         Actions = "_A = $.extend(_A," +  picojson::value(ActionsObject).serialize() + ");";
+        Actions += "_G = $.extend(_G," +  picojson::value(GroupsObject).serialize() + ");";
         WORKER_LOG("_MACRO_INSERT_ACTIONS_");
         WORKER_LOG(Actions);
         ReplaceAllInPlace(OriginalScript,"_MACRO_INSERT_ACTIONS_",Actions);
@@ -89,6 +122,15 @@ void ToolboxPreprocess(const ModulesDataList & Modules, std::string& OriginalScr
                     res["description"] = picojson::value(Module->Description);
                     res["type"] = picojson::value("group");
                     res["show_only_with_database"] = picojson::value(Module->OnlyWithDatabase);
+                    res["name"] = picojson::value(Module->Name);
+                    if(!Module->Icon.empty())
+                    {
+                        res["icon"] = picojson::value(std::string("../../modules/") + Module->Name + std::string("/") + Module->Icon);
+                    }
+                    if(!Module->Info.empty())
+                    {
+                        res["info"] = picojson::value(Module->Info);
+                    }
 
 
                     ActionList += ",";

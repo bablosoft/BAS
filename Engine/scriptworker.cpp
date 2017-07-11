@@ -1,6 +1,7 @@
 #include "scriptworker.h"
 #include "debugterminate.h"
 #include "csvhelperwrapper.h"
+#include <limits>
 #include "every_cpp.h"
 
 namespace BrowserAutomationStudioFramework
@@ -8,9 +9,8 @@ namespace BrowserAutomationStudioFramework
 
 
     ScriptWorker::ScriptWorker(QObject *parent) :
-        IWorker(parent), Browser(0), Logger(0), Results1(0),Results2(0), Results3(0),Results4(0),Results5(0),Results6(0),Results7(0),Results8(0),Results9(0), Waiter(0),engine(0),ThreadNumber(0),IsAborted(false),ProcessComunicator(0), HttpClient1(0), HttpClient2(0), Pop3Client(0), ImapClient(0), DoTrace(false), MaxFail(999999), MaxSuccess(100), IsFailExceedRunning(false), IsSuccessExceedRunning(false), FunctionData(0), CurrentWebElement(0), HttpClientIndex(1),DieInstant(false), DontCreateMore(false), SuccessNumber(0), FailNumber(0), HttpClientNextTimeout(-1), SolverNotFailNextTime(false)
+        IWorker(parent), Browser(0), Logger(0), Results1(0),Results2(0), Results3(0),Results4(0),Results5(0),Results6(0),Results7(0),Results8(0),Results9(0), Waiter(0),engine(0),ThreadNumber(0),IsAborted(false),ProcessComunicator(0), HttpClient1(0), HttpClient2(0), Pop3Client(0), ImapClient(0), DoTrace(false), MaxFail(999999), MaxSuccess(100), IsFailExceedRunning(false), IsSuccessExceedRunning(false), FunctionData(0), CurrentWebElement(0), HttpClientIndex(1),DieInstant(false), DontCreateMore(false), SuccessNumber(0), FailNumber(0), HttpClientNextTimeout(-1), SolverNotFailNextTime(false), SubstageId(0), SubstageParentId(0), CurrentAction(-1)
     {
-
     }
 
 
@@ -71,6 +71,7 @@ namespace BrowserAutomationStudioFramework
 
     ScriptWorker::~ScriptWorker()
     {
+
         for(FunctionRunData* func:FunctionDataList)
             func->Stop();
         FunctionDataList.clear();
@@ -159,6 +160,16 @@ namespace BrowserAutomationStudioFramework
     void ScriptWorker::SetProcessComunicator(IProcessComunicator *ProcessComunicator)
     {
         this->ProcessComunicator = ProcessComunicator;
+    }
+
+    void ScriptWorker::SetStringBuilder(IStringBuilder *StringBuilder)
+    {
+        this->StringBuilder = StringBuilder;
+    }
+
+    IStringBuilder * ScriptWorker::GetStringBuilder()
+    {
+        return StringBuilder;
     }
 
     IProcessComunicator * ScriptWorker::GetProcessComunicator()
@@ -468,7 +479,6 @@ namespace BrowserAutomationStudioFramework
         ResultMessage = "Ok";
         ResultStatus = IWorker::SuccessStatus;
 
-
         engine = new QScriptEngine(this);
         NeedToSetAsyncResult = false;
 
@@ -544,7 +554,6 @@ namespace BrowserAutomationStudioFramework
             engine->globalObject().setProperty(i.key(), Value);
             i++;
         }
-
         Browser->SetScriptResources(ScriptResources);
 
         foreach(QString script, ScriptResources->GetEngineScripts())
@@ -557,7 +566,6 @@ namespace BrowserAutomationStudioFramework
             QString Script = AdditionalScripts->at(i);
             engine->evaluate(Script);
         }
-
         RunSubScript();
     }
 
@@ -869,6 +877,11 @@ namespace BrowserAutomationStudioFramework
         Waiter->Sleep(msec,this,SLOT(RunSubScript()));
     }
 
+    QString ScriptWorker::Spintax(const QString& Text)
+    {
+        return StringBuilder->Expand(Text);
+    }
+
     void ScriptWorker::Suspend(int msec, const QString& callback)
     {
         Script = callback;
@@ -902,6 +915,20 @@ namespace BrowserAutomationStudioFramework
 
 
     static QScriptValue prepare(QScriptEngine *engine, IWebElement* web);
+
+    static QScriptValue prototype_nowait(QScriptContext *ctx, QScriptEngine *engine)
+    {
+        IWebElement *web = qobject_cast<IWebElement*>(ctx->thisObject().toQObject());
+        if(!web)
+        {
+            return engine->undefinedValue();
+        }
+        if(ctx->argumentCount()!=0)
+        {
+            return engine->undefinedValue();
+        }
+        return prepare(engine,web->nowait());
+    }
 
     static QScriptValue prototype_css(QScriptContext *ctx, QScriptEngine *engine)
     {
@@ -1088,6 +1115,7 @@ namespace BrowserAutomationStudioFramework
 
         QScriptValue res = engine->newQObject(web);
         res.setProperty("css", engine->newFunction(prototype_css));
+        res.setProperty("nowait", engine->newFunction(prototype_nowait));
         res.setProperty("xpath", engine->newFunction(prototype_xpath));
         res.setProperty("frame", engine->newFunction(prototype_frame));
         res.setProperty("frame_css", engine->newFunction(prototype_frame_css));
@@ -1229,13 +1257,34 @@ namespace BrowserAutomationStudioFramework
             return PrepareMessage(tr("Thread suspended"));
         }
 
+        bool ShowActionId = false;
+
         switch(ResultStatus)
         {
-            case IWorker::FailStatus: status = tr("Thread ended"); break;
+            case IWorker::FailStatus: ShowActionId = true; status = tr("Thread ended"); break;
             case IWorker::DieStatus: status = tr("Thread ended"); break;
             case IWorker::SuccessStatus: status = tr("Thread succeeded"); break;
         }
-        return PrepareMessage(status + tr(" with message \"") + ResultMessage + "\"");
+        QString text = status + tr(" with message \"") + ResultMessage + "\"";
+        if(ShowActionId)
+        {
+            text = PrepareMessage(text);
+        }else
+        {
+            text = PrepareMessageNoId(text);
+        }
+        return text;
+    }
+
+    QString ScriptWorker::GetResultMessageRawWithId()
+    {
+        QString result;
+        if(CurrentAction >= 0)
+        {
+            result += QString("[") + QString::number(CurrentAction) + QString("] ");
+        }
+        result += ResultMessage;
+        return result;
     }
 
     QString ScriptWorker::GetResultMessageRaw()
@@ -1243,11 +1292,33 @@ namespace BrowserAutomationStudioFramework
         return ResultMessage;
     }
 
+    void ScriptWorker::SetCurrentAction(qint64 CurrentAction)
+    {
+        this->CurrentAction = CurrentAction;
+    }
+
     QString ScriptWorker::PrepareMessage(const QString &message)
     {
         QString status;
         QString datestring = QTime::currentTime().toString("hh:mm:ss");
-        status  = "[" + datestring + "] " + tr("Thread #") + QString::number(ThreadNumber) + " : " + message;
+        if(CurrentAction >= 0)
+        {
+            status += QString("[") + QString::number(CurrentAction) + QString("] ");
+        }
+        status  += "[" + datestring + "]";
+
+        status += QString(" ") + tr("Thread #") + QString::number(ThreadNumber) + " : " + message;
+        return status;
+    }
+
+    QString ScriptWorker::PrepareMessageNoId(const QString &message)
+    {
+        QString status;
+        QString datestring = QTime::currentTime().toString("hh:mm:ss");
+
+        status  += "[" + datestring + "]";
+
+        status += QString(" ") + tr("Thread #") + QString::number(ThreadNumber) + " : " + message;
         return status;
     }
 
@@ -1946,6 +2017,66 @@ namespace BrowserAutomationStudioFramework
         DatabaseConnector->Update(item,TableId);
     }
 
+
+    void ScriptWorker::SubstageSetStartingFunction(const QString& StartingFunction)
+    {
+        this->SubstageStartingFunction = StartingFunction;
+    }
+
+    QString ScriptWorker::SubstageGetStartingFunction()
+    {
+        return SubstageStartingFunction;
+    }
+
+    int ScriptWorker::SubstageGetId()
+    {
+        return SubstageId;
+    }
+
+    void ScriptWorker::SubstageSetId(int Id)
+    {
+        this->SubstageId = Id;
+    }
+
+    int ScriptWorker::SubstageGetParentId()
+    {
+        return SubstageParentId;
+    }
+
+    void ScriptWorker::SubstageSetParentId(int Id)
+    {
+        this->SubstageParentId = Id;
+    }
+
+    void ScriptWorker::SubstageFinished(int Id)
+    {
+        if(Id == SubstageId)
+        {
+            emit SubstageFinishedSignal();
+        }
+    }
+
+    void ScriptWorker::SubstageCall(const QString& StartingFunction, qint64 ThreadsNumber, qint64 MaximumSuccess, qint64 MaximumFailure, const QString& Callback)
+    {
+        SubstageId = qrand() % 1000000 + 1;
+        SetScript(Callback);
+        if(MaximumSuccess < 0)
+            MaximumSuccess = std::numeric_limits<qint64>::max();
+        if(MaximumFailure < 0)
+            MaximumFailure = std::numeric_limits<qint64>::max();
+        Waiter->WaitInfinity(this,SIGNAL(SubstageFinishedSignal()),this,SLOT(SubstageFinishAndRunNext()));
+        emit SubstageBeginSignal(StartingFunction, ThreadsNumber, MaximumSuccess, MaximumFailure, SubstageId);
+    }
+
+    void ScriptWorker::SubstageFinishAndRunNext()
+    {
+
+        if(SubstageId)
+        {
+            SubstageId = 0;
+            RunSubScript();
+        }
+    }
 
 
 }

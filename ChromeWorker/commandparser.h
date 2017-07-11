@@ -23,12 +23,15 @@ public:
     std::vector<std::function<void(const std::string&)> > EventSetUserAgent;
     std::vector<std::function<void(const std::string&)> > EventSetOpenFileName;
     std::vector<std::function<void(const std::string&,const std::string&, const std::string&)> > EventSetStartupScript;
+    std::vector<std::function<void(bool,bool,int)> > EventSendWorkerSettings;
+
     std::vector<std::function<void(const std::string&)> > EventSetPromptResult;
     std::vector<std::function<void(const std::string&,const std::string&)> > EventSetHttpAuthResult;
 
     std::vector<std::function<void()> > EventGetUrl;
     std::vector<std::function<void(int, int)> > EventResize;
     std::vector<std::function<void(const std::string&)> > EventSetWindow;
+    std::vector<std::function<void(const std::string&)> > EventHighlightAction;
     std::vector<std::function<void(int, int)> > EventMouseClick;
     std::vector<std::function<void(int, int)> > EventMouseClickUp;
     std::vector<std::function<void(int, int)> > EventMouseClickDown;
@@ -47,6 +50,10 @@ public:
     std::vector<std::function<void()> > EventWaitCode;
     std::vector<std::function<void(int)> > EventStartSection;
     std::vector<std::function<void(std::string)> > EventSetFontList;
+
+    std::vector<std::function<void()> > EventClearImageData;
+    std::vector<std::function<void(std::string)> > EventSetImageData;
+    std::vector<std::function<void()> > EventFindImage;
 
     std::vector<std::function<void()> > EventScriptFinished;
     std::vector<std::function<void()> > EventIsChanged;
@@ -73,6 +80,7 @@ public:
     std::vector<std::function<void(const std::string&)> > EventIsUrlLoadedByMask;
     std::vector<std::function<void(const std::string&)> > EventDebugVariablesResult;
     std::vector<std::function<void()> > EventGetLoadStats;
+    std::vector<std::function<void()> > EventRestoreOriginalStage;
 
 
     std::vector<std::function<void(const std::string&,const std::string&)> > EventSetCode;

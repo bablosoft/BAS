@@ -16,8 +16,9 @@ namespace BrowserAutomationStudioFramework
         IValidator *Validator;
         bool IsAdvanced;
         QPushButton *DatabaseButton;
+        QAction *Advanced;
     public:
-        explicit AskUserForResourcesDialog(QWidget *parent = 0);
+        explicit AskUserForResourcesDialog(int width, int height, QWidget *parent = 0);
         ~AskUserForResourcesDialog();
         QWidget *GetContentWidget();
         void ClearContentWidget();

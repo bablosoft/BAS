@@ -34,10 +34,12 @@ namespace BrowserAutomationStudioFramework
         virtual void SendIsChanged();
         virtual void StopRecorder();
         virtual void SendCode(const QString& Code,const QString& Schema);
+        virtual void HighlightAction(const QString& ActionId);
         virtual void SetWindow(const QString& Window);
         virtual void SendResources(const QList<ResourceDescription>& Resources);
         virtual void InstallProcessComunicator(IProcessComunicator *Comunicator);
         virtual void Closed();
+        virtual void RestoreOriginalStage();
     };
 }
 

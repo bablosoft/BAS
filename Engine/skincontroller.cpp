@@ -7,6 +7,10 @@
     #include <QtGui/QApplication>
 #endif
 #include <QFont>
+#include <QProcessEnvironment>
+#include <QFile>
+#include <QTextStream>
+
 #include "every_cpp.h"
 namespace BrowserAutomationStudioFramework
 {
@@ -17,6 +21,9 @@ namespace BrowserAutomationStudioFramework
 
     void SkinController::ApplyTheme(const QString & theme)
     {
+        QString ClientName = QProcessEnvironment::systemEnvironment().value("ClientName", "").toLower();
+        if(ClientName != "" && ClientName != "console")
+            return;
 
         if(theme == "DarkFusion")
         {
@@ -44,7 +51,17 @@ namespace BrowserAutomationStudioFramework
             palette.setColor(QPalette::HighlightedText, Qt::black);
             qApp->setPalette(palette);
 
-            qApp->setStyleSheet("QToolTip { color: white; background-color: #232323; border-radius:4px;  border-width: 1px; border-style: solid; border-color:gray;}");
+            QFile f(":/themes/dark/style.qss");
+            if (f.open(QFile::ReadOnly | QFile::Text))
+            {
+                QTextStream in(&f);
+                in.setCodec("UTF-8");
+                QString ret = in.readAll();
+                qApp->setStyleSheet(ret);
+                f.close();
+
+            }
+
         }else if(theme == "WhiteFusion")
         {
             qApp->setStyle(QStyleFactory::create("fusion"));

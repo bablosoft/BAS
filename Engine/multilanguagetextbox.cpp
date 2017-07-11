@@ -16,6 +16,11 @@ namespace BrowserAutomationStudioFramework
         connect(ui->comboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(ComboTextChanged(QString)));
     }
 
+    QLineEdit * MultiLanguageTextBox::GetEdit()
+    {
+        return ui->lineEdit;
+    }
+
     void MultiLanguageTextBox::SetTranslation(const QString& text)
     {
         MultilanguageText.SetTranslation(ui->comboBox->currentText(),text);

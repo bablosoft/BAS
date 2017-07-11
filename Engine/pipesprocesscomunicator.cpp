@@ -74,6 +74,7 @@ namespace BrowserAutomationStudioFramework
 
         }
         ParamsCopy = arguments + ParamsCopy;
+        //qDebug()<<"Location"<<Location<<ParamsCopy;
         Process->start(Location,ParamsCopy);
     }
 
@@ -143,6 +144,12 @@ namespace BrowserAutomationStudioFramework
             emit SendSignal(key, value);
         }
     }
+
+    bool PipesProcessComunicator::HasProcess()
+    {
+        return Process;
+    }
+
 
     void PipesProcessComunicator::ConnectToProcess(const QString& key_in, const QString& key_out)
     {

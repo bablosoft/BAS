@@ -51,6 +51,12 @@ function rand(v1,v2,v3)
     return;
 }
 
+function _spintax(text)
+{
+    return ScriptWorker.Spintax(text);
+}
+
+
 function proxy_parse(proxy_string)
 {
     var server = "";

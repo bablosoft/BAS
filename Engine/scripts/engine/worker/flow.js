@@ -37,12 +37,19 @@ function debug_variables(list, callback)
     for(var i = 0;i<list.length;i++)
     {
         var v = list[i]
-        try
+        if(v.indexOf("GLOBAL:") == 0)
         {
-            res[v.slice(4)] = eval(v)
-        }catch(e)
+            res[v] = JSON.parse(P("basglobal",v.slice(7)) || '""');
+        }else
         {
-            res[v.slice(4)] = "undefined"
+
+            try
+            {
+                res[v.slice(4)] = eval(v)
+            }catch(e)
+            {
+                res[v.slice(4)] = "undefined"
+            }
         }
     }
 

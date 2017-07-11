@@ -1,6 +1,8 @@
 {
 	
 	"name":"ScriptStats",
+	"info":{"en": "Usefull tools to get script statistic.", "ru": "Полезные инструменты для получения статистики выполнения скрипта."},
+	"icon":"scriptstats.png",
 	"description":"Get script statistic",
 	"description_small":{"en": "Script statistic", "ru": "Статистика скрипта"},
 	"major_version": 1,
