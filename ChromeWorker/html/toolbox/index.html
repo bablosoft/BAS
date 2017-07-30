@@ -2454,7 +2454,7 @@
 
 
   <script type="text/template" id="randomint_code">
-      <%= variable %> = Math.floor(Math.random() * (<%= max %> - <%= min %> + 1)) + <%= min %>
+      <%= variable %> = Math.floor(Math.random() * (parseInt(<%= max %>) - parseInt(<%= min %>) + 1)) + parseInt(<%= min %>)
   </script>
 
 
@@ -2467,6 +2467,8 @@
       /*Browser*/
       <% if(imagesearch){ %>
         <%= waiter %>        
+      <% }else if(query){ %>
+        ;_SELECTOR=<%=query%>;
       <% } %>
 
       <%= path %>.exist()!
@@ -2750,6 +2752,9 @@
 
   <script type="text/template" id="length_code">
       /*Browser*/
+      <% if(query){ %>
+        ;_SELECTOR=<%=query%>;
+      <% } %>
       <%= path %>.length()!
       <%= variable %> = _result()
   </script>
@@ -6302,7 +6307,7 @@
                 {
                   imagesearch = path["imagesearch"]
                 }
-                var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Variable,path: path["path"],waiter: path["waiter"], imagesearch: imagesearch, isvisible: CheckIsvisible})
+                var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Variable,path: path["path"],waiter: path["waiter"], imagesearch: imagesearch, isvisible: CheckIsvisible, query: path["query"]})
                 code = Normalize(code,0)
                 BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
               }catch(e)
@@ -6502,7 +6507,7 @@
             }
              try{
               var path = GetPath(loader,true)
-              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,path: path["path"],waiter: path["waiter"]})
+              var code = loader.GetAdditionalData() + _.template($('#' + State + "_code").html())({variable:"VAR_" + Save,path: path["path"],waiter: path["waiter"], query: path["query"]})
               code = Normalize(code,0)
               BrowserAutomationStudio_Append("", BrowserAutomationStudio_SaveControls() + code, action, DisableIfAdd);
             }catch(e)

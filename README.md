@@ -1,3 +1,6 @@
+This repository is not updated regularly, if you want actual source code, check out premium version https://bablosoft.com/shop/BASPremium
+
+
 # Browser Automation Studio
 BrowserAutomationStudio is a solution that allows you to quickly create applications using browser, http client, email client, and other libraries. Programming skills are not required. Main application types: creation of posters, spammers, parsers, uploaders, apps for the social networks.
 

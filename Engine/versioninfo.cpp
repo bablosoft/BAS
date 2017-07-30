@@ -21,7 +21,7 @@ namespace BrowserAutomationStudioFramework
 
     int VersionInfo::BuildVersion()
     {
-        return 0;
+        return 3;
     }
 
     QString VersionInfo::VersionString()

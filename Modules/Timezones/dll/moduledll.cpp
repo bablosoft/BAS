@@ -8,6 +8,7 @@
 #include <QVariant>
 #include "GeoIP.h"
 #include "GeoIPCity.h"
+#include "tmap.h"
 
 extern "C" {
 
@@ -104,9 +105,34 @@ extern "C" {
             res.insert("country", QString::fromLatin1(record->country_code));
             res.insert("latitude", record->latitude);
             res.insert("longitude", record->longitude);
-            res.insert("timezone", GeoIP_time_zone_by_country_and_region(record->country_code,record->region));
-            res.insert("offset", GeoIP_time_zone_offset_by_country_and_region(record->country_code,record->region));
-            res.insert("dstoffset", GeoIP_time_zone_dst_offset_by_country_and_region(record->country_code,record->region));
+            int offset = GeoIP_time_zone_offset_by_country_and_region(record->country_code,record->region);
+
+            bool compute = false;
+            if(offset >= 99999)
+            {
+                int id = kdLookupRoot(record->latitude,record->longitude);
+
+                if(id>0)
+                {
+                    const char *region = _timezone_to_region(id);
+                    const char *country = _timezone_to_country(id);
+                    if(region && country)
+                    {
+                        res.insert("timezone", GeoIP_time_zone_by_country_and_region(country,region));
+                        res.insert("offset", GeoIP_time_zone_offset_by_country_and_region(country,region));
+                        res.insert("dstoffset", GeoIP_time_zone_dst_offset_by_country_and_region(country,region));
+                        compute = true;
+                    }
+                }
+            }
+
+            if(!compute)
+            {
+                res.insert("timezone", GeoIP_time_zone_by_country_and_region(record->country_code,record->region));
+                res.insert("offset", offset);
+                res.insert("dstoffset", GeoIP_time_zone_dst_offset_by_country_and_region(record->country_code,record->region));
+            }
+
             GeoIPRecord_delete(record);
         }else
         {

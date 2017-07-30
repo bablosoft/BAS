@@ -1623,14 +1623,26 @@ namespace BrowserAutomationStudioFramework
     {
 
         QString Location = GetActualHttpClient()->GetHeader("Location");
+
         //Relative location
         while(Location.startsWith("."))
             Location.remove(0,1);
 
-        if(Location.startsWith("/"))
+        if(Location.startsWith("//"))
         {
             QUrl url = QUrl(GetActualHttpClient()->GetLastUrl());
-            url.setPath(Location);
+
+            QUrl urllocation = QUrl(Location);
+            urllocation.setScheme(url.scheme());
+            Location = urllocation.toString();
+
+        }else if(Location.startsWith("/"))
+        {
+            QUrl url = QUrl(GetActualHttpClient()->GetLastUrl());
+            QUrl urllocation = QUrl(Location);
+            url.setPath(urllocation.path());
+            url.setQuery(urllocation.query());
+            url.setFragment(urllocation.fragment());
 
             Location = url.toString();
         }

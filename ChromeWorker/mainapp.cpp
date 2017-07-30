@@ -2677,7 +2677,7 @@ void MainApp::HandleMainBrowserEvents()
                     y = std::stoi(y_string);
                 }
 
-                if(!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser))
+                if(false/*!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser)*/)
                 {
                     IsLastCommandNull = false;
                 }else
@@ -2719,7 +2719,7 @@ void MainApp::HandleMainBrowserEvents()
                 }
                 MouseEndX = x - Data->ScrollX;
                 MouseEndY = y - Data->ScrollY;
-                if(!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser))
+                if(false/*!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser)*/)
                 {
                     IsLastCommandNull = false;
                 }else
@@ -3047,7 +3047,7 @@ void MainApp::HandleMainBrowserEvents()
                 x += ExecuteSearchCoordinatesX + Data->ScrollX;
                 y += ExecuteSearchCoordinatesY + Data->ScrollY;
 
-                if(!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser))
+                if(false/*!BrowserEventsEmulator::IsPointOnScreen(x,y,Data->ScrollX, Data->ScrollY, Data->WidthBrowser, Data->HeightBrowser)*/)
                 {
                     //WORKER_LOG("Failed to move");
                     IsLastCommandNull = false;

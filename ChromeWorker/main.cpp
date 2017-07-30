@@ -1153,7 +1153,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
     Client = new PipesClient();
     Parser = new CommandParser();
-    int NumberArgs;
+    int NumberArgs = Arguments.size();
     std::string Lang = ws2s(Arguments[1]);
 
     Translate::SetLanguage(Lang);

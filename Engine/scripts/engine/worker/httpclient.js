@@ -171,11 +171,18 @@ function http_client_post_no_redirect(url, params, post_options, callback)
 {
     _ensure_http_client();
     var p = []
-    for(var k in params)
+    if(Object.prototype.toString.call(params) === '[object Array]')
     {
-        p.push(k);
-        p.push(params[k]);
+        p = params
+    }else
+    {
+        for(var k in params)
+        {
+            p.push(k);
+            p.push(params[k]);
+        }
     }
+
     var p1 = []
     if(typeof(post_options) === "function")
     {

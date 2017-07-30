@@ -778,6 +778,17 @@ QString MainWindow::OpenFromFile(const QString& fileName)
 
     Res->FromViewToModel(&loader);
     Res->FromModelToView(WidgetController);
+
+    {
+        QFile f("settings_worker.ini");
+        if(f.open(QFile::WriteOnly | QFile::Text))
+        {
+            QTextStream out(&f);
+            out<<loader.GetSettingsWorker();
+        }
+        f.close();
+    }
+
     compiler->SetVersion(loader.GetScriptVersion());
     compiler->SetName(loader.GetScriptName());
     compiler->SetHideBrowsers(loader.GetHideBrowsers());
@@ -997,6 +1008,11 @@ void MainWindow::New()
     {
         if(_RecordProcessCommunication)
             _RecordProcessCommunication->StopRecorder();
+        {
+            QFile f("settings_worker.ini");
+            f.remove();
+        }
+
         Output->SetDefaults();
         TextEditor->Clear();
         SetDefaultText();
@@ -1011,6 +1027,7 @@ void MainWindow::New()
         ConnectionPassword.clear();
         SetIsDirty(_DataBaseConnector->HasDatabase());
         DatabaseId = QString("Database.") + QString::number(qrand() % 100000);
+
         SetNotModified();
     }
 }

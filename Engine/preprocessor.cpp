@@ -70,9 +70,16 @@ namespace BrowserAutomationStudioFramework
         }
         if(str.mid(index,func_name.length()) == func_name)
         {
-            res.IsGotoLabel = true;
-            res.Index = index;
-            res.Label = str.mid(IndexBracket + 1,start - IndexBracket-1);
+            QString Label = str.mid(IndexBracket + 1,start - IndexBracket-1);
+            if(Label.contains(")!"))
+            {
+                res.IsGotoLabel = false;
+            }else
+            {
+                res.IsGotoLabel = true;
+                res.Index = index;
+                res.Label = str.mid(IndexBracket + 1,start - IndexBracket-1);
+            }
             return res;
         }else
         {
@@ -218,7 +225,7 @@ namespace BrowserAutomationStudioFramework
         while(true)
         {
             int length = Res.length();
-            int index_start = Res.indexOf(")!", from);
+            int index_start = Res.lastIndexOf(")!");
             from = index_start + 2;
             bool is_one_argument = false;
             int index_search = index_start - 1;
@@ -261,7 +268,7 @@ namespace BrowserAutomationStudioFramework
                     GotoLabelData ParseData = ParseSetGotoLabel(Res,index_start);
                     if(ParseData.IsGotoLabel)
                     {
-                        Res = Res.replace(ParseData.Index,index_end - ParseData.Index,"_goto_fast(" + ParseData.Label + ")!");
+                        Res = Res.replace(ParseData.Index,index_end - ParseData.Index,"_fast_goto(" + ParseData.Label + ")!");
                         GotoData[ParseData.Label] = Encrypt(all,ParanoicLevel);
                     }else
                     {
@@ -292,7 +299,7 @@ namespace BrowserAutomationStudioFramework
                             GotoLabelData ParseData = ParseSetGotoLabel(Res,index_start);
                             if(ParseData.IsGotoLabel)
                             {
-                                Res = Res.replace(ParseData.Index,index_end - ParseData.Index,"_goto_fast(" + ParseData.Label + ")!");
+                                Res = Res.replace(ParseData.Index,index_end - ParseData.Index,"_fast_goto(" + ParseData.Label + ")!");
                                 GotoData[ParseData.Label] = Encrypt(all,ParanoicLevel);
                             }else
                             {
@@ -321,7 +328,7 @@ namespace BrowserAutomationStudioFramework
                         GotoLabelData ParseData = ParseSetGotoLabel(Res,index_start);
                         if(ParseData.IsGotoLabel)
                         {
-                            Res = Res.replace(ParseData.Index,index_end - ParseData.Index,"_goto_fast(" + ParseData.Label + ")!");
+                            Res = Res.replace(ParseData.Index,index_end - ParseData.Index,"_fast_goto(" + ParseData.Label + ")!");
                             GotoData[ParseData.Label] = Encrypt(all,ParanoicLevel);
                         }else
                         {

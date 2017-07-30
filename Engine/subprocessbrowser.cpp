@@ -804,8 +804,8 @@ namespace BrowserAutomationStudioFramework
             connect(Worker->GetProcessComunicator(),SIGNAL(Received(QString)),NetworkAccessManager,SLOT(Received(QString)));
             NetworkAccessManager->setParent(Worker->GetProcessComunicator());
             
-            connect(Worker->GetProcessComunicator(),SIGNAL(ProcessFinished()),this,SLOT(WorkerStopped()));
-            connect(Worker->GetProcessComunicator(),SIGNAL(Error()),this,SLOT(WorkerStopped()));
+            //connect(Worker->GetProcessComunicator(),SIGNAL(ProcessFinished()),this,SLOT(WorkerStopped()));
+            //connect(Worker->GetProcessComunicator(),SIGNAL(Error()),this,SLOT(WorkerStopped()));
 
             connect(Worker->GetProcessComunicator(),SIGNAL(Received(QString)),this,SLOT(Received(QString)));
             Worker->SetFailMessage(QString("Timeout during creating new process"));

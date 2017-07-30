@@ -8,11 +8,13 @@ SOURCES += moduledll.cpp \
     pread.c \
     regionName.c \
     timeZone.c \
-    timezoneoffset.c
+    timezoneoffset.c \
+    tmap.cpp
 HEADERS += moduledll.h \
     GeoIP.h \
     GeoIP_internal.h \
     GeoIPCity.h \
-    pread.h
+    pread.h \
+    tmap.h
 LIBS += -lWs2_32
 
